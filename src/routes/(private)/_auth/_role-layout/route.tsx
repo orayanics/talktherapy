@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 import SidebarSudo from "~/components/Sidebar/SidebarSudo";
 
@@ -6,13 +7,11 @@ export const Route = createFileRoute("/(private)/_auth/_role-layout")({
 });
 
 function RouteComponent() {
-  // for navigation depending on role
+  const [isCollapsed, setIsCollapsed] = useState(false);
   return (
-    <div className="grid grid-cols-12 min-h-screen">
-      <div className="col-span-1 p-4">
-        <SidebarSudo />
-      </div>
-      <div className="col-span-11 bg-blue-50 p-4">
+    <div className="flex h-screen bg-gray-50 dark:bg-gray-950 overflow-hidden">
+      <SidebarSudo isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
+      <div className="flex-1 overflow-auto p-4">
         <Outlet />
       </div>
     </div>

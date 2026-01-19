@@ -17,18 +17,22 @@ function RouteComponent() {
 
 function UserStatsCard() {
   return (
-    <div className="grid grid-cols-3 gap-4">
-      <div className="bg-white p-4 rounded shadow">
-        <h2 className="text-lg font-semibold">Patient Count</h2>
-        <p className="text-2xl">150</p>
+    <div
+      className="grid grid-cols-3 gap-4 [&>div]:bg-white [&>div]:p-4 [&>div]:rounded-md [&>div]:border
+    [&>div>h2]:font-semibold  [&>div>h2]:text-lg [&>div>p]:text-2xl
+    "
+    >
+      <div>
+        <h2>Patient Count</h2>
+        <p>150</p>
       </div>
-      <div className="bg-white p-4 rounded shadow">
-        <h2 className="text-lg font-semibold">Clinician Count</h2>
-        <p className="text-2xl">25</p>
+      <div>
+        <h2>Clinician Count</h2>
+        <p>25</p>
       </div>
-      <div className="bg-white p-4 rounded shadow">
-        <h2 className="text-lg font-semibold">Admin Count</h2>
-        <p className="text-2xl">5</p>
+      <div>
+        <h2>Admin Count</h2>
+        <p>5</p>
       </div>
     </div>
   );
@@ -36,7 +40,7 @@ function UserStatsCard() {
 
 function AppointmentStatsCard() {
   return (
-    <div className="bg-white p-4 rounded shadow mt-4">
+    <div className="bg-white p-4 rounded-md mt-4 border">
       <h2 className="text-lg font-semibold">Upcoming Appointments</h2>
       <p className="text-2xl">45</p>
     </div>

@@ -8,8 +8,8 @@ export default function LoginForm() {
       }}
     >
       <div className="flex flex-col gap-4">
-        <input className="border p-2" type="email" placeholder="Email" />
-        <input className="border p-2" type="password" placeholder="Password" />
+        <input className="input" type="email" placeholder="Email" />
+        <input className="input" type="password" placeholder="Password" />
         <button className="btn-primary mt-4">Login</button>
       </div>
     </form>

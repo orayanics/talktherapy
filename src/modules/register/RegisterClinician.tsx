@@ -38,7 +38,7 @@ function ClinicianVerification() {
             key={index}
             type="text"
             maxLength={1}
-            className="border p-2 w-12 text-center text-xl"
+            className="input w-12 text-center text-xl"
           />
         ))}
       </div>
@@ -75,12 +75,12 @@ function ClinicianPersonalForm() {
       <h1>Personal Information</h1>
       <div className="flex flex-col gap-4">
         <div className="grid md:grid-cols-2 grid-cols-1 grid-rows-1 gap-4">
-          <input className="border p-2" type="text" placeholder="First Name" />
-          <input className="border p-2" type="text" placeholder="Last Name" />
+          <input className="input" type="text" placeholder="First Name" />
+          <input className="input" type="text" placeholder="Last Name" />
         </div>
 
         <div className="flex flex-col gap-4">
-          <select className="border p-2" defaultValue="">
+          <select className="input" defaultValue="">
             <option value="" disabled>
               Select Specialty
             </option>
@@ -101,11 +101,11 @@ function ClinicianAccountForm() {
     <div>
       <h1>Account</h1>
       <div className="flex flex-col gap-4">
-        <input className="border p-2" type="text" placeholder="Username" />
-        <input className="border p-2" type="email" placeholder="Email" />
-        <input className="border p-2" type="password" placeholder="Password" />
+        <input className="input" type="text" placeholder="Username" />
+        <input className="input" type="email" placeholder="Email" />
+        <input className="input" type="password" placeholder="Password" />
         <input
-          className="border p-2"
+          className="input"
           type="password"
           placeholder="Confirm Password"
         />

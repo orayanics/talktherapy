@@ -1,64 +1,65 @@
 import { Link } from "@tanstack/react-router";
-import { FaHome, FaUsers, FaFile, FaCog } from "react-icons/fa";
+import cx from "classnames";
+
+import {
+  FaHome,
+  FaFile,
+  FaCog,
+  FaChevronLeft,
+  FaChevronRight,
+} from "react-icons/fa";
+
+import LogoText from "~/components/Logo/LogoText";
+import SidebarNavItems from "./SidebarNavItems";
 
 const SUDO_NAV_ITEMS = [
   {
     label: "Dashboard",
     to: "/dashboard",
-    icon: <FaHome />,
+    icon: <FaHome size={20} />,
   },
-  {
-    label: "Users",
-    to: "/users",
-    icon: <FaUsers />,
-  },
+  // {
+  //   label: "Users",
+  //   to: "/users",
+  //   icon: <FaUsers size={20} />,
+  // },
   {
     label: "Logs",
     to: "/logs",
-    icon: <FaFile />,
+    icon: <FaFile size={20} />,
   },
   {
     label: "Settings",
     to: "/settings",
-    icon: <FaCog />,
+    icon: <FaCog size={20} />,
   },
 ];
 
-export default function SidebarSudo() {
-  return (
-    <nav className="flex flex-col gap-4">
-      {SUDO_NAV_ITEMS.map((item) => {
-        const { label, to, icon } = item;
-        return (
-          <Link
-            key={to}
-            to={to}
-            className="flex items-center gap-2 p-2 hover:bg-red-100 rounded"
-          >
-            <span className="text-xl">{icon}</span>
-            <span>{label}</span>
-          </Link>
-        );
-      })}
-
-      <button className="btn-primary">Logout</button>
-    </nav>
-  );
+interface SidebarProps {
+  isCollapsed: boolean;
+  setIsCollapsed: (collapsed: boolean) => void;
 }
 
-function Tooltip({
-  label,
-  children,
-}: {
-  label: string;
-  children: React.ReactNode;
-}) {
+export default function SidebarSudo(props: SidebarProps) {
+  const { isCollapsed, setIsCollapsed } = props;
+
   return (
-    <div className="relative group">
-      {children}
-      <div className="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-gray-800 text-white text-xs rounded py-1 px-2 whitespace-nowrap">
-        {label}
+    <aside
+      className={cx("sidebar", {
+        "w-20": isCollapsed,
+        "w-48": !isCollapsed,
+      })}
+    >
+      <LogoText isCollapsed={isCollapsed} />
+      <SidebarNavItems isCollapsed={isCollapsed} items={SUDO_NAV_ITEMS} />
+      <div className="p-4 border-t border-gray-100 dark:border-gray-800">
+        <button
+          onClick={() => setIsCollapsed(!isCollapsed)}
+          className="w-full flex items-center justify-center p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 transition-colors cursor-pointer"
+        >
+          {isCollapsed ? <FaChevronRight /> : <FaChevronLeft />}
+        </button>
       </div>
-    </div>
+    </aside>
   );
 }

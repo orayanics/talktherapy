@@ -1,8 +1,8 @@
 export interface LogsClient {
   id: string;
+  timestamp: Date;
   userId: string; // Reference to user table
   action: string;
-  timestamp: Date;
   details?: string;
 }
 
