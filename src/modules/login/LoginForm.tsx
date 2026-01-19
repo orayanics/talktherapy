@@ -1,0 +1,17 @@
+import React from "react";
+
+export default function LoginForm() {
+  return (
+    <form
+      onSubmit={() => {
+        alert("login");
+      }}
+    >
+      <div className="flex flex-col gap-4">
+        <input className="border p-2" type="email" placeholder="Email" />
+        <input className="border p-2" type="password" placeholder="Password" />
+        <button className="btn-primary mt-4">Login</button>
+      </div>
+    </form>
+  );
+}

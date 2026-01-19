@@ -1,0 +1,75 @@
+@import "tailwindcss";
+
+@theme {
+  /* Colors */
+  /* base: sky-600 */
+  --color-primary: oklch(58.8% 0.158 241.966);
+  --color-primary-hover: oklch(48.8% 0.158 241.966);
+  --color-primary-active: oklch(38.8% 0.158 241.966);
+  --color-primary-disabled: oklch(78.8% 0.05 241.966);
+  --color-primary-contrast: oklch(98.8% 0.02 241.966);
+
+  /* Padding Values */
+  --padding-global: 2rem;
+  --padding-global-lg: 3rem;
+  --padding-global-sm: 1rem;
+
+  --padding-section: 4rem;
+  --padding-section-lg: 6rem;
+  --padding-section-sm: 2rem;
+}
+
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+}
+
+@layer base {
+  html {
+    color-scheme: light dark;
+  }
+
+  * {
+    @apply border-gray-200 dark:border-gray-800;
+  }
+
+  html,
+  body {
+    @apply text-gray-900 bg-gray-50 dark:bg-gray-950 dark:text-gray-200;
+  }
+
+  .using-mouse * {
+    outline: none !important;
+  }
+}
+
+@layer components {
+  /* Buttons */
+
+  /* Primary */
+  .btn-primary {
+    @apply inline-flex items-center justify-center rounded-md font-medium px-4 py-2 transition-colors duration-200;
+    @apply cursor-pointer select-none;
+    @apply text-white dark:text-black;
+    background-color: var(--color-primary);
+  }
+
+  .btn-primary:hover {
+    background-color: var(--color-primary-hover);
+  }
+
+  .btn-primary:active {
+    background-color: var(--color-primary-active);
+  }
+
+  .btn-primary:disabled {
+    background-color: var(--color-primary-disabled);
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+}
