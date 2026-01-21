@@ -1,8 +1,11 @@
+export type UserType = "superadmin" | "admin" | "clinician" | "patient";
+
 // Common user model definition:
 export interface UserClient {
   id: string;
   username: string;
   email: string;
+  userType: UserType;
   information: {
     firstName: string;
     lastName: string;

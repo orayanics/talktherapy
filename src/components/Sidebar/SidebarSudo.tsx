@@ -7,6 +7,7 @@ import {
   FaCog,
   FaChevronLeft,
   FaChevronRight,
+  FaUser,
 } from "react-icons/fa";
 
 import LogoText from "~/components/Logo/LogoText";
@@ -18,11 +19,11 @@ const SUDO_NAV_ITEMS = [
     to: "/dashboard",
     icon: <FaHome size={20} />,
   },
-  // {
-  //   label: "Users",
-  //   to: "/users",
-  //   icon: <FaUsers size={20} />,
-  // },
+  {
+    label: "Users",
+    to: "/users",
+    icon: <FaUser size={20} />,
+  },
   {
     label: "Logs",
     to: "/logs",

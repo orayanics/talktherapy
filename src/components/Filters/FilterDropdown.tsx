@@ -64,9 +64,9 @@ function DefaultSelect({
   }, []);
 
   return (
-    <div ref={ref}>
+    <div ref={ref} className="relative">
       <button
-        className="input input-select"
+        className="input input-select w-full"
         type="button"
         onClick={() => setOpen((o) => !o)}
       >
@@ -77,7 +77,7 @@ function DefaultSelect({
         <div className="absolute z-10 mt-2 w-auto border rounded bg-white dark:bg-gray-900 shadow space-y-2 p-2">
           {options.map((option) => (
             <button
-              className="block w-full text-left px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded"
+              className="block text-left px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded"
               key={option}
               onClick={() => toggleOption(option)}
             >
@@ -128,9 +128,9 @@ function MultiSelect({
   const label = value.length === 0 ? placeholder : `${value.length} selected`;
 
   return (
-    <div ref={ref}>
+    <div ref={ref} className="relative">
       <button
-        className="input input-select"
+        className="input input-select w-full"
         type="button"
         onClick={() => setOpen((o) => !o)}
       >
@@ -138,7 +138,7 @@ function MultiSelect({
       </button>
 
       {open && (
-        <div className="absolute z-10 mt-2 w-auto border rounded bg-white dark:bg-gray-900 shadow space-y-2 p-2">
+        <div className="absolute z-10 mt-2 border rounded bg-white dark:bg-gray-900 shadow space-y-2 p-2">
           {options.map((option) => (
             <label
               key={option}

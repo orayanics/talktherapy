@@ -11,17 +11,10 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as RedirectRouteImport } from './routes/redirect'
 import { Route as DeferredRouteImport } from './routes/deferred'
-import { Route as UsersRouteRouteImport } from './routes/users.route'
-import { Route as PostsRouteRouteImport } from './routes/posts.route'
 import { Route as publicRouteRouteImport } from './routes/(public)/route'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as UsersIndexRouteImport } from './routes/users.index'
-import { Route as PostsIndexRouteImport } from './routes/posts.index'
-import { Route as UsersUserIdRouteImport } from './routes/users.$userId'
-import { Route as PostsPostIdRouteImport } from './routes/posts.$postId'
 import { Route as ApiUsersRouteImport } from './routes/api/users'
 import { Route as privateAuthRouteRouteImport } from './routes/(private)/_auth/route'
-import { Route as PostsPostIdDeepRouteImport } from './routes/posts_.$postId.deep'
 import { Route as ApiUsersIdRouteImport } from './routes/api/users.$id'
 import { Route as publicmarketingAboutRouteImport } from './routes/(public)/(marketing)/about'
 import { Route as publicauthAuthPagesRouteRouteImport } from './routes/(public)/(auth)/_auth-pages/route'
@@ -31,7 +24,8 @@ import { Route as publicauthAuthPagesLoginRouteImport } from './routes/(public)/
 import { Route as privateAuthRoleLayoutDashboardRouteImport } from './routes/(private)/_auth/_role-layout/dashboard'
 import { Route as privateAuthRoleLayoutsudoRouteRouteImport } from './routes/(private)/_auth/_role-layout/(sudo)/route'
 import { Route as privateAuthRoleLayoutsudoLogsRouteImport } from './routes/(private)/_auth/_role-layout/(sudo)/logs'
-import { Route as privateAuthRoleLayoutsharedSettingsRouteImport } from './routes/(private)/_auth/_role-layout/(shared)/settings'
+import { Route as privateAuthRoleLayoutadmSharedUsersRouteImport } from './routes/(private)/_auth/_role-layout/(adm-shared)/users'
+import { Route as privateAuthRoleLayoutadmSharedSettingsRouteImport } from './routes/(private)/_auth/_role-layout/(adm-shared)/settings'
 
 const RedirectRoute = RedirectRouteImport.update({
   id: '/redirect',
@@ -43,16 +37,6 @@ const DeferredRoute = DeferredRouteImport.update({
   path: '/deferred',
   getParentRoute: () => rootRouteImport,
 } as any)
-const UsersRouteRoute = UsersRouteRouteImport.update({
-  id: '/users',
-  path: '/users',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PostsRouteRoute = PostsRouteRouteImport.update({
-  id: '/posts',
-  path: '/posts',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const publicRouteRoute = publicRouteRouteImport.update({
   id: '/(public)',
   getParentRoute: () => rootRouteImport,
@@ -62,26 +46,6 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const UsersIndexRoute = UsersIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => UsersRouteRoute,
-} as any)
-const PostsIndexRoute = PostsIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => PostsRouteRoute,
-} as any)
-const UsersUserIdRoute = UsersUserIdRouteImport.update({
-  id: '/$userId',
-  path: '/$userId',
-  getParentRoute: () => UsersRouteRoute,
-} as any)
-const PostsPostIdRoute = PostsPostIdRouteImport.update({
-  id: '/$postId',
-  path: '/$postId',
-  getParentRoute: () => PostsRouteRoute,
-} as any)
 const ApiUsersRoute = ApiUsersRouteImport.update({
   id: '/api/users',
   path: '/api/users',
@@ -89,11 +53,6 @@ const ApiUsersRoute = ApiUsersRouteImport.update({
 } as any)
 const privateAuthRouteRoute = privateAuthRouteRouteImport.update({
   id: '/(private)/_auth',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PostsPostIdDeepRoute = PostsPostIdDeepRouteImport.update({
-  id: '/posts_/$postId/deep',
-  path: '/posts/$postId/deep',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiUsersIdRoute = ApiUsersIdRouteImport.update({
@@ -145,31 +104,31 @@ const privateAuthRoleLayoutsudoLogsRoute =
     path: '/logs',
     getParentRoute: () => privateAuthRoleLayoutsudoRouteRoute,
   } as any)
-const privateAuthRoleLayoutsharedSettingsRoute =
-  privateAuthRoleLayoutsharedSettingsRouteImport.update({
-    id: '/(shared)/settings',
+const privateAuthRoleLayoutadmSharedUsersRoute =
+  privateAuthRoleLayoutadmSharedUsersRouteImport.update({
+    id: '/(adm-shared)/users',
+    path: '/users',
+    getParentRoute: () => privateAuthRoleLayoutRouteRoute,
+  } as any)
+const privateAuthRoleLayoutadmSharedSettingsRoute =
+  privateAuthRoleLayoutadmSharedSettingsRouteImport.update({
+    id: '/(adm-shared)/settings',
     path: '/settings',
     getParentRoute: () => privateAuthRoleLayoutRouteRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/posts': typeof PostsRouteRouteWithChildren
-  '/users': typeof UsersRouteRouteWithChildren
   '/deferred': typeof DeferredRoute
   '/redirect': typeof RedirectRoute
   '/api/users': typeof ApiUsersRouteWithChildren
-  '/posts/$postId': typeof PostsPostIdRoute
-  '/users/$userId': typeof UsersUserIdRoute
-  '/posts/': typeof PostsIndexRoute
-  '/users/': typeof UsersIndexRoute
   '/about': typeof publicmarketingAboutRoute
   '/api/users/$id': typeof ApiUsersIdRoute
-  '/posts/$postId/deep': typeof PostsPostIdDeepRoute
   '/dashboard': typeof privateAuthRoleLayoutDashboardRoute
   '/login': typeof publicauthAuthPagesLoginRoute
   '/register': typeof publicauthAuthPagesRegisterRoute
-  '/settings': typeof privateAuthRoleLayoutsharedSettingsRoute
+  '/settings': typeof privateAuthRoleLayoutadmSharedSettingsRoute
+  '/users': typeof privateAuthRoleLayoutadmSharedUsersRoute
   '/logs': typeof privateAuthRoleLayoutsudoLogsRoute
 }
 export interface FileRoutesByTo {
@@ -177,65 +136,49 @@ export interface FileRoutesByTo {
   '/deferred': typeof DeferredRoute
   '/redirect': typeof RedirectRoute
   '/api/users': typeof ApiUsersRouteWithChildren
-  '/posts/$postId': typeof PostsPostIdRoute
-  '/users/$userId': typeof UsersUserIdRoute
-  '/posts': typeof PostsIndexRoute
-  '/users': typeof UsersIndexRoute
   '/about': typeof publicmarketingAboutRoute
   '/api/users/$id': typeof ApiUsersIdRoute
-  '/posts/$postId/deep': typeof PostsPostIdDeepRoute
   '/dashboard': typeof privateAuthRoleLayoutDashboardRoute
   '/login': typeof publicauthAuthPagesLoginRoute
   '/register': typeof publicauthAuthPagesRegisterRoute
-  '/settings': typeof privateAuthRoleLayoutsharedSettingsRoute
+  '/settings': typeof privateAuthRoleLayoutadmSharedSettingsRoute
+  '/users': typeof privateAuthRoleLayoutadmSharedUsersRoute
   '/logs': typeof privateAuthRoleLayoutsudoLogsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/(public)': typeof publicRouteRouteWithChildren
-  '/posts': typeof PostsRouteRouteWithChildren
-  '/users': typeof UsersRouteRouteWithChildren
   '/deferred': typeof DeferredRoute
   '/redirect': typeof RedirectRoute
   '/(private)/_auth': typeof privateAuthRouteRouteWithChildren
   '/api/users': typeof ApiUsersRouteWithChildren
-  '/posts/$postId': typeof PostsPostIdRoute
-  '/users/$userId': typeof UsersUserIdRoute
-  '/posts/': typeof PostsIndexRoute
-  '/users/': typeof UsersIndexRoute
   '/(private)/_auth/_role-layout': typeof privateAuthRoleLayoutRouteRouteWithChildren
   '/(public)/(auth)/_auth-pages': typeof publicauthAuthPagesRouteRouteWithChildren
   '/(public)/(marketing)/about': typeof publicmarketingAboutRoute
   '/api/users/$id': typeof ApiUsersIdRoute
-  '/posts_/$postId/deep': typeof PostsPostIdDeepRoute
   '/(private)/_auth/_role-layout/(sudo)': typeof privateAuthRoleLayoutsudoRouteRouteWithChildren
   '/(private)/_auth/_role-layout/dashboard': typeof privateAuthRoleLayoutDashboardRoute
   '/(public)/(auth)/_auth-pages/login': typeof publicauthAuthPagesLoginRoute
   '/(public)/(auth)/_auth-pages/register': typeof publicauthAuthPagesRegisterRoute
-  '/(private)/_auth/_role-layout/(shared)/settings': typeof privateAuthRoleLayoutsharedSettingsRoute
+  '/(private)/_auth/_role-layout/(adm-shared)/settings': typeof privateAuthRoleLayoutadmSharedSettingsRoute
+  '/(private)/_auth/_role-layout/(adm-shared)/users': typeof privateAuthRoleLayoutadmSharedUsersRoute
   '/(private)/_auth/_role-layout/(sudo)/logs': typeof privateAuthRoleLayoutsudoLogsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/posts'
-    | '/users'
     | '/deferred'
     | '/redirect'
     | '/api/users'
-    | '/posts/$postId'
-    | '/users/$userId'
-    | '/posts/'
-    | '/users/'
     | '/about'
     | '/api/users/$id'
-    | '/posts/$postId/deep'
     | '/dashboard'
     | '/login'
     | '/register'
     | '/settings'
+    | '/users'
     | '/logs'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -243,55 +186,42 @@ export interface FileRouteTypes {
     | '/deferred'
     | '/redirect'
     | '/api/users'
-    | '/posts/$postId'
-    | '/users/$userId'
-    | '/posts'
-    | '/users'
     | '/about'
     | '/api/users/$id'
-    | '/posts/$postId/deep'
     | '/dashboard'
     | '/login'
     | '/register'
     | '/settings'
+    | '/users'
     | '/logs'
   id:
     | '__root__'
     | '/'
     | '/(public)'
-    | '/posts'
-    | '/users'
     | '/deferred'
     | '/redirect'
     | '/(private)/_auth'
     | '/api/users'
-    | '/posts/$postId'
-    | '/users/$userId'
-    | '/posts/'
-    | '/users/'
     | '/(private)/_auth/_role-layout'
     | '/(public)/(auth)/_auth-pages'
     | '/(public)/(marketing)/about'
     | '/api/users/$id'
-    | '/posts_/$postId/deep'
     | '/(private)/_auth/_role-layout/(sudo)'
     | '/(private)/_auth/_role-layout/dashboard'
     | '/(public)/(auth)/_auth-pages/login'
     | '/(public)/(auth)/_auth-pages/register'
-    | '/(private)/_auth/_role-layout/(shared)/settings'
+    | '/(private)/_auth/_role-layout/(adm-shared)/settings'
+    | '/(private)/_auth/_role-layout/(adm-shared)/users'
     | '/(private)/_auth/_role-layout/(sudo)/logs'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   publicRouteRoute: typeof publicRouteRouteWithChildren
-  PostsRouteRoute: typeof PostsRouteRouteWithChildren
-  UsersRouteRoute: typeof UsersRouteRouteWithChildren
   DeferredRoute: typeof DeferredRoute
   RedirectRoute: typeof RedirectRoute
   privateAuthRouteRoute: typeof privateAuthRouteRouteWithChildren
   ApiUsersRoute: typeof ApiUsersRouteWithChildren
-  PostsPostIdDeepRoute: typeof PostsPostIdDeepRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -310,20 +240,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DeferredRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/users': {
-      id: '/users'
-      path: '/users'
-      fullPath: '/users'
-      preLoaderRoute: typeof UsersRouteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/posts': {
-      id: '/posts'
-      path: '/posts'
-      fullPath: '/posts'
-      preLoaderRoute: typeof PostsRouteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/(public)': {
       id: '/(public)'
       path: ''
@@ -338,34 +254,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/users/': {
-      id: '/users/'
-      path: '/'
-      fullPath: '/users/'
-      preLoaderRoute: typeof UsersIndexRouteImport
-      parentRoute: typeof UsersRouteRoute
-    }
-    '/posts/': {
-      id: '/posts/'
-      path: '/'
-      fullPath: '/posts/'
-      preLoaderRoute: typeof PostsIndexRouteImport
-      parentRoute: typeof PostsRouteRoute
-    }
-    '/users/$userId': {
-      id: '/users/$userId'
-      path: '/$userId'
-      fullPath: '/users/$userId'
-      preLoaderRoute: typeof UsersUserIdRouteImport
-      parentRoute: typeof UsersRouteRoute
-    }
-    '/posts/$postId': {
-      id: '/posts/$postId'
-      path: '/$postId'
-      fullPath: '/posts/$postId'
-      preLoaderRoute: typeof PostsPostIdRouteImport
-      parentRoute: typeof PostsRouteRoute
-    }
     '/api/users': {
       id: '/api/users'
       path: '/api/users'
@@ -378,13 +266,6 @@ declare module '@tanstack/react-router' {
       path: ''
       fullPath: ''
       preLoaderRoute: typeof privateAuthRouteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/posts_/$postId/deep': {
-      id: '/posts_/$postId/deep'
-      path: '/posts/$postId/deep'
-      fullPath: '/posts/$postId/deep'
-      preLoaderRoute: typeof PostsPostIdDeepRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/users/$id': {
@@ -450,11 +331,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof privateAuthRoleLayoutsudoLogsRouteImport
       parentRoute: typeof privateAuthRoleLayoutsudoRouteRoute
     }
-    '/(private)/_auth/_role-layout/(shared)/settings': {
-      id: '/(private)/_auth/_role-layout/(shared)/settings'
+    '/(private)/_auth/_role-layout/(adm-shared)/users': {
+      id: '/(private)/_auth/_role-layout/(adm-shared)/users'
+      path: '/users'
+      fullPath: '/users'
+      preLoaderRoute: typeof privateAuthRoleLayoutadmSharedUsersRouteImport
+      parentRoute: typeof privateAuthRoleLayoutRouteRoute
+    }
+    '/(private)/_auth/_role-layout/(adm-shared)/settings': {
+      id: '/(private)/_auth/_role-layout/(adm-shared)/settings'
       path: '/settings'
       fullPath: '/settings'
-      preLoaderRoute: typeof privateAuthRoleLayoutsharedSettingsRouteImport
+      preLoaderRoute: typeof privateAuthRoleLayoutadmSharedSettingsRouteImport
       parentRoute: typeof privateAuthRoleLayoutRouteRoute
     }
   }
@@ -490,34 +378,6 @@ const publicRouteRouteWithChildren = publicRouteRoute._addFileChildren(
   publicRouteRouteChildren,
 )
 
-interface PostsRouteRouteChildren {
-  PostsPostIdRoute: typeof PostsPostIdRoute
-  PostsIndexRoute: typeof PostsIndexRoute
-}
-
-const PostsRouteRouteChildren: PostsRouteRouteChildren = {
-  PostsPostIdRoute: PostsPostIdRoute,
-  PostsIndexRoute: PostsIndexRoute,
-}
-
-const PostsRouteRouteWithChildren = PostsRouteRoute._addFileChildren(
-  PostsRouteRouteChildren,
-)
-
-interface UsersRouteRouteChildren {
-  UsersUserIdRoute: typeof UsersUserIdRoute
-  UsersIndexRoute: typeof UsersIndexRoute
-}
-
-const UsersRouteRouteChildren: UsersRouteRouteChildren = {
-  UsersUserIdRoute: UsersUserIdRoute,
-  UsersIndexRoute: UsersIndexRoute,
-}
-
-const UsersRouteRouteWithChildren = UsersRouteRoute._addFileChildren(
-  UsersRouteRouteChildren,
-)
-
 interface privateAuthRoleLayoutsudoRouteRouteChildren {
   privateAuthRoleLayoutsudoLogsRoute: typeof privateAuthRoleLayoutsudoLogsRoute
 }
@@ -535,7 +395,8 @@ const privateAuthRoleLayoutsudoRouteRouteWithChildren =
 interface privateAuthRoleLayoutRouteRouteChildren {
   privateAuthRoleLayoutsudoRouteRoute: typeof privateAuthRoleLayoutsudoRouteRouteWithChildren
   privateAuthRoleLayoutDashboardRoute: typeof privateAuthRoleLayoutDashboardRoute
-  privateAuthRoleLayoutsharedSettingsRoute: typeof privateAuthRoleLayoutsharedSettingsRoute
+  privateAuthRoleLayoutadmSharedSettingsRoute: typeof privateAuthRoleLayoutadmSharedSettingsRoute
+  privateAuthRoleLayoutadmSharedUsersRoute: typeof privateAuthRoleLayoutadmSharedUsersRoute
 }
 
 const privateAuthRoleLayoutRouteRouteChildren: privateAuthRoleLayoutRouteRouteChildren =
@@ -543,8 +404,10 @@ const privateAuthRoleLayoutRouteRouteChildren: privateAuthRoleLayoutRouteRouteCh
     privateAuthRoleLayoutsudoRouteRoute:
       privateAuthRoleLayoutsudoRouteRouteWithChildren,
     privateAuthRoleLayoutDashboardRoute: privateAuthRoleLayoutDashboardRoute,
-    privateAuthRoleLayoutsharedSettingsRoute:
-      privateAuthRoleLayoutsharedSettingsRoute,
+    privateAuthRoleLayoutadmSharedSettingsRoute:
+      privateAuthRoleLayoutadmSharedSettingsRoute,
+    privateAuthRoleLayoutadmSharedUsersRoute:
+      privateAuthRoleLayoutadmSharedUsersRoute,
   }
 
 const privateAuthRoleLayoutRouteRouteWithChildren =
@@ -578,13 +441,10 @@ const ApiUsersRouteWithChildren = ApiUsersRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   publicRouteRoute: publicRouteRouteWithChildren,
-  PostsRouteRoute: PostsRouteRouteWithChildren,
-  UsersRouteRoute: UsersRouteRouteWithChildren,
   DeferredRoute: DeferredRoute,
   RedirectRoute: RedirectRoute,
   privateAuthRouteRoute: privateAuthRouteRouteWithChildren,
   ApiUsersRoute: ApiUsersRouteWithChildren,
-  PostsPostIdDeepRoute: PostsPostIdDeepRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

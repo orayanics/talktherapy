@@ -49,6 +49,14 @@
 }
 
 @layer components {
+  /* Text Elements */
+  .heading-1 {
+    @apply text-4xl font-bold;
+  }
+
+  .heading-2 {
+    @apply text-2xl font-bold;
+  }
   /* Buttons */
 
   /* Primary */

@@ -1,9 +1,13 @@
 import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 
+import Grid from "~/components/Page/Grid";
+import GridItem from "~/components/Page/GridItem";
+
 import TableHeader from "~/components/Table/TableHeader";
 import TableContent from "~/components/Table/TableContent";
 import FilterDropdown from "~/components/Filters/FilterDropdown";
+import FilterDrawer from "~/components/Filters/FilterDrawer";
 
 export const Route = createFileRoute(
   "/(private)/_auth/_role-layout/(sudo)/logs",
@@ -13,9 +17,11 @@ export const Route = createFileRoute(
 
 function RouteComponent() {
   return (
-    <div>
-      <Table />
-    </div>
+    <Grid cols={12} gap={6}>
+      <GridItem colSpan={12} className="flex flex-col gap-4">
+        <Table />
+      </GridItem>
+    </Grid>
   );
 }
 
@@ -48,31 +54,28 @@ function Table() {
   const [checkboxes, setCheckboxes] = useState<string[]>([]);
   return (
     <>
-      <TableHeader
-        heading="System Logs"
-        filterOptions={
-          <>
-            <FilterDropdown
-              placeholder="Select one"
-              options={["One", "Two", "Three"]}
-              value={select}
-              onChange={(value) => {
-                setSelect(value as string);
-              }}
-              type="select"
-            />
-            <FilterDropdown
-              placeholder="Checkbox filters"
-              options={["Red", "Blue", "Green"]}
-              value={checkboxes}
-              onChange={(value) => {
-                setCheckboxes(value as string[]);
-              }}
-              type="multiselect"
-            />
-          </>
-        }
-      />
+      <TableHeader heading="System Logs" />
+
+      <FilterDrawer>
+        <FilterDropdown
+          placeholder="Select one"
+          options={["One", "Two", "Three"]}
+          value={select}
+          onChange={(value) => {
+            setSelect(value as string);
+          }}
+          type="select"
+        />
+        <FilterDropdown
+          placeholder="Checkbox filters"
+          options={["Red", "Blue", "Green"]}
+          value={checkboxes}
+          onChange={(value) => {
+            setCheckboxes(value as string[]);
+          }}
+          type="multiselect"
+        />
+      </FilterDrawer>
 
       <TableContent
         columns={[
@@ -81,7 +84,7 @@ function Table() {
           { header: "Action", accessor: "action" },
           { header: "Details", accessor: "details" },
         ]}
-        data={SAMPLE_LOGS.map(({ id, ...rest }) => rest)}
+        data={SAMPLE_LOGS}
       />
     </>
   );
