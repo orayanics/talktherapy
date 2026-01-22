@@ -8,7 +8,7 @@ export default function RegisterPatient() {
     >
       <PatientPersonalForm />
       <PatientAccountForm />
-      <button className="btn-primary mt-4">Submit</button>
+      <button className="btn btn-primary mt-4">Submit</button>
     </form>
   );
 }

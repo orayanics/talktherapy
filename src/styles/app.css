@@ -71,6 +71,11 @@
   html,
   body {
     @apply text-gray-900 bg-gray-50 dark:bg-gray-950 dark:text-gray-200;
+
+    scroll-behavior: smooth;
+    /* disable scrollbar */
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
   }
 
   .using-mouse * {
@@ -87,40 +92,9 @@
   .heading-2 {
     @apply text-2xl font-bold;
   }
-  /* Buttons */
-
-  /* Form Inputs */
-  .input {
-    @apply border rounded-md px-3 py-2;
-    @apply bg-white dark:bg-gray-900;
-    @apply text-gray-900 dark:text-gray-200;
-    @apply placeholder-gray-400 dark:placeholder-gray-600;
-    @apply focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--color-primary)];
-    @apply transition-shadow duration-200;
-  }
-
-  .input:disabled {
-    @apply bg-gray-200 dark:bg-gray-800;
-    @apply cursor-not-allowed;
-    @apply opacity-60;
-  }
-
-  .input-select {
-    @apply appearance-none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='currentColor'%3E%3Cpath fill-rule='evenodd' d='M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.27a.75.75 0 01.02-1.06z' clip-rule='evenodd'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 0.75rem center;
-    background-size: 1.5em 1.5em;
-    padding-right: 2.5rem;
-  }
-
-  .input-checkbox {
-    @apply h-4 w-4 rounded border-gray-300 text-[var(--color-primary)] focus:ring-[var(--color-primary)];
-    accent-color: var(--color-primary);
-  }
 
   /* Sidebar */
   .sidebar {
-    @apply flex flex-col h-full bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 transition-all duration-300 ease-in-out relative;
+    @apply flex flex-col h-full bg-white border-r relative;
   }
 }

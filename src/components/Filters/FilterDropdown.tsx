@@ -3,8 +3,8 @@ import { useEffect, useState, useRef } from "react";
 interface FilterDropdownProps {
   placeholder?: string;
   options: string[];
-  value?: string[] | string;
-  onChange?: (value: string[] | string) => void;
+  value: string[] | string;
+  onChange: (value: string[] | string) => void;
   type: "select" | "checkbox" | "multiselect";
 }
 
@@ -35,58 +35,33 @@ export default function FilterDropdown(props: FilterDropdownProps) {
 interface DefaultSelectProps {
   placeholder?: string;
   options: string[];
-  value?: string;
-  onChange?: (value: string) => void;
+  value: string;
+  onChange: (value: string) => void;
 }
 
 function DefaultSelect({
   placeholder,
   options,
-  value = "",
+  value,
   onChange,
 }: DefaultSelectProps) {
-  const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-
-  const toggleOption = (option: string) => {
-    onChange?.(option);
-  };
-
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
   return (
-    <div ref={ref} className="relative">
-      <button
-        className="input input-select w-full"
-        type="button"
-        onClick={() => setOpen((o) => !o)}
-      >
-        {value || placeholder || "Select an option"}
-      </button>
-
-      {open && (
-        <div className="absolute z-10 mt-2 w-auto border rounded bg-white dark:bg-gray-900 shadow space-y-2 p-2">
-          {options.map((option) => (
-            <button
-              className="block text-left px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded"
-              key={option}
-              onClick={() => toggleOption(option)}
-            >
-              {option}
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
+    <select
+      className="input input-select"
+      id="default-select"
+      name="default-select"
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+    >
+      <option value="" disabled>
+        {placeholder || "Select an option"}
+      </option>
+      {options.map((option) => (
+        <option key={option} value={option}>
+          {option}
+        </option>
+      ))}
+    </select>
   );
 }
 
@@ -130,7 +105,7 @@ function MultiSelect({
   return (
     <div ref={ref} className="relative">
       <button
-        className="input input-select w-full"
+        className="input input-select w-full text-left"
         type="button"
         onClick={() => setOpen((o) => !o)}
       >
@@ -138,11 +113,11 @@ function MultiSelect({
       </button>
 
       {open && (
-        <div className="absolute z-10 mt-2 border rounded bg-white dark:bg-gray-900 shadow space-y-2 p-2">
+        <div className="absolute z-10 mt-2 border rounded bg-white shadow space-y-2 p-2">
           {options.map((option) => (
             <label
               key={option}
-              className="flex items-center gap-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 px-2 py-1"
+              className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 px-2 py-1"
             >
               <input
                 className="input-checkbox"

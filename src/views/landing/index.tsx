@@ -9,7 +9,7 @@ export default function index() {
         <h2>Speech service in your hands.</h2>
         <p>Skilled doctors, personalized exercises and feedback system.</p>
         <p>All-in-one go with TalkTherapy.</p>
-        <Link to="/register" className="btn-primary">
+        <Link to="/register" className="btn btn-primary">
           Get Started
         </Link>
       </div>

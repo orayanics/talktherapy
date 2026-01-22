@@ -10,7 +10,7 @@ export default function FilterDrawer({ children }: FilterDrawerProps) {
   return (
     <>
       <button
-        className="btn-primary"
+        className="btn btn-primary"
         onClick={() => setOpen(true)}
         type="button"
       >
@@ -24,7 +24,7 @@ export default function FilterDrawer({ children }: FilterDrawerProps) {
       />
 
       <aside
-        className={`flex flex-col justify-between p-6 gap-2 fixed top-0 right-0 z-50 h-full w-100 max-w-md bg-white dark:bg-gray-900 shadow-lg transform transition-transform duration-300 ease-in-out
+        className={`flex flex-col justify-between p-6 gap-2 fixed top-0 right-0 z-50 h-full w-100 max-w-md bg-white shadow-lg transform transition-transform duration-300 ease-in-out
           ${open ? "translate-x-0" : "translate-x-full"}
 
         `}
@@ -35,7 +35,7 @@ export default function FilterDrawer({ children }: FilterDrawerProps) {
         <div className="flex flex-col gap-2">{children}</div>
 
         <button
-          className="flex p-2 justify-center items-center btn-primary"
+          className="flex p-2 justify-center items-center btn btn-primary"
           onClick={() => setOpen(false)}
           aria-label="Close drawer"
         >

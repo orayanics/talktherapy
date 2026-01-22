@@ -25,7 +25,7 @@ import { Route as privateAuthRoleLayoutDashboardRouteImport } from './routes/(pr
 import { Route as privateAuthRoleLayoutsudoRouteRouteImport } from './routes/(private)/_auth/_role-layout/(sudo)/route'
 import { Route as privateAuthRoleLayoutsudoLogsRouteImport } from './routes/(private)/_auth/_role-layout/(sudo)/logs'
 import { Route as privateAuthRoleLayoutadmSharedUsersRouteImport } from './routes/(private)/_auth/_role-layout/(adm-shared)/users'
-import { Route as privateAuthRoleLayoutadmSharedSettingsRouteImport } from './routes/(private)/_auth/_role-layout/(adm-shared)/settings'
+import { Route as privateAuthRoleLayoutadmSharedProfileRouteImport } from './routes/(private)/_auth/_role-layout/(adm-shared)/profile'
 
 const RedirectRoute = RedirectRouteImport.update({
   id: '/redirect',
@@ -110,10 +110,10 @@ const privateAuthRoleLayoutadmSharedUsersRoute =
     path: '/users',
     getParentRoute: () => privateAuthRoleLayoutRouteRoute,
   } as any)
-const privateAuthRoleLayoutadmSharedSettingsRoute =
-  privateAuthRoleLayoutadmSharedSettingsRouteImport.update({
-    id: '/(adm-shared)/settings',
-    path: '/settings',
+const privateAuthRoleLayoutadmSharedProfileRoute =
+  privateAuthRoleLayoutadmSharedProfileRouteImport.update({
+    id: '/(adm-shared)/profile',
+    path: '/profile',
     getParentRoute: () => privateAuthRoleLayoutRouteRoute,
   } as any)
 
@@ -127,7 +127,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof privateAuthRoleLayoutDashboardRoute
   '/login': typeof publicauthAuthPagesLoginRoute
   '/register': typeof publicauthAuthPagesRegisterRoute
-  '/settings': typeof privateAuthRoleLayoutadmSharedSettingsRoute
+  '/profile': typeof privateAuthRoleLayoutadmSharedProfileRoute
   '/users': typeof privateAuthRoleLayoutadmSharedUsersRoute
   '/logs': typeof privateAuthRoleLayoutsudoLogsRoute
 }
@@ -141,7 +141,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof privateAuthRoleLayoutDashboardRoute
   '/login': typeof publicauthAuthPagesLoginRoute
   '/register': typeof publicauthAuthPagesRegisterRoute
-  '/settings': typeof privateAuthRoleLayoutadmSharedSettingsRoute
+  '/profile': typeof privateAuthRoleLayoutadmSharedProfileRoute
   '/users': typeof privateAuthRoleLayoutadmSharedUsersRoute
   '/logs': typeof privateAuthRoleLayoutsudoLogsRoute
 }
@@ -161,7 +161,7 @@ export interface FileRoutesById {
   '/(private)/_auth/_role-layout/dashboard': typeof privateAuthRoleLayoutDashboardRoute
   '/(public)/(auth)/_auth-pages/login': typeof publicauthAuthPagesLoginRoute
   '/(public)/(auth)/_auth-pages/register': typeof publicauthAuthPagesRegisterRoute
-  '/(private)/_auth/_role-layout/(adm-shared)/settings': typeof privateAuthRoleLayoutadmSharedSettingsRoute
+  '/(private)/_auth/_role-layout/(adm-shared)/profile': typeof privateAuthRoleLayoutadmSharedProfileRoute
   '/(private)/_auth/_role-layout/(adm-shared)/users': typeof privateAuthRoleLayoutadmSharedUsersRoute
   '/(private)/_auth/_role-layout/(sudo)/logs': typeof privateAuthRoleLayoutsudoLogsRoute
 }
@@ -177,7 +177,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/login'
     | '/register'
-    | '/settings'
+    | '/profile'
     | '/users'
     | '/logs'
   fileRoutesByTo: FileRoutesByTo
@@ -191,7 +191,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/login'
     | '/register'
-    | '/settings'
+    | '/profile'
     | '/users'
     | '/logs'
   id:
@@ -210,7 +210,7 @@ export interface FileRouteTypes {
     | '/(private)/_auth/_role-layout/dashboard'
     | '/(public)/(auth)/_auth-pages/login'
     | '/(public)/(auth)/_auth-pages/register'
-    | '/(private)/_auth/_role-layout/(adm-shared)/settings'
+    | '/(private)/_auth/_role-layout/(adm-shared)/profile'
     | '/(private)/_auth/_role-layout/(adm-shared)/users'
     | '/(private)/_auth/_role-layout/(sudo)/logs'
   fileRoutesById: FileRoutesById
@@ -338,11 +338,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof privateAuthRoleLayoutadmSharedUsersRouteImport
       parentRoute: typeof privateAuthRoleLayoutRouteRoute
     }
-    '/(private)/_auth/_role-layout/(adm-shared)/settings': {
-      id: '/(private)/_auth/_role-layout/(adm-shared)/settings'
-      path: '/settings'
-      fullPath: '/settings'
-      preLoaderRoute: typeof privateAuthRoleLayoutadmSharedSettingsRouteImport
+    '/(private)/_auth/_role-layout/(adm-shared)/profile': {
+      id: '/(private)/_auth/_role-layout/(adm-shared)/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof privateAuthRoleLayoutadmSharedProfileRouteImport
       parentRoute: typeof privateAuthRoleLayoutRouteRoute
     }
   }
@@ -395,7 +395,7 @@ const privateAuthRoleLayoutsudoRouteRouteWithChildren =
 interface privateAuthRoleLayoutRouteRouteChildren {
   privateAuthRoleLayoutsudoRouteRoute: typeof privateAuthRoleLayoutsudoRouteRouteWithChildren
   privateAuthRoleLayoutDashboardRoute: typeof privateAuthRoleLayoutDashboardRoute
-  privateAuthRoleLayoutadmSharedSettingsRoute: typeof privateAuthRoleLayoutadmSharedSettingsRoute
+  privateAuthRoleLayoutadmSharedProfileRoute: typeof privateAuthRoleLayoutadmSharedProfileRoute
   privateAuthRoleLayoutadmSharedUsersRoute: typeof privateAuthRoleLayoutadmSharedUsersRoute
 }
 
@@ -404,8 +404,8 @@ const privateAuthRoleLayoutRouteRouteChildren: privateAuthRoleLayoutRouteRouteCh
     privateAuthRoleLayoutsudoRouteRoute:
       privateAuthRoleLayoutsudoRouteRouteWithChildren,
     privateAuthRoleLayoutDashboardRoute: privateAuthRoleLayoutDashboardRoute,
-    privateAuthRoleLayoutadmSharedSettingsRoute:
-      privateAuthRoleLayoutadmSharedSettingsRoute,
+    privateAuthRoleLayoutadmSharedProfileRoute:
+      privateAuthRoleLayoutadmSharedProfileRoute,
     privateAuthRoleLayoutadmSharedUsersRoute:
       privateAuthRoleLayoutadmSharedUsersRoute,
   }

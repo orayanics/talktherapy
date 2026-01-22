@@ -37,7 +37,7 @@ export default function TablePagination({
     >
       <div className="flex items-center gap-2">
         <button
-          className="px-2 py-1 rounded border bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 disabled:opacity-50"
+          className="px-2 py-1 rounded border bg-gray-100 text-gray-700 disabled:opacity-50"
           onClick={handlePrev}
           disabled={currentPage === 1}
         >
@@ -47,7 +47,7 @@ export default function TablePagination({
           Page <strong>{currentPage}</strong> of <strong>{totalPages}</strong>
         </span>
         <button
-          className="px-2 py-1 rounded border bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 disabled:opacity-50"
+          className="px-2 py-1 rounded border bg-gray-100 text-gray-700 gray-200 disabled:opacity-50"
           onClick={handleNext}
           disabled={currentPage === totalPages}
         >
@@ -57,9 +57,11 @@ export default function TablePagination({
       <div className="flex items-center gap-2">
         <span>Rows per page:</span>
         <select
-          className="border rounded px-2 py-1 bg-white dark:bg-gray-900"
+          className="input input-select bg-white"
           value={perPage}
           onChange={(e) => onPerPageChange?.(Number(e.target.value))}
+          id="table-select"
+          name="table-select"
         >
           {perPageOptions.map((opt) => (
             <option key={opt} value={opt}>
@@ -67,9 +69,7 @@ export default function TablePagination({
             </option>
           ))}
         </select>
-        <span className="ml-2 text-sm text-gray-500 dark:text-gray-400">
-          {total} total
-        </span>
+        <span className="ml-2 text-sm text-gray-500">{total} total</span>
       </div>
     </div>
   );

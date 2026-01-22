@@ -25,9 +25,9 @@ export default function TableContent<T extends { id?: React.Key }>({
   rowsPerPage = 5,
 }: TableContentProps<T>) {
   return (
-    <div className="overflow-auto bg-white dark:bg-gray-900 rounded-lg border bg-background p-6">
+    <div className="overflow-auto h-150 max-h-150 bg-white rounded-lg border bg-background p-6">
       <table className="w-full text-sm border-separate border-spacing-0">
-        <thead className="hover:bg-gray-100 ">
+        <thead className="hover:bg-gray-50">
           <tr>
             {columns.map((col) => (
               <th
@@ -43,7 +43,7 @@ export default function TableContent<T extends { id?: React.Key }>({
           {data.slice(0, rowsPerPage).map((row, rowIndex) => (
             <tr
               key={getRowId(row, rowIndex)}
-              className="transition-colors hover:bg-gray-100"
+              className="transition-colors hover:bg-gray-50"
             >
               {columns.map((col) => {
                 const value = row[col.accessor];

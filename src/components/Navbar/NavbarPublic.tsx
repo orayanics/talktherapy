@@ -3,12 +3,12 @@ import { Link } from "@tanstack/react-router";
 const PUBLIC_LINKS = [
   { to: "/", label: "Home" },
   { to: "/login", label: "Login" },
-  { to: "/register", label: "Get Started", className: "btn-primary" },
+  { to: "/register", label: "Get Started", className: "btn btn-primary" },
 ];
 
 export default function NavbarPublic() {
   return (
-    <nav className="h-[64px] w-full bg-white border-b border-gray-200">
+    <nav className="h-16 w-full bg-white border-b border-gray-200">
       <div className="flex justify-between items-center h-full container mx-auto">
         <Link to="/" className="font-bold text-lg">
           TalkTherapy

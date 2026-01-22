@@ -17,7 +17,7 @@ export default function RegisterClinician() {
       {isVerified ? <ClinicianForm /> : <ClinicianVerification />}
 
       <button
-        className="btn-primary w-full mt-4"
+        className="btn btn-primary w-full mt-4"
         onClick={handleVerification}
         disabled={isLoading || isVerified}
       >
@@ -56,7 +56,7 @@ function ClinicianForm() {
     >
       <ClinicianPersonalForm />
       <ClinicianAccountForm />
-      <button className="btn-primary mt-4">Submit</button>
+      <button className="btn btn-primary mt-4">Submit</button>
     </form>
   );
 }

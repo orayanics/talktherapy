@@ -4,7 +4,7 @@ import Grid from "~/components/Page/Grid";
 import GridItem from "~/components/Page/GridItem";
 
 export const Route = createFileRoute(
-  "/(private)/_auth/_role-layout/(adm-shared)/settings",
+  "/(private)/_auth/_role-layout/(adm-shared)/profile",
 )({
   component: RouteComponent,
 });
@@ -14,7 +14,7 @@ function RouteComponent() {
     <Grid cols={12} gap={6}>
       <GridItem colSpan={12} className="flex flex-col gap-4 md:col-span-4">
         <h1 className="heading-1">Profile</h1>
-        <div className="bg-gray-200 h-[400px] rounded-lg" />
+        <div className="bg-gray-200 h-100 rounded-lg" />
 
         <div>
           <p className="text-xl font-bold">Jose Marie</p>

@@ -21,4 +21,58 @@
   .btn-primary:active:not(:disabled) {
     @apply bg-blue-800 dark:bg-blue-500;
   }
+
+  .btn-secondary {
+    @apply border border-blue-600 dark:border-blue-300;
+    @apply text-blue-600 dark:text-blue-300;
+  }
+
+  .btn-secondary:disabled {
+    @apply border-blue-100 text-primary-light;
+    @apply cursor-not-allowed;
+    @apply opacity-40;
+  }
+
+  .btn-secondary:hover:not(:disabled) {
+    @apply bg-blue-50 dark:bg-blue-900;
+  }
+
+  .btn-secondary:active:not(:disabled) {
+    @apply bg-blue-100 dark:bg-blue-800;
+  }
+
+  .btn-link {
+    @apply text-black;
+  }
+
+  .btn-link:disabled {
+    @apply text-gray-400;
+    @apply cursor-not-allowed;
+  }
+
+  .btn-link:hover:not(:disabled) {
+    @apply text-blue-600 dark:text-blue-300;
+  }
+
+  .btn-link:active:not(:disabled) {
+    @apply text-blue-800 dark:text-blue-500;
+  }
+
+  .btn-primary-link {
+    @apply cursor-pointer;
+    @apply text-blue-600 dark:text-blue-300;
+  }
+
+  .btn-primary-link:disabled {
+    @apply text-gray-400;
+    @apply cursor-not-allowed;
+  }
+
+  .btn-primary-link:hover:not(:disabled) {
+    @apply text-blue-800 dark:text-blue-500;
+  }
+
+  .btn-primary-link:active:not(:disabled) {
+    @apply text-blue-900 dark:text-blue-600;
+  }
 }

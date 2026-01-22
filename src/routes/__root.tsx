@@ -126,7 +126,6 @@ function RootDocument({ children }: { children: React.ReactNode }) {
             This Route Does Not Exist
           </Link>
         </div> */}
-        <hr />
         {children}
         {/* <TanStackRouterDevtools position="bottom-right" />
         <ReactQueryDevtools buttonPosition="bottom-left" /> */}
