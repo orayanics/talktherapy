@@ -1,0 +1,24 @@
+@layer components {
+  .btn {
+    @apply px-4 py-2 rounded-lg cursor-pointer select-none;
+  }
+
+  .btn-primary {
+    @apply text-primary-dark dark:text-primary-light;
+    @apply bg-blue-600 dark:bg-blue-300;
+  }
+
+  .btn-primary:disabled {
+    @apply bg-blue-100 text-primary-light;
+    @apply cursor-not-allowed;
+    @apply opacity-40;
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    @apply bg-blue-700 dark:bg-blue-400;
+  }
+
+  .btn-primary:active:not(:disabled) {
+    @apply bg-blue-800 dark:bg-blue-500;
+  }
+}

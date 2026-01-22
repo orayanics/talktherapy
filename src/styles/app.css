@@ -1,22 +1,52 @@
 @import "tailwindcss";
 
-@theme {
+@theme inline {
   /* Colors */
-  /* base: sky-600 */
-  --color-primary: oklch(58.8% 0.158 241.966);
-  --color-primary-hover: oklch(48.8% 0.158 241.966);
-  --color-primary-active: oklch(38.8% 0.158 241.966);
-  --color-primary-disabled: oklch(78.8% 0.05 241.966);
-  --color-primary-contrast: oklch(98.8% 0.02 241.966);
+  /* base: #D1E2FF */
+  /* --color-hawkes-blue-50: #eff5ff;
+--color-hawkes-blue-100: #d1e2ff;
+--color-hawkes-blue-200: #bdd7ff;
+--color-hawkes-blue-300: #90beff;
+--color-hawkes-blue-400: #5c9bfe;
+--color-hawkes-blue-500: #3675fb;
+--color-hawkes-blue-600: #1f55f1;
+--color-hawkes-blue-700: #183fdd;
+--color-hawkes-blue-800: #1a35b3;
+--color-hawkes-blue-900: #1b328d;
+--color-hawkes-blue-950: #152056; */
 
-  /* Padding Values */
-  --padding-global: 2rem;
-  --padding-global-lg: 3rem;
-  --padding-global-sm: 1rem;
+  --color-blue-50: oklch(96.852% 0.01496 260.813);
+  --color-blue-100: oklch(90.919% 0.0439 261.201);
+  --color-blue-200: oklch(87.325% 0.06243 258.944);
+  --color-blue-300: oklch(79.356% 0.10538 257.09);
+  --color-blue-400: oklch(69.3% 0.16026 259.123);
+  --color-blue-500: oklch(59.878% 0.21083 262.798);
+  --color-blue-600: oklch(52.431% 0.23973 264.428);
+  --color-blue-700: oklch(46.675% 0.24028 265.402);
+  --color-blue-800: oklch(40.744% 0.19953 266.569);
+  --color-blue-900: oklch(36.42% 0.15308 267.094);
+  --color-blue-950: oklch(27.138% 0.09858 269.848);
 
-  --padding-section: 4rem;
-  --padding-section-lg: 6rem;
-  --padding-section-sm: 2rem;
+  --color-primary-light: var(--color-blue-900);
+  --color-primary-dark: var(--color-blue-100);
+}
+
+:root {
+  /* for 50 to 300 */
+  /* --text-light: oklch(36.42% 0.15308 267.094); */
+  /* for 400 to 950 */
+  /* --text-dark: oklch(90.919% 0.0439 261.201); */
+
+  /* Gradients
+  100 to 200
+  100 to 300
+  200 to 300
+  300 to 500
+  400 to 600
+  500 to 700
+  600 to 800
+  700 to 900
+  850 to 950 */
 }
 
 @layer base {
@@ -58,28 +88,6 @@
     @apply text-2xl font-bold;
   }
   /* Buttons */
-
-  /* Primary */
-  .btn-primary {
-    @apply inline-flex items-center justify-center rounded-md font-medium px-4 py-2 transition-colors duration-200;
-    @apply cursor-pointer select-none;
-    @apply text-white dark:text-black;
-    background-color: var(--color-primary);
-  }
-
-  .btn-primary:hover {
-    background-color: var(--color-primary-hover);
-  }
-
-  .btn-primary:active {
-    background-color: var(--color-primary-active);
-  }
-
-  .btn-primary:disabled {
-    background-color: var(--color-primary-disabled);
-    cursor: not-allowed;
-    opacity: 0.6;
-  }
 
   /* Form Inputs */
   .input {
