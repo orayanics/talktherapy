@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "@tanstack/react-router";
 
 export default function RegisterClinician() {
   const [isVerified, setIsVerified] = useState(false);
@@ -13,16 +14,22 @@ export default function RegisterClinician() {
   }
 
   return (
-    <div className="container mx-auto">
+    <div className="container flex flex-col items-center gap-4 mx-auto">
       {isVerified ? <ClinicianForm /> : <ClinicianVerification />}
 
-      <button
-        className="btn btn-primary w-full mt-4"
-        onClick={handleVerification}
-        disabled={isLoading || isVerified}
-      >
-        Simulate Verification
-      </button>
+      {!isVerified && (
+        <button
+          className="btn btn-primary w-full mt-4"
+          onClick={handleVerification}
+          disabled={isLoading || isVerified}
+        >
+          Simulate Verification
+        </button>
+      )}
+      <Link to="/login">
+        I already have an account.{" "}
+        <span className="link link-hover">Login here.</span>
+      </Link>
     </div>
   );
 }
@@ -52,7 +59,7 @@ function ClinicianForm() {
       onSubmit={() => {
         alert("submit");
       }}
-      className="flex flex-col gap-5"
+      className="flex flex-col gap-4"
     >
       <ClinicianPersonalForm />
       <ClinicianAccountForm />
@@ -113,7 +120,7 @@ function ClinicianAccountForm() {
 
       <div className="w-full">
         <label className="mt-4 flex justify-center items-center gap-2">
-          <input type="checkbox" className="w-4 h-4" />
+          <input type="checkbox" className="checkbox checkbox-sm" />
           <span>I consent to the terms and conditions</span>
         </label>
       </div>

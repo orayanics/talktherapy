@@ -21,7 +21,7 @@ function RouteComponent() {
         </div>
 
         <div className="w-full flex flex-col gap-2 justify-center col-span-6 px-6">
-          <div className="flex flex-col justify-center mx-auto h-full border rounded-lg p-6">
+          <div className="flex flex-col justify-center items-center mx-auto h-full border rounded-lg p-6">
             <h1 className="text-4xl font-bold mb-4">Login</h1>
             <LoginForm />
           </div>

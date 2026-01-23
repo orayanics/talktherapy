@@ -1,14 +1,20 @@
+import { Link } from "@tanstack/react-router";
+
 export default function RegisterPatient() {
   return (
     <form
       onSubmit={() => {
         alert("submit");
       }}
-      className="flex flex-col gap-5 max-w-100"
+      className="flex flex-col gap-4"
     >
       <PatientPersonalForm />
       <PatientAccountForm />
       <button className="btn btn-primary mt-4">Submit</button>
+      <Link className="mx-auto" to="/login">
+        I already have an account.{" "}
+        <span className="link link-hover">Login here.</span>
+      </Link>
     </form>
   );
 }
@@ -49,7 +55,7 @@ function PatientAccountForm() {
 
       <div className="w-full">
         <label className="mt-4 flex justify-center items-center gap-2">
-          <input type="checkbox" className="w-4 h-4" />
+          <input type="checkbox" className="checkbox checkbox-sm" />
           <span>I consent to the terms and conditions</span>
         </label>
       </div>

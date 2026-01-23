@@ -25,7 +25,7 @@ function RouteComponent() {
         </div>
 
         <div className="flex flex-col gap-4 items-center justify-center col-span-6">
-          <div className="w-100 border rounded-lg p-6">
+          <div className="w-auto md:w-100 border rounded-lg p-6">
             <div className="flex flex-col items-center mb-4">
               <h1 className="text-4xl font-bold mb-4">Get Started</h1>
               <div className="flex gap-4">
