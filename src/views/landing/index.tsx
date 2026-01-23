@@ -11,7 +11,7 @@ const LANDING_CTA = [
 
 export default function index() {
   return (
-    <div className="hero bg-base-200 min-h-screen">
+    <div className="hero min-h-screen pattern-boxes pattern-color-primary pattern-bg-white pattern-size-8">
       <div className="hero-content text-center">
         <div className="max-w-md flex flex-col gap-4">
           <h1 className="text-5xl font-bold">TalkTherapy</h1>

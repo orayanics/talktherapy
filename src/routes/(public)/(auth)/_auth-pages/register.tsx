@@ -13,7 +13,7 @@ function RouteComponent() {
   return (
     <main className="flex items-center container min-h-screen mx-auto">
       <div className="grid grid-cols-1 md:grid-cols-12 gap-2 mx-auto">
-        <div className="my-auto hidden md:flex flex-col justify-center h-100 col-span-6">
+        <div className="my-auto hidden md:flex flex-col justify-center h-100 col-span-6 bg-white/60 relative">
           <div className="flex flex-col gap-4 p-6">
             <h1 className="text-4xl font-bold">TalkTherapy</h1>
             <p>
@@ -25,7 +25,7 @@ function RouteComponent() {
         </div>
 
         <div className="flex flex-col gap-4 items-center justify-center col-span-6">
-          <div className="w-auto md:w-100 border rounded-lg p-6">
+          <div className="w-auto md:w-100 border rounded-lg p-6 bg-white relative">
             <div className="flex flex-col items-center mb-4">
               <h1 className="text-4xl font-bold mb-4">Get Started</h1>
               <div className="flex gap-4">

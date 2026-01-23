@@ -79,13 +79,55 @@
   }
 }
 
-@layer components {
-  /* Text Elements */
-  .heading-1 {
-    @apply text-4xl font-bold;
+@layer utilities {
+  .pattern-boxes {
+    position: relative;
+    overflow: hidden;
+
+    --pattern-color: rgba(255, 255, 255, 0.1);
+    --pattern-bg: transparent;
+    --pattern-size: 20px;
+
+    background-color: var(--pattern-bg);
+    background-image:
+      linear-gradient(to right, var(--pattern-color) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--pattern-color) 1px, transparent 1px);
+    background-size: var(--pattern-size) var(--pattern-size);
   }
 
-  .heading-2 {
-    @apply text-2xl font-bold;
+  .pattern-boxes::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(
+      circle,
+      rgba(255, 255, 255, 0.6) 0%,
+      rgb(255, 255, 255, 0.82) 60%
+    );
+    pointer-events: none;
+  }
+
+  .pattern-color-primary {
+    --pattern-color: oklch(80% 0.105 251.813 / 0.5);
+  }
+
+  .pattern-bg-white {
+    --pattern-bg: rgba(255, 255, 255, var(--pattern-opacity, 0.2));
+  }
+  .pattern-bg-black {
+    --pattern-bg: rgba(0, 0, 0, var(--pattern-opacity, 0.2));
+  }
+
+  .pattern-size-4 {
+    --pattern-size: 24px;
+  }
+  .pattern-size-6 {
+    --pattern-size: 32px;
+  }
+  .pattern-size-8 {
+    --pattern-size: 48px;
   }
 }

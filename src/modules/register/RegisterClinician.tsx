@@ -1,5 +1,6 @@
-import { useState } from "react";
-import { Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { Link, useBlocker } from "@tanstack/react-router";
+import ModalBlockNavigation from "~/components/Modal/ModalBlockNavigation";
 
 export default function RegisterClinician() {
   const [isVerified, setIsVerified] = useState(false);
@@ -8,7 +9,7 @@ export default function RegisterClinician() {
   async function handleVerification() {
     // async simulation
     setIsLoading(true);
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    await new Promise((resolve) => setTimeout(resolve, 500));
     setIsLoading(false);
     setIsVerified(true);
   }
@@ -38,14 +39,17 @@ function ClinicianVerification() {
   return (
     <div className="flex flex-col gap-4">
       <h1 className="font-semibold">Clinician Verification</h1>
-      <p>Please enter the 6-digit verification code sent to your email.</p>
-      <div className="flex gap-2">
+      <p>
+        Enter the 6-digit verification code sent to your email to continue to
+        clinician account creation.
+      </p>
+      <div className="flex flex-row justify-center gap-2">
         {Array.from({ length: 6 }).map((_, index) => (
           <input
             key={index}
             type="text"
             maxLength={1}
-            className="input w-12 text-center text-xl"
+            className="input w-full md:w-full h-11 text-center text-md md:text-xl"
           />
         ))}
       </div>
@@ -54,21 +58,56 @@ function ClinicianVerification() {
 }
 
 function ClinicianForm() {
+  const [formIsDirty, setFormIsDirty] = useState(false);
+
+  const { proceed, reset, status } = useBlocker({
+    shouldBlockFn: () => formIsDirty,
+    enableBeforeUnload: formIsDirty,
+    withResolver: true,
+  });
+
+  const handleInputChange = () => {
+    if (!formIsDirty) {
+      setFormIsDirty(true);
+    }
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    alert("Form submitted!");
+    setFormIsDirty(false);
+  };
+
   return (
-    <form
-      onSubmit={() => {
-        alert("submit");
-      }}
-      className="flex flex-col gap-4"
-    >
-      <ClinicianPersonalForm />
-      <ClinicianAccountForm />
-      <button className="btn btn-primary mt-4">Submit</button>
-    </form>
+    <div className="max-w-2xl mx-auto p-6">
+      {status === "blocked" && (
+        <ModalBlockNavigation
+          isOpen={status === "blocked"}
+          onProceed={proceed}
+          onReset={reset}
+        >
+          <p className="text-gray-700 mb-6">
+            You have unsaved changes. Exiting will require you to have another
+            activation code. Are you sure you want to leave this page?
+          </p>
+        </ModalBlockNavigation>
+      )}
+
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <ClinicianPersonalForm onChange={handleInputChange} />
+        <ClinicianAccountForm onChange={handleInputChange} />
+        <button
+          type="submit"
+          className="btn btn-primary px-6 py-2 rounded-lg hover:bg-blue-700 font-medium"
+        >
+          Submit
+        </button>
+      </form>
+    </div>
   );
 }
 
-function ClinicianPersonalForm() {
+function ClinicianPersonalForm({ onChange }: { onChange: VoidFunction }) {
   const SPECIALTY_OPTIONS = [
     "Psychologist",
     "Psychiatrist",
@@ -77,17 +116,28 @@ function ClinicianPersonalForm() {
     "Social Worker",
     "Other",
   ];
+
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="font-semibold">Personal Information</h1>
+      <h1 className="font-semibold text-lg">Personal Information</h1>
       <div className="flex flex-col gap-4">
-        <div className="grid md:grid-cols-2 grid-cols-1 grid-rows-1 gap-4 [&>input]:w-full">
-          <input className="input" type="text" placeholder="First Name" />
-          <input className="input" type="text" placeholder="Last Name" />
+        <div className="grid md:grid-cols-2 grid-cols-1 gap-4">
+          <input
+            className="input"
+            type="text"
+            placeholder="First Name"
+            onChange={onChange}
+          />
+          <input
+            className="input"
+            type="text"
+            placeholder="Last Name"
+            onChange={onChange}
+          />
         </div>
 
-        <div className="flex flex-col gap-4 [&>select]:w-full">
-          <select className="input" defaultValue="">
+        <div className="flex flex-col gap-4">
+          <select className="input" defaultValue="" onChange={onChange}>
             <option value="" disabled>
               Select Specialty
             </option>
@@ -103,26 +153,35 @@ function ClinicianPersonalForm() {
   );
 }
 
-function ClinicianAccountForm() {
+function ClinicianAccountForm({ onChange }: { onChange: VoidFunction }) {
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="font-semibold">Account</h1>
-      <div className="flex flex-col gap-4 [&>input]:w-full">
-        <input className="input" type="text" placeholder="Username" />
-        <input className="input" type="email" placeholder="Email" />
-        <input className="input" type="password" placeholder="Password" />
+      <h1 className="font-semibold text-lg">Account</h1>
+      <div className="flex flex-col gap-4">
+        <input
+          className="input"
+          type="text"
+          placeholder="Username"
+          onChange={onChange}
+        />
+        <input
+          className="input"
+          type="email"
+          placeholder="Email"
+          onChange={onChange}
+        />
+        <input
+          className="input"
+          type="password"
+          placeholder="Password"
+          onChange={onChange}
+        />
         <input
           className="input"
           type="password"
           placeholder="Confirm Password"
+          onChange={onChange}
         />
-      </div>
-
-      <div className="w-full">
-        <label className="mt-4 flex justify-center items-center gap-2">
-          <input type="checkbox" className="checkbox checkbox-sm" />
-          <span>I consent to the terms and conditions</span>
-        </label>
       </div>
     </div>
   );

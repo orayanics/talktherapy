@@ -1,4 +1,6 @@
+import { useState } from "react";
 import { Link } from "@tanstack/react-router";
+import ConsentsPatient from "~/components/Consents/ConsentsPatient";
 
 export default function RegisterPatient() {
   return (
@@ -39,6 +41,18 @@ function PatientPersonalForm() {
 }
 
 function PatientAccountForm() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [consentValue, setConsentValue] = useState(false);
+
+  const handleTriggerModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleModalConsent = (isConsent: boolean) => {
+    setConsentValue(isConsent);
+    setIsModalOpen(false);
+  };
+
   return (
     <div className="flex flex-col gap-4">
       <h1 className="font-semibold">Account</h1>
@@ -55,9 +69,27 @@ function PatientAccountForm() {
 
       <div className="w-full">
         <label className="mt-4 flex justify-center items-center gap-2">
-          <input type="checkbox" className="checkbox checkbox-sm" />
-          <span>I consent to the terms and conditions</span>
+          <input
+            type="checkbox"
+            className="checkbox checkbox-sm"
+            name="patientConsent"
+            checked={consentValue}
+            disabled={!consentValue}
+            readOnly
+          />
+          <span
+            className="text-xs link link-hover"
+            onClick={handleTriggerModal}
+          >
+            Read the terms and conditions before consenting.
+          </span>
         </label>
+        <ConsentsPatient
+          isOpen={isModalOpen}
+          isAgree={consentValue}
+          onClose={() => setIsModalOpen(false)}
+          onAgree={handleModalConsent}
+        />
       </div>
     </div>
   );

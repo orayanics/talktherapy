@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { FaFilter } from "react-icons/fa";
 
 type FilterDrawerProps = {
   children: React.ReactNode;
@@ -10,11 +11,11 @@ export default function FilterDrawer({ children }: FilterDrawerProps) {
   return (
     <>
       <button
-        className="btn btn-primary"
+        className="btn btn-primary w-fit"
         onClick={() => setOpen(true)}
         type="button"
       >
-        Select Filters
+        <FaFilter />
       </button>
 
       {/* Overlay */}
