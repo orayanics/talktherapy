@@ -24,8 +24,10 @@ import { Route as publicauthAuthPagesLoginRouteImport } from './routes/(public)/
 import { Route as privateAuthRoleLayoutDashboardRouteImport } from './routes/(private)/_auth/_role-layout/dashboard'
 import { Route as privateAuthRoleLayoutsudoRouteRouteImport } from './routes/(private)/_auth/_role-layout/(sudo)/route'
 import { Route as privateAuthRoleLayoutsudoLogsRouteImport } from './routes/(private)/_auth/_role-layout/(sudo)/logs'
-import { Route as privateAuthRoleLayoutadmSharedUsersRouteImport } from './routes/(private)/_auth/_role-layout/(adm-shared)/users'
 import { Route as privateAuthRoleLayoutadmSharedProfileRouteImport } from './routes/(private)/_auth/_role-layout/(adm-shared)/profile'
+import { Route as privateAuthRoleLayoutadmSharedUsersRouteRouteImport } from './routes/(private)/_auth/_role-layout/(adm-shared)/users/route'
+import { Route as privateAuthRoleLayoutadmSharedUsersIndexRouteImport } from './routes/(private)/_auth/_role-layout/(adm-shared)/users/index'
+import { Route as privateAuthRoleLayoutadmSharedUsersIdRouteImport } from './routes/(private)/_auth/_role-layout/(adm-shared)/users/$id'
 
 const RedirectRoute = RedirectRouteImport.update({
   id: '/redirect',
@@ -104,17 +106,29 @@ const privateAuthRoleLayoutsudoLogsRoute =
     path: '/logs',
     getParentRoute: () => privateAuthRoleLayoutsudoRouteRoute,
   } as any)
-const privateAuthRoleLayoutadmSharedUsersRoute =
-  privateAuthRoleLayoutadmSharedUsersRouteImport.update({
-    id: '/(adm-shared)/users',
-    path: '/users',
-    getParentRoute: () => privateAuthRoleLayoutRouteRoute,
-  } as any)
 const privateAuthRoleLayoutadmSharedProfileRoute =
   privateAuthRoleLayoutadmSharedProfileRouteImport.update({
     id: '/(adm-shared)/profile',
     path: '/profile',
     getParentRoute: () => privateAuthRoleLayoutRouteRoute,
+  } as any)
+const privateAuthRoleLayoutadmSharedUsersRouteRoute =
+  privateAuthRoleLayoutadmSharedUsersRouteRouteImport.update({
+    id: '/(adm-shared)/users',
+    path: '/users',
+    getParentRoute: () => privateAuthRoleLayoutRouteRoute,
+  } as any)
+const privateAuthRoleLayoutadmSharedUsersIndexRoute =
+  privateAuthRoleLayoutadmSharedUsersIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => privateAuthRoleLayoutadmSharedUsersRouteRoute,
+  } as any)
+const privateAuthRoleLayoutadmSharedUsersIdRoute =
+  privateAuthRoleLayoutadmSharedUsersIdRouteImport.update({
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => privateAuthRoleLayoutadmSharedUsersRouteRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -127,9 +141,11 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof privateAuthRoleLayoutDashboardRoute
   '/login': typeof publicauthAuthPagesLoginRoute
   '/register': typeof publicauthAuthPagesRegisterRoute
+  '/users': typeof privateAuthRoleLayoutadmSharedUsersRouteRouteWithChildren
   '/profile': typeof privateAuthRoleLayoutadmSharedProfileRoute
-  '/users': typeof privateAuthRoleLayoutadmSharedUsersRoute
   '/logs': typeof privateAuthRoleLayoutsudoLogsRoute
+  '/users/$id': typeof privateAuthRoleLayoutadmSharedUsersIdRoute
+  '/users/': typeof privateAuthRoleLayoutadmSharedUsersIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -142,8 +158,9 @@ export interface FileRoutesByTo {
   '/login': typeof publicauthAuthPagesLoginRoute
   '/register': typeof publicauthAuthPagesRegisterRoute
   '/profile': typeof privateAuthRoleLayoutadmSharedProfileRoute
-  '/users': typeof privateAuthRoleLayoutadmSharedUsersRoute
   '/logs': typeof privateAuthRoleLayoutsudoLogsRoute
+  '/users/$id': typeof privateAuthRoleLayoutadmSharedUsersIdRoute
+  '/users': typeof privateAuthRoleLayoutadmSharedUsersIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -161,9 +178,11 @@ export interface FileRoutesById {
   '/(private)/_auth/_role-layout/dashboard': typeof privateAuthRoleLayoutDashboardRoute
   '/(public)/(auth)/_auth-pages/login': typeof publicauthAuthPagesLoginRoute
   '/(public)/(auth)/_auth-pages/register': typeof publicauthAuthPagesRegisterRoute
+  '/(private)/_auth/_role-layout/(adm-shared)/users': typeof privateAuthRoleLayoutadmSharedUsersRouteRouteWithChildren
   '/(private)/_auth/_role-layout/(adm-shared)/profile': typeof privateAuthRoleLayoutadmSharedProfileRoute
-  '/(private)/_auth/_role-layout/(adm-shared)/users': typeof privateAuthRoleLayoutadmSharedUsersRoute
   '/(private)/_auth/_role-layout/(sudo)/logs': typeof privateAuthRoleLayoutsudoLogsRoute
+  '/(private)/_auth/_role-layout/(adm-shared)/users/$id': typeof privateAuthRoleLayoutadmSharedUsersIdRoute
+  '/(private)/_auth/_role-layout/(adm-shared)/users/': typeof privateAuthRoleLayoutadmSharedUsersIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -177,9 +196,11 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/login'
     | '/register'
-    | '/profile'
     | '/users'
+    | '/profile'
     | '/logs'
+    | '/users/$id'
+    | '/users/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -192,8 +213,9 @@ export interface FileRouteTypes {
     | '/login'
     | '/register'
     | '/profile'
-    | '/users'
     | '/logs'
+    | '/users/$id'
+    | '/users'
   id:
     | '__root__'
     | '/'
@@ -210,9 +232,11 @@ export interface FileRouteTypes {
     | '/(private)/_auth/_role-layout/dashboard'
     | '/(public)/(auth)/_auth-pages/login'
     | '/(public)/(auth)/_auth-pages/register'
-    | '/(private)/_auth/_role-layout/(adm-shared)/profile'
     | '/(private)/_auth/_role-layout/(adm-shared)/users'
+    | '/(private)/_auth/_role-layout/(adm-shared)/profile'
     | '/(private)/_auth/_role-layout/(sudo)/logs'
+    | '/(private)/_auth/_role-layout/(adm-shared)/users/$id'
+    | '/(private)/_auth/_role-layout/(adm-shared)/users/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -331,19 +355,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof privateAuthRoleLayoutsudoLogsRouteImport
       parentRoute: typeof privateAuthRoleLayoutsudoRouteRoute
     }
-    '/(private)/_auth/_role-layout/(adm-shared)/users': {
-      id: '/(private)/_auth/_role-layout/(adm-shared)/users'
-      path: '/users'
-      fullPath: '/users'
-      preLoaderRoute: typeof privateAuthRoleLayoutadmSharedUsersRouteImport
-      parentRoute: typeof privateAuthRoleLayoutRouteRoute
-    }
     '/(private)/_auth/_role-layout/(adm-shared)/profile': {
       id: '/(private)/_auth/_role-layout/(adm-shared)/profile'
       path: '/profile'
       fullPath: '/profile'
       preLoaderRoute: typeof privateAuthRoleLayoutadmSharedProfileRouteImport
       parentRoute: typeof privateAuthRoleLayoutRouteRoute
+    }
+    '/(private)/_auth/_role-layout/(adm-shared)/users': {
+      id: '/(private)/_auth/_role-layout/(adm-shared)/users'
+      path: '/users'
+      fullPath: '/users'
+      preLoaderRoute: typeof privateAuthRoleLayoutadmSharedUsersRouteRouteImport
+      parentRoute: typeof privateAuthRoleLayoutRouteRoute
+    }
+    '/(private)/_auth/_role-layout/(adm-shared)/users/': {
+      id: '/(private)/_auth/_role-layout/(adm-shared)/users/'
+      path: '/'
+      fullPath: '/users/'
+      preLoaderRoute: typeof privateAuthRoleLayoutadmSharedUsersIndexRouteImport
+      parentRoute: typeof privateAuthRoleLayoutadmSharedUsersRouteRoute
+    }
+    '/(private)/_auth/_role-layout/(adm-shared)/users/$id': {
+      id: '/(private)/_auth/_role-layout/(adm-shared)/users/$id'
+      path: '/$id'
+      fullPath: '/users/$id'
+      preLoaderRoute: typeof privateAuthRoleLayoutadmSharedUsersIdRouteImport
+      parentRoute: typeof privateAuthRoleLayoutadmSharedUsersRouteRoute
     }
   }
 }
@@ -392,11 +430,29 @@ const privateAuthRoleLayoutsudoRouteRouteWithChildren =
     privateAuthRoleLayoutsudoRouteRouteChildren,
   )
 
+interface privateAuthRoleLayoutadmSharedUsersRouteRouteChildren {
+  privateAuthRoleLayoutadmSharedUsersIdRoute: typeof privateAuthRoleLayoutadmSharedUsersIdRoute
+  privateAuthRoleLayoutadmSharedUsersIndexRoute: typeof privateAuthRoleLayoutadmSharedUsersIndexRoute
+}
+
+const privateAuthRoleLayoutadmSharedUsersRouteRouteChildren: privateAuthRoleLayoutadmSharedUsersRouteRouteChildren =
+  {
+    privateAuthRoleLayoutadmSharedUsersIdRoute:
+      privateAuthRoleLayoutadmSharedUsersIdRoute,
+    privateAuthRoleLayoutadmSharedUsersIndexRoute:
+      privateAuthRoleLayoutadmSharedUsersIndexRoute,
+  }
+
+const privateAuthRoleLayoutadmSharedUsersRouteRouteWithChildren =
+  privateAuthRoleLayoutadmSharedUsersRouteRoute._addFileChildren(
+    privateAuthRoleLayoutadmSharedUsersRouteRouteChildren,
+  )
+
 interface privateAuthRoleLayoutRouteRouteChildren {
   privateAuthRoleLayoutsudoRouteRoute: typeof privateAuthRoleLayoutsudoRouteRouteWithChildren
   privateAuthRoleLayoutDashboardRoute: typeof privateAuthRoleLayoutDashboardRoute
+  privateAuthRoleLayoutadmSharedUsersRouteRoute: typeof privateAuthRoleLayoutadmSharedUsersRouteRouteWithChildren
   privateAuthRoleLayoutadmSharedProfileRoute: typeof privateAuthRoleLayoutadmSharedProfileRoute
-  privateAuthRoleLayoutadmSharedUsersRoute: typeof privateAuthRoleLayoutadmSharedUsersRoute
 }
 
 const privateAuthRoleLayoutRouteRouteChildren: privateAuthRoleLayoutRouteRouteChildren =
@@ -404,10 +460,10 @@ const privateAuthRoleLayoutRouteRouteChildren: privateAuthRoleLayoutRouteRouteCh
     privateAuthRoleLayoutsudoRouteRoute:
       privateAuthRoleLayoutsudoRouteRouteWithChildren,
     privateAuthRoleLayoutDashboardRoute: privateAuthRoleLayoutDashboardRoute,
+    privateAuthRoleLayoutadmSharedUsersRouteRoute:
+      privateAuthRoleLayoutadmSharedUsersRouteRouteWithChildren,
     privateAuthRoleLayoutadmSharedProfileRoute:
       privateAuthRoleLayoutadmSharedProfileRoute,
-    privateAuthRoleLayoutadmSharedUsersRoute:
-      privateAuthRoleLayoutadmSharedUsersRoute,
   }
 
 const privateAuthRoleLayoutRouteRouteWithChildren =

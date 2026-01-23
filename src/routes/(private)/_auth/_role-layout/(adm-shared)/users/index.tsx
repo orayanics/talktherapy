@@ -18,7 +18,7 @@ import FilterDropdown from "~/components/Filters/FilterDropdown";
 import FilterDrawer from "~/components/Filters/FilterDrawer";
 
 export const Route = createFileRoute(
-  "/(private)/_auth/_role-layout/(adm-shared)/users"
+  "/(private)/_auth/_role-layout/(adm-shared)/users/"
 )({
   component: RouteComponent,
 });

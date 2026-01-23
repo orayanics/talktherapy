@@ -22,7 +22,7 @@ const SUDO_NAV_ITEMS = [
   },
   {
     label: "Users",
-    to: "/users",
+    to: "/user",
     icon: <FaUser size={16} />,
   },
   {
