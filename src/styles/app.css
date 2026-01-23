@@ -88,9 +88,4 @@
   .heading-2 {
     @apply text-2xl font-bold;
   }
-
-  /* Sidebar */
-  .sidebar {
-    @apply flex flex-col h-full bg-white border-r relative;
-  }
 }
