@@ -14,7 +14,7 @@ function RouteComponent() {
 
   return (
     <>
-      <NavbarPublic />
+      {/* <NavbarPublic /> */}
       <Outlet />
     </>
   );

@@ -12,11 +12,13 @@ import GridItem from "~/components/Page/GridItem";
 import TableHeader from "~/components/Table/TableHeader";
 import TableContent from "~/components/Table/TableContent";
 import TablePagination from "~/components/Table/TablePagination";
+import TableAction from "~/components/Table/TableAction";
+
 import FilterDropdown from "~/components/Filters/FilterDropdown";
 import FilterDrawer from "~/components/Filters/FilterDrawer";
 
 export const Route = createFileRoute(
-  "/(private)/_auth/_role-layout/(adm-shared)/users",
+  "/(private)/_auth/_role-layout/(adm-shared)/users"
 )({
   component: RouteComponent,
 });
@@ -33,9 +35,9 @@ const SAMPLE_USERS = [
       profileUrl: "",
     },
     accountStatus: "active",
-    createdAt: new Date("2024-01-05"),
-    updatedAt: new Date("2024-06-10"),
-    lastLogin: new Date("2025-01-15"),
+    createdAt: new Date("2024-01-05").toDateString(),
+    updatedAt: new Date("2024-06-10").toDateString(),
+    lastLogin: new Date("2025-01-15").toDateString(),
   },
   {
     id: "2",
@@ -48,9 +50,9 @@ const SAMPLE_USERS = [
       profileUrl: "",
     },
     accountStatus: "active",
-    createdAt: new Date("2023-11-20"),
-    updatedAt: new Date("2024-12-02"),
-    lastLogin: new Date("2025-01-18"),
+    createdAt: new Date("2023-11-20").toDateString(),
+    updatedAt: new Date("2024-12-02").toDateString(),
+    lastLogin: new Date("2025-01-18").toDateString(),
   },
   {
     id: "3",
@@ -63,9 +65,9 @@ const SAMPLE_USERS = [
       profileUrl: "",
     },
     accountStatus: "active",
-    createdAt: new Date("2022-09-14"),
-    updatedAt: new Date("2024-10-01"),
-    lastLogin: new Date("2025-01-10"),
+    createdAt: new Date("2022-09-14").toDateString(),
+    updatedAt: new Date("2024-10-01").toDateString(),
+    lastLogin: new Date("2025-01-10").toDateString(),
   },
   {
     id: "4",
@@ -78,9 +80,9 @@ const SAMPLE_USERS = [
       profileUrl: "",
     },
     accountStatus: "inactive",
-    createdAt: new Date("2024-03-01"),
-    updatedAt: new Date("2024-08-12"),
-    lastLogin: new Date("2024-09-05"),
+    createdAt: new Date("2024-03-01").toDateString(),
+    updatedAt: new Date("2024-08-12").toDateString(),
+    lastLogin: new Date("2024-09-05").toDateString(),
   },
   {
     id: "5",
@@ -93,9 +95,9 @@ const SAMPLE_USERS = [
       profileUrl: "",
     },
     accountStatus: "suspended",
-    createdAt: new Date("2023-05-18"),
-    updatedAt: new Date("2024-07-22"),
-    lastLogin: new Date("2024-07-30"),
+    createdAt: new Date("2023-05-18").toDateString(),
+    updatedAt: new Date("2024-07-22").toDateString(),
+    lastLogin: new Date("2024-07-30").toDateString(),
   },
   {
     id: "6",
@@ -108,7 +110,7 @@ const SAMPLE_USERS = [
       profileUrl: "",
     },
     accountStatus: "active",
-    createdAt: new Date("2024-02-10"),
+    createdAt: new Date("2024-02-10").toDateString(),
     updatedAt: new Date("2024-11-15"),
     lastLogin: new Date("2025-01-19"),
   },
@@ -235,7 +237,7 @@ function simulateApiCall({
         const end = start + perPage;
         resolve({ data: filtered.slice(start, end), total });
       }, 400);
-    },
+    }
   );
 }
 

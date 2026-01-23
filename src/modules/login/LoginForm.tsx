@@ -8,17 +8,22 @@ export default function LoginForm() {
       }}
     >
       <div className="flex flex-col gap-4">
-        <input className="input" type="email" placeholder="Email" />
-        <input className="input" type="password" placeholder="Password" />
+        <label className="input w-full">
+          <span className="label">Email</span>
+          <input type="email" placeholder="email@email.com" />
+        </label>
 
-        <div className="flex flex-col gap-2">
-          <button className="btn btn-primary mt-4">Login</button>
-          <button>
+        <label className="input w-full">
+          <span className="label">Password</span>
+          <input type="password" placeholder="********" />
+        </label>
+
+        <div className="flex flex-col items-center gap-2 ">
+          <button className="btn btn-primary w-full mt-4">Login</button>
+          <Link to="/register">
             Don't have an account?{" "}
-            <Link to="/register" className="btn-link">
-              Register here.
-            </Link>
-          </button>
+            <span className="link link-hover">Register here!</span>
+          </Link>
         </div>
       </div>
     </form>

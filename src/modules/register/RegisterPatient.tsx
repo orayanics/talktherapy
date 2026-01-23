@@ -4,7 +4,7 @@ export default function RegisterPatient() {
       onSubmit={() => {
         alert("submit");
       }}
-      className="flex flex-col gap-5 p-4"
+      className="flex flex-col gap-5 max-w-100"
     >
       <PatientPersonalForm />
       <PatientAccountForm />
@@ -15,15 +15,15 @@ export default function RegisterPatient() {
 
 function PatientPersonalForm() {
   return (
-    <div>
-      <h1>Personal Information</h1>
+    <div className="flex flex-col gap-4">
+      <h1 className="font-semibold">Personal Information</h1>
       <div className="flex flex-col gap-4">
-        <div className="grid md:grid-cols-2 grid-cols-1 grid-rows-1 gap-4">
+        <div className="grid md:grid-cols-2 grid-cols-1 grid-rows-1 gap-4 [&>input]:w-full">
           <input className="input" type="text" placeholder="First Name" />
           <input className="input" type="text" placeholder="Last Name" />
         </div>
 
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 [&>input]:w-full">
           <input className="input" type="date" placeholder="Date of Birth" />
           <input className="input" type="text" placeholder="Diagnosis" />
         </div>
@@ -34,9 +34,9 @@ function PatientPersonalForm() {
 
 function PatientAccountForm() {
   return (
-    <div>
-      <h1>Account</h1>
-      <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4">
+      <h1 className="font-semibold">Account</h1>
+      <div className="flex flex-col gap-4 [&>input]:w-full">
         <input className="input" type="text" placeholder="Username" />
         <input className="input" type="email" placeholder="Email" />
         <input className="input" type="password" placeholder="Password" />

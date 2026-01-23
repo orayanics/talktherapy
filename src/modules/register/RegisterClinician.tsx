@@ -13,7 +13,7 @@ export default function RegisterClinician() {
   }
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="container mx-auto">
       {isVerified ? <ClinicianForm /> : <ClinicianVerification />}
 
       <button
@@ -30,7 +30,7 @@ export default function RegisterClinician() {
 function ClinicianVerification() {
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="text-2xl font-bold mb-4">Clinician Verification</h1>
+      <h1 className="font-semibold">Clinician Verification</h1>
       <p>Please enter the 6-digit verification code sent to your email.</p>
       <div className="flex gap-2">
         {Array.from({ length: 6 }).map((_, index) => (
@@ -52,7 +52,7 @@ function ClinicianForm() {
       onSubmit={() => {
         alert("submit");
       }}
-      className="flex flex-col gap-5 p-4"
+      className="flex flex-col gap-5"
     >
       <ClinicianPersonalForm />
       <ClinicianAccountForm />
@@ -71,15 +71,15 @@ function ClinicianPersonalForm() {
     "Other",
   ];
   return (
-    <div>
-      <h1>Personal Information</h1>
+    <div className="flex flex-col gap-4">
+      <h1 className="font-semibold">Personal Information</h1>
       <div className="flex flex-col gap-4">
-        <div className="grid md:grid-cols-2 grid-cols-1 grid-rows-1 gap-4">
+        <div className="grid md:grid-cols-2 grid-cols-1 grid-rows-1 gap-4 [&>input]:w-full">
           <input className="input" type="text" placeholder="First Name" />
           <input className="input" type="text" placeholder="Last Name" />
         </div>
 
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 [&>select]:w-full">
           <select className="input" defaultValue="">
             <option value="" disabled>
               Select Specialty
@@ -98,9 +98,9 @@ function ClinicianPersonalForm() {
 
 function ClinicianAccountForm() {
   return (
-    <div>
-      <h1>Account</h1>
-      <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4">
+      <h1 className="font-semibold">Account</h1>
+      <div className="flex flex-col gap-4 [&>input]:w-full">
         <input className="input" type="text" placeholder="Username" />
         <input className="input" type="email" placeholder="Email" />
         <input className="input" type="password" placeholder="Password" />

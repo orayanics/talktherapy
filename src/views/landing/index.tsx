@@ -1,18 +1,42 @@
 import { Link } from "@tanstack/react-router";
 
+const LANDING_CTA = [
+  { to: "/register", label: "Get Started", className: "btn btn-primary" },
+  {
+    to: "/login",
+    label: "Already have an account? Log in",
+    className: "btn btn-ghost",
+  },
+];
+
 export default function index() {
-  const handleRedirect = () => {};
   return (
-    <main className="container mx-auto h-100 p-2">
-      <div className="flex flex-col h-full justify-center items-center gap-4 text-center m-auto">
-        <h1 className="text-5xl font-bold">TalkTherapy</h1>
-        <h2>Speech service in your hands.</h2>
-        <p>Skilled doctors, personalized exercises and feedback system.</p>
-        <p>All-in-one go with TalkTherapy.</p>
-        <Link to="/register" className="btn btn-primary">
-          Get Started
-        </Link>
+    <div className="hero bg-base-200 min-h-screen">
+      <div className="hero-content text-center">
+        <div className="max-w-md flex flex-col gap-4">
+          <h1 className="text-5xl font-bold">TalkTherapy</h1>
+          <p>
+            Speech service in your hands. Skilled doctors, personalized
+            exercises and feedback system. All-in-one go with TalkTherapy.
+          </p>
+          <p>All-in-one go with TalkTherapy!</p>
+
+          <div className="flex flex-col gap-2">
+            {LANDING_CTA.map((link) => {
+              const { to, label, className } = link;
+              return (
+                <Link
+                  key={to}
+                  to={to}
+                  className={`${className || "btn btn-ghost"}`}
+                >
+                  {label}
+                </Link>
+              );
+            })}
+          </div>
+        </div>
       </div>
-    </main>
+    </div>
   );
 }

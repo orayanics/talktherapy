@@ -1,32 +1,32 @@
 import { Link } from "@tanstack/react-router";
 
 const PUBLIC_LINKS = [
-  { to: "/", label: "Home" },
   { to: "/login", label: "Login" },
   { to: "/register", label: "Get Started", className: "btn btn-primary" },
 ];
 
 export default function NavbarPublic() {
   return (
-    <nav className="h-16 w-full bg-white border-b border-gray-200">
-      <div className="flex justify-between items-center h-full container mx-auto">
-        <Link to="/" className="font-bold text-lg">
-          TalkTherapy
+    <nav className="navbar bg-base-100 shadow-sm">
+      <div className="navbar-start">
+        <Link to={"/"} className="btn btn-ghost text-xl">
+          talktherapy
         </Link>
-        <div className="flex items-center gap-3">
-          {PUBLIC_LINKS.map(({ to, label, className }) => (
+      </div>
+
+      <div className="navbar-end gap-1">
+        {PUBLIC_LINKS.map((link) => {
+          const { to, label, className } = link;
+          return (
             <Link
               key={to}
               to={to}
-              activeProps={{
-                className: "font-semibold",
-              }}
-              className={className}
+              className={`${className || "btn btn-ghost"}`}
             >
               {label}
             </Link>
-          ))}
-        </div>
+          );
+        })}
       </div>
     </nav>
   );
