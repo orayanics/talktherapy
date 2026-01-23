@@ -17,6 +17,7 @@ export default function FilterDrawer({ children }: FilterDrawerProps) {
         Select Filters
       </button>
 
+      {/* Overlay */}
       <div
         className={`fixed inset-0 z-40 bg-black/50 duration-300 ${open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
         onClick={() => setOpen(false)}
@@ -28,14 +29,15 @@ export default function FilterDrawer({ children }: FilterDrawerProps) {
           ${open ? "translate-x-0" : "translate-x-full"}
 
         `}
-        style={{ maxWidth: "90vw" }}
         aria-modal="true"
         role="dialog"
       >
-        <div className="flex flex-col gap-2">{children}</div>
+        <div className="flex flex-col gap-4 [&>select]:w-full [&>div>button]:w-full">
+          {children}
+        </div>
 
         <button
-          className="flex p-2 justify-center items-center btn btn-primary"
+          className="btn btn-primary"
           onClick={() => setOpen(false)}
           aria-label="Close drawer"
         >

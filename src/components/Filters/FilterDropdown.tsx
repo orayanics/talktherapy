@@ -47,7 +47,7 @@ function DefaultSelect({
 }: DefaultSelectProps) {
   return (
     <select
-      className="input input-select"
+      className="select"
       id="default-select"
       name="default-select"
       value={value}
@@ -105,7 +105,7 @@ function MultiSelect({
   return (
     <div ref={ref} className="relative">
       <button
-        className="input input-select w-full text-left"
+        className="select text-left"
         type="button"
         onClick={() => setOpen((o) => !o)}
       >
@@ -113,14 +113,14 @@ function MultiSelect({
       </button>
 
       {open && (
-        <div className="absolute z-10 mt-2 border rounded bg-white shadow space-y-2 p-2">
+        <div className="absolute z-10 mt-2 border rounded bg-white shadow space-y-2 p-2 w-full">
           {options.map((option) => (
             <label
               key={option}
-              className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 px-2 py-1"
+              className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 px-2 py-1 border-b last:border-b-0"
             >
               <input
-                className="input-checkbox"
+                className="checkbox checkbox-sm"
                 type="checkbox"
                 checked={value.includes(option)}
                 onChange={() => toggleOption(option)}

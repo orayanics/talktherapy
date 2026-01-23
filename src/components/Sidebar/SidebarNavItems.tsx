@@ -21,10 +21,9 @@ export default function SidebarNavItems(props: SidebarNavItemsProps) {
           <Link
             key={to}
             to={to}
-            className="flex items-center gap-2 p-2 rounded-lg text-gray-600  border border-transparent hover:bg-gray-50 hover:border-gray-100"
+            className="flex items-center gap-2 p-2 rounded-lg text-gray-600  border border-transparent hover:bg-base-200 hover:border-gray-100"
             activeProps={{
-              className:
-                "bg-gray-100/70 !text-gray-800 !border !border-gray-200",
+              className: "bg-base-300 !text-gray-800 !border !border-base-100",
             }}
           >
             <span>{icon}</span>
