@@ -7,7 +7,7 @@ export const Route = createFileRoute("/(private)/_auth/_role-layout")({
 
 function RouteComponent() {
   return (
-    <div className="flex h-screen bg-white/70 overflow-hidden">
+    <div className="flex h-screen bg-white/70 overflow-auto">
       <SidebarSudo>
         <div className="w-full flex-1 overflow-auto p-4">
           <Outlet />

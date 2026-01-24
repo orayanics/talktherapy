@@ -1,12 +1,16 @@
-import React from "react";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import FilterDropdown from "~/components/Input/InputSelect";
 
 type TablePaginationProps = {
   page: number;
   perPage: number;
   total: number;
   onPageChange: (page: number) => void;
-  onPerPageChange?: (perPage: number) => void;
-  perPageOptions?: number[];
+  onPerPageChange: (perPage: number) => void;
+  perPageOptions?: {
+    value: number;
+    label: string;
+  }[];
   className?: string;
 };
 
@@ -16,7 +20,12 @@ export default function TablePagination({
   total,
   onPageChange,
   onPerPageChange,
-  perPageOptions = [5, 10, 20, 50],
+  perPageOptions = [
+    { value: 10, label: "10" },
+    { value: 20, label: "20" },
+    { value: 50, label: "50" },
+    { value: 100, label: "100" },
+  ],
   className = "",
 }: TablePaginationProps) {
   const totalPages = Math.max(1, Math.ceil(total / perPage));
@@ -35,41 +44,36 @@ export default function TablePagination({
     <div
       className={`flex flex-col md:flex-row md:items-center justify-between gap-2 ${className}`}
     >
-      <div className="flex items-center gap-2">
+      <div className="flex items-center justify-center md:justify-start gap-2 w-full">
         <button
-          className="px-2 py-1 rounded border bg-gray-100 text-gray-700 disabled:opacity-50"
+          className="btn btn-primary p-2"
           onClick={handlePrev}
           disabled={currentPage === 1}
         >
-          Prev
+          <FaChevronLeft />
         </button>
         <span className="mx-2">
           Page <strong>{currentPage}</strong> of <strong>{totalPages}</strong>
         </span>
         <button
-          className="px-2 py-1 rounded border bg-gray-100 text-gray-700 gray-200 disabled:opacity-50"
+          className="btn btn-primary p-2"
           onClick={handleNext}
           disabled={currentPage === totalPages}
         >
-          Next
+          <FaChevronRight />
         </button>
       </div>
-      <div className="flex items-center gap-2">
-        <span>Rows per page:</span>
-        <select
-          className="input input-select bg-white"
+      <div className="flex flex-row items-center md:justify-end gap-2 w-auto">
+        <p className="whitespace-nowrap">No. of Items</p>
+        <FilterDropdown
+          placeholder="Select one"
+          options={perPageOptions}
           value={perPage}
-          onChange={(e) => onPerPageChange?.(Number(e.target.value))}
-          id="table-select"
-          name="table-select"
-        >
-          {perPageOptions.map((opt) => (
-            <option key={opt} value={opt}>
-              {opt}
-            </option>
-          ))}
-        </select>
-        <span className="ml-2 text-sm text-gray-500">{total} total</span>
+          onChange={(e) =>
+            onPerPageChange(typeof e === "number" ? e : parseInt(e, 10))
+          }
+          className="w-auto"
+        />
       </div>
     </div>
   );

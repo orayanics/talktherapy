@@ -1,5 +1,4 @@
 import { Link } from "@tanstack/react-router";
-import cx from "classnames";
 
 interface NavItem {
   label: string;

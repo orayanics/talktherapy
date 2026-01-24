@@ -1,15 +1,6 @@
 import React from "react";
-import { Link } from "@tanstack/react-router";
-import cx from "classnames";
 
-import {
-  FaHome,
-  FaFile,
-  FaCog,
-  FaChevronLeft,
-  FaChevronRight,
-  FaUser,
-} from "react-icons/fa";
+import { FaHome, FaFile, FaCog, FaUser, FaBars } from "react-icons/fa";
 
 import LogoText from "~/components/Logo/LogoText";
 import SidebarNavItems from "./SidebarNavItems";
@@ -22,7 +13,7 @@ const SUDO_NAV_ITEMS = [
   },
   {
     label: "Users",
-    to: "/user",
+    to: "/users",
     icon: <FaUser size={16} />,
   },
   {
@@ -47,8 +38,11 @@ export default function SidebarSudo({
       <input id="my-drawer-3" type="checkbox" className="drawer-toggle" />
       <div className="drawer-content flex flex-col items-center justify-center">
         <div className="bg-base-100 border-b w-full">
-          <label htmlFor="my-drawer-3" className="btn btn-primary lg:hidden">
-            Open drawer
+          <label
+            htmlFor="my-drawer-3"
+            className="btn btn-primary m-4 lg:hidden"
+          >
+            <FaBars />
           </label>
         </div>
         {children}

@@ -1,6 +1,8 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/(private)/_auth/_role-layout/(adm-shared)/users")({
+export const Route = createFileRoute(
+  "/(private)/_auth/_role-layout/(adm-shared)/users",
+)({
   component: RouteComponent,
 });
 

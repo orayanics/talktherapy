@@ -10,6 +10,11 @@ export type TableContentProps<T> = {
   columns: Column<T>[];
   data: T[];
   rowsPerPage?: 5 | 10 | 50;
+  /**
+   * Optional map of accessor keys to custom render functions.
+   * These functions are used when a column does not provide its own `render`.
+   */
+  renderers?: Partial<Record<keyof T, (value: any, row: T) => React.ReactNode>>;
 };
 
 function getRowId<T extends { id?: React.Key }>(
@@ -23,9 +28,10 @@ export default function TableContent<T extends { id?: React.Key }>({
   columns,
   data,
   rowsPerPage = 5,
+  renderers = {},
 }: TableContentProps<T>) {
   return (
-    <div className="overflow-auto h-150 max-h-150 bg-white rounded-lg border bg-background p-6">
+    <div className="overflow-auto h-120 max-h-120 bg-white rounded-lg border bg-background p-6">
       <table className="w-full text-sm border-separate border-spacing-0">
         <thead className="hover:bg-gray-50">
           <tr>
@@ -39,7 +45,7 @@ export default function TableContent<T extends { id?: React.Key }>({
             ))}
           </tr>
         </thead>
-        <tbody className="[&_tr:last-child]:border-0">
+        <tbody className=" [&>_tr:last-child>_td]:border-b-0">
           {data.slice(0, rowsPerPage).map((row, rowIndex) => (
             <tr
               key={getRowId(row, rowIndex)}
@@ -54,9 +60,13 @@ export default function TableContent<T extends { id?: React.Key }>({
                   >
                     {col.render
                       ? col.render(value, row)
-                      : value != null
-                        ? String(value)
-                        : ""}
+                      : renderers[col.accessor]
+                        ? renderers[col.accessor]!(value, row)
+                        : value != null
+                          ? typeof value === "object"
+                            ? JSON.stringify(value)
+                            : (value as unknown as React.ReactNode)
+                          : ""}
                   </td>
                 );
               })}
