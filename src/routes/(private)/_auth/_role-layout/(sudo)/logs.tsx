@@ -9,7 +9,10 @@ import TableContent from "~/components/Table/TableContent";
 import FilterDropdown from "~/components/Input/InputSelect";
 import FilterDrawer from "~/components/Filters/FilterDrawer";
 import PageTitle from "~/components/Page/PageTitle";
-
+import InputMultiselect from "~/components/Input/InputMultiselect";
+import InputDropdown from "~/components/Input/InputDropdown";
+import LoaderTable from "~/components/Loader/LoaderTable";
+import TablePagination from "~/components/Table/TablePagination";
 export const Route = createFileRoute(
   "/(private)/_auth/_role-layout/(sudo)/logs",
 )({
@@ -17,6 +20,10 @@ export const Route = createFileRoute(
 });
 
 function RouteComponent() {
+  const [page, setPage] = useState(1);
+  const [perPage, setPerPage] = useState(10);
+  const isLoading = false;
+
   return (
     <>
       <PageTitle
@@ -25,7 +32,17 @@ function RouteComponent() {
       />
       <Grid cols={12} gap={6}>
         <GridItem colSpan={12} className="flex flex-col gap-4">
-          <Table />
+          <Table
+            data={SAMPLE_LOGS}
+            page={page}
+            perPage={perPage}
+            isLoading={isLoading}
+            onPageChange={setPage}
+            onPerPageChange={(val) => {
+              setPerPage(val);
+              setPage(1);
+            }}
+          />
         </GridItem>
       </Grid>
     </>
@@ -56,50 +73,59 @@ const SAMPLE_LOGS = [
   },
 ];
 
-function Table() {
-  const [select, setSelect] = useState<string>("");
-  const [checkboxes, setCheckboxes] = useState<string[]>([]);
+interface TableProps {
+  onPageChange: (page: number) => void;
+  onPerPageChange: (perPage: number) => void;
+  isLoading?: boolean;
+  data: typeof SAMPLE_LOGS;
+  page: number;
+  perPage: number;
+}
+
+function Table(props: TableProps) {
+  const { data, isLoading, page, perPage, onPageChange, onPerPageChange } =
+    props;
   return (
     <>
-      <FilterDrawer>
-        <FilterDropdown
-          placeholder="Select one"
-          options={[
-            { value: "superadmin", label: "Super Admin" },
-            { value: "admin", label: "Admin" },
-            { value: "patient", label: "Patient" },
-            { value: "clinician", label: "Clinician" },
-          ]}
-          value={select}
-          onChange={(value) => {
-            setSelect(value as string);
-          }}
-          type="select"
-        />
-        <FilterDropdown
-          placeholder="Checkbox filters"
-          options={[
-            { value: "red", label: "Color Red" },
-            { value: "blue", label: "Color Blue" },
-            { value: "yellow", label: "Color Yellow" },
-            { value: "green", label: "Color Green" },
-          ]}
-          value={checkboxes}
-          onChange={(value) => {
-            setCheckboxes(value as string[]);
-          }}
-          type="multiselect"
-        />
-      </FilterDrawer>
+      <div className="flex flex-col md:flex-row gap-2">
+        <InputDropdown
+          label="Filter By Date"
+          className="flex flex-row gap-2 md:w-auto w-full"
+          btnClassName="md:w-auto w-full btn-primary"
+          position="dropdown-start"
+        >
+          <label className="input w-full">
+            <span className="label">Start Date</span>
+            <input type="date" id="startDate" name="startDate" />
+          </label>
 
-      <TableContent
-        columns={[
-          { header: "Timestamp", accessor: "timestamp" },
-          { header: "User ID", accessor: "userId" },
-          { header: "Action", accessor: "action" },
-          { header: "Details", accessor: "details" },
-        ]}
-        data={SAMPLE_LOGS}
+          <label className="input w-full">
+            <span className="label">End Date</span>
+            <input type="date" id="endDate" name="endDate" />
+          </label>
+        </InputDropdown>
+      </div>
+
+      {isLoading ? (
+        <LoaderTable />
+      ) : (
+        <TableContent
+          columns={[
+            { header: "Timestamp", accessor: "timestamp" },
+            { header: "User ID", accessor: "userId" },
+            { header: "Action", accessor: "action" },
+            { header: "Details", accessor: "details" },
+          ]}
+          data={data}
+        />
+      )}
+
+      <TablePagination
+        page={page}
+        perPage={perPage}
+        total={SAMPLE_LOGS.length}
+        onPageChange={onPageChange}
+        onPerPageChange={onPerPageChange}
       />
     </>
   );

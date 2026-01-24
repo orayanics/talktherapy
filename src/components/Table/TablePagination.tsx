@@ -63,7 +63,7 @@ export default function TablePagination({
           <FaChevronRight />
         </button>
       </div>
-      <div className="flex flex-row items-center md:justify-end gap-2 w-auto">
+      <div className="flex flex-row items-center justify-center md:justify-end gap-2 w-auto">
         <p className="whitespace-nowrap">No. of Items</p>
         <FilterDropdown
           placeholder="Select one"

@@ -1,4 +1,4 @@
-import React from "react";
+import { useEffect, useRef } from "react";
 
 interface InputDropdownProps {
   label?: string;
@@ -11,24 +11,43 @@ interface InputDropdownProps {
 
 export default function InputDropdown(props: InputDropdownProps) {
   const { label, onClick, children, className, btnClassName, position } = props;
+  const dropdownRef = useRef<HTMLDetailsElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        dropdownRef.current.removeAttribute("open");
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [dropdownRef]);
+
   return (
     <>
-      <div className={`dropdown ${position || "dropdown-end"}`}>
-        <div
-          tabIndex={0}
+      <details
+        ref={dropdownRef}
+        className={`dropdown ${position || "dropdown-end"}`}
+      >
+        <summary
           role="button"
           className={`btn ${btnClassName || ""}`}
           onClick={onClick}
         >
           {label || "Select Option"}
-        </div>
+        </summary>
         <ul
-          tabIndex={-1}
-          className={`dropdown-content menu bg-white rounded-lg p-2 shadow-md border ${className}`}
+          className={`dropdown-content menu bg-white rounded-lg z-1 p-2 shadow-md border ${className}`}
         >
           {children}
         </ul>
-      </div>
+      </details>
     </>
   );
 }
