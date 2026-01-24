@@ -21,13 +21,19 @@ import { Route as publicauthAuthPagesRouteRouteImport } from './routes/(public)/
 import { Route as privateAuthRoleLayoutRouteRouteImport } from './routes/(private)/_auth/_role-layout/route'
 import { Route as publicauthAuthPagesRegisterRouteImport } from './routes/(public)/(auth)/_auth-pages/register'
 import { Route as publicauthAuthPagesLoginRouteImport } from './routes/(public)/(auth)/_auth-pages/login'
+import { Route as privateAuthRoleLayoutProfileRouteImport } from './routes/(private)/_auth/_role-layout/profile'
 import { Route as privateAuthRoleLayoutDashboardRouteImport } from './routes/(private)/_auth/_role-layout/dashboard'
 import { Route as privateAuthRoleLayoutsudoRouteRouteImport } from './routes/(private)/_auth/_role-layout/(sudo)/route'
+import { Route as privateAuthRoleLayoutadminRouteRouteImport } from './routes/(private)/_auth/_role-layout/(admin)/route'
+import { Route as privateAuthRoleLayoutadmSharedRouteRouteImport } from './routes/(private)/_auth/_role-layout/(adm-shared)/route'
 import { Route as privateAuthRoleLayoutsudoLogsRouteImport } from './routes/(private)/_auth/_role-layout/(sudo)/logs'
-import { Route as privateAuthRoleLayoutadmSharedProfileRouteImport } from './routes/(private)/_auth/_role-layout/(adm-shared)/profile'
-import { Route as privateAuthRoleLayoutadmSharedUsersRouteRouteImport } from './routes/(private)/_auth/_role-layout/(adm-shared)/users/route'
+import { Route as privateAuthRoleLayoutadminSchedulesIndexRouteImport } from './routes/(private)/_auth/_role-layout/(admin)/schedules/index'
+import { Route as privateAuthRoleLayoutadminContentIndexRouteImport } from './routes/(private)/_auth/_role-layout/(admin)/content/index'
 import { Route as privateAuthRoleLayoutadmSharedUsersIndexRouteImport } from './routes/(private)/_auth/_role-layout/(adm-shared)/users/index'
-import { Route as privateAuthRoleLayoutadmSharedUsersIdRouteImport } from './routes/(private)/_auth/_role-layout/(adm-shared)/users/$id'
+import { Route as privateAuthRoleLayoutadminContentContentIdRouteImport } from './routes/(private)/_auth/_role-layout/(admin)/content/$contentId'
+import { Route as privateAuthRoleLayoutadmSharedUsersUserIdRouteImport } from './routes/(private)/_auth/_role-layout/(adm-shared)/users/$userId'
+import { Route as privateAuthRoleLayoutadminContentContentIdEditRouteImport } from './routes/(private)/_auth/_role-layout/(admin)/content_/$contentId/edit'
+import { Route as privateAuthRoleLayoutadmSharedUsersUserIdEditRouteImport } from './routes/(private)/_auth/_role-layout/(adm-shared)/users_/$userId/edit'
 
 const RedirectRoute = RedirectRouteImport.update({
   id: '/redirect',
@@ -89,6 +95,12 @@ const publicauthAuthPagesLoginRoute =
     path: '/login',
     getParentRoute: () => publicauthAuthPagesRouteRoute,
   } as any)
+const privateAuthRoleLayoutProfileRoute =
+  privateAuthRoleLayoutProfileRouteImport.update({
+    id: '/profile',
+    path: '/profile',
+    getParentRoute: () => privateAuthRoleLayoutRouteRoute,
+  } as any)
 const privateAuthRoleLayoutDashboardRoute =
   privateAuthRoleLayoutDashboardRouteImport.update({
     id: '/dashboard',
@@ -100,35 +112,63 @@ const privateAuthRoleLayoutsudoRouteRoute =
     id: '/(sudo)',
     getParentRoute: () => privateAuthRoleLayoutRouteRoute,
   } as any)
+const privateAuthRoleLayoutadminRouteRoute =
+  privateAuthRoleLayoutadminRouteRouteImport.update({
+    id: '/(admin)',
+    getParentRoute: () => privateAuthRoleLayoutRouteRoute,
+  } as any)
+const privateAuthRoleLayoutadmSharedRouteRoute =
+  privateAuthRoleLayoutadmSharedRouteRouteImport.update({
+    id: '/(adm-shared)',
+    getParentRoute: () => privateAuthRoleLayoutRouteRoute,
+  } as any)
 const privateAuthRoleLayoutsudoLogsRoute =
   privateAuthRoleLayoutsudoLogsRouteImport.update({
     id: '/logs',
     path: '/logs',
     getParentRoute: () => privateAuthRoleLayoutsudoRouteRoute,
   } as any)
-const privateAuthRoleLayoutadmSharedProfileRoute =
-  privateAuthRoleLayoutadmSharedProfileRouteImport.update({
-    id: '/(adm-shared)/profile',
-    path: '/profile',
-    getParentRoute: () => privateAuthRoleLayoutRouteRoute,
+const privateAuthRoleLayoutadminSchedulesIndexRoute =
+  privateAuthRoleLayoutadminSchedulesIndexRouteImport.update({
+    id: '/schedules/',
+    path: '/schedules/',
+    getParentRoute: () => privateAuthRoleLayoutadminRouteRoute,
   } as any)
-const privateAuthRoleLayoutadmSharedUsersRouteRoute =
-  privateAuthRoleLayoutadmSharedUsersRouteRouteImport.update({
-    id: '/(adm-shared)/users',
-    path: '/users',
-    getParentRoute: () => privateAuthRoleLayoutRouteRoute,
+const privateAuthRoleLayoutadminContentIndexRoute =
+  privateAuthRoleLayoutadminContentIndexRouteImport.update({
+    id: '/content/',
+    path: '/content/',
+    getParentRoute: () => privateAuthRoleLayoutadminRouteRoute,
   } as any)
 const privateAuthRoleLayoutadmSharedUsersIndexRoute =
   privateAuthRoleLayoutadmSharedUsersIndexRouteImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => privateAuthRoleLayoutadmSharedUsersRouteRoute,
+    id: '/users/',
+    path: '/users/',
+    getParentRoute: () => privateAuthRoleLayoutadmSharedRouteRoute,
   } as any)
-const privateAuthRoleLayoutadmSharedUsersIdRoute =
-  privateAuthRoleLayoutadmSharedUsersIdRouteImport.update({
-    id: '/$id',
-    path: '/$id',
-    getParentRoute: () => privateAuthRoleLayoutadmSharedUsersRouteRoute,
+const privateAuthRoleLayoutadminContentContentIdRoute =
+  privateAuthRoleLayoutadminContentContentIdRouteImport.update({
+    id: '/content/$contentId',
+    path: '/content/$contentId',
+    getParentRoute: () => privateAuthRoleLayoutadminRouteRoute,
+  } as any)
+const privateAuthRoleLayoutadmSharedUsersUserIdRoute =
+  privateAuthRoleLayoutadmSharedUsersUserIdRouteImport.update({
+    id: '/users/$userId',
+    path: '/users/$userId',
+    getParentRoute: () => privateAuthRoleLayoutadmSharedRouteRoute,
+  } as any)
+const privateAuthRoleLayoutadminContentContentIdEditRoute =
+  privateAuthRoleLayoutadminContentContentIdEditRouteImport.update({
+    id: '/content_/$contentId/edit',
+    path: '/content/$contentId/edit',
+    getParentRoute: () => privateAuthRoleLayoutadminRouteRoute,
+  } as any)
+const privateAuthRoleLayoutadmSharedUsersUserIdEditRoute =
+  privateAuthRoleLayoutadmSharedUsersUserIdEditRouteImport.update({
+    id: '/users_/$userId/edit',
+    path: '/users/$userId/edit',
+    getParentRoute: () => privateAuthRoleLayoutadmSharedRouteRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -139,13 +179,17 @@ export interface FileRoutesByFullPath {
   '/about': typeof publicmarketingAboutRoute
   '/api/users/$id': typeof ApiUsersIdRoute
   '/dashboard': typeof privateAuthRoleLayoutDashboardRoute
+  '/profile': typeof privateAuthRoleLayoutProfileRoute
   '/login': typeof publicauthAuthPagesLoginRoute
   '/register': typeof publicauthAuthPagesRegisterRoute
-  '/users': typeof privateAuthRoleLayoutadmSharedUsersRouteRouteWithChildren
-  '/profile': typeof privateAuthRoleLayoutadmSharedProfileRoute
   '/logs': typeof privateAuthRoleLayoutsudoLogsRoute
-  '/users/$id': typeof privateAuthRoleLayoutadmSharedUsersIdRoute
+  '/users/$userId': typeof privateAuthRoleLayoutadmSharedUsersUserIdRoute
+  '/content/$contentId': typeof privateAuthRoleLayoutadminContentContentIdRoute
   '/users/': typeof privateAuthRoleLayoutadmSharedUsersIndexRoute
+  '/content/': typeof privateAuthRoleLayoutadminContentIndexRoute
+  '/schedules/': typeof privateAuthRoleLayoutadminSchedulesIndexRoute
+  '/users/$userId/edit': typeof privateAuthRoleLayoutadmSharedUsersUserIdEditRoute
+  '/content/$contentId/edit': typeof privateAuthRoleLayoutadminContentContentIdEditRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -155,12 +199,17 @@ export interface FileRoutesByTo {
   '/about': typeof publicmarketingAboutRoute
   '/api/users/$id': typeof ApiUsersIdRoute
   '/dashboard': typeof privateAuthRoleLayoutDashboardRoute
+  '/profile': typeof privateAuthRoleLayoutProfileRoute
   '/login': typeof publicauthAuthPagesLoginRoute
   '/register': typeof publicauthAuthPagesRegisterRoute
-  '/profile': typeof privateAuthRoleLayoutadmSharedProfileRoute
   '/logs': typeof privateAuthRoleLayoutsudoLogsRoute
-  '/users/$id': typeof privateAuthRoleLayoutadmSharedUsersIdRoute
+  '/users/$userId': typeof privateAuthRoleLayoutadmSharedUsersUserIdRoute
+  '/content/$contentId': typeof privateAuthRoleLayoutadminContentContentIdRoute
   '/users': typeof privateAuthRoleLayoutadmSharedUsersIndexRoute
+  '/content': typeof privateAuthRoleLayoutadminContentIndexRoute
+  '/schedules': typeof privateAuthRoleLayoutadminSchedulesIndexRoute
+  '/users/$userId/edit': typeof privateAuthRoleLayoutadmSharedUsersUserIdEditRoute
+  '/content/$contentId/edit': typeof privateAuthRoleLayoutadminContentContentIdEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -174,15 +223,21 @@ export interface FileRoutesById {
   '/(public)/(auth)/_auth-pages': typeof publicauthAuthPagesRouteRouteWithChildren
   '/(public)/(marketing)/about': typeof publicmarketingAboutRoute
   '/api/users/$id': typeof ApiUsersIdRoute
+  '/(private)/_auth/_role-layout/(adm-shared)': typeof privateAuthRoleLayoutadmSharedRouteRouteWithChildren
+  '/(private)/_auth/_role-layout/(admin)': typeof privateAuthRoleLayoutadminRouteRouteWithChildren
   '/(private)/_auth/_role-layout/(sudo)': typeof privateAuthRoleLayoutsudoRouteRouteWithChildren
   '/(private)/_auth/_role-layout/dashboard': typeof privateAuthRoleLayoutDashboardRoute
+  '/(private)/_auth/_role-layout/profile': typeof privateAuthRoleLayoutProfileRoute
   '/(public)/(auth)/_auth-pages/login': typeof publicauthAuthPagesLoginRoute
   '/(public)/(auth)/_auth-pages/register': typeof publicauthAuthPagesRegisterRoute
-  '/(private)/_auth/_role-layout/(adm-shared)/users': typeof privateAuthRoleLayoutadmSharedUsersRouteRouteWithChildren
-  '/(private)/_auth/_role-layout/(adm-shared)/profile': typeof privateAuthRoleLayoutadmSharedProfileRoute
   '/(private)/_auth/_role-layout/(sudo)/logs': typeof privateAuthRoleLayoutsudoLogsRoute
-  '/(private)/_auth/_role-layout/(adm-shared)/users/$id': typeof privateAuthRoleLayoutadmSharedUsersIdRoute
+  '/(private)/_auth/_role-layout/(adm-shared)/users/$userId': typeof privateAuthRoleLayoutadmSharedUsersUserIdRoute
+  '/(private)/_auth/_role-layout/(admin)/content/$contentId': typeof privateAuthRoleLayoutadminContentContentIdRoute
   '/(private)/_auth/_role-layout/(adm-shared)/users/': typeof privateAuthRoleLayoutadmSharedUsersIndexRoute
+  '/(private)/_auth/_role-layout/(admin)/content/': typeof privateAuthRoleLayoutadminContentIndexRoute
+  '/(private)/_auth/_role-layout/(admin)/schedules/': typeof privateAuthRoleLayoutadminSchedulesIndexRoute
+  '/(private)/_auth/_role-layout/(adm-shared)/users_/$userId/edit': typeof privateAuthRoleLayoutadmSharedUsersUserIdEditRoute
+  '/(private)/_auth/_role-layout/(admin)/content_/$contentId/edit': typeof privateAuthRoleLayoutadminContentContentIdEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -194,13 +249,17 @@ export interface FileRouteTypes {
     | '/about'
     | '/api/users/$id'
     | '/dashboard'
+    | '/profile'
     | '/login'
     | '/register'
-    | '/users'
-    | '/profile'
     | '/logs'
-    | '/users/$id'
+    | '/users/$userId'
+    | '/content/$contentId'
     | '/users/'
+    | '/content/'
+    | '/schedules/'
+    | '/users/$userId/edit'
+    | '/content/$contentId/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -210,12 +269,17 @@ export interface FileRouteTypes {
     | '/about'
     | '/api/users/$id'
     | '/dashboard'
+    | '/profile'
     | '/login'
     | '/register'
-    | '/profile'
     | '/logs'
-    | '/users/$id'
+    | '/users/$userId'
+    | '/content/$contentId'
     | '/users'
+    | '/content'
+    | '/schedules'
+    | '/users/$userId/edit'
+    | '/content/$contentId/edit'
   id:
     | '__root__'
     | '/'
@@ -228,15 +292,21 @@ export interface FileRouteTypes {
     | '/(public)/(auth)/_auth-pages'
     | '/(public)/(marketing)/about'
     | '/api/users/$id'
+    | '/(private)/_auth/_role-layout/(adm-shared)'
+    | '/(private)/_auth/_role-layout/(admin)'
     | '/(private)/_auth/_role-layout/(sudo)'
     | '/(private)/_auth/_role-layout/dashboard'
+    | '/(private)/_auth/_role-layout/profile'
     | '/(public)/(auth)/_auth-pages/login'
     | '/(public)/(auth)/_auth-pages/register'
-    | '/(private)/_auth/_role-layout/(adm-shared)/users'
-    | '/(private)/_auth/_role-layout/(adm-shared)/profile'
     | '/(private)/_auth/_role-layout/(sudo)/logs'
-    | '/(private)/_auth/_role-layout/(adm-shared)/users/$id'
+    | '/(private)/_auth/_role-layout/(adm-shared)/users/$userId'
+    | '/(private)/_auth/_role-layout/(admin)/content/$contentId'
     | '/(private)/_auth/_role-layout/(adm-shared)/users/'
+    | '/(private)/_auth/_role-layout/(admin)/content/'
+    | '/(private)/_auth/_role-layout/(admin)/schedules/'
+    | '/(private)/_auth/_role-layout/(adm-shared)/users_/$userId/edit'
+    | '/(private)/_auth/_role-layout/(admin)/content_/$contentId/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -334,6 +404,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof publicauthAuthPagesLoginRouteImport
       parentRoute: typeof publicauthAuthPagesRouteRoute
     }
+    '/(private)/_auth/_role-layout/profile': {
+      id: '/(private)/_auth/_role-layout/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof privateAuthRoleLayoutProfileRouteImport
+      parentRoute: typeof privateAuthRoleLayoutRouteRoute
+    }
     '/(private)/_auth/_role-layout/dashboard': {
       id: '/(private)/_auth/_role-layout/dashboard'
       path: '/dashboard'
@@ -348,6 +425,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof privateAuthRoleLayoutsudoRouteRouteImport
       parentRoute: typeof privateAuthRoleLayoutRouteRoute
     }
+    '/(private)/_auth/_role-layout/(admin)': {
+      id: '/(private)/_auth/_role-layout/(admin)'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof privateAuthRoleLayoutadminRouteRouteImport
+      parentRoute: typeof privateAuthRoleLayoutRouteRoute
+    }
+    '/(private)/_auth/_role-layout/(adm-shared)': {
+      id: '/(private)/_auth/_role-layout/(adm-shared)'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof privateAuthRoleLayoutadmSharedRouteRouteImport
+      parentRoute: typeof privateAuthRoleLayoutRouteRoute
+    }
     '/(private)/_auth/_role-layout/(sudo)/logs': {
       id: '/(private)/_auth/_role-layout/(sudo)/logs'
       path: '/logs'
@@ -355,33 +446,54 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof privateAuthRoleLayoutsudoLogsRouteImport
       parentRoute: typeof privateAuthRoleLayoutsudoRouteRoute
     }
-    '/(private)/_auth/_role-layout/(adm-shared)/profile': {
-      id: '/(private)/_auth/_role-layout/(adm-shared)/profile'
-      path: '/profile'
-      fullPath: '/profile'
-      preLoaderRoute: typeof privateAuthRoleLayoutadmSharedProfileRouteImport
-      parentRoute: typeof privateAuthRoleLayoutRouteRoute
+    '/(private)/_auth/_role-layout/(admin)/schedules/': {
+      id: '/(private)/_auth/_role-layout/(admin)/schedules/'
+      path: '/schedules'
+      fullPath: '/schedules/'
+      preLoaderRoute: typeof privateAuthRoleLayoutadminSchedulesIndexRouteImport
+      parentRoute: typeof privateAuthRoleLayoutadminRouteRoute
     }
-    '/(private)/_auth/_role-layout/(adm-shared)/users': {
-      id: '/(private)/_auth/_role-layout/(adm-shared)/users'
-      path: '/users'
-      fullPath: '/users'
-      preLoaderRoute: typeof privateAuthRoleLayoutadmSharedUsersRouteRouteImport
-      parentRoute: typeof privateAuthRoleLayoutRouteRoute
+    '/(private)/_auth/_role-layout/(admin)/content/': {
+      id: '/(private)/_auth/_role-layout/(admin)/content/'
+      path: '/content'
+      fullPath: '/content/'
+      preLoaderRoute: typeof privateAuthRoleLayoutadminContentIndexRouteImport
+      parentRoute: typeof privateAuthRoleLayoutadminRouteRoute
     }
     '/(private)/_auth/_role-layout/(adm-shared)/users/': {
       id: '/(private)/_auth/_role-layout/(adm-shared)/users/'
-      path: '/'
+      path: '/users'
       fullPath: '/users/'
       preLoaderRoute: typeof privateAuthRoleLayoutadmSharedUsersIndexRouteImport
-      parentRoute: typeof privateAuthRoleLayoutadmSharedUsersRouteRoute
+      parentRoute: typeof privateAuthRoleLayoutadmSharedRouteRoute
     }
-    '/(private)/_auth/_role-layout/(adm-shared)/users/$id': {
-      id: '/(private)/_auth/_role-layout/(adm-shared)/users/$id'
-      path: '/$id'
-      fullPath: '/users/$id'
-      preLoaderRoute: typeof privateAuthRoleLayoutadmSharedUsersIdRouteImport
-      parentRoute: typeof privateAuthRoleLayoutadmSharedUsersRouteRoute
+    '/(private)/_auth/_role-layout/(admin)/content/$contentId': {
+      id: '/(private)/_auth/_role-layout/(admin)/content/$contentId'
+      path: '/content/$contentId'
+      fullPath: '/content/$contentId'
+      preLoaderRoute: typeof privateAuthRoleLayoutadminContentContentIdRouteImport
+      parentRoute: typeof privateAuthRoleLayoutadminRouteRoute
+    }
+    '/(private)/_auth/_role-layout/(adm-shared)/users/$userId': {
+      id: '/(private)/_auth/_role-layout/(adm-shared)/users/$userId'
+      path: '/users/$userId'
+      fullPath: '/users/$userId'
+      preLoaderRoute: typeof privateAuthRoleLayoutadmSharedUsersUserIdRouteImport
+      parentRoute: typeof privateAuthRoleLayoutadmSharedRouteRoute
+    }
+    '/(private)/_auth/_role-layout/(admin)/content_/$contentId/edit': {
+      id: '/(private)/_auth/_role-layout/(admin)/content_/$contentId/edit'
+      path: '/content/$contentId/edit'
+      fullPath: '/content/$contentId/edit'
+      preLoaderRoute: typeof privateAuthRoleLayoutadminContentContentIdEditRouteImport
+      parentRoute: typeof privateAuthRoleLayoutadminRouteRoute
+    }
+    '/(private)/_auth/_role-layout/(adm-shared)/users_/$userId/edit': {
+      id: '/(private)/_auth/_role-layout/(adm-shared)/users_/$userId/edit'
+      path: '/users/$userId/edit'
+      fullPath: '/users/$userId/edit'
+      preLoaderRoute: typeof privateAuthRoleLayoutadmSharedUsersUserIdEditRouteImport
+      parentRoute: typeof privateAuthRoleLayoutadmSharedRouteRoute
     }
   }
 }
@@ -416,6 +528,51 @@ const publicRouteRouteWithChildren = publicRouteRoute._addFileChildren(
   publicRouteRouteChildren,
 )
 
+interface privateAuthRoleLayoutadmSharedRouteRouteChildren {
+  privateAuthRoleLayoutadmSharedUsersUserIdRoute: typeof privateAuthRoleLayoutadmSharedUsersUserIdRoute
+  privateAuthRoleLayoutadmSharedUsersIndexRoute: typeof privateAuthRoleLayoutadmSharedUsersIndexRoute
+  privateAuthRoleLayoutadmSharedUsersUserIdEditRoute: typeof privateAuthRoleLayoutadmSharedUsersUserIdEditRoute
+}
+
+const privateAuthRoleLayoutadmSharedRouteRouteChildren: privateAuthRoleLayoutadmSharedRouteRouteChildren =
+  {
+    privateAuthRoleLayoutadmSharedUsersUserIdRoute:
+      privateAuthRoleLayoutadmSharedUsersUserIdRoute,
+    privateAuthRoleLayoutadmSharedUsersIndexRoute:
+      privateAuthRoleLayoutadmSharedUsersIndexRoute,
+    privateAuthRoleLayoutadmSharedUsersUserIdEditRoute:
+      privateAuthRoleLayoutadmSharedUsersUserIdEditRoute,
+  }
+
+const privateAuthRoleLayoutadmSharedRouteRouteWithChildren =
+  privateAuthRoleLayoutadmSharedRouteRoute._addFileChildren(
+    privateAuthRoleLayoutadmSharedRouteRouteChildren,
+  )
+
+interface privateAuthRoleLayoutadminRouteRouteChildren {
+  privateAuthRoleLayoutadminContentContentIdRoute: typeof privateAuthRoleLayoutadminContentContentIdRoute
+  privateAuthRoleLayoutadminContentIndexRoute: typeof privateAuthRoleLayoutadminContentIndexRoute
+  privateAuthRoleLayoutadminSchedulesIndexRoute: typeof privateAuthRoleLayoutadminSchedulesIndexRoute
+  privateAuthRoleLayoutadminContentContentIdEditRoute: typeof privateAuthRoleLayoutadminContentContentIdEditRoute
+}
+
+const privateAuthRoleLayoutadminRouteRouteChildren: privateAuthRoleLayoutadminRouteRouteChildren =
+  {
+    privateAuthRoleLayoutadminContentContentIdRoute:
+      privateAuthRoleLayoutadminContentContentIdRoute,
+    privateAuthRoleLayoutadminContentIndexRoute:
+      privateAuthRoleLayoutadminContentIndexRoute,
+    privateAuthRoleLayoutadminSchedulesIndexRoute:
+      privateAuthRoleLayoutadminSchedulesIndexRoute,
+    privateAuthRoleLayoutadminContentContentIdEditRoute:
+      privateAuthRoleLayoutadminContentContentIdEditRoute,
+  }
+
+const privateAuthRoleLayoutadminRouteRouteWithChildren =
+  privateAuthRoleLayoutadminRouteRoute._addFileChildren(
+    privateAuthRoleLayoutadminRouteRouteChildren,
+  )
+
 interface privateAuthRoleLayoutsudoRouteRouteChildren {
   privateAuthRoleLayoutsudoLogsRoute: typeof privateAuthRoleLayoutsudoLogsRoute
 }
@@ -430,40 +587,24 @@ const privateAuthRoleLayoutsudoRouteRouteWithChildren =
     privateAuthRoleLayoutsudoRouteRouteChildren,
   )
 
-interface privateAuthRoleLayoutadmSharedUsersRouteRouteChildren {
-  privateAuthRoleLayoutadmSharedUsersIdRoute: typeof privateAuthRoleLayoutadmSharedUsersIdRoute
-  privateAuthRoleLayoutadmSharedUsersIndexRoute: typeof privateAuthRoleLayoutadmSharedUsersIndexRoute
-}
-
-const privateAuthRoleLayoutadmSharedUsersRouteRouteChildren: privateAuthRoleLayoutadmSharedUsersRouteRouteChildren =
-  {
-    privateAuthRoleLayoutadmSharedUsersIdRoute:
-      privateAuthRoleLayoutadmSharedUsersIdRoute,
-    privateAuthRoleLayoutadmSharedUsersIndexRoute:
-      privateAuthRoleLayoutadmSharedUsersIndexRoute,
-  }
-
-const privateAuthRoleLayoutadmSharedUsersRouteRouteWithChildren =
-  privateAuthRoleLayoutadmSharedUsersRouteRoute._addFileChildren(
-    privateAuthRoleLayoutadmSharedUsersRouteRouteChildren,
-  )
-
 interface privateAuthRoleLayoutRouteRouteChildren {
+  privateAuthRoleLayoutadmSharedRouteRoute: typeof privateAuthRoleLayoutadmSharedRouteRouteWithChildren
+  privateAuthRoleLayoutadminRouteRoute: typeof privateAuthRoleLayoutadminRouteRouteWithChildren
   privateAuthRoleLayoutsudoRouteRoute: typeof privateAuthRoleLayoutsudoRouteRouteWithChildren
   privateAuthRoleLayoutDashboardRoute: typeof privateAuthRoleLayoutDashboardRoute
-  privateAuthRoleLayoutadmSharedUsersRouteRoute: typeof privateAuthRoleLayoutadmSharedUsersRouteRouteWithChildren
-  privateAuthRoleLayoutadmSharedProfileRoute: typeof privateAuthRoleLayoutadmSharedProfileRoute
+  privateAuthRoleLayoutProfileRoute: typeof privateAuthRoleLayoutProfileRoute
 }
 
 const privateAuthRoleLayoutRouteRouteChildren: privateAuthRoleLayoutRouteRouteChildren =
   {
+    privateAuthRoleLayoutadmSharedRouteRoute:
+      privateAuthRoleLayoutadmSharedRouteRouteWithChildren,
+    privateAuthRoleLayoutadminRouteRoute:
+      privateAuthRoleLayoutadminRouteRouteWithChildren,
     privateAuthRoleLayoutsudoRouteRoute:
       privateAuthRoleLayoutsudoRouteRouteWithChildren,
     privateAuthRoleLayoutDashboardRoute: privateAuthRoleLayoutDashboardRoute,
-    privateAuthRoleLayoutadmSharedUsersRouteRoute:
-      privateAuthRoleLayoutadmSharedUsersRouteRouteWithChildren,
-    privateAuthRoleLayoutadmSharedProfileRoute:
-      privateAuthRoleLayoutadmSharedProfileRoute,
+    privateAuthRoleLayoutProfileRoute: privateAuthRoleLayoutProfileRoute,
   }
 
 const privateAuthRoleLayoutRouteRouteWithChildren =

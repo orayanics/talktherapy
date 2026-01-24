@@ -43,12 +43,28 @@ export interface ScheduleContentClient {
 }
 
 export type AppointmentStatus =
-  | "Pending"
-  | "Accepted"
-  | "Rejected"
-  | "Completed"
-  | "Requested Schedule Change"
-  | "Rescheduled";
+  | "pending"
+  | "accepted"
+  | "rejected"
+  | "completed"
+  | "requested"
+  | "rescheduled"
+  | "fallback";
+
+export type AppointmentStatusValues = {
+  [key in AppointmentStatus]: string;
+};
+
+// Mapping of appointment status keys to their display values
+export const AppointmentStatusValues: AppointmentStatusValues = {
+  pending: "Pending",
+  accepted: "Accepted",
+  rejected: "Rejected",
+  completed: "Completed",
+  requested: "For Reschedule",
+  rescheduled: "Rescheduled",
+  fallback: "N/A",
+};
 
 export interface AppointmentContentClient {
   id: string;

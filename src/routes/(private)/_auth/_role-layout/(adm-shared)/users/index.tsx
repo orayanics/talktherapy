@@ -1,6 +1,12 @@
 import { useState } from "react";
 import { Link, createFileRoute } from "@tanstack/react-router";
 
+export const Route = createFileRoute(
+  "/(private)/_auth/_role-layout/(adm-shared)/users/",
+)({
+  component: RouteComponent,
+});
+
 import Grid from "~/components/Page/Grid";
 import GridItem from "~/components/Page/GridItem";
 
@@ -18,11 +24,11 @@ import InputMultiselect from "~/components/Input/InputMultiselect";
 import LoaderTable from "~/components/Loader/LoaderTable";
 import UserAddClinician from "~/modules/users/UserAddClinician";
 
-export const Route = createFileRoute(
-  "/(private)/_auth/_role-layout/(adm-shared)/users/",
-)({
-  component: RouteComponent,
-});
+// TODO: Replace with real data from API
+// ===============================
+// Return all users if sudo
+// Return patient and clinician users if admin
+// ===============================
 
 const SAMPLE_USERS = [
   {
@@ -251,6 +257,8 @@ function Table(props: TableProps) {
     onPageChange,
     onPerPageChange,
   } = props;
+  const isAdmin = true; // TODO: Replace with real auth check
+
   return (
     <>
       <div className="flex flex-col md:flex-row gap-2 justify-between">
@@ -298,21 +306,23 @@ function Table(props: TableProps) {
           >
             Clinician
           </button>
-          <button
-            className="btn"
-            onClick={() => {
-              const modal = document.getElementById(
-                "add-admin-modal",
-              ) as HTMLDialogElement | null;
-              modal?.showModal();
-            }}
-          >
-            Admin
-          </button>
+          {!isAdmin && (
+            <button
+              className="btn"
+              onClick={() => {
+                const modal = document.getElementById(
+                  "add-admin-modal",
+                ) as HTMLDialogElement | null;
+                modal?.showModal();
+              }}
+            >
+              Admin
+            </button>
+          )}
         </InputDropdown>
 
-        <UserAddAdmin id={"add-admin-modal"} />
         <UserAddClinician id={"add-clinician-modal"} />
+        {!isAdmin && <UserAddAdmin id={"add-admin-modal"} />}
       </div>
 
       {isLoading ? (
@@ -326,8 +336,8 @@ function Table(props: TableProps) {
               accessor: "information",
               render: (value, row) => (
                 <Link
-                  to={"/users/$id"}
-                  params={{ id: row.id as string }}
+                  to="/users/$userId"
+                  params={{ userId: row.userType }}
                   className="link link-hover hover:text-info"
                 >
                   {(value as { firstName: string; lastName: string }).firstName}{" "}
@@ -351,15 +361,16 @@ function Table(props: TableProps) {
                   position="dropdown-center dropdown-left"
                 >
                   <Link
-                    to={"/users/$id"}
-                    params={{ id: row.id as string }}
+                    to={"/users/$userId/edit"}
+                    params={{ userId: row.id as string }}
                     className="btn btn-soft btn-info"
                   >
                     Edit
                   </Link>
                   <Link
-                    to={"/users/$id"}
-                    params={{ id: row.id as string }}
+                    // TODO: Add deactivate user functionality
+                    to={"/users/$userId"}
+                    params={{ userId: row.id as string }}
                     className="btn btn-soft btn-error"
                   >
                     Deactivate

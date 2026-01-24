@@ -1,38 +1,19 @@
 import React from "react";
+import { SUDO_NAV_ITEMS, ADMIN_NAV_ITEMS } from "~/config/sidebar";
 
-import { FaHome, FaFile, FaCog, FaUser, FaBars } from "react-icons/fa";
+import { FaBars } from "react-icons/fa";
 
 import LogoText from "~/components/Logo/LogoText";
 import SidebarNavItems from "./SidebarNavItems";
 
-const SUDO_NAV_ITEMS = [
-  {
-    label: "Dashboard",
-    to: "/dashboard",
-    icon: <FaHome size={16} />,
-  },
-  {
-    label: "Users",
-    to: "/users",
-    icon: <FaUser size={16} />,
-  },
-  {
-    label: "Logs",
-    to: "/logs",
-    icon: <FaFile size={16} />,
-  },
-  {
-    label: "Profile",
-    to: "/profile",
-    icon: <FaCog size={16} />,
-  },
-];
-
-export default function SidebarSudo({
-  children,
-}: {
+interface SidebarProps {
   children: React.ReactNode;
-}) {
+  role: "sudo" | "admin";
+}
+
+export default function Sidebar(props: SidebarProps) {
+  const { children, role = "admin" } = props;
+  const navItems = role === "sudo" ? SUDO_NAV_ITEMS : ADMIN_NAV_ITEMS;
   return (
     <aside className="drawer lg:drawer-open">
       <input id="my-drawer-3" type="checkbox" className="drawer-toggle" />
@@ -55,7 +36,7 @@ export default function SidebarSudo({
         ></label>
         <div className="menu bg-base-100 border-r min-h-full w-64 gap-2 p-0">
           <LogoText />
-          <SidebarNavItems items={SUDO_NAV_ITEMS} />
+          <SidebarNavItems items={navItems} />
         </div>
       </div>
     </aside>
