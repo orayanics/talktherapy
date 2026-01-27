@@ -30,6 +30,7 @@ import { Route as privateAuthRoleLayoutsudoLogsRouteImport } from './routes/(pri
 import { Route as privateAuthRoleLayoutadminSchedulesIndexRouteImport } from './routes/(private)/_auth/_role-layout/(admin)/schedules/index'
 import { Route as privateAuthRoleLayoutadminContentIndexRouteImport } from './routes/(private)/_auth/_role-layout/(admin)/content/index'
 import { Route as privateAuthRoleLayoutadmSharedUsersIndexRouteImport } from './routes/(private)/_auth/_role-layout/(adm-shared)/users/index'
+import { Route as privateAuthRoleLayoutadminContentCreateRouteImport } from './routes/(private)/_auth/_role-layout/(admin)/content/create'
 import { Route as privateAuthRoleLayoutadminContentContentIdRouteImport } from './routes/(private)/_auth/_role-layout/(admin)/content/$contentId'
 import { Route as privateAuthRoleLayoutadmSharedUsersUserIdRouteImport } from './routes/(private)/_auth/_role-layout/(adm-shared)/users/$userId'
 import { Route as privateAuthRoleLayoutadminContentContentIdEditRouteImport } from './routes/(private)/_auth/_role-layout/(admin)/content_/$contentId/edit'
@@ -146,6 +147,12 @@ const privateAuthRoleLayoutadmSharedUsersIndexRoute =
     path: '/users/',
     getParentRoute: () => privateAuthRoleLayoutadmSharedRouteRoute,
   } as any)
+const privateAuthRoleLayoutadminContentCreateRoute =
+  privateAuthRoleLayoutadminContentCreateRouteImport.update({
+    id: '/content/create',
+    path: '/content/create',
+    getParentRoute: () => privateAuthRoleLayoutadminRouteRoute,
+  } as any)
 const privateAuthRoleLayoutadminContentContentIdRoute =
   privateAuthRoleLayoutadminContentContentIdRouteImport.update({
     id: '/content/$contentId',
@@ -185,6 +192,7 @@ export interface FileRoutesByFullPath {
   '/logs': typeof privateAuthRoleLayoutsudoLogsRoute
   '/users/$userId': typeof privateAuthRoleLayoutadmSharedUsersUserIdRoute
   '/content/$contentId': typeof privateAuthRoleLayoutadminContentContentIdRoute
+  '/content/create': typeof privateAuthRoleLayoutadminContentCreateRoute
   '/users/': typeof privateAuthRoleLayoutadmSharedUsersIndexRoute
   '/content/': typeof privateAuthRoleLayoutadminContentIndexRoute
   '/schedules/': typeof privateAuthRoleLayoutadminSchedulesIndexRoute
@@ -205,6 +213,7 @@ export interface FileRoutesByTo {
   '/logs': typeof privateAuthRoleLayoutsudoLogsRoute
   '/users/$userId': typeof privateAuthRoleLayoutadmSharedUsersUserIdRoute
   '/content/$contentId': typeof privateAuthRoleLayoutadminContentContentIdRoute
+  '/content/create': typeof privateAuthRoleLayoutadminContentCreateRoute
   '/users': typeof privateAuthRoleLayoutadmSharedUsersIndexRoute
   '/content': typeof privateAuthRoleLayoutadminContentIndexRoute
   '/schedules': typeof privateAuthRoleLayoutadminSchedulesIndexRoute
@@ -233,6 +242,7 @@ export interface FileRoutesById {
   '/(private)/_auth/_role-layout/(sudo)/logs': typeof privateAuthRoleLayoutsudoLogsRoute
   '/(private)/_auth/_role-layout/(adm-shared)/users/$userId': typeof privateAuthRoleLayoutadmSharedUsersUserIdRoute
   '/(private)/_auth/_role-layout/(admin)/content/$contentId': typeof privateAuthRoleLayoutadminContentContentIdRoute
+  '/(private)/_auth/_role-layout/(admin)/content/create': typeof privateAuthRoleLayoutadminContentCreateRoute
   '/(private)/_auth/_role-layout/(adm-shared)/users/': typeof privateAuthRoleLayoutadmSharedUsersIndexRoute
   '/(private)/_auth/_role-layout/(admin)/content/': typeof privateAuthRoleLayoutadminContentIndexRoute
   '/(private)/_auth/_role-layout/(admin)/schedules/': typeof privateAuthRoleLayoutadminSchedulesIndexRoute
@@ -255,6 +265,7 @@ export interface FileRouteTypes {
     | '/logs'
     | '/users/$userId'
     | '/content/$contentId'
+    | '/content/create'
     | '/users/'
     | '/content/'
     | '/schedules/'
@@ -275,6 +286,7 @@ export interface FileRouteTypes {
     | '/logs'
     | '/users/$userId'
     | '/content/$contentId'
+    | '/content/create'
     | '/users'
     | '/content'
     | '/schedules'
@@ -302,6 +314,7 @@ export interface FileRouteTypes {
     | '/(private)/_auth/_role-layout/(sudo)/logs'
     | '/(private)/_auth/_role-layout/(adm-shared)/users/$userId'
     | '/(private)/_auth/_role-layout/(admin)/content/$contentId'
+    | '/(private)/_auth/_role-layout/(admin)/content/create'
     | '/(private)/_auth/_role-layout/(adm-shared)/users/'
     | '/(private)/_auth/_role-layout/(admin)/content/'
     | '/(private)/_auth/_role-layout/(admin)/schedules/'
@@ -467,6 +480,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof privateAuthRoleLayoutadmSharedUsersIndexRouteImport
       parentRoute: typeof privateAuthRoleLayoutadmSharedRouteRoute
     }
+    '/(private)/_auth/_role-layout/(admin)/content/create': {
+      id: '/(private)/_auth/_role-layout/(admin)/content/create'
+      path: '/content/create'
+      fullPath: '/content/create'
+      preLoaderRoute: typeof privateAuthRoleLayoutadminContentCreateRouteImport
+      parentRoute: typeof privateAuthRoleLayoutadminRouteRoute
+    }
     '/(private)/_auth/_role-layout/(admin)/content/$contentId': {
       id: '/(private)/_auth/_role-layout/(admin)/content/$contentId'
       path: '/content/$contentId'
@@ -551,6 +571,7 @@ const privateAuthRoleLayoutadmSharedRouteRouteWithChildren =
 
 interface privateAuthRoleLayoutadminRouteRouteChildren {
   privateAuthRoleLayoutadminContentContentIdRoute: typeof privateAuthRoleLayoutadminContentContentIdRoute
+  privateAuthRoleLayoutadminContentCreateRoute: typeof privateAuthRoleLayoutadminContentCreateRoute
   privateAuthRoleLayoutadminContentIndexRoute: typeof privateAuthRoleLayoutadminContentIndexRoute
   privateAuthRoleLayoutadminSchedulesIndexRoute: typeof privateAuthRoleLayoutadminSchedulesIndexRoute
   privateAuthRoleLayoutadminContentContentIdEditRoute: typeof privateAuthRoleLayoutadminContentContentIdEditRoute
@@ -560,6 +581,8 @@ const privateAuthRoleLayoutadminRouteRouteChildren: privateAuthRoleLayoutadminRo
   {
     privateAuthRoleLayoutadminContentContentIdRoute:
       privateAuthRoleLayoutadminContentContentIdRoute,
+    privateAuthRoleLayoutadminContentCreateRoute:
+      privateAuthRoleLayoutadminContentCreateRoute,
     privateAuthRoleLayoutadminContentIndexRoute:
       privateAuthRoleLayoutadminContentIndexRoute,
     privateAuthRoleLayoutadminSchedulesIndexRoute:

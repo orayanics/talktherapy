@@ -19,7 +19,7 @@ export type TableContentProps<T> = {
 
 function getRowId<T extends { id?: React.Key }>(
   row: T,
-  rowIndex: number,
+  rowIndex: number
 ): React.Key {
   return row.id ?? rowIndex;
 }
@@ -31,7 +31,7 @@ export default function TableContent<T extends { id?: React.Key }>({
   renderers = {},
 }: TableContentProps<T>) {
   return (
-    <div className="overflow-auto h-120 max-h-120 bg-white rounded-lg border bg-background p-6">
+    <div className="overflow-auto h-120 max-h-120 bg-white rounded-lg border p-6">
       <table className="w-full text-sm border-separate border-spacing-0">
         <thead className="hover:bg-gray-50">
           <tr>

@@ -4,8 +4,8 @@ export interface MediaContentClient {
   description: string;
   body: string; // Markdown content
   authorId: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
   category: string;
   tags?: string[];
 }
