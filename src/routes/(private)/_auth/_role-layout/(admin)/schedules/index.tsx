@@ -7,7 +7,7 @@ import Grid from "~/components/Page/Grid";
 import GridItem from "~/components/Page/GridItem";
 
 export const Route = createFileRoute(
-  "/(private)/_auth/_role-layout/(admin)/schedules/"
+  "/(private)/_auth/_role-layout/(admin)/schedules/",
 )({
   component: RouteComponent,
 });
@@ -20,15 +20,15 @@ function RouteComponent() {
         subheading="View all schedules of clinicians within the system."
       />
       <Grid cols={12} gap={6}>
-        <GridItem colSpan={4} className="flex flex-col gap-4 bg-yellow-50">
+        <GridItem colSpan={12} className="flex flex-col gap-4 md:col-span-4">
           <TableClinician />
         </GridItem>
 
-        <GridItem colSpan={4} className="flex flex-col gap-4 ">
+        <GridItem colSpan={12} className="flex flex-col gap-4 md:col-span-4">
           <Calendar />
         </GridItem>
 
-        <GridItem colSpan={4} className="flex flex-col gap-4 bg-red-50">
+        <GridItem colSpan={12} className="flex flex-col gap-4 md:col-span-4">
           <TableSchedule />
         </GridItem>
       </Grid>
@@ -36,12 +36,48 @@ function RouteComponent() {
   );
 }
 
-const TABLE_LIST = ["John Doe", "Apple John", "Maple John"];
+const TABLE_LIST = [
+  "John Doe",
+  "Apple John",
+  "Maple John",
+  "John Doe",
+  "Apple John",
+  "Maple John",
+  "John Doe",
+  "Apple John",
+  "Maple John",
+  "John Doe",
+  "Apple John",
+  "Maple John",
+  "John Doe",
+  "Apple John",
+  "Maple John",
+  "John Doe",
+  "Apple John",
+  "Maple John",
+  "John Doe",
+  "Apple John",
+  "Maple John",
+];
 function TableClinician() {
+  const handleScrollToSchedule = (e: React.UIEvent<HTMLDivElement>) => {
+    const scheduleElement = document.getElementById("table-schedule");
+    if (scheduleElement) {
+      scheduleElement.scrollIntoView({ behavior: "smooth" });
+    }
+  };
   return (
-    <div>
-      {TABLE_LIST.map((item) => {
-        return <p>{item}</p>;
+    <div className="flex flex-col gap-2 max-h-[88vh] overflow-y-auto">
+      {TABLE_LIST.map((item, index) => {
+        return (
+          <div
+            key={index}
+            className="p-2 border rounded-lg hover:bg-gray-100 last:border-b-0"
+            onClick={handleScrollToSchedule}
+          >
+            {item}
+          </div>
+        );
       })}
     </div>
   );
@@ -107,29 +143,26 @@ const SCHEDULE_LIST = [
 
 function TableSchedule() {
   return (
-    <div>
-      {SCHEDULE_LIST.map((item) => (
-        <div key={item.id} className="mb-4">
-          <p>
-            <strong>Day:</strong> {item.day}
-          </p>
-          <p>
-            <strong>Time:</strong> {item.startTime} – {item.endTime}
-          </p>
-          <p>
-            <strong>Status:</strong> {item.scheduleStatus}
-          </p>
-          <p>
-            <strong>Recurrence:</strong> {item.type.recurrence}
-          </p>
-
-          {item.type.endDate && (
+    <div id="table-schedule">
+      {SCHEDULE_LIST.map((item) => {
+        const { id, day, startTime, endTime, scheduleStatus, type } = item;
+        const { recurrence, endDate } = type;
+        return (
+          <div key={id} className="mb-4 border rounded-lg p-4">
+            <div className="flex flex-row justify-between items-center">
+              <p className="font-semibold text-xl">{day}</p>
+              <span className="badge">{scheduleStatus}</span>
+            </div>
             <p>
-              <strong>Ends:</strong> {item.type.endDate.toLocaleDateString()}
+              {startTime} – {endTime}
             </p>
-          )}
-        </div>
-      ))}
+
+            <p className="badge">{recurrence}</p>
+
+            {endDate && <p>Ends on {endDate.toLocaleDateString()}</p>}
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -139,13 +172,16 @@ function Calendar() {
   return (
     <>
       <DayPicker
-        className="react-day-picker"
+        className="react-day-picker bg-white"
         classNames={{
           months: "w-full max-w-full",
           month_grid: "w-100 mx-auto",
+          day_button:
+            "px-3 py-3 rounded-lg hover:bg-primary focus:outline-none focus:ring-2 focus:ring-primary/50 focus:bg-blue-50 focus:text-blue-800 focus:border-blue-200",
+          today: "font-bold text-blue-800",
         }}
         mode="single"
-        selected={selected}
+        selected={selected || undefined}
         onSelect={setSelected}
         footer={
           selected

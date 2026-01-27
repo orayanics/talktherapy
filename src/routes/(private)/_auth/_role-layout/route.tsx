@@ -10,7 +10,7 @@ function RouteComponent() {
   return (
     <div className="flex bg-white/70">
       <Sidebar role={userRole}>
-        <div className="w-full flex-1 overflow-scroll min-h-screen p-4">
+        <div className="w-full flex-1 overflow-auto min-h-screen p-4">
           <Outlet />
         </div>
       </Sidebar>

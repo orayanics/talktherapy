@@ -1,10 +1,11 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 
 export default function LoginForm() {
+  const navigate = useNavigate();
   return (
     <form
       onSubmit={() => {
-        alert("login");
+        navigate({ to: "/dashboard" });
       }}
     >
       <div className="flex flex-col gap-4">
