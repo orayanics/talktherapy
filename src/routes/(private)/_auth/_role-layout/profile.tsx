@@ -26,7 +26,7 @@ function RouteComponent() {
           <ProfileAccInfo role={useRole} />
 
           <div className="flex flex-col gap-2 col-span-12">
-            <button className="btn btn-primary">Update Profile</button>
+            <button className="btn btn-primary">Edit Profile</button>
             <button className="btn btn-neutral">Change Password</button>
           </div>
         </GridItem>

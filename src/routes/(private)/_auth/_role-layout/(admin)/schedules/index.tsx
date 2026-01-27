@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { DayPicker } from "react-day-picker";
 
 import PageTitle from "~/components/Page/PageTitle";
@@ -72,7 +72,7 @@ function TableClinician() {
         return (
           <div
             key={index}
-            className="p-2 border rounded-lg hover:bg-gray-100 last:border-b-0"
+            className="p-2 border rounded-lg hover:bg-gray-100 last:border-b-0 hover:cursor-pointer"
             onClick={handleScrollToSchedule}
           >
             {item}
@@ -143,12 +143,22 @@ const SCHEDULE_LIST = [
 
 function TableSchedule() {
   return (
-    <div id="table-schedule">
+    <div
+      id="table-schedule"
+      className="flex flex-col gap-4 max-h-[88vh] overflow-y-auto"
+    >
       {SCHEDULE_LIST.map((item) => {
         const { id, day, startTime, endTime, scheduleStatus, type } = item;
         const { recurrence, endDate } = type;
         return (
-          <div key={id} className="mb-4 border rounded-lg p-4">
+          <Link
+            to="/schedules/$scheduleId"
+            params={{
+              scheduleId: id,
+            }}
+            key={id}
+            className="flex flex-col gap-2 border rounded-lg p-4 hover:cursor-pointer hover:bg-gray-100"
+          >
             <div className="flex flex-row justify-between items-center">
               <p className="font-semibold text-xl">{day}</p>
               <span className="badge">{scheduleStatus}</span>
@@ -160,7 +170,7 @@ function TableSchedule() {
             <p className="badge">{recurrence}</p>
 
             {endDate && <p>Ends on {endDate.toLocaleDateString()}</p>}
-          </div>
+          </Link>
         );
       })}
     </div>
