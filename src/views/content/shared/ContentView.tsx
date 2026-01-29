@@ -1,4 +1,3 @@
-import { createFileRoute } from "@tanstack/react-router";
 import Markdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
 
@@ -6,13 +5,27 @@ import Grid from "~/components/Page/Grid";
 import GridItem from "~/components/Page/GridItem";
 import PageTitle from "~/components/Page/PageTitle";
 
-import ContentMediaInfo from "~/modules/content/ContentMediaInfo";
+export default function ContentView() {
+  return (
+    <>
+      <PageTitle
+        heading={"Content Shared Overview"}
+        subheading={"Manage media content."}
+      />
 
-export const Route = createFileRoute(
-  "/(private)/_auth/_role-layout/(admin)/content/$contentId"
-)({
-  component: RouteComponent,
-});
+      <Grid cols={12} gap={6}>
+        <GridItem colSpan={12} className="md:col-span-12">
+          <h1 className="font-bold">{MEDIA_ITEMS[0].title}</h1>
+          <div className="flex flex-col gap-4 bg-gray-50 border-dashed border-gray-200 border p-4 rounded-lg min-h-screen">
+            <Markdown rehypePlugins={[rehypeRaw]}>
+              {MEDIA_ITEMS[0].body}
+            </Markdown>
+          </div>
+        </GridItem>
+      </Grid>
+    </>
+  );
+}
 
 export const MEDIA_ITEMS = [
   {
@@ -34,7 +47,7 @@ It helps developers catch errors early, improve code quality, and build more mai
 
 <iframe
   width="100%"
-  height="100%"
+  height="400px"
   src="https://www.youtube.com/embed/EmeW6li6bbo"
   title="YouTube video player"
   frameborder="0"
@@ -49,29 +62,3 @@ It helps developers catch errors early, improve code quality, and build more mai
     tags: ["typescript", "javascript", "basics", "node"],
   },
 ];
-
-function RouteComponent() {
-  return (
-    <>
-      <PageTitle
-        heading={"Content Overview"}
-        subheading={"Manage media content."}
-      />
-
-      <Grid cols={12} gap={6}>
-        <GridItem colSpan={12} className="md:col-span-6">
-          <ContentMediaInfo {...MEDIA_ITEMS[0]} />
-        </GridItem>
-
-        <GridItem colSpan={12} className="md:col-span-6">
-          <h1 className="font-bold">Content Body Preview</h1>
-          <div className="flex flex-col gap-4 bg-gray-50 border-dashed border-gray-200 border p-4 rounded-lg max-h-200 overflow-scroll">
-            <Markdown rehypePlugins={[rehypeRaw]}>
-              {MEDIA_ITEMS[0].body}
-            </Markdown>
-          </div>
-        </GridItem>
-      </Grid>
-    </>
-  );
-}

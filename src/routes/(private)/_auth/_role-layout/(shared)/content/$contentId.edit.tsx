@@ -10,7 +10,7 @@ import PageTitle from "~/components/Page/PageTitle";
 
 import ContentMediaInfoEdit from "~/modules/content/ContentMediaInfoEdit";
 export const Route = createFileRoute(
-  "/(private)/_auth/_role-layout/(admin)/content_/$contentId/edit"
+  "/(private)/_auth/_role-layout/(shared)/content/$contentId/edit"
 )({
   component: RouteComponent,
 });

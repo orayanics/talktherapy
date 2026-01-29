@@ -1,22 +1,15 @@
 import { useState } from "react";
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { DayPicker } from "react-day-picker";
-
+import { Link } from "@tanstack/react-router";
 import PageTitle from "~/components/Page/PageTitle";
 import Grid from "~/components/Page/Grid";
 import GridItem from "~/components/Page/GridItem";
+import { DayPicker } from "react-day-picker";
 
-export const Route = createFileRoute(
-  "/(private)/_auth/_role-layout/(admin)/schedules/",
-)({
-  component: RouteComponent,
-});
-
-function RouteComponent() {
+export default function ScheduleOverview() {
   return (
     <>
       <PageTitle
-        heading="Schedule Overview"
+        heading="Schedule Admin Overview"
         subheading="View all schedules of clinicians within the system."
       />
       <Grid cols={12} gap={6}>
@@ -59,6 +52,7 @@ const TABLE_LIST = [
   "Apple John",
   "Maple John",
 ];
+
 function TableClinician() {
   const handleScrollToSchedule = (e: React.UIEvent<HTMLDivElement>) => {
     const scheduleElement = document.getElementById("table-schedule");

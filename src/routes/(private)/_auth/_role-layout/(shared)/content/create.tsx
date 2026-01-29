@@ -11,13 +11,16 @@ import PageTitle from "~/components/Page/PageTitle";
 import ContentMediaCreate from "~/modules/content/ContentMediaCreate";
 
 export const Route = createFileRoute(
-  "/(private)/_auth/_role-layout/(admin)/content/create"
+  "/(private)/_auth/_role-layout/(shared)/content/create"
 )({
   component: RouteComponent,
 });
 
 function RouteComponent() {
   const [bodyContent, setBodyContent] = useState("");
+  const role = "admin";
+
+  if (role !== "clinician") return null;
   return (
     <>
       <PageTitle

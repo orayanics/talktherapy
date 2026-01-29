@@ -8,7 +8,7 @@ import ScheduleInfo from "~/modules/schedule/ScheduleInfo";
 import ScheduleAppointmentInfo from "~/modules/schedule/ScheduleAppointmentInfo";
 
 export const Route = createFileRoute(
-  "/(private)/_auth/_role-layout/(admin)/schedules/$scheduleId",
+  "/(private)/_auth/_role-layout/(shared)/schedules/$scheduleId",
 )({
   component: RouteComponent,
 });

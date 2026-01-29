@@ -1,6 +1,6 @@
 import React from "react";
-import { SUDO_NAV_ITEMS, ADMIN_NAV_ITEMS } from "~/config/sidebar";
-
+import { NAV_BY_ROLE } from "~/config/sidebar";
+import { UserType } from "~/models/user";
 import { FaBars } from "react-icons/fa";
 
 import LogoText from "~/components/Logo/LogoText";
@@ -8,12 +8,13 @@ import SidebarNavItems from "./SidebarNavItems";
 
 interface SidebarProps {
   children: React.ReactNode;
-  role: "sudo" | "admin";
+  role: UserType;
 }
 
 export default function Sidebar(props: SidebarProps) {
-  const { children, role = "admin" } = props;
-  const navItems = role === "sudo" ? SUDO_NAV_ITEMS : ADMIN_NAV_ITEMS;
+  const { children, role } = props;
+  const navItems = NAV_BY_ROLE[role] ?? [];
+
   return (
     <aside className="drawer lg:drawer-open">
       <input id="my-drawer-3" type="checkbox" className="drawer-toggle" />

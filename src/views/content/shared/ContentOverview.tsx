@@ -1,17 +1,11 @@
-import { Link, createFileRoute } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 
 import PageTitle from "~/components/Page/PageTitle";
 import Grid from "~/components/Page/Grid";
 import GridItem from "~/components/Page/GridItem";
 import TablePagination from "~/components/Table/TablePagination";
 
-export const Route = createFileRoute(
-  "/(private)/_auth/_role-layout/(admin)/content/"
-)({
-  component: RouteComponent,
-});
-
-function RouteComponent() {
+export default function ContentOverview() {
   return (
     <>
       <PageTitle
@@ -124,11 +118,6 @@ function Table() {
         </label>
 
         {/* filters */}
-
-        {/* action */}
-        <Link className="btn btn-primary" to="/content/create">
-          Add Content
-        </Link>
       </div>
 
       <div className="bg-white rounded-lg">
@@ -141,7 +130,13 @@ function Table() {
                 colSpan={12}
                 className="md:col-span-3 lg:col-span-2"
               >
-                <div className="grid grid-cols-12 gap-2 rounded-lg bg-base-100 shadow-sm">
+                <Link
+                  to="/content/$contentId"
+                  params={{
+                    contentId: id,
+                  }}
+                  className="grid grid-cols-12 gap-2 rounded-lg bg-base-100 shadow-sm"
+                >
                   <figure className="col-span-4 md:col-span-12">
                     <img
                       src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp"
@@ -153,11 +148,8 @@ function Table() {
                     <h1 className="card-title truncate">{title}</h1>
                     <p className="text-gray-600 truncate">{description}</p>
                     <p>{authorId}</p>
-                    <div>
-                      <button className="btn btn-primary btn-xs">Edit</button>
-                    </div>
                   </div>
-                </div>
+                </Link>
               </GridItem>
             );
           })}

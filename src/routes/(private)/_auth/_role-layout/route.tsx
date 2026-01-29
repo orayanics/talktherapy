@@ -6,7 +6,7 @@ export const Route = createFileRoute("/(private)/_auth/_role-layout")({
 });
 
 function RouteComponent() {
-  const userRole = "admin";
+  const userRole = "clinician";
   return (
     <div className="flex bg-white/70">
       <Sidebar role={userRole}>

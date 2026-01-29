@@ -1,4 +1,4 @@
-export type UserType = "superadmin" | "admin" | "clinician" | "patient";
+export type UserType = "sudo" | "admin" | "clinician" | "patient";
 
 // Common user model definition:
 export interface UserClient {

@@ -5,7 +5,7 @@ export const Route = createFileRoute("/(private)/_auth/_role-layout/(admin)")({
 });
 
 function RouteComponent() {
-  const isAdmin = true;
+  const isAdmin = false;
   if (!isAdmin) {
     return <div>Access denied. Admin role required.</div>;
   }
