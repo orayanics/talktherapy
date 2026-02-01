@@ -6,7 +6,7 @@ import PatientBookmark from "./PatientBookmark";
 export default function index() {
   return (
     <>
-      <Grid cols={12} gap={2}>
+      <Grid cols={12} gap={6}>
         {/* First Col */}
         <GridItem
           colSpan={12}

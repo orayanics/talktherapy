@@ -30,11 +30,14 @@ import { Route as privateAuthRoleLayoutadmSharedRouteRouteImport } from './route
 import { Route as privateAuthRoleLayoutsudoLogsRouteImport } from './routes/(private)/_auth/_role-layout/(sudo)/logs'
 import { Route as privateAuthRoleLayoutsharedSchedulesIndexRouteImport } from './routes/(private)/_auth/_role-layout/(shared)/schedules/index'
 import { Route as privateAuthRoleLayoutsharedContentIndexRouteImport } from './routes/(private)/_auth/_role-layout/(shared)/content/index'
+import { Route as privateAuthRoleLayoutpatientRecordsIndexRouteImport } from './routes/(private)/_auth/_role-layout/(patient)/records/index'
+import { Route as privateAuthRoleLayoutpatientAppointmentsIndexRouteImport } from './routes/(private)/_auth/_role-layout/(patient)/appointments/index'
 import { Route as privateAuthRoleLayoutclinicianPatientsIndexRouteImport } from './routes/(private)/_auth/_role-layout/(clinician)/patients/index'
 import { Route as privateAuthRoleLayoutadmSharedUsersIndexRouteImport } from './routes/(private)/_auth/_role-layout/(adm-shared)/users/index'
 import { Route as privateAuthRoleLayoutsharedSchedulesScheduleIdRouteImport } from './routes/(private)/_auth/_role-layout/(shared)/schedules/$scheduleId'
 import { Route as privateAuthRoleLayoutsharedContentCreateRouteImport } from './routes/(private)/_auth/_role-layout/(shared)/content/create'
 import { Route as privateAuthRoleLayoutsharedContentContentIdRouteImport } from './routes/(private)/_auth/_role-layout/(shared)/content/$contentId'
+import { Route as privateAuthRoleLayoutpatientAppointmentsAppointmentIdRouteImport } from './routes/(private)/_auth/_role-layout/(patient)/appointments/$appointmentId'
 import { Route as privateAuthRoleLayoutclinicianPatientsPatientIdRouteImport } from './routes/(private)/_auth/_role-layout/(clinician)/patients/$patientId'
 import { Route as privateAuthRoleLayoutadmSharedUsersUserIdRouteImport } from './routes/(private)/_auth/_role-layout/(adm-shared)/users/$userId'
 import { Route as privateAuthRoleLayoutsharedContentContentIdEditRouteImport } from './routes/(private)/_auth/_role-layout/(shared)/content/$contentId.edit'
@@ -150,6 +153,18 @@ const privateAuthRoleLayoutsharedContentIndexRoute =
     path: '/content/',
     getParentRoute: () => privateAuthRoleLayoutRouteRoute,
   } as any)
+const privateAuthRoleLayoutpatientRecordsIndexRoute =
+  privateAuthRoleLayoutpatientRecordsIndexRouteImport.update({
+    id: '/(patient)/records/',
+    path: '/records/',
+    getParentRoute: () => privateAuthRoleLayoutRouteRoute,
+  } as any)
+const privateAuthRoleLayoutpatientAppointmentsIndexRoute =
+  privateAuthRoleLayoutpatientAppointmentsIndexRouteImport.update({
+    id: '/(patient)/appointments/',
+    path: '/appointments/',
+    getParentRoute: () => privateAuthRoleLayoutRouteRoute,
+  } as any)
 const privateAuthRoleLayoutclinicianPatientsIndexRoute =
   privateAuthRoleLayoutclinicianPatientsIndexRouteImport.update({
     id: '/patients/',
@@ -178,6 +193,12 @@ const privateAuthRoleLayoutsharedContentContentIdRoute =
   privateAuthRoleLayoutsharedContentContentIdRouteImport.update({
     id: '/(shared)/content/$contentId',
     path: '/content/$contentId',
+    getParentRoute: () => privateAuthRoleLayoutRouteRoute,
+  } as any)
+const privateAuthRoleLayoutpatientAppointmentsAppointmentIdRoute =
+  privateAuthRoleLayoutpatientAppointmentsAppointmentIdRouteImport.update({
+    id: '/(patient)/appointments/$appointmentId',
+    path: '/appointments/$appointmentId',
     getParentRoute: () => privateAuthRoleLayoutRouteRoute,
   } as any)
 const privateAuthRoleLayoutclinicianPatientsPatientIdRoute =
@@ -219,11 +240,14 @@ export interface FileRoutesByFullPath {
   '/logs': typeof privateAuthRoleLayoutsudoLogsRoute
   '/users/$userId': typeof privateAuthRoleLayoutadmSharedUsersUserIdRouteWithChildren
   '/patients/$patientId': typeof privateAuthRoleLayoutclinicianPatientsPatientIdRoute
+  '/appointments/$appointmentId': typeof privateAuthRoleLayoutpatientAppointmentsAppointmentIdRoute
   '/content/$contentId': typeof privateAuthRoleLayoutsharedContentContentIdRouteWithChildren
   '/content/create': typeof privateAuthRoleLayoutsharedContentCreateRoute
   '/schedules/$scheduleId': typeof privateAuthRoleLayoutsharedSchedulesScheduleIdRoute
   '/users/': typeof privateAuthRoleLayoutadmSharedUsersIndexRoute
   '/patients/': typeof privateAuthRoleLayoutclinicianPatientsIndexRoute
+  '/appointments/': typeof privateAuthRoleLayoutpatientAppointmentsIndexRoute
+  '/records/': typeof privateAuthRoleLayoutpatientRecordsIndexRoute
   '/content/': typeof privateAuthRoleLayoutsharedContentIndexRoute
   '/schedules/': typeof privateAuthRoleLayoutsharedSchedulesIndexRoute
   '/users/$userId/edit': typeof privateAuthRoleLayoutadmSharedUsersUserIdEditRoute
@@ -243,11 +267,14 @@ export interface FileRoutesByTo {
   '/logs': typeof privateAuthRoleLayoutsudoLogsRoute
   '/users/$userId': typeof privateAuthRoleLayoutadmSharedUsersUserIdRouteWithChildren
   '/patients/$patientId': typeof privateAuthRoleLayoutclinicianPatientsPatientIdRoute
+  '/appointments/$appointmentId': typeof privateAuthRoleLayoutpatientAppointmentsAppointmentIdRoute
   '/content/$contentId': typeof privateAuthRoleLayoutsharedContentContentIdRouteWithChildren
   '/content/create': typeof privateAuthRoleLayoutsharedContentCreateRoute
   '/schedules/$scheduleId': typeof privateAuthRoleLayoutsharedSchedulesScheduleIdRoute
   '/users': typeof privateAuthRoleLayoutadmSharedUsersIndexRoute
   '/patients': typeof privateAuthRoleLayoutclinicianPatientsIndexRoute
+  '/appointments': typeof privateAuthRoleLayoutpatientAppointmentsIndexRoute
+  '/records': typeof privateAuthRoleLayoutpatientRecordsIndexRoute
   '/content': typeof privateAuthRoleLayoutsharedContentIndexRoute
   '/schedules': typeof privateAuthRoleLayoutsharedSchedulesIndexRoute
   '/users/$userId/edit': typeof privateAuthRoleLayoutadmSharedUsersUserIdEditRoute
@@ -276,11 +303,14 @@ export interface FileRoutesById {
   '/(private)/_auth/_role-layout/(sudo)/logs': typeof privateAuthRoleLayoutsudoLogsRoute
   '/(private)/_auth/_role-layout/(adm-shared)/users/$userId': typeof privateAuthRoleLayoutadmSharedUsersUserIdRouteWithChildren
   '/(private)/_auth/_role-layout/(clinician)/patients/$patientId': typeof privateAuthRoleLayoutclinicianPatientsPatientIdRoute
+  '/(private)/_auth/_role-layout/(patient)/appointments/$appointmentId': typeof privateAuthRoleLayoutpatientAppointmentsAppointmentIdRoute
   '/(private)/_auth/_role-layout/(shared)/content/$contentId': typeof privateAuthRoleLayoutsharedContentContentIdRouteWithChildren
   '/(private)/_auth/_role-layout/(shared)/content/create': typeof privateAuthRoleLayoutsharedContentCreateRoute
   '/(private)/_auth/_role-layout/(shared)/schedules/$scheduleId': typeof privateAuthRoleLayoutsharedSchedulesScheduleIdRoute
   '/(private)/_auth/_role-layout/(adm-shared)/users/': typeof privateAuthRoleLayoutadmSharedUsersIndexRoute
   '/(private)/_auth/_role-layout/(clinician)/patients/': typeof privateAuthRoleLayoutclinicianPatientsIndexRoute
+  '/(private)/_auth/_role-layout/(patient)/appointments/': typeof privateAuthRoleLayoutpatientAppointmentsIndexRoute
+  '/(private)/_auth/_role-layout/(patient)/records/': typeof privateAuthRoleLayoutpatientRecordsIndexRoute
   '/(private)/_auth/_role-layout/(shared)/content/': typeof privateAuthRoleLayoutsharedContentIndexRoute
   '/(private)/_auth/_role-layout/(shared)/schedules/': typeof privateAuthRoleLayoutsharedSchedulesIndexRoute
   '/(private)/_auth/_role-layout/(adm-shared)/users/$userId/edit': typeof privateAuthRoleLayoutadmSharedUsersUserIdEditRoute
@@ -302,11 +332,14 @@ export interface FileRouteTypes {
     | '/logs'
     | '/users/$userId'
     | '/patients/$patientId'
+    | '/appointments/$appointmentId'
     | '/content/$contentId'
     | '/content/create'
     | '/schedules/$scheduleId'
     | '/users/'
     | '/patients/'
+    | '/appointments/'
+    | '/records/'
     | '/content/'
     | '/schedules/'
     | '/users/$userId/edit'
@@ -326,11 +359,14 @@ export interface FileRouteTypes {
     | '/logs'
     | '/users/$userId'
     | '/patients/$patientId'
+    | '/appointments/$appointmentId'
     | '/content/$contentId'
     | '/content/create'
     | '/schedules/$scheduleId'
     | '/users'
     | '/patients'
+    | '/appointments'
+    | '/records'
     | '/content'
     | '/schedules'
     | '/users/$userId/edit'
@@ -358,11 +394,14 @@ export interface FileRouteTypes {
     | '/(private)/_auth/_role-layout/(sudo)/logs'
     | '/(private)/_auth/_role-layout/(adm-shared)/users/$userId'
     | '/(private)/_auth/_role-layout/(clinician)/patients/$patientId'
+    | '/(private)/_auth/_role-layout/(patient)/appointments/$appointmentId'
     | '/(private)/_auth/_role-layout/(shared)/content/$contentId'
     | '/(private)/_auth/_role-layout/(shared)/content/create'
     | '/(private)/_auth/_role-layout/(shared)/schedules/$scheduleId'
     | '/(private)/_auth/_role-layout/(adm-shared)/users/'
     | '/(private)/_auth/_role-layout/(clinician)/patients/'
+    | '/(private)/_auth/_role-layout/(patient)/appointments/'
+    | '/(private)/_auth/_role-layout/(patient)/records/'
     | '/(private)/_auth/_role-layout/(shared)/content/'
     | '/(private)/_auth/_role-layout/(shared)/schedules/'
     | '/(private)/_auth/_role-layout/(adm-shared)/users/$userId/edit'
@@ -527,6 +566,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof privateAuthRoleLayoutsharedContentIndexRouteImport
       parentRoute: typeof privateAuthRoleLayoutRouteRoute
     }
+    '/(private)/_auth/_role-layout/(patient)/records/': {
+      id: '/(private)/_auth/_role-layout/(patient)/records/'
+      path: '/records'
+      fullPath: '/records/'
+      preLoaderRoute: typeof privateAuthRoleLayoutpatientRecordsIndexRouteImport
+      parentRoute: typeof privateAuthRoleLayoutRouteRoute
+    }
+    '/(private)/_auth/_role-layout/(patient)/appointments/': {
+      id: '/(private)/_auth/_role-layout/(patient)/appointments/'
+      path: '/appointments'
+      fullPath: '/appointments/'
+      preLoaderRoute: typeof privateAuthRoleLayoutpatientAppointmentsIndexRouteImport
+      parentRoute: typeof privateAuthRoleLayoutRouteRoute
+    }
     '/(private)/_auth/_role-layout/(clinician)/patients/': {
       id: '/(private)/_auth/_role-layout/(clinician)/patients/'
       path: '/patients'
@@ -560,6 +613,13 @@ declare module '@tanstack/react-router' {
       path: '/content/$contentId'
       fullPath: '/content/$contentId'
       preLoaderRoute: typeof privateAuthRoleLayoutsharedContentContentIdRouteImport
+      parentRoute: typeof privateAuthRoleLayoutRouteRoute
+    }
+    '/(private)/_auth/_role-layout/(patient)/appointments/$appointmentId': {
+      id: '/(private)/_auth/_role-layout/(patient)/appointments/$appointmentId'
+      path: '/appointments/$appointmentId'
+      fullPath: '/appointments/$appointmentId'
+      preLoaderRoute: typeof privateAuthRoleLayoutpatientAppointmentsAppointmentIdRouteImport
       parentRoute: typeof privateAuthRoleLayoutRouteRoute
     }
     '/(private)/_auth/_role-layout/(clinician)/patients/$patientId': {
@@ -710,9 +770,12 @@ interface privateAuthRoleLayoutRouteRouteChildren {
   privateAuthRoleLayoutsudoRouteRoute: typeof privateAuthRoleLayoutsudoRouteRouteWithChildren
   privateAuthRoleLayoutDashboardRoute: typeof privateAuthRoleLayoutDashboardRoute
   privateAuthRoleLayoutProfileRoute: typeof privateAuthRoleLayoutProfileRoute
+  privateAuthRoleLayoutpatientAppointmentsAppointmentIdRoute: typeof privateAuthRoleLayoutpatientAppointmentsAppointmentIdRoute
   privateAuthRoleLayoutsharedContentContentIdRoute: typeof privateAuthRoleLayoutsharedContentContentIdRouteWithChildren
   privateAuthRoleLayoutsharedContentCreateRoute: typeof privateAuthRoleLayoutsharedContentCreateRoute
   privateAuthRoleLayoutsharedSchedulesScheduleIdRoute: typeof privateAuthRoleLayoutsharedSchedulesScheduleIdRoute
+  privateAuthRoleLayoutpatientAppointmentsIndexRoute: typeof privateAuthRoleLayoutpatientAppointmentsIndexRoute
+  privateAuthRoleLayoutpatientRecordsIndexRoute: typeof privateAuthRoleLayoutpatientRecordsIndexRoute
   privateAuthRoleLayoutsharedContentIndexRoute: typeof privateAuthRoleLayoutsharedContentIndexRoute
   privateAuthRoleLayoutsharedSchedulesIndexRoute: typeof privateAuthRoleLayoutsharedSchedulesIndexRoute
 }
@@ -728,12 +791,18 @@ const privateAuthRoleLayoutRouteRouteChildren: privateAuthRoleLayoutRouteRouteCh
       privateAuthRoleLayoutsudoRouteRouteWithChildren,
     privateAuthRoleLayoutDashboardRoute: privateAuthRoleLayoutDashboardRoute,
     privateAuthRoleLayoutProfileRoute: privateAuthRoleLayoutProfileRoute,
+    privateAuthRoleLayoutpatientAppointmentsAppointmentIdRoute:
+      privateAuthRoleLayoutpatientAppointmentsAppointmentIdRoute,
     privateAuthRoleLayoutsharedContentContentIdRoute:
       privateAuthRoleLayoutsharedContentContentIdRouteWithChildren,
     privateAuthRoleLayoutsharedContentCreateRoute:
       privateAuthRoleLayoutsharedContentCreateRoute,
     privateAuthRoleLayoutsharedSchedulesScheduleIdRoute:
       privateAuthRoleLayoutsharedSchedulesScheduleIdRoute,
+    privateAuthRoleLayoutpatientAppointmentsIndexRoute:
+      privateAuthRoleLayoutpatientAppointmentsIndexRoute,
+    privateAuthRoleLayoutpatientRecordsIndexRoute:
+      privateAuthRoleLayoutpatientRecordsIndexRoute,
     privateAuthRoleLayoutsharedContentIndexRoute:
       privateAuthRoleLayoutsharedContentIndexRoute,
     privateAuthRoleLayoutsharedSchedulesIndexRoute:
