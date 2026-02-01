@@ -84,8 +84,8 @@ const SCHEDULE_LIST = [
     type: {
       recurrence: "none",
     },
-    createdAt: new Date(),
-    updatedAt: new Date(),
+    createdAt: "2025-01-18T11:10:00Z",
+    updatedAt: "2025-01-18T11:10:00Z",
   },
   {
     id: "2",
@@ -96,10 +96,10 @@ const SCHEDULE_LIST = [
     scheduleStatus: "unavailable",
     type: {
       recurrence: "daily",
-      endDate: new Date("2026-02-28"),
+      endDate: "2026-02-28",
     },
-    createdAt: new Date(),
-    updatedAt: new Date(),
+    createdAt: "2025-01-18T11:10:00Z",
+    updatedAt: "2025-01-18T11:10:00Z",
   },
   {
     id: "3",
@@ -110,10 +110,10 @@ const SCHEDULE_LIST = [
     scheduleStatus: "booked",
     type: {
       recurrence: "weekly",
-      endDate: new Date("2026-06-30"),
+      endDate: "2026-06-30",
     },
-    createdAt: new Date(),
-    updatedAt: new Date(),
+    createdAt: "2025-01-18T11:10:00Z",
+    updatedAt: "2025-01-18T11:10:00Z",
   },
   {
     id: "4",
@@ -124,10 +124,10 @@ const SCHEDULE_LIST = [
     scheduleStatus: "available",
     type: {
       recurrence: "monthly",
-      endDate: new Date("2026-12-31"),
+      endDate: "2026-12-31",
     },
-    createdAt: new Date(),
-    updatedAt: new Date(),
+    createdAt: "2025-01-18T11:10:00Z",
+    updatedAt: "2025-01-18T11:10:00Z",
   },
 ];
 
@@ -159,7 +159,7 @@ function TableSchedule() {
 
             <p className="badge">{recurrence}</p>
 
-            {endDate && <p>Ends on {endDate.toLocaleDateString()}</p>}
+            {endDate && <p>Ends on {endDate}</p>}
           </Link>
         );
       })}
@@ -183,11 +183,7 @@ function Calendar() {
         mode="single"
         selected={selected || undefined}
         onSelect={setSelected}
-        footer={
-          selected
-            ? `Selected: ${selected.toLocaleDateString()}`
-            : "Pick a day."
-        }
+        footer={selected ? `Selected: ${selected}` : "Pick a day."}
       />
     </>
   );

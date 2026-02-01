@@ -7,10 +7,12 @@ import PageTitle from "~/components/Page/PageTitle";
 
 import AppointmentStatusBadge from "~/components/Badge/AppointmentStatusBadge";
 
+import PatientDashboard from "~/views/dashboard/patient";
+
 export const Route = createFileRoute("/(private)/_auth/_role-layout/dashboard")(
   {
     component: RouteComponent,
-  },
+  }
 );
 
 function RouteComponent() {
@@ -18,15 +20,17 @@ function RouteComponent() {
     <>
       <PageTitle
         heading="Dashboard"
-        subheading="Overview of key metrics and statistics"
+        subheading="Overview and different key actions"
       />
-      <Grid cols={12} gap={2}>
+      {/* <Grid cols={12} gap={2}>
         <GridItem colSpan={12} className="flex flex-col gap-4">
           <UserStatsCard />
           <AppointmentStatsCard />
           <AppointmentTest />
         </GridItem>
-      </Grid>
+      </Grid> */}
+
+      <PatientDashboard />
     </>
   );
 }

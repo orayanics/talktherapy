@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute(
-  "/(private)/_auth/_role-layout/(adm-shared)/users/",
+  "/(private)/_auth/_role-layout/(adm-shared)/users/"
 )({
   component: RouteComponent,
 });
@@ -42,9 +42,9 @@ const SAMPLE_USERS = [
       profileUrl: "",
     },
     accountStatus: "active",
-    createdAt: new Date("2024-01-05").toDateString(),
-    updatedAt: new Date("2024-06-10").toDateString(),
-    lastLogin: new Date("2025-01-15").toDateString(),
+    createdAt: "2024-01-05",
+    updatedAt: "2024-06-10",
+    lastLogin: "2025-01-15",
   },
   {
     id: "2",
@@ -57,9 +57,9 @@ const SAMPLE_USERS = [
       profileUrl: "",
     },
     accountStatus: "deactivated",
-    createdAt: new Date("2023-11-20").toDateString(),
-    updatedAt: new Date("2024-12-02").toDateString(),
-    lastLogin: new Date("2025-01-18").toDateString(),
+    createdAt: "2023-11-20",
+    updatedAt: "2024-12-02",
+    lastLogin: "2025-01-18",
   },
   {
     id: "3",
@@ -72,9 +72,9 @@ const SAMPLE_USERS = [
       profileUrl: "",
     },
     accountStatus: "pending",
-    createdAt: new Date("2022-09-14").toDateString(),
-    updatedAt: new Date("2024-10-01").toDateString(),
-    lastLogin: new Date("2025-01-10").toDateString(),
+    createdAt: "2022-09-14",
+    updatedAt: "2024-10-01",
+    lastLogin: "2025-01-10",
   },
   {
     id: "4",
@@ -87,9 +87,9 @@ const SAMPLE_USERS = [
       profileUrl: "",
     },
     accountStatus: "inactive",
-    createdAt: new Date("2024-03-01").toDateString(),
-    updatedAt: new Date("2024-08-12").toDateString(),
-    lastLogin: new Date("2024-09-05").toDateString(),
+    createdAt: "2024-03-01",
+    updatedAt: "2024-08-12",
+    lastLogin: "2024-09-05",
   },
   {
     id: "5",
@@ -102,9 +102,9 @@ const SAMPLE_USERS = [
       profileUrl: "",
     },
     accountStatus: "suspended",
-    createdAt: new Date("2023-05-18").toDateString(),
-    updatedAt: new Date("2024-07-22").toDateString(),
-    lastLogin: new Date("2024-07-30").toDateString(),
+    createdAt: "2023-05-18",
+    updatedAt: "2024-07-22",
+    lastLogin: "2024-07-30",
   },
   {
     id: "6",
@@ -117,9 +117,9 @@ const SAMPLE_USERS = [
       profileUrl: "",
     },
     accountStatus: "active",
-    createdAt: new Date("2024-02-10").toDateString(),
-    updatedAt: new Date("2024-11-15").toDateString(),
-    lastLogin: new Date("2025-01-19").toDateString(),
+    createdAt: "2024-02-10",
+    updatedAt: "2024-11-15",
+    lastLogin: "2025-01-19",
   },
   {
     id: "7",
@@ -132,9 +132,9 @@ const SAMPLE_USERS = [
       profileUrl: "",
     },
     accountStatus: "active",
-    createdAt: new Date("2023-08-09").toDateString(),
-    updatedAt: new Date("2024-09-03").toDateString(),
-    lastLogin: new Date("2025-01-12").toDateString(),
+    createdAt: "2023-08-09",
+    updatedAt: "2024-09-03",
+    lastLogin: "2025-01-12",
   },
   {
     id: "8",
@@ -162,9 +162,9 @@ const SAMPLE_USERS = [
       profileUrl: "",
     },
     accountStatus: "inactive",
-    createdAt: new Date("2024-04-22").toDateString(),
-    updatedAt: new Date("2024-09-11").toDateString(),
-    lastLogin: new Date("2024-09-20").toDateString(),
+    createdAt: "2024-04-22",
+    updatedAt: "2024-09-11",
+    lastLogin: "2024-09-20",
   },
   {
     id: "10",
@@ -177,9 +177,9 @@ const SAMPLE_USERS = [
       profileUrl: "",
     },
     accountStatus: "active",
-    createdAt: new Date("2023-01-30").toDateString(),
-    updatedAt: new Date("2024-12-28").toDateString(),
-    lastLogin: new Date("2025-01-20").toDateString(),
+    createdAt: "2023-01-30",
+    updatedAt: "2024-12-28",
+    lastLogin: "2025-01-20",
   },
   {
     id: "11",
@@ -192,9 +192,9 @@ const SAMPLE_USERS = [
       profileUrl: "",
     },
     accountStatus: "active",
-    createdAt: new Date("2022-06-17").toDateString(),
-    updatedAt: new Date("2024-11-05").toDateString(),
-    lastLogin: new Date("2025-01-16").toDateString(),
+    createdAt: "2022-06-17",
+    updatedAt: "2024-11-05",
+    lastLogin: "2025-01-16",
   },
   {
     id: "12",
@@ -207,9 +207,9 @@ const SAMPLE_USERS = [
       profileUrl: "",
     },
     accountStatus: "active",
-    createdAt: new Date("2024-05-08").toDateString(),
-    updatedAt: new Date("2024-12-01").toDateString(),
-    lastLogin: new Date("2025-01-14").toDateString(),
+    createdAt: "2024-05-08",
+    updatedAt: "2024-12-01",
+    lastLogin: "2025-01-14",
   },
 ];
 
@@ -299,7 +299,7 @@ function Table(props: TableProps) {
             className="btn"
             onClick={() => {
               const modal = document.getElementById(
-                "add-clinician-modal",
+                "add-clinician-modal"
               ) as HTMLDialogElement | null;
               modal?.showModal();
             }}
@@ -311,7 +311,7 @@ function Table(props: TableProps) {
               className="btn"
               onClick={() => {
                 const modal = document.getElementById(
-                  "add-admin-modal",
+                  "add-admin-modal"
                 ) as HTMLDialogElement | null;
                 modal?.showModal();
               }}

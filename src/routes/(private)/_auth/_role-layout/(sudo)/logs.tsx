@@ -14,7 +14,7 @@ import InputDropdown from "~/components/Input/InputDropdown";
 import LoaderTable from "~/components/Loader/LoaderTable";
 import TablePagination from "~/components/Table/TablePagination";
 export const Route = createFileRoute(
-  "/(private)/_auth/_role-layout/(sudo)/logs",
+  "/(private)/_auth/_role-layout/(sudo)/logs"
 )({
   component: RouteComponent,
 });
@@ -52,21 +52,21 @@ function RouteComponent() {
 const SAMPLE_LOGS = [
   {
     id: "1",
-    timestamp: new Date().toLocaleDateString("en-US"),
+    timestamp: "10/01/2024 10:00 AM",
     userId: "user1",
     action: "Login",
     details: "User logged in successfully",
   },
   {
     id: "2",
-    timestamp: new Date().toLocaleDateString("en-US"),
+    timestamp: "10/01/2024 10:05 AM",
     userId: "user2",
     action: "File Upload",
     details: "Uploaded file report.pdf",
   },
   {
     id: "3",
-    timestamp: new Date().toLocaleDateString("en-US"),
+    timestamp: "10/01/2024 10:05 AM",
     userId: "user3",
     action: "Password Change",
     details: "Changed password successfully",
