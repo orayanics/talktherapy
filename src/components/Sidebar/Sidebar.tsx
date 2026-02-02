@@ -1,6 +1,6 @@
 import React from "react";
 import { NAV_BY_ROLE } from "~/config/sidebar";
-import { UserType } from "~/models/user";
+import { UserType } from "~/models/user/user";
 import { FaBars } from "react-icons/fa";
 
 import LogoText from "~/components/Logo/LogoText";

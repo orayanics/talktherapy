@@ -7,7 +7,7 @@ import {
   FaMedkit,
   FaUserFriends,
 } from "react-icons/fa";
-import { UserType } from "~/models/user";
+import { UserType } from "~/models/user/user";
 
 export interface NavItem {
   label: string;
