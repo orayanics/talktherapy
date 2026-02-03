@@ -13,9 +13,7 @@ import { Route as RedirectRouteImport } from './routes/redirect'
 import { Route as DeferredRouteImport } from './routes/deferred'
 import { Route as publicRouteRouteImport } from './routes/(public)/route'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ApiUsersRouteImport } from './routes/api/users'
 import { Route as privateAuthRouteRouteImport } from './routes/(private)/_auth/route'
-import { Route as ApiUsersIdRouteImport } from './routes/api/users.$id'
 import { Route as publicmarketingAboutRouteImport } from './routes/(public)/(marketing)/about'
 import { Route as publicauthAuthPagesRouteRouteImport } from './routes/(public)/(auth)/_auth-pages/route'
 import { Route as privateAuthRoleLayoutRouteRouteImport } from './routes/(private)/_auth/_role-layout/route'
@@ -62,19 +60,9 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiUsersRoute = ApiUsersRouteImport.update({
-  id: '/api/users',
-  path: '/api/users',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const privateAuthRouteRoute = privateAuthRouteRouteImport.update({
   id: '/(private)/_auth',
   getParentRoute: () => rootRouteImport,
-} as any)
-const ApiUsersIdRoute = ApiUsersIdRouteImport.update({
-  id: '/$id',
-  path: '/$id',
-  getParentRoute: () => ApiUsersRoute,
 } as any)
 const publicmarketingAboutRoute = publicmarketingAboutRouteImport.update({
   id: '/(marketing)/about',
@@ -230,9 +218,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/deferred': typeof DeferredRoute
   '/redirect': typeof RedirectRoute
-  '/api/users': typeof ApiUsersRouteWithChildren
   '/about': typeof publicmarketingAboutRoute
-  '/api/users/$id': typeof ApiUsersIdRoute
   '/dashboard': typeof privateAuthRoleLayoutDashboardRoute
   '/profile': typeof privateAuthRoleLayoutProfileRoute
   '/login': typeof publicauthAuthPagesLoginRoute
@@ -257,9 +243,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/deferred': typeof DeferredRoute
   '/redirect': typeof RedirectRoute
-  '/api/users': typeof ApiUsersRouteWithChildren
   '/about': typeof publicmarketingAboutRoute
-  '/api/users/$id': typeof ApiUsersIdRoute
   '/dashboard': typeof privateAuthRoleLayoutDashboardRoute
   '/profile': typeof privateAuthRoleLayoutProfileRoute
   '/login': typeof publicauthAuthPagesLoginRoute
@@ -287,11 +271,9 @@ export interface FileRoutesById {
   '/deferred': typeof DeferredRoute
   '/redirect': typeof RedirectRoute
   '/(private)/_auth': typeof privateAuthRouteRouteWithChildren
-  '/api/users': typeof ApiUsersRouteWithChildren
   '/(private)/_auth/_role-layout': typeof privateAuthRoleLayoutRouteRouteWithChildren
   '/(public)/(auth)/_auth-pages': typeof publicauthAuthPagesRouteRouteWithChildren
   '/(public)/(marketing)/about': typeof publicmarketingAboutRoute
-  '/api/users/$id': typeof ApiUsersIdRoute
   '/(private)/_auth/_role-layout/(adm-shared)': typeof privateAuthRoleLayoutadmSharedRouteRouteWithChildren
   '/(private)/_auth/_role-layout/(admin)': typeof privateAuthRoleLayoutadminRouteRoute
   '/(private)/_auth/_role-layout/(clinician)': typeof privateAuthRoleLayoutclinicianRouteRouteWithChildren
@@ -322,9 +304,7 @@ export interface FileRouteTypes {
     | '/'
     | '/deferred'
     | '/redirect'
-    | '/api/users'
     | '/about'
-    | '/api/users/$id'
     | '/dashboard'
     | '/profile'
     | '/login'
@@ -349,9 +329,7 @@ export interface FileRouteTypes {
     | '/'
     | '/deferred'
     | '/redirect'
-    | '/api/users'
     | '/about'
-    | '/api/users/$id'
     | '/dashboard'
     | '/profile'
     | '/login'
@@ -378,11 +356,9 @@ export interface FileRouteTypes {
     | '/deferred'
     | '/redirect'
     | '/(private)/_auth'
-    | '/api/users'
     | '/(private)/_auth/_role-layout'
     | '/(public)/(auth)/_auth-pages'
     | '/(public)/(marketing)/about'
-    | '/api/users/$id'
     | '/(private)/_auth/_role-layout/(adm-shared)'
     | '/(private)/_auth/_role-layout/(admin)'
     | '/(private)/_auth/_role-layout/(clinician)'
@@ -414,7 +390,6 @@ export interface RootRouteChildren {
   DeferredRoute: typeof DeferredRoute
   RedirectRoute: typeof RedirectRoute
   privateAuthRouteRoute: typeof privateAuthRouteRouteWithChildren
-  ApiUsersRoute: typeof ApiUsersRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -447,26 +422,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/users': {
-      id: '/api/users'
-      path: '/api/users'
-      fullPath: '/api/users'
-      preLoaderRoute: typeof ApiUsersRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/(private)/_auth': {
       id: '/(private)/_auth'
       path: ''
       fullPath: ''
       preLoaderRoute: typeof privateAuthRouteRouteImport
       parentRoute: typeof rootRouteImport
-    }
-    '/api/users/$id': {
-      id: '/api/users/$id'
-      path: '/$id'
-      fullPath: '/api/users/$id'
-      preLoaderRoute: typeof ApiUsersIdRouteImport
-      parentRoute: typeof ApiUsersRoute
     }
     '/(public)/(marketing)/about': {
       id: '/(public)/(marketing)/about'
@@ -825,25 +786,12 @@ const privateAuthRouteRouteChildren: privateAuthRouteRouteChildren = {
 const privateAuthRouteRouteWithChildren =
   privateAuthRouteRoute._addFileChildren(privateAuthRouteRouteChildren)
 
-interface ApiUsersRouteChildren {
-  ApiUsersIdRoute: typeof ApiUsersIdRoute
-}
-
-const ApiUsersRouteChildren: ApiUsersRouteChildren = {
-  ApiUsersIdRoute: ApiUsersIdRoute,
-}
-
-const ApiUsersRouteWithChildren = ApiUsersRoute._addFileChildren(
-  ApiUsersRouteChildren,
-)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   publicRouteRoute: publicRouteRouteWithChildren,
   DeferredRoute: DeferredRoute,
   RedirectRoute: RedirectRoute,
   privateAuthRouteRoute: privateAuthRouteRouteWithChildren,
-  ApiUsersRoute: ApiUsersRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
