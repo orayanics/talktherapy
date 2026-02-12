@@ -6,7 +6,7 @@ export const Route = createFileRoute("/_public/_auth")({
 
 function RouteComponent() {
   return (
-    <div className="px-2 md:p-0 pattern-boxes pattern-color-primary pattern-bg-white pattern-size-8">
+    <div className="h-screen px-2 md:p-0 pattern-boxes pattern-color-primary pattern-bg-white pattern-size-8">
       <Outlet />
     </div>
   );
