@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import RoleBadge from "~/components/Badge/RoleBadge";
 
 import Grid from "~/components/Page/Grid";
 import GridItem from "~/components/Page/GridItem";
@@ -16,8 +15,6 @@ export const Route = createFileRoute("/_private/profile")({
 
 function RouteComponent() {
   const session = useSession();
-  const { account_role } = session;
-
   return (
     <>
       <PageTitle
@@ -27,8 +24,8 @@ function RouteComponent() {
 
       <Grid cols={8} gap={6} className="w-auto md:w-200">
         <GridItem colSpan={8} className="flex flex-col gap-4 order-1">
-          <ProfileUserInfo data={session} />
-          <ProfileAccInfo role={account_role as any} data={session} />
+          <ProfileUserInfo {...session} />
+          <ProfileAccInfo {...session} />
 
           <div className="flex flex-col gap-2 col-span-12">
             <button className="btn btn-primary">Edit Profile</button>

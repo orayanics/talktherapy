@@ -1,6 +1,8 @@
 import RoleBadge from "~/components/Badge/RoleBadge";
 import AccountStatusBadge from "~/components/Badge/AccountStatusBadge";
+
 import { UserResponse } from "~/models/system";
+import { formatToLocalDateTime } from "~/utils/date";
 
 export default function ProfileAccInfo(props: UserResponse) {
   const { account_role, account_status, created_at } = props;
@@ -32,7 +34,7 @@ export default function ProfileAccInfo(props: UserResponse) {
 
         <div className="flex flex-row justify-between gap-2">
           <p className="font-bold">Created At</p>
-          <p>{created_at}</p>
+          <p>{formatToLocalDateTime(created_at)}</p>
         </div>
       </div>
     </>

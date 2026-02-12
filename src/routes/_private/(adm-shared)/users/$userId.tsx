@@ -9,6 +9,7 @@ import ProfileAccInfo from "~/modules/profile/ProfileAccInfo";
 import ProfileUserInfo from "~/modules/profile/ProfileUserInfo";
 
 import { fetchUserDetails } from "~/api/users";
+
 export const Route = createFileRoute("/_private/(adm-shared)/users/$userId")({
   loader: ({ context: { queryClient }, params }) => {
     const { userId } = params;
@@ -20,14 +21,10 @@ export const Route = createFileRoute("/_private/(adm-shared)/users/$userId")({
   component: RouteComponent,
 });
 
-type UserId = "sudo" | "admin" | "clinician" | "patient";
-
 function RouteComponent() {
-  const params = Route.useParams();
-  const userId = params.userId as UserId;
+  // const params = Route.useParams();
+  // const userId = params.userId;
   const data = Route.useLoaderData();
-  const { account_role } = data;
-  console.log(data);
   return (
     <>
       <PageTitle

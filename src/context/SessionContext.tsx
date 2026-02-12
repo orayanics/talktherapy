@@ -1,12 +1,7 @@
 import { createContext, useContext } from "react";
+import { UserResponse } from "~/models/system";
 
-export interface SessionContextValue {
-  name: string;
-  email: string;
-  account_icon: string | null;
-  account_status: string;
-  account_role: string;
-}
+interface SessionContextValue extends UserResponse {}
 
 export const SessionContext = createContext<SessionContextValue | null>(null);
 
