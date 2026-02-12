@@ -28,3 +28,22 @@ export interface ErrorResponse {
   message?: string;
   errors?: Record<string, string[]>;
 }
+
+export interface TableResponse {
+  current_page?: number;
+  data: any[];
+  total?: number;
+  last_page?: number;
+  from?: number | null;
+  to?: number | null;
+  per_page?: number;
+}
+
+export interface TableDataProps {
+  onPageChange: (page: number) => void;
+  onPerPageChange: (perPage: number) => void;
+  isLoading?: boolean;
+  data: TableResponse | null | undefined;
+  page: number;
+  perPage: number;
+}

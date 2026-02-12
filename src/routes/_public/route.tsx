@@ -1,6 +1,5 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 import { fetchSession } from "~/api/auth";
-import { SessionProvider } from "~/context/SessionContext";
 
 export const Route = createFileRoute("/_public")({
   ssr: false,

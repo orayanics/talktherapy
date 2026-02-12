@@ -5,6 +5,9 @@ type TablePaginationProps = {
   page: number;
   perPage: number;
   total: number;
+  lastPage?: number;
+  from?: number | null;
+  to?: number | null;
   onPageChange: (page: number) => void;
   onPerPageChange: (perPage: number) => void;
   perPageOptions?: {
@@ -18,6 +21,9 @@ export default function TablePagination({
   page,
   perPage,
   total,
+  lastPage,
+  from,
+  to,
   onPageChange,
   onPerPageChange,
   perPageOptions = [
@@ -28,9 +34,11 @@ export default function TablePagination({
   ],
   className = "",
 }: TablePaginationProps) {
-  const totalPages = Math.max(1, Math.ceil(total / perPage));
+  const totalPages = Math.max(
+    1,
+    Number.isFinite(lastPage) ? Number(lastPage) : Math.ceil(total / perPage),
+  );
 
-  // Clamp page
   const currentPage = Math.min(Math.max(page, 1), totalPages);
 
   const handlePrev = () => {
@@ -64,6 +72,12 @@ export default function TablePagination({
         </button>
       </div>
       <div className="flex flex-row items-center justify-center md:justify-end gap-2 w-auto">
+        {typeof from === "number" && typeof to === "number" && (
+          <p className="whitespace-nowrap">
+            Showing <strong>{from}</strong>-<strong>{to}</strong> of{" "}
+            <strong>{total}</strong>
+          </p>
+        )}
         <p className="whitespace-nowrap">No. of Items</p>
         <FilterDropdown
           placeholder="Select one"

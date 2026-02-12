@@ -9,17 +9,12 @@ export type Column<T> = {
 export type TableContentProps<T> = {
   columns: Column<T>[];
   data: T[];
-  rowsPerPage?: 5 | 10 | 50;
-  /**
-   * Optional map of accessor keys to custom render functions.
-   * These functions are used when a column does not provide its own `render`.
-   */
   renderers?: Partial<Record<keyof T, (value: any, row: T) => React.ReactNode>>;
 };
 
 function getRowId<T extends { id?: React.Key }>(
   row: T,
-  rowIndex: number
+  rowIndex: number,
 ): React.Key {
   return row.id ?? rowIndex;
 }
@@ -27,7 +22,6 @@ function getRowId<T extends { id?: React.Key }>(
 export default function TableContent<T extends { id?: React.Key }>({
   columns,
   data,
-  rowsPerPage = 5,
   renderers = {},
 }: TableContentProps<T>) {
   return (
@@ -46,7 +40,18 @@ export default function TableContent<T extends { id?: React.Key }>({
           </tr>
         </thead>
         <tbody className=" [&>_tr:last-child>_td]:border-b-0">
-          {data.slice(0, rowsPerPage).map((row, rowIndex) => (
+          {data.length === 0 && (
+            <tr>
+              <td
+                colSpan={columns.length}
+                className="text-center py-4 text-gray-500"
+              >
+                No data available.
+              </td>
+            </tr>
+          )}
+
+          {data.map((row, rowIndex) => (
             <tr
               key={getRowId(row, rowIndex)}
               className="transition-colors hover:bg-gray-50"

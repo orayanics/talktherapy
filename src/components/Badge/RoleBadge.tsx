@@ -3,7 +3,7 @@ interface RoleBadgeProps {
 }
 
 const ROLE_BADGE_STYLES: Record<string, string> = {
-  sudo: "rounded-lg badge bg-red-200 text-red-800",
+  sudo: "rounded-lg badge bg-red-200 text-red-800 truncate",
   admin: "rounded-lg badge bg-amber-200 text-amber-800",
   clinician: "rounded-lg badge bg-blue-200 text-blue-800",
   patient: "rounded-lg badge bg-green-200 text-green-800",
