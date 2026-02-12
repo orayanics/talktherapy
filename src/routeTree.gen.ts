@@ -9,7 +9,6 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as RedirectRouteImport } from './routes/redirect'
 import { Route as DeferredRouteImport } from './routes/deferred'
 import { Route as publicRouteRouteImport } from './routes/(public)/route'
 import { Route as IndexRouteImport } from './routes/index'
@@ -41,11 +40,6 @@ import { Route as privateAuthRoleLayoutadmSharedUsersUserIdRouteImport } from '.
 import { Route as privateAuthRoleLayoutsharedContentContentIdEditRouteImport } from './routes/(private)/_auth/_role-layout/(shared)/content/$contentId.edit'
 import { Route as privateAuthRoleLayoutadmSharedUsersUserIdEditRouteImport } from './routes/(private)/_auth/_role-layout/(adm-shared)/users/$userId.edit'
 
-const RedirectRoute = RedirectRouteImport.update({
-  id: '/redirect',
-  path: '/redirect',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const DeferredRoute = DeferredRouteImport.update({
   id: '/deferred',
   path: '/deferred',
@@ -217,7 +211,6 @@ const privateAuthRoleLayoutadmSharedUsersUserIdEditRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/deferred': typeof DeferredRoute
-  '/redirect': typeof RedirectRoute
   '/about': typeof publicmarketingAboutRoute
   '/dashboard': typeof privateAuthRoleLayoutDashboardRoute
   '/profile': typeof privateAuthRoleLayoutProfileRoute
@@ -242,7 +235,6 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/deferred': typeof DeferredRoute
-  '/redirect': typeof RedirectRoute
   '/about': typeof publicmarketingAboutRoute
   '/dashboard': typeof privateAuthRoleLayoutDashboardRoute
   '/profile': typeof privateAuthRoleLayoutProfileRoute
@@ -269,7 +261,6 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/(public)': typeof publicRouteRouteWithChildren
   '/deferred': typeof DeferredRoute
-  '/redirect': typeof RedirectRoute
   '/(private)/_auth': typeof privateAuthRouteRouteWithChildren
   '/(private)/_auth/_role-layout': typeof privateAuthRoleLayoutRouteRouteWithChildren
   '/(public)/(auth)/_auth-pages': typeof publicauthAuthPagesRouteRouteWithChildren
@@ -303,7 +294,6 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/deferred'
-    | '/redirect'
     | '/about'
     | '/dashboard'
     | '/profile'
@@ -328,7 +318,6 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/deferred'
-    | '/redirect'
     | '/about'
     | '/dashboard'
     | '/profile'
@@ -354,7 +343,6 @@ export interface FileRouteTypes {
     | '/'
     | '/(public)'
     | '/deferred'
-    | '/redirect'
     | '/(private)/_auth'
     | '/(private)/_auth/_role-layout'
     | '/(public)/(auth)/_auth-pages'
@@ -388,19 +376,11 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   publicRouteRoute: typeof publicRouteRouteWithChildren
   DeferredRoute: typeof DeferredRoute
-  RedirectRoute: typeof RedirectRoute
   privateAuthRouteRoute: typeof privateAuthRouteRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/redirect': {
-      id: '/redirect'
-      path: '/redirect'
-      fullPath: '/redirect'
-      preLoaderRoute: typeof RedirectRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/deferred': {
       id: '/deferred'
       path: '/deferred'
@@ -790,7 +770,6 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   publicRouteRoute: publicRouteRouteWithChildren,
   DeferredRoute: DeferredRoute,
-  RedirectRoute: RedirectRoute,
   privateAuthRouteRoute: privateAuthRouteRouteWithChildren,
 }
 export const routeTree = rootRouteImport

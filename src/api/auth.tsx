@@ -11,8 +11,8 @@ export const login = () => {
   const navigate = useNavigate();
   return useMutation({
     mutationFn: async (payload: LoginPayload) => {
-      await api(false).get("/sanctum/csrf-cookie");
       const { data } = await api().post("/auth/login", payload);
+      localStorage.setItem("token", data.token);
       return data;
     },
     onSuccess: () => {
@@ -21,8 +21,21 @@ export const login = () => {
   });
 };
 
+export const useLogout = () => {
+  const navigate = useNavigate();
+  return useMutation({
+    mutationFn: async () => {
+      await api().post("/auth/logout");
+      localStorage.removeItem("token");
+    },
+    onSuccess: () => {
+      navigate({ to: "/login" });
+    },
+  });
+};
+
 export const fetchSession = async () => {
-  const { data } = await api().get("/me");
+  const { data } = await api().get("/auth/me");
   return data;
 };
 
@@ -35,7 +48,6 @@ export const useRegisterPatient = () => {
   const navigate = useNavigate();
   return useMutation({
     mutationFn: async (payload: PatientRegisterPayload) => {
-      await api(false).get("/sanctum/csrf-cookie");
       const { data } = await api().post("/auth/register/patient", payload);
       return data;
     },

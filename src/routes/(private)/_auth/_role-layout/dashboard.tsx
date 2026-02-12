@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 // import { AppointmentStatus, AppointmentStatusValues } from "~/models/content";
 
-// import Grid from "~/components/Page/Grid";
-// import GridItem from "~/components/Page/GridItem";
+import Grid from "~/components/Page/Grid";
+import GridItem from "~/components/Page/GridItem";
 import PageTitle from "~/components/Page/PageTitle";
 
 // import AppointmentStatusBadge from "~/components/Badge/AppointmentStatusBadge";
@@ -22,46 +22,46 @@ function RouteComponent() {
         heading="Dashboard"
         subheading="Overview and different key actions"
       />
-      {/* <Grid cols={12} gap={2}>
+      <Grid cols={12} gap={2}>
         <GridItem colSpan={12} className="flex flex-col gap-4">
           <UserStatsCard />
-          <AppointmentStatsCard />
-          <AppointmentTest />
+          {/* <AppointmentStatsCard /> */}
+          {/* <AppointmentTest /> */}
         </GridItem>
-      </Grid> */}
+      </Grid>
 
       {/* <PatientDashboard /> */}
     </>
   );
 }
 
-// function UserStatsCard() {
-//   const COUNT_ITEMS = [
-//     { key: "patients", title: "Patients", count: 150 },
-//     { key: "clinicians", title: "Clinicians", count: 25 },
-//     { key: "admins", title: "Admins", count: 5 },
-//     { key: "totalUsers", title: "Total Users", count: 180 },
-//   ];
-//   return (
-//     <Grid
-//       cols={12}
-//       gap={4}
-//       className=" rounded-lg [&>div]:bg-white [&>div]:p-4 [&>div]:rounded-lg [&>div]:border
-//     [&>div>h2]:font-medium [&>div>h2]:text-gray-600 [&>div>p]:text-2xl [&>div>p]:font-semibold"
-//     >
-//       {COUNT_ITEMS.map((item) => (
-//         <GridItem
-//           key={item.key}
-//           colSpan={12}
-//           className={`md:col-span-3 ${item.key === "totalUsers" ? "order-first md:order-0" : ""}`}
-//         >
-//           <h2>{item.title}</h2>
-//           <p>{item.count}</p>
-//         </GridItem>
-//       ))}
-//     </Grid>
-//   );
-// }
+function UserStatsCard() {
+  const COUNT_ITEMS = [
+    { key: "patients", title: "Patients", count: 150 },
+    { key: "clinicians", title: "Clinicians", count: 25 },
+    { key: "admins", title: "Admins", count: 5 },
+    { key: "totalUsers", title: "Total Users", count: 180 },
+  ];
+  return (
+    <Grid
+      cols={12}
+      gap={4}
+      className=" rounded-lg [&>div]:bg-white [&>div]:p-4 [&>div]:rounded-lg [&>div]:border
+    [&>div>h2]:font-medium [&>div>h2]:text-gray-600 [&>div>p]:text-2xl [&>div>p]:font-semibold"
+    >
+      {COUNT_ITEMS.map((item) => (
+        <GridItem
+          key={item.key}
+          colSpan={12}
+          className={`md:col-span-3 ${item.key === "totalUsers" ? "order-first md:order-0" : ""}`}
+        >
+          <h2>{item.title}</h2>
+          <p>{item.count}</p>
+        </GridItem>
+      ))}
+    </Grid>
+  );
+}
 
 // function AppointmentStatsCard() {
 //   return (

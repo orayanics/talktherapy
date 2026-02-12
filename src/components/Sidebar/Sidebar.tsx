@@ -5,6 +5,7 @@ import { FaBars } from "react-icons/fa";
 
 import LogoText from "~/components/Logo/LogoText";
 import SidebarNavItems from "./SidebarNavItems";
+import { useLogout } from "~/api/auth";
 
 interface SidebarProps {
   children: React.ReactNode;
@@ -14,6 +15,11 @@ interface SidebarProps {
 export default function Sidebar(props: SidebarProps) {
   const { children, role } = props;
   const navItems = NAV_BY_ROLE[role] ?? [];
+
+  const { mutateAsync: logout } = useLogout();
+  const handleLogout = async () => {
+    await logout();
+  };
 
   return (
     <aside className="drawer lg:drawer-open">
@@ -38,6 +44,9 @@ export default function Sidebar(props: SidebarProps) {
         <div className="menu bg-base-100 border-r min-h-full w-64 gap-2 p-0">
           <LogoText />
           <SidebarNavItems items={navItems} />
+          <button onClick={handleLogout} className="btn btn-info mx-2 mb-4">
+            Logout
+          </button>
         </div>
       </div>
     </aside>

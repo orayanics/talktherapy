@@ -1,6 +1,12 @@
 import React from "react";
 
-export default function ProfileUserInfo() {
+interface ProfileUserInfoProps {
+  data: any;
+}
+
+export default function ProfileUserInfo(props: ProfileUserInfoProps) {
+  const { name, email } = props.data;
+
   return (
     <>
       <p className="font-bold uppercase text-info">User Information</p>
@@ -12,12 +18,12 @@ export default function ProfileUserInfo() {
 
         <div className="flex flex-row justify-between gap-2">
           <p className="font-bold">Full Name</p>
-          <p>Jose Marie</p>
+          <p>{name}</p>
         </div>
 
         <div className="flex flex-row justify-between gap-2">
           <p className="font-bold">Email Address</p>
-          <p>emailnijose@email.com</p>
+          <p>{email}</p>
         </div>
       </div>
     </>

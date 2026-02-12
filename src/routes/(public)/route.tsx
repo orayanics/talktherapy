@@ -5,11 +5,5 @@ export const Route = createFileRoute("/(public)")({
 });
 
 function RouteComponent() {
-  const isAuth = true;
-
-  if (!isAuth) {
-    return <div>You are already logged in.</div>;
-  }
-
   return <Outlet />;
 }

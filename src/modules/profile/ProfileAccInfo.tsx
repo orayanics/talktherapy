@@ -1,12 +1,14 @@
-import React from "react";
 import RoleBadge from "~/components/Badge/RoleBadge";
+import AccountStatusBadge from "~/components/Badge/AccountStatusBadge";
 
 interface ProfileAccInfoProps {
   role: "sudo" | "admin" | "clinician" | "patient";
+  data: any;
 }
 
 export default function ProfileAccInfo(props: ProfileAccInfoProps) {
-  const { role } = props;
+  const { role, data } = props;
+  const { account_status, created_at } = data;
 
   return (
     <>
@@ -26,7 +28,7 @@ export default function ProfileAccInfo(props: ProfileAccInfoProps) {
 
         <div className="flex flex-row justify-between gap-2">
           <p className="font-bold">Account Status</p>
-          <p>Deactivated</p>
+          <AccountStatusBadge status={account_status} />
         </div>
         <div className="flex flex-row justify-between gap-2">
           <p className="font-bold">Last Login</p>
@@ -35,7 +37,7 @@ export default function ProfileAccInfo(props: ProfileAccInfoProps) {
 
         <div className="flex flex-row justify-between gap-2">
           <p className="font-bold">Created At</p>
-          <p>Jan 21, 2025</p>
+          <p>{created_at}</p>
         </div>
       </div>
     </>
