@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { fetchDashboardData } from "~/api/dashboard";
 // import { AppointmentStatus, AppointmentStatusValues } from "~/models/content";
 
 import Grid from "~/components/Page/Grid";
@@ -8,14 +9,20 @@ import PageTitle from "~/components/Page/PageTitle";
 // import AppointmentStatusBadge from "~/components/Badge/AppointmentStatusBadge";
 
 // import PatientDashboard from "~/views/dashboard/patient";
+import AdminSharedDashboard from "~/views/dashboard/adm-shared/";
 
-export const Route = createFileRoute("/_private/dashboard")(
-  {
-    component: RouteComponent,
+export const Route = createFileRoute("/_private/dashboard")({
+  loader: ({ context: { queryClient } }) => {
+    return queryClient.ensureQueryData({
+      queryKey: ["dashboard-data"],
+      queryFn: fetchDashboardData,
+    });
   },
-);
+  component: RouteComponent,
+});
 
 function RouteComponent() {
+  const data = Route.useLoaderData();
   return (
     <>
       <PageTitle
@@ -24,8 +31,7 @@ function RouteComponent() {
       />
       <Grid cols={12} gap={2}>
         <GridItem colSpan={12} className="flex flex-col gap-4">
-          <UserStatsCard />
-          {/* <AppointmentStatsCard /> */}
+          <AdminSharedDashboard data={data} />
           {/* <AppointmentTest /> */}
         </GridItem>
       </Grid>
@@ -34,43 +40,6 @@ function RouteComponent() {
     </>
   );
 }
-
-function UserStatsCard() {
-  const COUNT_ITEMS = [
-    { key: "patients", title: "Patients", count: 150 },
-    { key: "clinicians", title: "Clinicians", count: 25 },
-    { key: "admins", title: "Admins", count: 5 },
-    { key: "totalUsers", title: "Total Users", count: 180 },
-  ];
-  return (
-    <Grid
-      cols={12}
-      gap={4}
-      className=" rounded-lg [&>div]:bg-white [&>div]:p-4 [&>div]:rounded-lg [&>div]:border
-    [&>div>h2]:font-medium [&>div>h2]:text-gray-600 [&>div>p]:text-2xl [&>div>p]:font-semibold"
-    >
-      {COUNT_ITEMS.map((item) => (
-        <GridItem
-          key={item.key}
-          colSpan={12}
-          className={`md:col-span-3 ${item.key === "totalUsers" ? "order-first md:order-0" : ""}`}
-        >
-          <h2>{item.title}</h2>
-          <p>{item.count}</p>
-        </GridItem>
-      ))}
-    </Grid>
-  );
-}
-
-// function AppointmentStatsCard() {
-//   return (
-//     <div className="bg-white p-4 rounded-lg border">
-//       <h2 className="font-medium text-gray-600">Upcoming Appointments</h2>
-//       <p className="text-2xl font-semibold">45</p>
-//     </div>
-//   );
-// }
 
 // function AppointmentTest() {
 //   const APPOINTMENT_DATA = [
