@@ -9,297 +9,260 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as DeferredRouteImport } from './routes/deferred'
-import { Route as publicRouteRouteImport } from './routes/(public)/route'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as privateAuthRouteRouteImport } from './routes/(private)/_auth/route'
-import { Route as publicmarketingAboutRouteImport } from './routes/(public)/(marketing)/about'
-import { Route as publicauthAuthPagesRouteRouteImport } from './routes/(public)/(auth)/_auth-pages/route'
-import { Route as privateAuthRoleLayoutRouteRouteImport } from './routes/(private)/_auth/_role-layout/route'
-import { Route as publicauthAuthPagesRegisterRouteImport } from './routes/(public)/(auth)/_auth-pages/register'
-import { Route as publicauthAuthPagesLoginRouteImport } from './routes/(public)/(auth)/_auth-pages/login'
-import { Route as privateAuthRoleLayoutProfileRouteImport } from './routes/(private)/_auth/_role-layout/profile'
-import { Route as privateAuthRoleLayoutDashboardRouteImport } from './routes/(private)/_auth/_role-layout/dashboard'
-import { Route as privateAuthRoleLayoutsudoRouteRouteImport } from './routes/(private)/_auth/_role-layout/(sudo)/route'
-import { Route as privateAuthRoleLayoutclinicianRouteRouteImport } from './routes/(private)/_auth/_role-layout/(clinician)/route'
-import { Route as privateAuthRoleLayoutadminRouteRouteImport } from './routes/(private)/_auth/_role-layout/(admin)/route'
-import { Route as privateAuthRoleLayoutadmSharedRouteRouteImport } from './routes/(private)/_auth/_role-layout/(adm-shared)/route'
-import { Route as privateAuthRoleLayoutsudoLogsRouteImport } from './routes/(private)/_auth/_role-layout/(sudo)/logs'
-import { Route as privateAuthRoleLayoutsharedSchedulesIndexRouteImport } from './routes/(private)/_auth/_role-layout/(shared)/schedules/index'
-import { Route as privateAuthRoleLayoutsharedContentIndexRouteImport } from './routes/(private)/_auth/_role-layout/(shared)/content/index'
-import { Route as privateAuthRoleLayoutpatientRecordsIndexRouteImport } from './routes/(private)/_auth/_role-layout/(patient)/records/index'
-import { Route as privateAuthRoleLayoutpatientAppointmentsIndexRouteImport } from './routes/(private)/_auth/_role-layout/(patient)/appointments/index'
-import { Route as privateAuthRoleLayoutclinicianPatientsIndexRouteImport } from './routes/(private)/_auth/_role-layout/(clinician)/patients/index'
-import { Route as privateAuthRoleLayoutadmSharedUsersIndexRouteImport } from './routes/(private)/_auth/_role-layout/(adm-shared)/users/index'
-import { Route as privateAuthRoleLayoutsharedSchedulesScheduleIdRouteImport } from './routes/(private)/_auth/_role-layout/(shared)/schedules/$scheduleId'
-import { Route as privateAuthRoleLayoutsharedContentCreateRouteImport } from './routes/(private)/_auth/_role-layout/(shared)/content/create'
-import { Route as privateAuthRoleLayoutsharedContentContentIdRouteImport } from './routes/(private)/_auth/_role-layout/(shared)/content/$contentId'
-import { Route as privateAuthRoleLayoutpatientAppointmentsAppointmentIdRouteImport } from './routes/(private)/_auth/_role-layout/(patient)/appointments/$appointmentId'
-import { Route as privateAuthRoleLayoutclinicianPatientsPatientIdRouteImport } from './routes/(private)/_auth/_role-layout/(clinician)/patients/$patientId'
-import { Route as privateAuthRoleLayoutadmSharedUsersUserIdRouteImport } from './routes/(private)/_auth/_role-layout/(adm-shared)/users/$userId'
-import { Route as privateAuthRoleLayoutsharedContentContentIdEditRouteImport } from './routes/(private)/_auth/_role-layout/(shared)/content/$contentId.edit'
-import { Route as privateAuthRoleLayoutadmSharedUsersUserIdEditRouteImport } from './routes/(private)/_auth/_role-layout/(adm-shared)/users/$userId.edit'
+import { Route as PublicRouteRouteImport } from './routes/_public/route'
+import { Route as PrivateRouteRouteImport } from './routes/_private/route'
+import { Route as PublicIndexRouteImport } from './routes/_public/index'
+import { Route as PrivateProfileRouteImport } from './routes/_private/profile'
+import { Route as PrivateDashboardRouteImport } from './routes/_private/dashboard'
+import { Route as PublicAuthRouteRouteImport } from './routes/_public/_auth/route'
+import { Route as PrivatesudoRouteRouteImport } from './routes/_private/(sudo)/route'
+import { Route as PrivateclinicianRouteRouteImport } from './routes/_private/(clinician)/route'
+import { Route as PrivateadminRouteRouteImport } from './routes/_private/(admin)/route'
+import { Route as PrivateadmSharedRouteRouteImport } from './routes/_private/(adm-shared)/route'
+import { Route as PublicAuthRegisterRouteImport } from './routes/_public/_auth/register'
+import { Route as PublicAuthLoginRouteImport } from './routes/_public/_auth/login'
+import { Route as PrivatesudoLogsRouteImport } from './routes/_private/(sudo)/logs'
+import { Route as PrivatesharedSchedulesIndexRouteImport } from './routes/_private/(shared)/schedules/index'
+import { Route as PrivatesharedContentIndexRouteImport } from './routes/_private/(shared)/content/index'
+import { Route as PrivatepatientRecordsIndexRouteImport } from './routes/_private/(patient)/records/index'
+import { Route as PrivatepatientAppointmentsIndexRouteImport } from './routes/_private/(patient)/appointments/index'
+import { Route as PrivateclinicianPatientsIndexRouteImport } from './routes/_private/(clinician)/patients/index'
+import { Route as PrivateadmSharedUsersIndexRouteImport } from './routes/_private/(adm-shared)/users/index'
+import { Route as PrivatesharedSchedulesScheduleIdRouteImport } from './routes/_private/(shared)/schedules/$scheduleId'
+import { Route as PrivatesharedContentCreateRouteImport } from './routes/_private/(shared)/content/create'
+import { Route as PrivatesharedContentContentIdRouteImport } from './routes/_private/(shared)/content/$contentId'
+import { Route as PrivatepatientAppointmentsAppointmentIdRouteImport } from './routes/_private/(patient)/appointments/$appointmentId'
+import { Route as PrivateclinicianPatientsPatientIdRouteImport } from './routes/_private/(clinician)/patients/$patientId'
+import { Route as PrivateadmSharedUsersUserIdRouteImport } from './routes/_private/(adm-shared)/users/$userId'
+import { Route as PrivatesharedContentContentIdEditRouteImport } from './routes/_private/(shared)/content/$contentId.edit'
+import { Route as PrivateadmSharedUsersUserIdEditRouteImport } from './routes/_private/(adm-shared)/users/$userId.edit'
 
-const DeferredRoute = DeferredRouteImport.update({
-  id: '/deferred',
-  path: '/deferred',
+const PublicRouteRoute = PublicRouteRouteImport.update({
+  id: '/_public',
   getParentRoute: () => rootRouteImport,
 } as any)
-const publicRouteRoute = publicRouteRouteImport.update({
-  id: '/(public)',
+const PrivateRouteRoute = PrivateRouteRouteImport.update({
+  id: '/_private',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
+const PublicIndexRoute = PublicIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => PublicRouteRoute,
 } as any)
-const privateAuthRouteRoute = privateAuthRouteRouteImport.update({
-  id: '/(private)/_auth',
-  getParentRoute: () => rootRouteImport,
+const PrivateProfileRoute = PrivateProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => PrivateRouteRoute,
 } as any)
-const publicmarketingAboutRoute = publicmarketingAboutRouteImport.update({
-  id: '/(marketing)/about',
-  path: '/about',
-  getParentRoute: () => publicRouteRoute,
+const PrivateDashboardRoute = PrivateDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => PrivateRouteRoute,
 } as any)
-const publicauthAuthPagesRouteRoute =
-  publicauthAuthPagesRouteRouteImport.update({
-    id: '/(auth)/_auth-pages',
-    getParentRoute: () => publicRouteRoute,
-  } as any)
-const privateAuthRoleLayoutRouteRoute =
-  privateAuthRoleLayoutRouteRouteImport.update({
-    id: '/_role-layout',
-    getParentRoute: () => privateAuthRouteRoute,
-  } as any)
-const publicauthAuthPagesRegisterRoute =
-  publicauthAuthPagesRegisterRouteImport.update({
-    id: '/register',
-    path: '/register',
-    getParentRoute: () => publicauthAuthPagesRouteRoute,
-  } as any)
-const publicauthAuthPagesLoginRoute =
-  publicauthAuthPagesLoginRouteImport.update({
-    id: '/login',
-    path: '/login',
-    getParentRoute: () => publicauthAuthPagesRouteRoute,
-  } as any)
-const privateAuthRoleLayoutProfileRoute =
-  privateAuthRoleLayoutProfileRouteImport.update({
-    id: '/profile',
-    path: '/profile',
-    getParentRoute: () => privateAuthRoleLayoutRouteRoute,
-  } as any)
-const privateAuthRoleLayoutDashboardRoute =
-  privateAuthRoleLayoutDashboardRouteImport.update({
-    id: '/dashboard',
-    path: '/dashboard',
-    getParentRoute: () => privateAuthRoleLayoutRouteRoute,
-  } as any)
-const privateAuthRoleLayoutsudoRouteRoute =
-  privateAuthRoleLayoutsudoRouteRouteImport.update({
-    id: '/(sudo)',
-    getParentRoute: () => privateAuthRoleLayoutRouteRoute,
-  } as any)
-const privateAuthRoleLayoutclinicianRouteRoute =
-  privateAuthRoleLayoutclinicianRouteRouteImport.update({
-    id: '/(clinician)',
-    getParentRoute: () => privateAuthRoleLayoutRouteRoute,
-  } as any)
-const privateAuthRoleLayoutadminRouteRoute =
-  privateAuthRoleLayoutadminRouteRouteImport.update({
-    id: '/(admin)',
-    getParentRoute: () => privateAuthRoleLayoutRouteRoute,
-  } as any)
-const privateAuthRoleLayoutadmSharedRouteRoute =
-  privateAuthRoleLayoutadmSharedRouteRouteImport.update({
-    id: '/(adm-shared)',
-    getParentRoute: () => privateAuthRoleLayoutRouteRoute,
-  } as any)
-const privateAuthRoleLayoutsudoLogsRoute =
-  privateAuthRoleLayoutsudoLogsRouteImport.update({
-    id: '/logs',
-    path: '/logs',
-    getParentRoute: () => privateAuthRoleLayoutsudoRouteRoute,
-  } as any)
-const privateAuthRoleLayoutsharedSchedulesIndexRoute =
-  privateAuthRoleLayoutsharedSchedulesIndexRouteImport.update({
+const PublicAuthRouteRoute = PublicAuthRouteRouteImport.update({
+  id: '/_auth',
+  getParentRoute: () => PublicRouteRoute,
+} as any)
+const PrivatesudoRouteRoute = PrivatesudoRouteRouteImport.update({
+  id: '/(sudo)',
+  getParentRoute: () => PrivateRouteRoute,
+} as any)
+const PrivateclinicianRouteRoute = PrivateclinicianRouteRouteImport.update({
+  id: '/(clinician)',
+  getParentRoute: () => PrivateRouteRoute,
+} as any)
+const PrivateadminRouteRoute = PrivateadminRouteRouteImport.update({
+  id: '/(admin)',
+  getParentRoute: () => PrivateRouteRoute,
+} as any)
+const PrivateadmSharedRouteRoute = PrivateadmSharedRouteRouteImport.update({
+  id: '/(adm-shared)',
+  getParentRoute: () => PrivateRouteRoute,
+} as any)
+const PublicAuthRegisterRoute = PublicAuthRegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => PublicAuthRouteRoute,
+} as any)
+const PublicAuthLoginRoute = PublicAuthLoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => PublicAuthRouteRoute,
+} as any)
+const PrivatesudoLogsRoute = PrivatesudoLogsRouteImport.update({
+  id: '/logs',
+  path: '/logs',
+  getParentRoute: () => PrivatesudoRouteRoute,
+} as any)
+const PrivatesharedSchedulesIndexRoute =
+  PrivatesharedSchedulesIndexRouteImport.update({
     id: '/(shared)/schedules/',
     path: '/schedules/',
-    getParentRoute: () => privateAuthRoleLayoutRouteRoute,
+    getParentRoute: () => PrivateRouteRoute,
   } as any)
-const privateAuthRoleLayoutsharedContentIndexRoute =
-  privateAuthRoleLayoutsharedContentIndexRouteImport.update({
+const PrivatesharedContentIndexRoute =
+  PrivatesharedContentIndexRouteImport.update({
     id: '/(shared)/content/',
     path: '/content/',
-    getParentRoute: () => privateAuthRoleLayoutRouteRoute,
+    getParentRoute: () => PrivateRouteRoute,
   } as any)
-const privateAuthRoleLayoutpatientRecordsIndexRoute =
-  privateAuthRoleLayoutpatientRecordsIndexRouteImport.update({
+const PrivatepatientRecordsIndexRoute =
+  PrivatepatientRecordsIndexRouteImport.update({
     id: '/(patient)/records/',
     path: '/records/',
-    getParentRoute: () => privateAuthRoleLayoutRouteRoute,
+    getParentRoute: () => PrivateRouteRoute,
   } as any)
-const privateAuthRoleLayoutpatientAppointmentsIndexRoute =
-  privateAuthRoleLayoutpatientAppointmentsIndexRouteImport.update({
+const PrivatepatientAppointmentsIndexRoute =
+  PrivatepatientAppointmentsIndexRouteImport.update({
     id: '/(patient)/appointments/',
     path: '/appointments/',
-    getParentRoute: () => privateAuthRoleLayoutRouteRoute,
+    getParentRoute: () => PrivateRouteRoute,
   } as any)
-const privateAuthRoleLayoutclinicianPatientsIndexRoute =
-  privateAuthRoleLayoutclinicianPatientsIndexRouteImport.update({
+const PrivateclinicianPatientsIndexRoute =
+  PrivateclinicianPatientsIndexRouteImport.update({
     id: '/patients/',
     path: '/patients/',
-    getParentRoute: () => privateAuthRoleLayoutclinicianRouteRoute,
+    getParentRoute: () => PrivateclinicianRouteRoute,
   } as any)
-const privateAuthRoleLayoutadmSharedUsersIndexRoute =
-  privateAuthRoleLayoutadmSharedUsersIndexRouteImport.update({
+const PrivateadmSharedUsersIndexRoute =
+  PrivateadmSharedUsersIndexRouteImport.update({
     id: '/users/',
     path: '/users/',
-    getParentRoute: () => privateAuthRoleLayoutadmSharedRouteRoute,
+    getParentRoute: () => PrivateadmSharedRouteRoute,
   } as any)
-const privateAuthRoleLayoutsharedSchedulesScheduleIdRoute =
-  privateAuthRoleLayoutsharedSchedulesScheduleIdRouteImport.update({
+const PrivatesharedSchedulesScheduleIdRoute =
+  PrivatesharedSchedulesScheduleIdRouteImport.update({
     id: '/(shared)/schedules/$scheduleId',
     path: '/schedules/$scheduleId',
-    getParentRoute: () => privateAuthRoleLayoutRouteRoute,
+    getParentRoute: () => PrivateRouteRoute,
   } as any)
-const privateAuthRoleLayoutsharedContentCreateRoute =
-  privateAuthRoleLayoutsharedContentCreateRouteImport.update({
+const PrivatesharedContentCreateRoute =
+  PrivatesharedContentCreateRouteImport.update({
     id: '/(shared)/content/create',
     path: '/content/create',
-    getParentRoute: () => privateAuthRoleLayoutRouteRoute,
+    getParentRoute: () => PrivateRouteRoute,
   } as any)
-const privateAuthRoleLayoutsharedContentContentIdRoute =
-  privateAuthRoleLayoutsharedContentContentIdRouteImport.update({
+const PrivatesharedContentContentIdRoute =
+  PrivatesharedContentContentIdRouteImport.update({
     id: '/(shared)/content/$contentId',
     path: '/content/$contentId',
-    getParentRoute: () => privateAuthRoleLayoutRouteRoute,
+    getParentRoute: () => PrivateRouteRoute,
   } as any)
-const privateAuthRoleLayoutpatientAppointmentsAppointmentIdRoute =
-  privateAuthRoleLayoutpatientAppointmentsAppointmentIdRouteImport.update({
+const PrivatepatientAppointmentsAppointmentIdRoute =
+  PrivatepatientAppointmentsAppointmentIdRouteImport.update({
     id: '/(patient)/appointments/$appointmentId',
     path: '/appointments/$appointmentId',
-    getParentRoute: () => privateAuthRoleLayoutRouteRoute,
+    getParentRoute: () => PrivateRouteRoute,
   } as any)
-const privateAuthRoleLayoutclinicianPatientsPatientIdRoute =
-  privateAuthRoleLayoutclinicianPatientsPatientIdRouteImport.update({
+const PrivateclinicianPatientsPatientIdRoute =
+  PrivateclinicianPatientsPatientIdRouteImport.update({
     id: '/patients/$patientId',
     path: '/patients/$patientId',
-    getParentRoute: () => privateAuthRoleLayoutclinicianRouteRoute,
+    getParentRoute: () => PrivateclinicianRouteRoute,
   } as any)
-const privateAuthRoleLayoutadmSharedUsersUserIdRoute =
-  privateAuthRoleLayoutadmSharedUsersUserIdRouteImport.update({
+const PrivateadmSharedUsersUserIdRoute =
+  PrivateadmSharedUsersUserIdRouteImport.update({
     id: '/users/$userId',
     path: '/users/$userId',
-    getParentRoute: () => privateAuthRoleLayoutadmSharedRouteRoute,
+    getParentRoute: () => PrivateadmSharedRouteRoute,
   } as any)
-const privateAuthRoleLayoutsharedContentContentIdEditRoute =
-  privateAuthRoleLayoutsharedContentContentIdEditRouteImport.update({
+const PrivatesharedContentContentIdEditRoute =
+  PrivatesharedContentContentIdEditRouteImport.update({
     id: '/edit',
     path: '/edit',
-    getParentRoute: () => privateAuthRoleLayoutsharedContentContentIdRoute,
+    getParentRoute: () => PrivatesharedContentContentIdRoute,
   } as any)
-const privateAuthRoleLayoutadmSharedUsersUserIdEditRoute =
-  privateAuthRoleLayoutadmSharedUsersUserIdEditRouteImport.update({
+const PrivateadmSharedUsersUserIdEditRoute =
+  PrivateadmSharedUsersUserIdEditRouteImport.update({
     id: '/edit',
     path: '/edit',
-    getParentRoute: () => privateAuthRoleLayoutadmSharedUsersUserIdRoute,
+    getParentRoute: () => PrivateadmSharedUsersUserIdRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/deferred': typeof DeferredRoute
-  '/about': typeof publicmarketingAboutRoute
-  '/dashboard': typeof privateAuthRoleLayoutDashboardRoute
-  '/profile': typeof privateAuthRoleLayoutProfileRoute
-  '/login': typeof publicauthAuthPagesLoginRoute
-  '/register': typeof publicauthAuthPagesRegisterRoute
-  '/logs': typeof privateAuthRoleLayoutsudoLogsRoute
-  '/users/$userId': typeof privateAuthRoleLayoutadmSharedUsersUserIdRouteWithChildren
-  '/patients/$patientId': typeof privateAuthRoleLayoutclinicianPatientsPatientIdRoute
-  '/appointments/$appointmentId': typeof privateAuthRoleLayoutpatientAppointmentsAppointmentIdRoute
-  '/content/$contentId': typeof privateAuthRoleLayoutsharedContentContentIdRouteWithChildren
-  '/content/create': typeof privateAuthRoleLayoutsharedContentCreateRoute
-  '/schedules/$scheduleId': typeof privateAuthRoleLayoutsharedSchedulesScheduleIdRoute
-  '/users/': typeof privateAuthRoleLayoutadmSharedUsersIndexRoute
-  '/patients/': typeof privateAuthRoleLayoutclinicianPatientsIndexRoute
-  '/appointments/': typeof privateAuthRoleLayoutpatientAppointmentsIndexRoute
-  '/records/': typeof privateAuthRoleLayoutpatientRecordsIndexRoute
-  '/content/': typeof privateAuthRoleLayoutsharedContentIndexRoute
-  '/schedules/': typeof privateAuthRoleLayoutsharedSchedulesIndexRoute
-  '/users/$userId/edit': typeof privateAuthRoleLayoutadmSharedUsersUserIdEditRoute
-  '/content/$contentId/edit': typeof privateAuthRoleLayoutsharedContentContentIdEditRoute
+  '/': typeof PublicIndexRoute
+  '/dashboard': typeof PrivateDashboardRoute
+  '/profile': typeof PrivateProfileRoute
+  '/logs': typeof PrivatesudoLogsRoute
+  '/login': typeof PublicAuthLoginRoute
+  '/register': typeof PublicAuthRegisterRoute
+  '/users/$userId': typeof PrivateadmSharedUsersUserIdRouteWithChildren
+  '/patients/$patientId': typeof PrivateclinicianPatientsPatientIdRoute
+  '/appointments/$appointmentId': typeof PrivatepatientAppointmentsAppointmentIdRoute
+  '/content/$contentId': typeof PrivatesharedContentContentIdRouteWithChildren
+  '/content/create': typeof PrivatesharedContentCreateRoute
+  '/schedules/$scheduleId': typeof PrivatesharedSchedulesScheduleIdRoute
+  '/users/': typeof PrivateadmSharedUsersIndexRoute
+  '/patients/': typeof PrivateclinicianPatientsIndexRoute
+  '/appointments/': typeof PrivatepatientAppointmentsIndexRoute
+  '/records/': typeof PrivatepatientRecordsIndexRoute
+  '/content/': typeof PrivatesharedContentIndexRoute
+  '/schedules/': typeof PrivatesharedSchedulesIndexRoute
+  '/users/$userId/edit': typeof PrivateadmSharedUsersUserIdEditRoute
+  '/content/$contentId/edit': typeof PrivatesharedContentContentIdEditRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/deferred': typeof DeferredRoute
-  '/about': typeof publicmarketingAboutRoute
-  '/dashboard': typeof privateAuthRoleLayoutDashboardRoute
-  '/profile': typeof privateAuthRoleLayoutProfileRoute
-  '/login': typeof publicauthAuthPagesLoginRoute
-  '/register': typeof publicauthAuthPagesRegisterRoute
-  '/logs': typeof privateAuthRoleLayoutsudoLogsRoute
-  '/users/$userId': typeof privateAuthRoleLayoutadmSharedUsersUserIdRouteWithChildren
-  '/patients/$patientId': typeof privateAuthRoleLayoutclinicianPatientsPatientIdRoute
-  '/appointments/$appointmentId': typeof privateAuthRoleLayoutpatientAppointmentsAppointmentIdRoute
-  '/content/$contentId': typeof privateAuthRoleLayoutsharedContentContentIdRouteWithChildren
-  '/content/create': typeof privateAuthRoleLayoutsharedContentCreateRoute
-  '/schedules/$scheduleId': typeof privateAuthRoleLayoutsharedSchedulesScheduleIdRoute
-  '/users': typeof privateAuthRoleLayoutadmSharedUsersIndexRoute
-  '/patients': typeof privateAuthRoleLayoutclinicianPatientsIndexRoute
-  '/appointments': typeof privateAuthRoleLayoutpatientAppointmentsIndexRoute
-  '/records': typeof privateAuthRoleLayoutpatientRecordsIndexRoute
-  '/content': typeof privateAuthRoleLayoutsharedContentIndexRoute
-  '/schedules': typeof privateAuthRoleLayoutsharedSchedulesIndexRoute
-  '/users/$userId/edit': typeof privateAuthRoleLayoutadmSharedUsersUserIdEditRoute
-  '/content/$contentId/edit': typeof privateAuthRoleLayoutsharedContentContentIdEditRoute
+  '/': typeof PublicIndexRoute
+  '/dashboard': typeof PrivateDashboardRoute
+  '/profile': typeof PrivateProfileRoute
+  '/logs': typeof PrivatesudoLogsRoute
+  '/login': typeof PublicAuthLoginRoute
+  '/register': typeof PublicAuthRegisterRoute
+  '/users/$userId': typeof PrivateadmSharedUsersUserIdRouteWithChildren
+  '/patients/$patientId': typeof PrivateclinicianPatientsPatientIdRoute
+  '/appointments/$appointmentId': typeof PrivatepatientAppointmentsAppointmentIdRoute
+  '/content/$contentId': typeof PrivatesharedContentContentIdRouteWithChildren
+  '/content/create': typeof PrivatesharedContentCreateRoute
+  '/schedules/$scheduleId': typeof PrivatesharedSchedulesScheduleIdRoute
+  '/users': typeof PrivateadmSharedUsersIndexRoute
+  '/patients': typeof PrivateclinicianPatientsIndexRoute
+  '/appointments': typeof PrivatepatientAppointmentsIndexRoute
+  '/records': typeof PrivatepatientRecordsIndexRoute
+  '/content': typeof PrivatesharedContentIndexRoute
+  '/schedules': typeof PrivatesharedSchedulesIndexRoute
+  '/users/$userId/edit': typeof PrivateadmSharedUsersUserIdEditRoute
+  '/content/$contentId/edit': typeof PrivatesharedContentContentIdEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/(public)': typeof publicRouteRouteWithChildren
-  '/deferred': typeof DeferredRoute
-  '/(private)/_auth': typeof privateAuthRouteRouteWithChildren
-  '/(private)/_auth/_role-layout': typeof privateAuthRoleLayoutRouteRouteWithChildren
-  '/(public)/(auth)/_auth-pages': typeof publicauthAuthPagesRouteRouteWithChildren
-  '/(public)/(marketing)/about': typeof publicmarketingAboutRoute
-  '/(private)/_auth/_role-layout/(adm-shared)': typeof privateAuthRoleLayoutadmSharedRouteRouteWithChildren
-  '/(private)/_auth/_role-layout/(admin)': typeof privateAuthRoleLayoutadminRouteRoute
-  '/(private)/_auth/_role-layout/(clinician)': typeof privateAuthRoleLayoutclinicianRouteRouteWithChildren
-  '/(private)/_auth/_role-layout/(sudo)': typeof privateAuthRoleLayoutsudoRouteRouteWithChildren
-  '/(private)/_auth/_role-layout/dashboard': typeof privateAuthRoleLayoutDashboardRoute
-  '/(private)/_auth/_role-layout/profile': typeof privateAuthRoleLayoutProfileRoute
-  '/(public)/(auth)/_auth-pages/login': typeof publicauthAuthPagesLoginRoute
-  '/(public)/(auth)/_auth-pages/register': typeof publicauthAuthPagesRegisterRoute
-  '/(private)/_auth/_role-layout/(sudo)/logs': typeof privateAuthRoleLayoutsudoLogsRoute
-  '/(private)/_auth/_role-layout/(adm-shared)/users/$userId': typeof privateAuthRoleLayoutadmSharedUsersUserIdRouteWithChildren
-  '/(private)/_auth/_role-layout/(clinician)/patients/$patientId': typeof privateAuthRoleLayoutclinicianPatientsPatientIdRoute
-  '/(private)/_auth/_role-layout/(patient)/appointments/$appointmentId': typeof privateAuthRoleLayoutpatientAppointmentsAppointmentIdRoute
-  '/(private)/_auth/_role-layout/(shared)/content/$contentId': typeof privateAuthRoleLayoutsharedContentContentIdRouteWithChildren
-  '/(private)/_auth/_role-layout/(shared)/content/create': typeof privateAuthRoleLayoutsharedContentCreateRoute
-  '/(private)/_auth/_role-layout/(shared)/schedules/$scheduleId': typeof privateAuthRoleLayoutsharedSchedulesScheduleIdRoute
-  '/(private)/_auth/_role-layout/(adm-shared)/users/': typeof privateAuthRoleLayoutadmSharedUsersIndexRoute
-  '/(private)/_auth/_role-layout/(clinician)/patients/': typeof privateAuthRoleLayoutclinicianPatientsIndexRoute
-  '/(private)/_auth/_role-layout/(patient)/appointments/': typeof privateAuthRoleLayoutpatientAppointmentsIndexRoute
-  '/(private)/_auth/_role-layout/(patient)/records/': typeof privateAuthRoleLayoutpatientRecordsIndexRoute
-  '/(private)/_auth/_role-layout/(shared)/content/': typeof privateAuthRoleLayoutsharedContentIndexRoute
-  '/(private)/_auth/_role-layout/(shared)/schedules/': typeof privateAuthRoleLayoutsharedSchedulesIndexRoute
-  '/(private)/_auth/_role-layout/(adm-shared)/users/$userId/edit': typeof privateAuthRoleLayoutadmSharedUsersUserIdEditRoute
-  '/(private)/_auth/_role-layout/(shared)/content/$contentId/edit': typeof privateAuthRoleLayoutsharedContentContentIdEditRoute
+  '/_private': typeof PrivateRouteRouteWithChildren
+  '/_public': typeof PublicRouteRouteWithChildren
+  '/_private/(adm-shared)': typeof PrivateadmSharedRouteRouteWithChildren
+  '/_private/(admin)': typeof PrivateadminRouteRoute
+  '/_private/(clinician)': typeof PrivateclinicianRouteRouteWithChildren
+  '/_private/(sudo)': typeof PrivatesudoRouteRouteWithChildren
+  '/_public/_auth': typeof PublicAuthRouteRouteWithChildren
+  '/_private/dashboard': typeof PrivateDashboardRoute
+  '/_private/profile': typeof PrivateProfileRoute
+  '/_public/': typeof PublicIndexRoute
+  '/_private/(sudo)/logs': typeof PrivatesudoLogsRoute
+  '/_public/_auth/login': typeof PublicAuthLoginRoute
+  '/_public/_auth/register': typeof PublicAuthRegisterRoute
+  '/_private/(adm-shared)/users/$userId': typeof PrivateadmSharedUsersUserIdRouteWithChildren
+  '/_private/(clinician)/patients/$patientId': typeof PrivateclinicianPatientsPatientIdRoute
+  '/_private/(patient)/appointments/$appointmentId': typeof PrivatepatientAppointmentsAppointmentIdRoute
+  '/_private/(shared)/content/$contentId': typeof PrivatesharedContentContentIdRouteWithChildren
+  '/_private/(shared)/content/create': typeof PrivatesharedContentCreateRoute
+  '/_private/(shared)/schedules/$scheduleId': typeof PrivatesharedSchedulesScheduleIdRoute
+  '/_private/(adm-shared)/users/': typeof PrivateadmSharedUsersIndexRoute
+  '/_private/(clinician)/patients/': typeof PrivateclinicianPatientsIndexRoute
+  '/_private/(patient)/appointments/': typeof PrivatepatientAppointmentsIndexRoute
+  '/_private/(patient)/records/': typeof PrivatepatientRecordsIndexRoute
+  '/_private/(shared)/content/': typeof PrivatesharedContentIndexRoute
+  '/_private/(shared)/schedules/': typeof PrivatesharedSchedulesIndexRoute
+  '/_private/(adm-shared)/users/$userId/edit': typeof PrivateadmSharedUsersUserIdEditRoute
+  '/_private/(shared)/content/$contentId/edit': typeof PrivatesharedContentContentIdEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/deferred'
-    | '/about'
     | '/dashboard'
     | '/profile'
+    | '/logs'
     | '/login'
     | '/register'
-    | '/logs'
     | '/users/$userId'
     | '/patients/$patientId'
     | '/appointments/$appointmentId'
@@ -317,13 +280,11 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/deferred'
-    | '/about'
     | '/dashboard'
     | '/profile'
+    | '/logs'
     | '/login'
     | '/register'
-    | '/logs'
     | '/users/$userId'
     | '/patients/$patientId'
     | '/appointments/$appointmentId'
@@ -340,437 +301,377 @@ export interface FileRouteTypes {
     | '/content/$contentId/edit'
   id:
     | '__root__'
-    | '/'
-    | '/(public)'
-    | '/deferred'
-    | '/(private)/_auth'
-    | '/(private)/_auth/_role-layout'
-    | '/(public)/(auth)/_auth-pages'
-    | '/(public)/(marketing)/about'
-    | '/(private)/_auth/_role-layout/(adm-shared)'
-    | '/(private)/_auth/_role-layout/(admin)'
-    | '/(private)/_auth/_role-layout/(clinician)'
-    | '/(private)/_auth/_role-layout/(sudo)'
-    | '/(private)/_auth/_role-layout/dashboard'
-    | '/(private)/_auth/_role-layout/profile'
-    | '/(public)/(auth)/_auth-pages/login'
-    | '/(public)/(auth)/_auth-pages/register'
-    | '/(private)/_auth/_role-layout/(sudo)/logs'
-    | '/(private)/_auth/_role-layout/(adm-shared)/users/$userId'
-    | '/(private)/_auth/_role-layout/(clinician)/patients/$patientId'
-    | '/(private)/_auth/_role-layout/(patient)/appointments/$appointmentId'
-    | '/(private)/_auth/_role-layout/(shared)/content/$contentId'
-    | '/(private)/_auth/_role-layout/(shared)/content/create'
-    | '/(private)/_auth/_role-layout/(shared)/schedules/$scheduleId'
-    | '/(private)/_auth/_role-layout/(adm-shared)/users/'
-    | '/(private)/_auth/_role-layout/(clinician)/patients/'
-    | '/(private)/_auth/_role-layout/(patient)/appointments/'
-    | '/(private)/_auth/_role-layout/(patient)/records/'
-    | '/(private)/_auth/_role-layout/(shared)/content/'
-    | '/(private)/_auth/_role-layout/(shared)/schedules/'
-    | '/(private)/_auth/_role-layout/(adm-shared)/users/$userId/edit'
-    | '/(private)/_auth/_role-layout/(shared)/content/$contentId/edit'
+    | '/_private'
+    | '/_public'
+    | '/_private/(adm-shared)'
+    | '/_private/(admin)'
+    | '/_private/(clinician)'
+    | '/_private/(sudo)'
+    | '/_public/_auth'
+    | '/_private/dashboard'
+    | '/_private/profile'
+    | '/_public/'
+    | '/_private/(sudo)/logs'
+    | '/_public/_auth/login'
+    | '/_public/_auth/register'
+    | '/_private/(adm-shared)/users/$userId'
+    | '/_private/(clinician)/patients/$patientId'
+    | '/_private/(patient)/appointments/$appointmentId'
+    | '/_private/(shared)/content/$contentId'
+    | '/_private/(shared)/content/create'
+    | '/_private/(shared)/schedules/$scheduleId'
+    | '/_private/(adm-shared)/users/'
+    | '/_private/(clinician)/patients/'
+    | '/_private/(patient)/appointments/'
+    | '/_private/(patient)/records/'
+    | '/_private/(shared)/content/'
+    | '/_private/(shared)/schedules/'
+    | '/_private/(adm-shared)/users/$userId/edit'
+    | '/_private/(shared)/content/$contentId/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  publicRouteRoute: typeof publicRouteRouteWithChildren
-  DeferredRoute: typeof DeferredRoute
-  privateAuthRouteRoute: typeof privateAuthRouteRouteWithChildren
+  PrivateRouteRoute: typeof PrivateRouteRouteWithChildren
+  PublicRouteRoute: typeof PublicRouteRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/deferred': {
-      id: '/deferred'
-      path: '/deferred'
-      fullPath: '/deferred'
-      preLoaderRoute: typeof DeferredRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/(public)': {
-      id: '/(public)'
+    '/_public': {
+      id: '/_public'
       path: ''
-      fullPath: ''
-      preLoaderRoute: typeof publicRouteRouteImport
+      fullPath: '/'
+      preLoaderRoute: typeof PublicRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
+    '/_private': {
+      id: '/_private'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof PrivateRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_public/': {
+      id: '/_public/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof PublicIndexRouteImport
+      parentRoute: typeof PublicRouteRoute
     }
-    '/(private)/_auth': {
-      id: '/(private)/_auth'
-      path: ''
-      fullPath: ''
-      preLoaderRoute: typeof privateAuthRouteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/(public)/(marketing)/about': {
-      id: '/(public)/(marketing)/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof publicmarketingAboutRouteImport
-      parentRoute: typeof publicRouteRoute
-    }
-    '/(public)/(auth)/_auth-pages': {
-      id: '/(public)/(auth)/_auth-pages'
-      path: ''
-      fullPath: ''
-      preLoaderRoute: typeof publicauthAuthPagesRouteRouteImport
-      parentRoute: typeof publicRouteRoute
-    }
-    '/(private)/_auth/_role-layout': {
-      id: '/(private)/_auth/_role-layout'
-      path: ''
-      fullPath: ''
-      preLoaderRoute: typeof privateAuthRoleLayoutRouteRouteImport
-      parentRoute: typeof privateAuthRouteRoute
-    }
-    '/(public)/(auth)/_auth-pages/register': {
-      id: '/(public)/(auth)/_auth-pages/register'
-      path: '/register'
-      fullPath: '/register'
-      preLoaderRoute: typeof publicauthAuthPagesRegisterRouteImport
-      parentRoute: typeof publicauthAuthPagesRouteRoute
-    }
-    '/(public)/(auth)/_auth-pages/login': {
-      id: '/(public)/(auth)/_auth-pages/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof publicauthAuthPagesLoginRouteImport
-      parentRoute: typeof publicauthAuthPagesRouteRoute
-    }
-    '/(private)/_auth/_role-layout/profile': {
-      id: '/(private)/_auth/_role-layout/profile'
+    '/_private/profile': {
+      id: '/_private/profile'
       path: '/profile'
       fullPath: '/profile'
-      preLoaderRoute: typeof privateAuthRoleLayoutProfileRouteImport
-      parentRoute: typeof privateAuthRoleLayoutRouteRoute
+      preLoaderRoute: typeof PrivateProfileRouteImport
+      parentRoute: typeof PrivateRouteRoute
     }
-    '/(private)/_auth/_role-layout/dashboard': {
-      id: '/(private)/_auth/_role-layout/dashboard'
+    '/_private/dashboard': {
+      id: '/_private/dashboard'
       path: '/dashboard'
       fullPath: '/dashboard'
-      preLoaderRoute: typeof privateAuthRoleLayoutDashboardRouteImport
-      parentRoute: typeof privateAuthRoleLayoutRouteRoute
+      preLoaderRoute: typeof PrivateDashboardRouteImport
+      parentRoute: typeof PrivateRouteRoute
     }
-    '/(private)/_auth/_role-layout/(sudo)': {
-      id: '/(private)/_auth/_role-layout/(sudo)'
+    '/_public/_auth': {
+      id: '/_public/_auth'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof PublicAuthRouteRouteImport
+      parentRoute: typeof PublicRouteRoute
+    }
+    '/_private/(sudo)': {
+      id: '/_private/(sudo)'
       path: ''
       fullPath: ''
-      preLoaderRoute: typeof privateAuthRoleLayoutsudoRouteRouteImport
-      parentRoute: typeof privateAuthRoleLayoutRouteRoute
+      preLoaderRoute: typeof PrivatesudoRouteRouteImport
+      parentRoute: typeof PrivateRouteRoute
     }
-    '/(private)/_auth/_role-layout/(clinician)': {
-      id: '/(private)/_auth/_role-layout/(clinician)'
+    '/_private/(clinician)': {
+      id: '/_private/(clinician)'
       path: ''
       fullPath: ''
-      preLoaderRoute: typeof privateAuthRoleLayoutclinicianRouteRouteImport
-      parentRoute: typeof privateAuthRoleLayoutRouteRoute
+      preLoaderRoute: typeof PrivateclinicianRouteRouteImport
+      parentRoute: typeof PrivateRouteRoute
     }
-    '/(private)/_auth/_role-layout/(admin)': {
-      id: '/(private)/_auth/_role-layout/(admin)'
+    '/_private/(admin)': {
+      id: '/_private/(admin)'
       path: ''
       fullPath: ''
-      preLoaderRoute: typeof privateAuthRoleLayoutadminRouteRouteImport
-      parentRoute: typeof privateAuthRoleLayoutRouteRoute
+      preLoaderRoute: typeof PrivateadminRouteRouteImport
+      parentRoute: typeof PrivateRouteRoute
     }
-    '/(private)/_auth/_role-layout/(adm-shared)': {
-      id: '/(private)/_auth/_role-layout/(adm-shared)'
+    '/_private/(adm-shared)': {
+      id: '/_private/(adm-shared)'
       path: ''
       fullPath: ''
-      preLoaderRoute: typeof privateAuthRoleLayoutadmSharedRouteRouteImport
-      parentRoute: typeof privateAuthRoleLayoutRouteRoute
+      preLoaderRoute: typeof PrivateadmSharedRouteRouteImport
+      parentRoute: typeof PrivateRouteRoute
     }
-    '/(private)/_auth/_role-layout/(sudo)/logs': {
-      id: '/(private)/_auth/_role-layout/(sudo)/logs'
+    '/_public/_auth/register': {
+      id: '/_public/_auth/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof PublicAuthRegisterRouteImport
+      parentRoute: typeof PublicAuthRouteRoute
+    }
+    '/_public/_auth/login': {
+      id: '/_public/_auth/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof PublicAuthLoginRouteImport
+      parentRoute: typeof PublicAuthRouteRoute
+    }
+    '/_private/(sudo)/logs': {
+      id: '/_private/(sudo)/logs'
       path: '/logs'
       fullPath: '/logs'
-      preLoaderRoute: typeof privateAuthRoleLayoutsudoLogsRouteImport
-      parentRoute: typeof privateAuthRoleLayoutsudoRouteRoute
+      preLoaderRoute: typeof PrivatesudoLogsRouteImport
+      parentRoute: typeof PrivatesudoRouteRoute
     }
-    '/(private)/_auth/_role-layout/(shared)/schedules/': {
-      id: '/(private)/_auth/_role-layout/(shared)/schedules/'
+    '/_private/(shared)/schedules/': {
+      id: '/_private/(shared)/schedules/'
       path: '/schedules'
       fullPath: '/schedules/'
-      preLoaderRoute: typeof privateAuthRoleLayoutsharedSchedulesIndexRouteImport
-      parentRoute: typeof privateAuthRoleLayoutRouteRoute
+      preLoaderRoute: typeof PrivatesharedSchedulesIndexRouteImport
+      parentRoute: typeof PrivateRouteRoute
     }
-    '/(private)/_auth/_role-layout/(shared)/content/': {
-      id: '/(private)/_auth/_role-layout/(shared)/content/'
+    '/_private/(shared)/content/': {
+      id: '/_private/(shared)/content/'
       path: '/content'
       fullPath: '/content/'
-      preLoaderRoute: typeof privateAuthRoleLayoutsharedContentIndexRouteImport
-      parentRoute: typeof privateAuthRoleLayoutRouteRoute
+      preLoaderRoute: typeof PrivatesharedContentIndexRouteImport
+      parentRoute: typeof PrivateRouteRoute
     }
-    '/(private)/_auth/_role-layout/(patient)/records/': {
-      id: '/(private)/_auth/_role-layout/(patient)/records/'
+    '/_private/(patient)/records/': {
+      id: '/_private/(patient)/records/'
       path: '/records'
       fullPath: '/records/'
-      preLoaderRoute: typeof privateAuthRoleLayoutpatientRecordsIndexRouteImport
-      parentRoute: typeof privateAuthRoleLayoutRouteRoute
+      preLoaderRoute: typeof PrivatepatientRecordsIndexRouteImport
+      parentRoute: typeof PrivateRouteRoute
     }
-    '/(private)/_auth/_role-layout/(patient)/appointments/': {
-      id: '/(private)/_auth/_role-layout/(patient)/appointments/'
+    '/_private/(patient)/appointments/': {
+      id: '/_private/(patient)/appointments/'
       path: '/appointments'
       fullPath: '/appointments/'
-      preLoaderRoute: typeof privateAuthRoleLayoutpatientAppointmentsIndexRouteImport
-      parentRoute: typeof privateAuthRoleLayoutRouteRoute
+      preLoaderRoute: typeof PrivatepatientAppointmentsIndexRouteImport
+      parentRoute: typeof PrivateRouteRoute
     }
-    '/(private)/_auth/_role-layout/(clinician)/patients/': {
-      id: '/(private)/_auth/_role-layout/(clinician)/patients/'
+    '/_private/(clinician)/patients/': {
+      id: '/_private/(clinician)/patients/'
       path: '/patients'
       fullPath: '/patients/'
-      preLoaderRoute: typeof privateAuthRoleLayoutclinicianPatientsIndexRouteImport
-      parentRoute: typeof privateAuthRoleLayoutclinicianRouteRoute
+      preLoaderRoute: typeof PrivateclinicianPatientsIndexRouteImport
+      parentRoute: typeof PrivateclinicianRouteRoute
     }
-    '/(private)/_auth/_role-layout/(adm-shared)/users/': {
-      id: '/(private)/_auth/_role-layout/(adm-shared)/users/'
+    '/_private/(adm-shared)/users/': {
+      id: '/_private/(adm-shared)/users/'
       path: '/users'
       fullPath: '/users/'
-      preLoaderRoute: typeof privateAuthRoleLayoutadmSharedUsersIndexRouteImport
-      parentRoute: typeof privateAuthRoleLayoutadmSharedRouteRoute
+      preLoaderRoute: typeof PrivateadmSharedUsersIndexRouteImport
+      parentRoute: typeof PrivateadmSharedRouteRoute
     }
-    '/(private)/_auth/_role-layout/(shared)/schedules/$scheduleId': {
-      id: '/(private)/_auth/_role-layout/(shared)/schedules/$scheduleId'
+    '/_private/(shared)/schedules/$scheduleId': {
+      id: '/_private/(shared)/schedules/$scheduleId'
       path: '/schedules/$scheduleId'
       fullPath: '/schedules/$scheduleId'
-      preLoaderRoute: typeof privateAuthRoleLayoutsharedSchedulesScheduleIdRouteImport
-      parentRoute: typeof privateAuthRoleLayoutRouteRoute
+      preLoaderRoute: typeof PrivatesharedSchedulesScheduleIdRouteImport
+      parentRoute: typeof PrivateRouteRoute
     }
-    '/(private)/_auth/_role-layout/(shared)/content/create': {
-      id: '/(private)/_auth/_role-layout/(shared)/content/create'
+    '/_private/(shared)/content/create': {
+      id: '/_private/(shared)/content/create'
       path: '/content/create'
       fullPath: '/content/create'
-      preLoaderRoute: typeof privateAuthRoleLayoutsharedContentCreateRouteImport
-      parentRoute: typeof privateAuthRoleLayoutRouteRoute
+      preLoaderRoute: typeof PrivatesharedContentCreateRouteImport
+      parentRoute: typeof PrivateRouteRoute
     }
-    '/(private)/_auth/_role-layout/(shared)/content/$contentId': {
-      id: '/(private)/_auth/_role-layout/(shared)/content/$contentId'
+    '/_private/(shared)/content/$contentId': {
+      id: '/_private/(shared)/content/$contentId'
       path: '/content/$contentId'
       fullPath: '/content/$contentId'
-      preLoaderRoute: typeof privateAuthRoleLayoutsharedContentContentIdRouteImport
-      parentRoute: typeof privateAuthRoleLayoutRouteRoute
+      preLoaderRoute: typeof PrivatesharedContentContentIdRouteImport
+      parentRoute: typeof PrivateRouteRoute
     }
-    '/(private)/_auth/_role-layout/(patient)/appointments/$appointmentId': {
-      id: '/(private)/_auth/_role-layout/(patient)/appointments/$appointmentId'
+    '/_private/(patient)/appointments/$appointmentId': {
+      id: '/_private/(patient)/appointments/$appointmentId'
       path: '/appointments/$appointmentId'
       fullPath: '/appointments/$appointmentId'
-      preLoaderRoute: typeof privateAuthRoleLayoutpatientAppointmentsAppointmentIdRouteImport
-      parentRoute: typeof privateAuthRoleLayoutRouteRoute
+      preLoaderRoute: typeof PrivatepatientAppointmentsAppointmentIdRouteImport
+      parentRoute: typeof PrivateRouteRoute
     }
-    '/(private)/_auth/_role-layout/(clinician)/patients/$patientId': {
-      id: '/(private)/_auth/_role-layout/(clinician)/patients/$patientId'
+    '/_private/(clinician)/patients/$patientId': {
+      id: '/_private/(clinician)/patients/$patientId'
       path: '/patients/$patientId'
       fullPath: '/patients/$patientId'
-      preLoaderRoute: typeof privateAuthRoleLayoutclinicianPatientsPatientIdRouteImport
-      parentRoute: typeof privateAuthRoleLayoutclinicianRouteRoute
+      preLoaderRoute: typeof PrivateclinicianPatientsPatientIdRouteImport
+      parentRoute: typeof PrivateclinicianRouteRoute
     }
-    '/(private)/_auth/_role-layout/(adm-shared)/users/$userId': {
-      id: '/(private)/_auth/_role-layout/(adm-shared)/users/$userId'
+    '/_private/(adm-shared)/users/$userId': {
+      id: '/_private/(adm-shared)/users/$userId'
       path: '/users/$userId'
       fullPath: '/users/$userId'
-      preLoaderRoute: typeof privateAuthRoleLayoutadmSharedUsersUserIdRouteImport
-      parentRoute: typeof privateAuthRoleLayoutadmSharedRouteRoute
+      preLoaderRoute: typeof PrivateadmSharedUsersUserIdRouteImport
+      parentRoute: typeof PrivateadmSharedRouteRoute
     }
-    '/(private)/_auth/_role-layout/(shared)/content/$contentId/edit': {
-      id: '/(private)/_auth/_role-layout/(shared)/content/$contentId/edit'
+    '/_private/(shared)/content/$contentId/edit': {
+      id: '/_private/(shared)/content/$contentId/edit'
       path: '/edit'
       fullPath: '/content/$contentId/edit'
-      preLoaderRoute: typeof privateAuthRoleLayoutsharedContentContentIdEditRouteImport
-      parentRoute: typeof privateAuthRoleLayoutsharedContentContentIdRoute
+      preLoaderRoute: typeof PrivatesharedContentContentIdEditRouteImport
+      parentRoute: typeof PrivatesharedContentContentIdRoute
     }
-    '/(private)/_auth/_role-layout/(adm-shared)/users/$userId/edit': {
-      id: '/(private)/_auth/_role-layout/(adm-shared)/users/$userId/edit'
+    '/_private/(adm-shared)/users/$userId/edit': {
+      id: '/_private/(adm-shared)/users/$userId/edit'
       path: '/edit'
       fullPath: '/users/$userId/edit'
-      preLoaderRoute: typeof privateAuthRoleLayoutadmSharedUsersUserIdEditRouteImport
-      parentRoute: typeof privateAuthRoleLayoutadmSharedUsersUserIdRoute
+      preLoaderRoute: typeof PrivateadmSharedUsersUserIdEditRouteImport
+      parentRoute: typeof PrivateadmSharedUsersUserIdRoute
     }
   }
 }
 
-interface publicauthAuthPagesRouteRouteChildren {
-  publicauthAuthPagesLoginRoute: typeof publicauthAuthPagesLoginRoute
-  publicauthAuthPagesRegisterRoute: typeof publicauthAuthPagesRegisterRoute
+interface PrivateadmSharedUsersUserIdRouteChildren {
+  PrivateadmSharedUsersUserIdEditRoute: typeof PrivateadmSharedUsersUserIdEditRoute
 }
 
-const publicauthAuthPagesRouteRouteChildren: publicauthAuthPagesRouteRouteChildren =
+const PrivateadmSharedUsersUserIdRouteChildren: PrivateadmSharedUsersUserIdRouteChildren =
   {
-    publicauthAuthPagesLoginRoute: publicauthAuthPagesLoginRoute,
-    publicauthAuthPagesRegisterRoute: publicauthAuthPagesRegisterRoute,
+    PrivateadmSharedUsersUserIdEditRoute: PrivateadmSharedUsersUserIdEditRoute,
   }
 
-const publicauthAuthPagesRouteRouteWithChildren =
-  publicauthAuthPagesRouteRoute._addFileChildren(
-    publicauthAuthPagesRouteRouteChildren,
+const PrivateadmSharedUsersUserIdRouteWithChildren =
+  PrivateadmSharedUsersUserIdRoute._addFileChildren(
+    PrivateadmSharedUsersUserIdRouteChildren,
   )
 
-interface publicRouteRouteChildren {
-  publicauthAuthPagesRouteRoute: typeof publicauthAuthPagesRouteRouteWithChildren
-  publicmarketingAboutRoute: typeof publicmarketingAboutRoute
+interface PrivateadmSharedRouteRouteChildren {
+  PrivateadmSharedUsersUserIdRoute: typeof PrivateadmSharedUsersUserIdRouteWithChildren
+  PrivateadmSharedUsersIndexRoute: typeof PrivateadmSharedUsersIndexRoute
 }
 
-const publicRouteRouteChildren: publicRouteRouteChildren = {
-  publicauthAuthPagesRouteRoute: publicauthAuthPagesRouteRouteWithChildren,
-  publicmarketingAboutRoute: publicmarketingAboutRoute,
+const PrivateadmSharedRouteRouteChildren: PrivateadmSharedRouteRouteChildren = {
+  PrivateadmSharedUsersUserIdRoute:
+    PrivateadmSharedUsersUserIdRouteWithChildren,
+  PrivateadmSharedUsersIndexRoute: PrivateadmSharedUsersIndexRoute,
 }
 
-const publicRouteRouteWithChildren = publicRouteRoute._addFileChildren(
-  publicRouteRouteChildren,
+const PrivateadmSharedRouteRouteWithChildren =
+  PrivateadmSharedRouteRoute._addFileChildren(
+    PrivateadmSharedRouteRouteChildren,
+  )
+
+interface PrivateclinicianRouteRouteChildren {
+  PrivateclinicianPatientsPatientIdRoute: typeof PrivateclinicianPatientsPatientIdRoute
+  PrivateclinicianPatientsIndexRoute: typeof PrivateclinicianPatientsIndexRoute
+}
+
+const PrivateclinicianRouteRouteChildren: PrivateclinicianRouteRouteChildren = {
+  PrivateclinicianPatientsPatientIdRoute:
+    PrivateclinicianPatientsPatientIdRoute,
+  PrivateclinicianPatientsIndexRoute: PrivateclinicianPatientsIndexRoute,
+}
+
+const PrivateclinicianRouteRouteWithChildren =
+  PrivateclinicianRouteRoute._addFileChildren(
+    PrivateclinicianRouteRouteChildren,
+  )
+
+interface PrivatesudoRouteRouteChildren {
+  PrivatesudoLogsRoute: typeof PrivatesudoLogsRoute
+}
+
+const PrivatesudoRouteRouteChildren: PrivatesudoRouteRouteChildren = {
+  PrivatesudoLogsRoute: PrivatesudoLogsRoute,
+}
+
+const PrivatesudoRouteRouteWithChildren =
+  PrivatesudoRouteRoute._addFileChildren(PrivatesudoRouteRouteChildren)
+
+interface PrivatesharedContentContentIdRouteChildren {
+  PrivatesharedContentContentIdEditRoute: typeof PrivatesharedContentContentIdEditRoute
+}
+
+const PrivatesharedContentContentIdRouteChildren: PrivatesharedContentContentIdRouteChildren =
+  {
+    PrivatesharedContentContentIdEditRoute:
+      PrivatesharedContentContentIdEditRoute,
+  }
+
+const PrivatesharedContentContentIdRouteWithChildren =
+  PrivatesharedContentContentIdRoute._addFileChildren(
+    PrivatesharedContentContentIdRouteChildren,
+  )
+
+interface PrivateRouteRouteChildren {
+  PrivateadmSharedRouteRoute: typeof PrivateadmSharedRouteRouteWithChildren
+  PrivateadminRouteRoute: typeof PrivateadminRouteRoute
+  PrivateclinicianRouteRoute: typeof PrivateclinicianRouteRouteWithChildren
+  PrivatesudoRouteRoute: typeof PrivatesudoRouteRouteWithChildren
+  PrivateDashboardRoute: typeof PrivateDashboardRoute
+  PrivateProfileRoute: typeof PrivateProfileRoute
+  PrivatepatientAppointmentsAppointmentIdRoute: typeof PrivatepatientAppointmentsAppointmentIdRoute
+  PrivatesharedContentContentIdRoute: typeof PrivatesharedContentContentIdRouteWithChildren
+  PrivatesharedContentCreateRoute: typeof PrivatesharedContentCreateRoute
+  PrivatesharedSchedulesScheduleIdRoute: typeof PrivatesharedSchedulesScheduleIdRoute
+  PrivatepatientAppointmentsIndexRoute: typeof PrivatepatientAppointmentsIndexRoute
+  PrivatepatientRecordsIndexRoute: typeof PrivatepatientRecordsIndexRoute
+  PrivatesharedContentIndexRoute: typeof PrivatesharedContentIndexRoute
+  PrivatesharedSchedulesIndexRoute: typeof PrivatesharedSchedulesIndexRoute
+}
+
+const PrivateRouteRouteChildren: PrivateRouteRouteChildren = {
+  PrivateadmSharedRouteRoute: PrivateadmSharedRouteRouteWithChildren,
+  PrivateadminRouteRoute: PrivateadminRouteRoute,
+  PrivateclinicianRouteRoute: PrivateclinicianRouteRouteWithChildren,
+  PrivatesudoRouteRoute: PrivatesudoRouteRouteWithChildren,
+  PrivateDashboardRoute: PrivateDashboardRoute,
+  PrivateProfileRoute: PrivateProfileRoute,
+  PrivatepatientAppointmentsAppointmentIdRoute:
+    PrivatepatientAppointmentsAppointmentIdRoute,
+  PrivatesharedContentContentIdRoute:
+    PrivatesharedContentContentIdRouteWithChildren,
+  PrivatesharedContentCreateRoute: PrivatesharedContentCreateRoute,
+  PrivatesharedSchedulesScheduleIdRoute: PrivatesharedSchedulesScheduleIdRoute,
+  PrivatepatientAppointmentsIndexRoute: PrivatepatientAppointmentsIndexRoute,
+  PrivatepatientRecordsIndexRoute: PrivatepatientRecordsIndexRoute,
+  PrivatesharedContentIndexRoute: PrivatesharedContentIndexRoute,
+  PrivatesharedSchedulesIndexRoute: PrivatesharedSchedulesIndexRoute,
+}
+
+const PrivateRouteRouteWithChildren = PrivateRouteRoute._addFileChildren(
+  PrivateRouteRouteChildren,
 )
 
-interface privateAuthRoleLayoutadmSharedUsersUserIdRouteChildren {
-  privateAuthRoleLayoutadmSharedUsersUserIdEditRoute: typeof privateAuthRoleLayoutadmSharedUsersUserIdEditRoute
+interface PublicAuthRouteRouteChildren {
+  PublicAuthLoginRoute: typeof PublicAuthLoginRoute
+  PublicAuthRegisterRoute: typeof PublicAuthRegisterRoute
 }
 
-const privateAuthRoleLayoutadmSharedUsersUserIdRouteChildren: privateAuthRoleLayoutadmSharedUsersUserIdRouteChildren =
-  {
-    privateAuthRoleLayoutadmSharedUsersUserIdEditRoute:
-      privateAuthRoleLayoutadmSharedUsersUserIdEditRoute,
-  }
-
-const privateAuthRoleLayoutadmSharedUsersUserIdRouteWithChildren =
-  privateAuthRoleLayoutadmSharedUsersUserIdRoute._addFileChildren(
-    privateAuthRoleLayoutadmSharedUsersUserIdRouteChildren,
-  )
-
-interface privateAuthRoleLayoutadmSharedRouteRouteChildren {
-  privateAuthRoleLayoutadmSharedUsersUserIdRoute: typeof privateAuthRoleLayoutadmSharedUsersUserIdRouteWithChildren
-  privateAuthRoleLayoutadmSharedUsersIndexRoute: typeof privateAuthRoleLayoutadmSharedUsersIndexRoute
+const PublicAuthRouteRouteChildren: PublicAuthRouteRouteChildren = {
+  PublicAuthLoginRoute: PublicAuthLoginRoute,
+  PublicAuthRegisterRoute: PublicAuthRegisterRoute,
 }
 
-const privateAuthRoleLayoutadmSharedRouteRouteChildren: privateAuthRoleLayoutadmSharedRouteRouteChildren =
-  {
-    privateAuthRoleLayoutadmSharedUsersUserIdRoute:
-      privateAuthRoleLayoutadmSharedUsersUserIdRouteWithChildren,
-    privateAuthRoleLayoutadmSharedUsersIndexRoute:
-      privateAuthRoleLayoutadmSharedUsersIndexRoute,
-  }
+const PublicAuthRouteRouteWithChildren = PublicAuthRouteRoute._addFileChildren(
+  PublicAuthRouteRouteChildren,
+)
 
-const privateAuthRoleLayoutadmSharedRouteRouteWithChildren =
-  privateAuthRoleLayoutadmSharedRouteRoute._addFileChildren(
-    privateAuthRoleLayoutadmSharedRouteRouteChildren,
-  )
-
-interface privateAuthRoleLayoutclinicianRouteRouteChildren {
-  privateAuthRoleLayoutclinicianPatientsPatientIdRoute: typeof privateAuthRoleLayoutclinicianPatientsPatientIdRoute
-  privateAuthRoleLayoutclinicianPatientsIndexRoute: typeof privateAuthRoleLayoutclinicianPatientsIndexRoute
+interface PublicRouteRouteChildren {
+  PublicAuthRouteRoute: typeof PublicAuthRouteRouteWithChildren
+  PublicIndexRoute: typeof PublicIndexRoute
 }
 
-const privateAuthRoleLayoutclinicianRouteRouteChildren: privateAuthRoleLayoutclinicianRouteRouteChildren =
-  {
-    privateAuthRoleLayoutclinicianPatientsPatientIdRoute:
-      privateAuthRoleLayoutclinicianPatientsPatientIdRoute,
-    privateAuthRoleLayoutclinicianPatientsIndexRoute:
-      privateAuthRoleLayoutclinicianPatientsIndexRoute,
-  }
-
-const privateAuthRoleLayoutclinicianRouteRouteWithChildren =
-  privateAuthRoleLayoutclinicianRouteRoute._addFileChildren(
-    privateAuthRoleLayoutclinicianRouteRouteChildren,
-  )
-
-interface privateAuthRoleLayoutsudoRouteRouteChildren {
-  privateAuthRoleLayoutsudoLogsRoute: typeof privateAuthRoleLayoutsudoLogsRoute
+const PublicRouteRouteChildren: PublicRouteRouteChildren = {
+  PublicAuthRouteRoute: PublicAuthRouteRouteWithChildren,
+  PublicIndexRoute: PublicIndexRoute,
 }
 
-const privateAuthRoleLayoutsudoRouteRouteChildren: privateAuthRoleLayoutsudoRouteRouteChildren =
-  {
-    privateAuthRoleLayoutsudoLogsRoute: privateAuthRoleLayoutsudoLogsRoute,
-  }
-
-const privateAuthRoleLayoutsudoRouteRouteWithChildren =
-  privateAuthRoleLayoutsudoRouteRoute._addFileChildren(
-    privateAuthRoleLayoutsudoRouteRouteChildren,
-  )
-
-interface privateAuthRoleLayoutsharedContentContentIdRouteChildren {
-  privateAuthRoleLayoutsharedContentContentIdEditRoute: typeof privateAuthRoleLayoutsharedContentContentIdEditRoute
-}
-
-const privateAuthRoleLayoutsharedContentContentIdRouteChildren: privateAuthRoleLayoutsharedContentContentIdRouteChildren =
-  {
-    privateAuthRoleLayoutsharedContentContentIdEditRoute:
-      privateAuthRoleLayoutsharedContentContentIdEditRoute,
-  }
-
-const privateAuthRoleLayoutsharedContentContentIdRouteWithChildren =
-  privateAuthRoleLayoutsharedContentContentIdRoute._addFileChildren(
-    privateAuthRoleLayoutsharedContentContentIdRouteChildren,
-  )
-
-interface privateAuthRoleLayoutRouteRouteChildren {
-  privateAuthRoleLayoutadmSharedRouteRoute: typeof privateAuthRoleLayoutadmSharedRouteRouteWithChildren
-  privateAuthRoleLayoutadminRouteRoute: typeof privateAuthRoleLayoutadminRouteRoute
-  privateAuthRoleLayoutclinicianRouteRoute: typeof privateAuthRoleLayoutclinicianRouteRouteWithChildren
-  privateAuthRoleLayoutsudoRouteRoute: typeof privateAuthRoleLayoutsudoRouteRouteWithChildren
-  privateAuthRoleLayoutDashboardRoute: typeof privateAuthRoleLayoutDashboardRoute
-  privateAuthRoleLayoutProfileRoute: typeof privateAuthRoleLayoutProfileRoute
-  privateAuthRoleLayoutpatientAppointmentsAppointmentIdRoute: typeof privateAuthRoleLayoutpatientAppointmentsAppointmentIdRoute
-  privateAuthRoleLayoutsharedContentContentIdRoute: typeof privateAuthRoleLayoutsharedContentContentIdRouteWithChildren
-  privateAuthRoleLayoutsharedContentCreateRoute: typeof privateAuthRoleLayoutsharedContentCreateRoute
-  privateAuthRoleLayoutsharedSchedulesScheduleIdRoute: typeof privateAuthRoleLayoutsharedSchedulesScheduleIdRoute
-  privateAuthRoleLayoutpatientAppointmentsIndexRoute: typeof privateAuthRoleLayoutpatientAppointmentsIndexRoute
-  privateAuthRoleLayoutpatientRecordsIndexRoute: typeof privateAuthRoleLayoutpatientRecordsIndexRoute
-  privateAuthRoleLayoutsharedContentIndexRoute: typeof privateAuthRoleLayoutsharedContentIndexRoute
-  privateAuthRoleLayoutsharedSchedulesIndexRoute: typeof privateAuthRoleLayoutsharedSchedulesIndexRoute
-}
-
-const privateAuthRoleLayoutRouteRouteChildren: privateAuthRoleLayoutRouteRouteChildren =
-  {
-    privateAuthRoleLayoutadmSharedRouteRoute:
-      privateAuthRoleLayoutadmSharedRouteRouteWithChildren,
-    privateAuthRoleLayoutadminRouteRoute: privateAuthRoleLayoutadminRouteRoute,
-    privateAuthRoleLayoutclinicianRouteRoute:
-      privateAuthRoleLayoutclinicianRouteRouteWithChildren,
-    privateAuthRoleLayoutsudoRouteRoute:
-      privateAuthRoleLayoutsudoRouteRouteWithChildren,
-    privateAuthRoleLayoutDashboardRoute: privateAuthRoleLayoutDashboardRoute,
-    privateAuthRoleLayoutProfileRoute: privateAuthRoleLayoutProfileRoute,
-    privateAuthRoleLayoutpatientAppointmentsAppointmentIdRoute:
-      privateAuthRoleLayoutpatientAppointmentsAppointmentIdRoute,
-    privateAuthRoleLayoutsharedContentContentIdRoute:
-      privateAuthRoleLayoutsharedContentContentIdRouteWithChildren,
-    privateAuthRoleLayoutsharedContentCreateRoute:
-      privateAuthRoleLayoutsharedContentCreateRoute,
-    privateAuthRoleLayoutsharedSchedulesScheduleIdRoute:
-      privateAuthRoleLayoutsharedSchedulesScheduleIdRoute,
-    privateAuthRoleLayoutpatientAppointmentsIndexRoute:
-      privateAuthRoleLayoutpatientAppointmentsIndexRoute,
-    privateAuthRoleLayoutpatientRecordsIndexRoute:
-      privateAuthRoleLayoutpatientRecordsIndexRoute,
-    privateAuthRoleLayoutsharedContentIndexRoute:
-      privateAuthRoleLayoutsharedContentIndexRoute,
-    privateAuthRoleLayoutsharedSchedulesIndexRoute:
-      privateAuthRoleLayoutsharedSchedulesIndexRoute,
-  }
-
-const privateAuthRoleLayoutRouteRouteWithChildren =
-  privateAuthRoleLayoutRouteRoute._addFileChildren(
-    privateAuthRoleLayoutRouteRouteChildren,
-  )
-
-interface privateAuthRouteRouteChildren {
-  privateAuthRoleLayoutRouteRoute: typeof privateAuthRoleLayoutRouteRouteWithChildren
-}
-
-const privateAuthRouteRouteChildren: privateAuthRouteRouteChildren = {
-  privateAuthRoleLayoutRouteRoute: privateAuthRoleLayoutRouteRouteWithChildren,
-}
-
-const privateAuthRouteRouteWithChildren =
-  privateAuthRouteRoute._addFileChildren(privateAuthRouteRouteChildren)
+const PublicRouteRouteWithChildren = PublicRouteRoute._addFileChildren(
+  PublicRouteRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  publicRouteRoute: publicRouteRouteWithChildren,
-  DeferredRoute: DeferredRoute,
-  privateAuthRouteRoute: privateAuthRouteRouteWithChildren,
+  PrivateRouteRoute: PrivateRouteRouteWithChildren,
+  PublicRouteRoute: PublicRouteRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
