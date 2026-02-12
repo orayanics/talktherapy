@@ -14,7 +14,7 @@ export const fetchUsers = async ({
   page?: number;
   perPage?: number;
 }) => {
-  const { data } = await api().get(`/users/${access}`, {
+  const { data } = await api().get(`/list/users/${access}`, {
     params: {
       account_status,
       account_role,
@@ -23,5 +23,10 @@ export const fetchUsers = async ({
     },
   });
 
+  return data;
+};
+
+export const fetchUserDetails = async (userId: string) => {
+  const { data } = await api().get(`/users/${userId}`);
   return data;
 };

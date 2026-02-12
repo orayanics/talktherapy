@@ -1,11 +1,8 @@
 import React from "react";
+import { UserResponse } from "~/models/system";
 
-interface ProfileUserInfoProps {
-  data: any;
-}
-
-export default function ProfileUserInfo(props: ProfileUserInfoProps) {
-  const { name, email } = props.data;
+export default function ProfileUserInfo(props: UserResponse) {
+  const { name, email } = props;
 
   return (
     <>

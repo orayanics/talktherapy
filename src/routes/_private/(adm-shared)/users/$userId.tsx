@@ -8,9 +8,15 @@ import PageTitle from "~/components/Page/PageTitle";
 import ProfileAccInfo from "~/modules/profile/ProfileAccInfo";
 import ProfileUserInfo from "~/modules/profile/ProfileUserInfo";
 
-export const Route = createFileRoute(
-  "/_private/(adm-shared)/users/$userId",
-)({
+import { fetchUserDetails } from "~/api/users";
+export const Route = createFileRoute("/_private/(adm-shared)/users/$userId")({
+  loader: ({ context: { queryClient }, params }) => {
+    const { userId } = params;
+    return queryClient.ensureQueryData({
+      queryKey: ["user-details", userId],
+      queryFn: () => fetchUserDetails(userId),
+    });
+  },
   component: RouteComponent,
 });
 
@@ -19,7 +25,9 @@ type UserId = "sudo" | "admin" | "clinician" | "patient";
 function RouteComponent() {
   const params = Route.useParams();
   const userId = params.userId as UserId;
-
+  const data = Route.useLoaderData();
+  const { account_role } = data;
+  console.log(data);
   return (
     <>
       <PageTitle
@@ -29,8 +37,8 @@ function RouteComponent() {
 
       <Grid cols={8} gap={6} className="w-auto md:w-200">
         <GridItem colSpan={8} className="flex flex-col gap-4 order-1">
-          <ProfileAccInfo role={userId} />
-          <ProfileUserInfo />
+          <ProfileAccInfo {...data} />
+          <ProfileUserInfo {...data} />
 
           <div className="flex flex-col gap-2 col-span-12">
             <button className="btn btn-primary">Deactivate User</button>

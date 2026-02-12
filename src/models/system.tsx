@@ -47,3 +47,22 @@ export interface TableDataProps {
   page: number;
   perPage: number;
 }
+
+export interface UserResponse {
+  id: string;
+  name: string;
+  email: string;
+  email_verified_at: string | null;
+  created_at: string;
+  updated_at: string;
+  account_status: "active" | "inactive" | "pending" | "suspended";
+  account_role: "sudo" | "admin" | "clinician" | "patient";
+  account_permissions: string[] | null;
+  account_icon: string | null;
+  created_by: string;
+  updated_by: string | null;
+  deleted_at: string | null;
+  patient: any | null;
+  clinician: any | null;
+  admin: any | null;
+}
