@@ -18,3 +18,13 @@ export interface NotificationClient {
   createdAt: Date;
   updatedAt: Date;
 }
+
+// Laravel API Response
+export interface ResponseData {
+  data: string[];
+}
+
+export interface ErrorResponse {
+  message?: string;
+  errors?: Record<string, string[]>;
+}

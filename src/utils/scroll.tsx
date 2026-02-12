@@ -19,8 +19,6 @@ export const useScrollToBottom = () => {
 
     contentElement.addEventListener("scroll", handleScroll);
 
-    handleScroll();
-
     return () => {
       contentElement.removeEventListener("scroll", handleScroll);
     };

@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useScrollToBottom } from "~/utils/scroll";
 
 import ModalHeader from "~/components/Modal/ModalHeader";
@@ -7,20 +6,16 @@ import ModalFooter from "~/components/Modal/ModalFooter";
 
 interface ConsentsPatientProps {
   isOpen: boolean;
-  isAgree: boolean;
   onClose: () => void;
   onAgree: (agreed: boolean) => void;
 }
 
 export default function ConsentsPatient(props: ConsentsPatientProps) {
-  const { isOpen, isAgree, onClose, onAgree } = props;
-  const [consentValue, setConsentValue] = useState(isAgree);
+  const { isOpen = false, onClose, onAgree } = props;
   const { isBottom, bottomRef } = useScrollToBottom();
 
-  const handleConsent = () => onAgree(consentValue);
-  const handleClose = () => {
-    onClose();
-  };
+  const handleConsent = () => onAgree(true);
+  const handleClose = () => onClose();
 
   return (
     <ModalBody isOpen={isOpen} onClose={handleClose}>
@@ -38,17 +33,6 @@ export default function ConsentsPatient(props: ConsentsPatientProps) {
         </div>
       </div>
 
-      <label className="flex items-center gap-2 mt-4">
-        <input
-          type="checkbox"
-          className="checkbox checkbox-sm"
-          checked={consentValue}
-          onChange={(e) => setConsentValue(e.target.checked)}
-          disabled={!isBottom && !consentValue}
-        />
-        <span>I have read and agree to the terms and conditions</span>
-      </label>
-
       <ModalFooter>
         <button className="btn btn-ghost" type="button" onClick={handleClose}>
           Close
@@ -57,7 +41,7 @@ export default function ConsentsPatient(props: ConsentsPatientProps) {
           type="button"
           className="btn btn-primary"
           onClick={handleConsent}
-          disabled={!consentValue || !isBottom}
+          disabled={false || !isBottom}
         >
           Agree
         </button>
@@ -109,7 +93,7 @@ function ConsentBody() {
         {EVALUATION_THERAPY.map((item) => {
           const { heading, content } = item;
           return (
-            <li>
+            <li key={heading}>
               <p className="font-semibold">{heading}</p>
               <p>{content}</p>
             </li>
@@ -121,7 +105,7 @@ function ConsentBody() {
         {ASSESSMENT_DOCUMENTATION.map((item) => {
           const { heading, content } = item;
           return (
-            <li>
+            <li key={heading}>
               <p className="font-semibold">{heading}</p>
               <p>{content}</p>
             </li>

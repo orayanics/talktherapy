@@ -25,7 +25,7 @@ export default function ModalBody(props: ModalBodyProps) {
   return (
     <dialog
       ref={dialogRef}
-      className={`modal modal-middle ${className}`}
+      className={`modal modal-middle ${className || ""}`}
       onClose={onClose}
       onCancel={onClose}
     >

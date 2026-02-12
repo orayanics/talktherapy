@@ -6,8 +6,8 @@ export const Route = createFileRoute("/(public)/(auth)/_auth-pages")({
 
 function RouteComponent() {
   return (
-    <main className="px-2 md:p-0 pattern-boxes pattern-color-primary pattern-bg-white pattern-size-8">
+    <div className="px-2 md:p-0 pattern-boxes pattern-color-primary pattern-bg-white pattern-size-8">
       <Outlet />
-    </main>
+    </div>
   );
 }

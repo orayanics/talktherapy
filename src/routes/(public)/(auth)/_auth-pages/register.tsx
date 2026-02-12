@@ -3,15 +3,27 @@ import { createFileRoute } from "@tanstack/react-router";
 import RegisterClinician from "~/modules/register/RegisterClinician";
 import RegisterPatient from "~/modules/register/RegisterPatient";
 
+import { useGetPublicDiagnoses } from "~/api/public";
+
 export const Route = createFileRoute("/(public)/(auth)/_auth-pages/register")({
+  loader: ({ context: { queryClient } }) => {
+    return queryClient.ensureQueryData(useGetPublicDiagnoses);
+  },
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  const [registerType, setRegisterType] = useState(1);
+  const publicDiagnoses = Route.useLoaderData();
+  const [registerType, setRegisterType] = useState(0);
+  const showRegister =
+    registerType === 0 ? (
+      <RegisterPatient data={publicDiagnoses} />
+    ) : (
+      <RegisterClinician />
+    );
 
   return (
-    <main className="flex items-center container min-h-screen mx-auto">
+    <div className="flex items-center container min-h-screen mx-auto">
       <div className="grid grid-cols-1 md:grid-cols-12 gap-2 mx-auto">
         <div className="my-auto hidden md:flex flex-col justify-center h-100 col-span-6 bg-white/60 relative">
           <div className="flex flex-col gap-4 p-6">
@@ -33,9 +45,9 @@ function RouteComponent() {
                   <input
                     className="radio radio-xs radio-info"
                     type="radio"
-                    value={1}
-                    checked={registerType === 1}
-                    onChange={() => setRegisterType(1)}
+                    value={0}
+                    checked={registerType === 0}
+                    onChange={() => setRegisterType(0)}
                   />
                   Patient
                 </label>
@@ -44,18 +56,18 @@ function RouteComponent() {
                   <input
                     className="radio radio-xs radio-info"
                     type="radio"
-                    value={0}
-                    checked={registerType === 0}
-                    onChange={() => setRegisterType(0)}
+                    value={1}
+                    checked={registerType === 1}
+                    onChange={() => setRegisterType(1)}
                   />
                   Clinician
                 </label>
               </div>
             </div>
-            {registerType === 0 ? <RegisterClinician /> : <RegisterPatient />}
+            {showRegister}
           </div>
         </div>
       </div>
-    </main>
+    </div>
   );
 }
