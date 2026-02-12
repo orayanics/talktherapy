@@ -5,11 +5,21 @@ import Sidebar from "~/components/Sidebar/Sidebar";
 
 export const Route = createFileRoute("/_private")({
   ssr: false,
-  loader: ({ context: { queryClient } }) => {
-    return queryClient.ensureQueryData({
-      queryKey: ["session"],
-      queryFn: fetchSession,
-    });
+  loader: async ({ context: { queryClient } }) => {
+    try {
+      const session = await queryClient.ensureQueryData({
+        queryKey: ["session"],
+        queryFn: fetchSession,
+      });
+
+      if (!session) throw new Error("No session");
+
+      return session;
+    } catch (err) {
+      throw Route.redirect({
+        to: "/login",
+      });
+    }
   },
   component: RouteComponent,
 });

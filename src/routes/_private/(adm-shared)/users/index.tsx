@@ -117,8 +117,12 @@ function Table(props: TableDataProps) {
           <InputMultiselect
             placeholder="User Type"
             options={[
-              { value: "sudo", label: "Super Admin" },
-              { value: "admin", label: "Admin" },
+              ...(!isAdmin
+                ? [
+                    { value: "sudo", label: "Super Admin" },
+                    { value: "admin", label: "Admin" },
+                  ]
+                : []),
               { value: "patient", label: "Patient" },
               { value: "clinician", label: "Clinician" },
             ]}
