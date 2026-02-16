@@ -4,12 +4,6 @@ import { fetchSession } from "~/api/auth";
 export const Route = createFileRoute("/_public")({
   ssr: false,
   loader: async ({ context: { queryClient } }) => {
-    const token = localStorage.getItem("token");
-
-    if (!token) {
-      return null;
-    }
-
     const session = await queryClient.ensureQueryData({
       queryKey: ["session"],
       queryFn: fetchSession,
@@ -20,6 +14,8 @@ export const Route = createFileRoute("/_public")({
         to: "/dashboard",
       });
     }
+
+    return null;
   },
   component: RouteComponent,
 });

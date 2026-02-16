@@ -1,39 +1,73 @@
 import ModalHeader from "~/components/Modal/ModalHeader";
+import ModalBody from "~/components/Modal/ModalBody";
+import { registerClinician } from "./useUserAdd";
 
 interface UserAddClinicianProps {
-  id: string;
+  isOpen: boolean;
+  onClose: () => void;
 }
 
 export default function UserAddClinician(props: UserAddClinicianProps) {
-  const { id } = props;
+  const { isOpen, onClose } = props;
+  const { form, handleChange, handleSubmit, resetState, errors, isLoading } =
+    registerClinician();
+
+  const handleClose = () => {
+    resetState();
+    onClose();
+  };
 
   return (
-    <dialog id={id} className="modal">
-      <div className="modal-box">
+    <ModalBody isOpen={isOpen} onClose={handleClose}>
+      <form
+        onSubmit={async (e) => {
+          e.preventDefault();
+          const isSuccess = await handleSubmit();
+          if (isSuccess) {
+            handleClose();
+          }
+        }}
+        aria-disabled={isLoading}
+      >
         <div className="flex flex-col gap-4">
           <ModalHeader>Add Clinician User</ModalHeader>
-          <label className="input w-full">
-            <span className="label">Email</span>
-            <input type="email" placeholder="email@email.com" />
-          </label>
-
-          <div className="flex flex-col items-center gap-2 "></div>
+          <div>
+            <label className="input w-full">
+              <span className="label">Email</span>
+              <input
+                type="email"
+                name="email"
+                placeholder="email@email.com"
+                value={form.email}
+                onChange={handleChange}
+              />
+            </label>
+            {errors?.message && !errors.errors && (
+              <p className="text-error text-center text-xs mt-1">
+                {errors.message}
+              </p>
+            )}
+            {errors?.errors?.email && (
+              <p className="text-error text-xs mt-1">
+                {errors.errors.email[0]}
+              </p>
+            )}
+          </div>
         </div>
         <div className="modal-action flex-row">
-          <button
-            className="btn"
-            onClick={() => {
-              const modal = document.getElementById(
-                id,
-              ) as HTMLDialogElement | null;
-              modal?.close();
-            }}
-          >
+          <button type="button" className="btn" onClick={handleClose}>
             Close
           </button>
-          <button className="btn btn-primary">Submit</button>
+          <button
+            className="btn btn-primary"
+            type="submit"
+            disabled={isLoading}
+            aria-disabled={isLoading}
+          >
+            Submit
+          </button>
         </div>
-      </div>
-    </dialog>
+      </form>
+    </ModalBody>
   );
 }

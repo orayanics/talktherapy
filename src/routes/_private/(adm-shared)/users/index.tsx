@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 
@@ -22,12 +23,17 @@ import { normalizeSearchArray } from "~/utils/query";
 import { fetchUsers } from "~/api/users";
 
 export const Route = createFileRoute("/_private/(adm-shared)/users/")({
-  validateSearch: (search) => {
+  validateSearch: (search: Record<string, unknown>) => {
+    const status = normalizeSearchArray(search.status);
+    const role = normalizeSearchArray(search.role);
+    const page = Number(search.page ?? 1);
+    const perPage = Number(search.perPage ?? 10);
+
     return {
-      status: normalizeSearchArray(search.status),
-      role: normalizeSearchArray(search.role),
-      page: Number(search.page ?? 1),
-      perPage: Number(search.perPage ?? 10),
+      ...(status?.length ? { status } : {}),
+      ...(role?.length ? { role } : {}),
+      ...(page !== 1 ? { page } : {}),
+      ...(perPage !== 10 ? { perPage } : {}),
     };
   },
   component: RouteComponent,
@@ -38,18 +44,23 @@ function RouteComponent() {
   const { account_role } = session || {};
 
   const search = Route.useSearch();
-  const { status, role, page, perPage } = search;
+
+  const status = search.status ?? [];
+  const role = search.role ?? [];
+  const page = search.page ?? 1;
+  const perPage = search.perPage ?? 10;
+
   const navigate = Route.useNavigate();
 
   const { data, isPending } = useSuspenseQuery({
-    queryKey: ["users", search],
+    queryKey: ["users", { status, role, page, perPage }],
     queryFn: () => {
       return fetchUsers({
         access: account_role,
         account_status: status,
         account_role: role,
-        page: page,
-        perPage: perPage,
+        page,
+        perPage,
       });
     },
   });
@@ -84,6 +95,8 @@ function Table(props: TableDataProps) {
     onPageChange,
     onPerPageChange,
   } = props;
+  const [isClinicianModalOpen, setClinicianModalOpen] = useState(false);
+  const [isAdminModalOpen, setAdminModalOpen] = useState(false);
   const session = useSession();
   const { account_role } = session || {};
   const isAdmin = account_role === "admin";
@@ -141,34 +154,26 @@ function Table(props: TableDataProps) {
           className="flex flex-col gap-2 md:w-auto w-full"
           btnClassName="md:w-auto w-full btn-primary"
         >
-          <button
-            className="btn"
-            onClick={() => {
-              const modal = document.getElementById(
-                "add-clinician-modal",
-              ) as HTMLDialogElement | null;
-              modal?.showModal();
-            }}
-          >
+          <button className="btn" onClick={() => setClinicianModalOpen(true)}>
             Clinician
           </button>
           {!isAdmin && (
-            <button
-              className="btn"
-              onClick={() => {
-                const modal = document.getElementById(
-                  "add-admin-modal",
-                ) as HTMLDialogElement | null;
-                modal?.showModal();
-              }}
-            >
+            <button className="btn" onClick={() => setAdminModalOpen(true)}>
               Admin
             </button>
           )}
         </InputDropdown>
 
-        <UserAddClinician id={"add-clinician-modal"} />
-        {!isAdmin && <UserAddAdmin id={"add-admin-modal"} />}
+        <UserAddClinician
+          isOpen={isClinicianModalOpen}
+          onClose={() => setClinicianModalOpen(false)}
+        />
+        {!isAdmin && (
+          <UserAddAdmin
+            isOpen={isAdminModalOpen}
+            onClose={() => setAdminModalOpen(false)}
+          />
+        )}
       </div>
 
       {isLoading ? (

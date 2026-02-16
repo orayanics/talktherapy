@@ -11,3 +11,12 @@ export interface PatientRegisterPayload {
   password_confirmation: string;
   consent: boolean;
 }
+
+export interface ClinicianRegisterPayload {
+  email: string;
+}
+
+export interface AdminRegisterPayload {
+  email: string;
+  abilities: string[];
+}

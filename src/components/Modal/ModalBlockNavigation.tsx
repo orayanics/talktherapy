@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 import ModalHeader from "~/components/Modal/ModalHeader";
 import ModalBody from "~/components/Modal/ModalBody";
 import ModalFooter from "~/components/Modal/ModalFooter";

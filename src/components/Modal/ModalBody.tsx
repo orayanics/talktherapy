@@ -1,35 +1,43 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 
 interface ModalBodyProps {
   children: React.ReactNode;
-  onClose: () => void;
   className?: string;
   isOpen: boolean;
+  onClose: () => void;
 }
 
 export default function ModalBody(props: ModalBodyProps) {
   const { children, onClose, className, isOpen } = props;
-  const dialogRef = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
-    const dialog = dialogRef.current;
-    if (!dialog) return;
+    if (!isOpen) return;
 
-    if (isOpen) {
-      dialog.showModal();
-    } else {
-      dialog.close();
-    }
-  }, [isOpen]);
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        onClose();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, onClose]);
+
+  const modalClassName = [
+    "modal",
+    "modal-middle",
+    isOpen ? "modal-open" : "",
+    className || "",
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   return (
-    <dialog
-      ref={dialogRef}
-      className={`modal modal-middle ${className || ""}`}
-      onClose={onClose}
-      onCancel={onClose}
-    >
+    <div className={modalClassName}>
       <div className="modal-box">{children}</div>
-    </dialog>
+      <button type="button" className="modal-backdrop" onClick={onClose}>
+        Close
+      </button>
+    </div>
   );
 }

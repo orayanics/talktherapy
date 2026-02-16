@@ -1,39 +1,100 @@
 import ModalHeader from "~/components/Modal/ModalHeader";
+import ModalBody from "~/components/Modal/ModalBody";
+import { registerAdmin } from "./useUserAdd";
+import { PermissionKey, PermissionLabels } from "~/models/user/permissions";
 
 interface UserAddAdminProps {
-  id: string;
+  isOpen: boolean;
+  onClose: () => void;
 }
 
 export default function UserAddAdmin(props: UserAddAdminProps) {
-  const { id } = props;
+  const { isOpen, onClose } = props;
+  const {
+    form,
+    handleChange,
+    handlePermissionChange,
+    handleSubmit,
+    resetState,
+    errors,
+    isLoading,
+  } = registerAdmin();
+
+  const handleClose = () => {
+    resetState();
+    onClose();
+  };
 
   return (
-    <dialog id={id} className="modal">
-      <div className="modal-box">
+    <ModalBody isOpen={isOpen} onClose={handleClose}>
+      <form
+        onSubmit={async (e) => {
+          e.preventDefault();
+          const isSuccess = await handleSubmit();
+          if (isSuccess) {
+            handleClose();
+          }
+        }}
+        aria-disabled={isLoading}
+      >
         <div className="flex flex-col gap-4">
           <ModalHeader>Add Admin User</ModalHeader>
-          <label className="input w-full">
-            <span className="label">Email</span>
-            <input type="email" placeholder="email@email.com" />
-          </label>
+          <div>
+            <label className="input w-full">
+              <span className="label">Email</span>
+              <input
+                type="email"
+                placeholder="email@email.com"
+                name="email"
+                value={form.email}
+                onChange={handleChange}
+              />
+            </label>
+            {errors?.message && !errors.errors && (
+              <p className="text-error text-center text-xs mt-1">
+                {errors.message}
+              </p>
+            )}
+            {errors?.errors?.email && (
+              <p className="text-error text-xs mt-1">
+                {errors.errors.email[0]}
+              </p>
+            )}
+          </div>
 
-          <div className="flex flex-col items-center gap-2 "></div>
+          <div>
+            {/* Permission Checklist */}
+            <span className="label">Permissions</span>
+            <div className="flex flex-col gap-2 max-h-60 overflow-y-auto p-2 border rounded">
+              {Object.keys(PermissionLabels).map((key) => (
+                <label key={key} className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    name="abilities"
+                    value={key}
+                    checked={form.abilities.includes(key as PermissionKey)}
+                    onChange={handlePermissionChange}
+                  />
+                  {PermissionLabels[key as PermissionKey]}
+                </label>
+              ))}
+            </div>
+          </div>
         </div>
         <div className="modal-action flex-row">
-          <button
-            className="btn"
-            onClick={() => {
-              const modal = document.getElementById(
-                id,
-              ) as HTMLDialogElement | null;
-              modal?.close();
-            }}
-          >
+          <button type="button" className="btn" onClick={handleClose}>
             Close
           </button>
-          <button className="btn btn-primary">Submit</button>
+          <button
+            className="btn btn-primary"
+            type="submit"
+            disabled={isLoading}
+            aria-busy={isLoading}
+          >
+            Submit
+          </button>
         </div>
-      </div>
-    </dialog>
+      </form>
+    </ModalBody>
   );
 }
