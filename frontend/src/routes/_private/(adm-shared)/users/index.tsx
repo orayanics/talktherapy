@@ -1,0 +1,255 @@
+import { useState } from "react";
+import { Link, createFileRoute } from "@tanstack/react-router";
+import { useSuspenseQuery } from "@tanstack/react-query";
+
+import Grid from "~/components/Page/Grid";
+import GridItem from "~/components/Page/GridItem";
+import TableContent from "~/components/Table/TableContent";
+import TablePagination from "~/components/Table/TablePagination";
+import AccountStatusBadge from "~/components/Badge/AccountStatusBadge";
+import RoleBadge from "~/components/Badge/RoleBadge";
+import PageTitle from "~/components/Page/PageTitle";
+import UserAddAdmin from "~/modules/users/UserAddAdmin";
+import InputDropdown from "~/components/Input/InputDropdown";
+import InputMultiselect from "~/components/Input/InputMultiselect";
+import LoaderTable from "~/components/Loader/LoaderTable";
+import UserAddClinician from "~/modules/users/UserAddClinician";
+
+import { useSession } from "~/context/SessionContext";
+
+import { TableDataProps } from "~/models/system";
+import { formatToLocalDateTime } from "~/utils/date";
+import { normalizeSearchArray } from "~/utils/query";
+import { fetchUsers } from "~/api/users";
+
+export const Route = createFileRoute("/_private/(adm-shared)/users/")({
+  validateSearch: (search: Record<string, unknown>) => {
+    const status = normalizeSearchArray(search.status);
+    const role = normalizeSearchArray(search.role);
+    const page = Number(search.page ?? 1);
+    const perPage = Number(search.perPage ?? 10);
+
+    return {
+      ...(status?.length ? { status } : {}),
+      ...(role?.length ? { role } : {}),
+      ...(page !== 1 ? { page } : {}),
+      ...(perPage !== 10 ? { perPage } : {}),
+    };
+  },
+  component: RouteComponent,
+});
+
+function RouteComponent() {
+  const session = useSession();
+  const { account_role } = session || {};
+
+  const search = Route.useSearch();
+
+  const status = search.status ?? [];
+  const role = search.role ?? [];
+  const page = search.page ?? 1;
+  const perPage = search.perPage ?? 10;
+
+  const navigate = Route.useNavigate();
+
+  const { data, isPending } = useSuspenseQuery({
+    queryKey: ["users", { status, role, page, perPage }],
+    queryFn: () => {
+      return fetchUsers({
+        access: account_role,
+        account_status: status,
+        account_role: role,
+        page,
+        perPage,
+      });
+    },
+  });
+
+  return (
+    <>
+      <PageTitle heading="Users" subheading="View all users" />
+      <Grid cols={12} gap={6}>
+        <GridItem colSpan={12} className="flex flex-col gap-4">
+          <Table
+            data={data}
+            page={page}
+            perPage={perPage}
+            isLoading={isPending}
+            onPageChange={(page) => navigate({ search: { ...search, page } })}
+            onPerPageChange={(perPage) => {
+              navigate({ search: { ...search, perPage, page: 1 } });
+            }}
+          />
+        </GridItem>
+      </Grid>
+    </>
+  );
+}
+
+function Table(props: TableDataProps) {
+  const {
+    isLoading = false,
+    page,
+    perPage,
+    data,
+    onPageChange,
+    onPerPageChange,
+  } = props;
+  const [isClinicianModalOpen, setClinicianModalOpen] = useState(false);
+  const [isAdminModalOpen, setAdminModalOpen] = useState(false);
+  const session = useSession();
+  const { account_role } = session || {};
+  const isAdmin = account_role === "admin";
+
+  const search = Route.useSearch();
+  const { status, role } = search;
+  const navigate = Route.useNavigate();
+
+  const { data: usersData = [], total = 0, last_page, to, from } = data || {};
+  const handleClearFilters = () => {
+    navigate({ to: "/users", search: {} });
+  };
+
+  return (
+    <>
+      <div className="flex flex-col md:flex-row gap-2 justify-between">
+        <div className="flex flex-col md:flex-row gap-2">
+          <InputMultiselect
+            placeholder="Account Status"
+            options={[
+              { value: "active", label: "Active" },
+              { value: "inactive", label: "Inactive" },
+              { value: "pending", label: "Pending" },
+              { value: "suspended", label: "Suspended" },
+            ]}
+            value={status}
+            onChange={(status) => navigate({ search: { ...search, status } })}
+            className={"w-full md:w-42"}
+          />
+
+          <InputMultiselect
+            placeholder="User Type"
+            options={[
+              ...(!isAdmin
+                ? [
+                    { value: "sudo", label: "Super Admin" },
+                    { value: "admin", label: "Admin" },
+                  ]
+                : []),
+              { value: "patient", label: "Patient" },
+              { value: "clinician", label: "Clinician" },
+            ]}
+            value={role}
+            onChange={(role) => navigate({ search: { ...search, role } })}
+            className={"w-full md:w-42"}
+          />
+
+          <button className="btn btn-primary" onClick={handleClearFilters}>
+            Clear Filters
+          </button>
+        </div>
+
+        <InputDropdown
+          label="Add User"
+          className="flex flex-col gap-2 md:w-auto w-full"
+          btnClassName="md:w-auto w-full btn-primary"
+        >
+          <button className="btn" onClick={() => setClinicianModalOpen(true)}>
+            Clinician
+          </button>
+          {!isAdmin && (
+            <button className="btn" onClick={() => setAdminModalOpen(true)}>
+              Admin
+            </button>
+          )}
+        </InputDropdown>
+
+        <UserAddClinician
+          isOpen={isClinicianModalOpen}
+          onClose={() => setClinicianModalOpen(false)}
+        />
+        {!isAdmin && (
+          <UserAddAdmin
+            isOpen={isAdminModalOpen}
+            onClose={() => setAdminModalOpen(false)}
+          />
+        )}
+      </div>
+
+      {isLoading ? (
+        <LoaderTable className="h-120 max-h-120 " />
+      ) : (
+        <TableContent
+          columns={[
+            { header: "Account Status", accessor: "account_status" },
+            {
+              header: "Name",
+              accessor: "name",
+              render: (value, row) => (
+                <Link
+                  to="/users/$userId"
+                  params={{ userId: row.id }}
+                  className="link link-hover hover:text-info"
+                >
+                  {value}
+                </Link>
+              ),
+            },
+            { header: "Email", accessor: "email" },
+            { header: "User Type", accessor: "account_role" },
+            {
+              header: "Created At",
+              accessor: "created_at",
+              render: (value) => formatToLocalDateTime(value),
+            },
+            { header: "Last Login", accessor: "last_login" },
+            {
+              header: "Actions",
+              accessor: "id",
+              render: (_value, row) => (
+                <InputDropdown
+                  label="Actions"
+                  className="flex flex-col gap-2"
+                  btnClassName="btn-primary"
+                  position="dropdown-center dropdown-left"
+                >
+                  <Link
+                    to={"/users/$userId/edit"}
+                    params={{ userId: row.id as string }}
+                    className="btn btn-soft btn-info"
+                  >
+                    Edit
+                  </Link>
+                  <Link
+                    // TODO: Add deactivate user functionality
+                    to={"/users/$userId"}
+                    params={{ userId: row.id as string }}
+                    className="btn btn-soft btn-error"
+                  >
+                    Deactivate
+                  </Link>
+                </InputDropdown>
+              ),
+            },
+          ]}
+          data={usersData}
+          renderers={{
+            account_role: (value) => <RoleBadge role={value} />,
+            account_status: (value) => <AccountStatusBadge status={value} />,
+          }}
+        />
+      )}
+
+      <TablePagination
+        page={page}
+        perPage={perPage}
+        total={total ?? usersData.length}
+        lastPage={last_page}
+        from={from}
+        to={to}
+        onPageChange={onPageChange}
+        onPerPageChange={onPerPageChange}
+      />
+    </>
+  );
+}
