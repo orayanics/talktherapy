@@ -1,0 +1,14 @@
+{
+  "name": "talktherapy",
+  "private": true,
+  "workspaces": [
+    "web",
+    "server"
+  ],
+  "scripts": {
+    "dev": "bun run --filter '*' dev",
+    "dev:web": "bun run --filter web dev",
+    "dev:server": "bun run --filter server dev",
+    "build": "bun run --filter '*' build"
+  }
+}
