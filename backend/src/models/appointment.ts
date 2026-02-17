@@ -1,39 +1,42 @@
-export interface Appointment {
-  id: string;
-  clinician_id: string;
-  patient_id: string;
-  schedule_instance_id?: string;
-  appointment_room_id?: string;
-  status: string;
-  starts_at: string;
-  ends_at: string;
-  created_at: string;
-  updated_at: string;
-  medical_diagnosis?: string;
-  source_referral?: string;
-  chief_complaint?: string;
-  referral_url?: string;
-  booked_at?: string;
-  confirmed_at?: string;
-  cancelled_at?: string;
-  completed_at?: string;
-  rescheduled_at?: string;
-  cancelled_by?: string;
-  patient_cancel_reason?: string;
-  clinician_cancel_reason?: string;
-  patient_reschedule_reason?: string;
-  clinician_reschedule_reason?: string;
-}
-export interface RescheduleRequest {
-  id: string;
-  appointment_id: string;
-  clinician_id: string;
-  patient_id: string;
-  original_schedule_instance_id?: string;
-  requested_schedule_instance_id?: string;
-  patient_reason?: string;
-  clinician_reason?: string;
-  status: string;
-  created_at: string;
-  updated_at: string;
-}
+import { t } from "elysia";
+
+export const AppointmentModel = t.Object({
+  id: t.String(),
+  clinician_id: t.String(),
+  patient_id: t.String(),
+  schedule_instance_id: t.Optional(t.String()),
+  appointment_room_id: t.Optional(t.String()),
+  status: t.String(),
+  starts_at: t.String(),
+  ends_at: t.String(),
+  created_at: t.String(),
+  updated_at: t.String(),
+  medical_diagnosis: t.Optional(t.String()),
+  source_referral: t.Optional(t.String()),
+  chief_complaint: t.Optional(t.String()),
+  referral_url: t.Optional(t.String()),
+  booked_at: t.Optional(t.String()),
+  confirmed_at: t.Optional(t.String()),
+  cancelled_at: t.Optional(t.String()),
+  completed_at: t.Optional(t.String()),
+  rescheduled_at: t.Optional(t.String()),
+  cancelled_by: t.Optional(t.String()),
+  patient_cancel_reason: t.Optional(t.String()),
+  clinician_cancel_reason: t.Optional(t.String()),
+  patient_reschedule_reason: t.Optional(t.String()),
+  clinician_reschedule_reason: t.Optional(t.String()),
+});
+
+export const RescheduleRequestModel = t.Object({
+  id: t.String(),
+  appointment_id: t.String(),
+  clinician_id: t.String(),
+  patient_id: t.String(),
+  original_schedule_instance_id: t.Optional(t.String()),
+  requested_schedule_instance_id: t.Optional(t.String()),
+  patient_reason: t.Optional(t.String()),
+  clinician_reason: t.Optional(t.String()),
+  status: t.String(),
+  created_at: t.String(),
+  updated_at: t.String(),
+});

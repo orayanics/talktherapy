@@ -1,0 +1,167 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+    provider = "prisma-client"
+    output = "./generated"
+    engineType = "client"
+    runtime = "bun"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Permissions {
+  id         String   @id @default(uuid())
+  name       String   @unique
+  created_at DateTime @default(now())
+}
+
+model Diagnosis {
+  id         String   @id @default(uuid())
+  value      String   @unique
+  label      String      @unique
+  created_at DateTime @default(now())
+
+  patient Patient[]
+  clinician Clinician[]
+}
+
+model User {
+  id              String   @id @default(uuid())
+  name            String?  @default("")
+  email           String   @unique
+  password        String?
+  account_status  String   @default("active")
+  account_role    String?
+  account_permissions String @default("")
+
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+  created_by      String?
+  updated_by      String?
+  deleted_at      DateTime?
+
+  sudo      Sudo?
+  admin     Admin?
+  patient   Patient?
+  clinician Clinician?
+}
+
+model Sudo {
+  id        String   @id @default(uuid())
+  user_id   String   @unique
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+model Admin {
+  id       String   @id @default(uuid())
+  user_id   String   @unique
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+model Patient {
+  id          String   @id @default(uuid())
+  user_id     String   @unique
+  diagnosis_id String?
+  consent     Boolean  @default(false)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  diagnosis Diagnosis? @relation(fields: [diagnosis_id], references: [id], onDelete: SetNull)
+}
+
+model Clinician {
+  id          String   @id @default(uuid())
+  user_id     String   @unique
+  diagnosis_id String?
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  diagnosis Diagnosis? @relation(fields: [diagnosis_id], references: [id], onDelete: SetNull)
+}
+
+
+model Otps {
+  id        String   @id @default(uuid())
+  user_id  String 
+  otp_code String
+  purpose String
+  expires_at DateTime
+  created_at DateTime @default(now())
+}
+
+model ScheduleRules {
+  id        String   @id @default(uuid())
+  clinician_id String
+  start_date DateTime
+  end_date DateTime
+  start_time DateTime
+  end_time DateTime
+  recurrence String?
+  recurrence_meta String?
+  is_active Boolean @default(true)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model ScheduleInstances {
+  id String  @id @default(uuid())
+  schedule_rule_id String
+  clinician_id String
+  starts_at DateTime
+  ends_at DateTime
+  status String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model Appointments {
+  id String  @id @default(uuid())
+  clinician_id String
+  patient_id String
+  schedule_instance_id String
+  room_id String?
+  status String
+  starts_at DateTime
+  ends_at DateTime
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  medical_diagnosis String?
+  source_referral String?
+  chief_complaint String?
+  refarral_url String?
+  booked_at DateTime?
+  confirmed_at DateTime?
+  cancelled_at DateTime?
+  completed_at DateTime?
+  rescheduled_at DateTime?
+  cancelled_by String?
+  patient_cancel_reason String?
+  clinician_cancel_reason String?
+  patient_reshedule_reason String?
+  clinician_reschedule_reason String?
+}
+
+model RescheduleRequests {
+  id String @id @default(uuid())
+  appointment_id String
+  clinician_id String
+  patient_id String
+  original_schedule_instance_id String
+  requested_schedule_instance_id String
+  patient_reason String?
+  clinician_reason String?
+  status String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}

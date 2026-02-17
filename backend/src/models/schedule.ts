@@ -1,24 +1,26 @@
-export interface ScheduleRule {
-  id: string;
-  clinician_id: string;
-  start_date: string;
-  end_date?: string;
-  start_time: string;
-  end_time: string;
-  recurrence?: string;
-  recurrence_meta?: string;
-  timezone: string;
-  is_active: number;
-  created_at: string;
-  updated_at: string;
-}
-export interface ScheduleInstance {
-  id: string;
-  schedule_rule_id: string;
-  clinician_id: string;
-  starts_at: string;
-  ends_at: string;
-  status: string;
-  created_at: string;
-  updated_at: string;
-}
+import { t } from "elysia";
+
+export const ScheduleRuleModel = t.Object({
+  id: t.String(),
+  clinician_id: t.String(),
+  start_date: t.String(),
+  end_date: t.Optional(t.String()),
+  start_time: t.String(),
+  end_time: t.String(),
+  recurrence: t.Optional(t.String()),
+  recurrence_meta: t.Optional(t.String()),
+  timezone: t.String(),
+  is_active: t.Number(),
+  created_at: t.String(),
+  updated_at: t.String(),
+});
+export const ScheduleInstanceModel = t.Object({
+  id: t.String(),
+  schedule_rule_id: t.String(),
+  clinician_id: t.String(),
+  starts_at: t.String(),
+  ends_at: t.String(),
+  status: t.String(),
+  created_at: t.String(),
+  updated_at: t.String(),
+});

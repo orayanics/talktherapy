@@ -1,30 +1,29 @@
-// import { Elysia } from "elysia";
-
-// const app = new Elysia()
-//   .get("/", () => "Hello Elysia")
-//   .get("/hello/:name", ({ params }) => `Hello ${params.name}!`)
-//   .listen(8000);
-
-// console.log(
-//   `🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port} ${process.env.APP_JWT_SECRET}`,
-// );
-// index.ts
-import { Elysia, t } from "elysia";
+import { Elysia } from "elysia";
 import { cors } from "@elysiajs/cors";
-import { initDb } from "./database/database";
-import { AuthPlugin } from "../plugins/auth";
-import { userRoutes } from "./routes/users";
-import { patientRoutes } from "./routes/patients";
-import { clinicianRoutes } from "./routes/clinicians";
-import { appointmentRoutes } from "./routes/appointments";
-import { scheduleRoutes } from "./routes/schedules";
-import { diagnosisRoutes } from "./routes/diagnoses";
+import { jwtPlugin } from "@/plugins/jwt";
 
-// Initialize database
-initDB();
+import { auth } from "@/modules/auth";
+import { publicModule } from "@/modules/public";
+import { users } from "@/modules/users";
+
+import { customMessages } from "./utils/errors";
+
+const corsOrigins = (process.env.APP_CORS_ORIGINS ?? "")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
 
 export const app = new Elysia()
-  .use(cors())
+  .use(
+    cors({
+      origin: corsOrigins.length
+        ? corsOrigins
+        : ["http://localhost:3000", "http://localhost:5173"],
+      credentials: true,
+      allowedHeaders: ["authorization", "content-type"],
+      methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    }),
+  )
 
   // Global error handler
   .onError(({ code, error, set }) => {
@@ -32,9 +31,20 @@ export const app = new Elysia()
 
     if (code === "VALIDATION") {
       set.status = 400;
+      const errors: Record<string, string[]> = {};
+      for (const err of error.all) {
+        const field = err.path?.replace(/^\//, "") ?? "unknown";
+        if (!errors[field]) errors[field] = [];
+
+        if (!errors[field].length) {
+          errors[field].push(
+            customMessages[field] ?? err.message ?? "Invalid value",
+          );
+        }
+      }
       return {
-        error: "Validation Error",
-        message: error.message,
+        message: "Validation failed.",
+        errors,
       };
     }
 
@@ -51,9 +61,7 @@ export const app = new Elysia()
     return {
       error: "Internal Server Error",
       message:
-        process.env.NODE_ENV === "production"
-          ? "An error occurred"
-          : error.message,
+        process.env.NODE_ENV === "production" ? "An error occurred" : error,
     };
   })
 
@@ -62,23 +70,14 @@ export const app = new Elysia()
     message: "Healthcare Appointment System API",
     version: "1.0.0",
     status: "healthy",
-  }))
-
-  .get("/api/health", () => ({
-    status: "healthy",
     timestamp: new Date().toISOString(),
   }))
 
-  // Mount plugins and routes
-  .use(authPlugin)
-  .use(userRoutes)
-  .use(diagnosisRoutes)
-  .use(patientRoutes)
-  .use(clinicianRoutes)
-  .use(appointmentRoutes)
-  .use(scheduleRoutes)
+  .group("/api/v1", (app) =>
+    app.use(jwtPlugin).use(auth).use(publicModule).use(users),
+  )
 
-  .listen(3000);
+  .listen(8000);
 
 console.log(
   `🦊 Healthcare API running at ${app.server?.hostname}:${app.server?.port}`,
