@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+import debounce from "debounce";
 
 import Grid from "~/components/Page/Grid";
 import GridItem from "~/components/Page/GridItem";
@@ -43,6 +44,7 @@ export const Route = createFileRoute("/_private/(adm-shared)/users/")({
 });
 
 function RouteComponent() {
+  const navigate = Route.useNavigate();
   const session = useSession();
   const { account_role } = session || {};
   const isAdmin = account_role === "admin";
@@ -51,16 +53,36 @@ function RouteComponent() {
   const status = search.status ?? [];
   const role = search.role ?? [];
   const page = search.page ?? 1;
-  const searchValue = search.search ?? "";
+  const [searchInput, setSearchInput] = useState(search.search ?? "");
+  const [debouncedSearch, setDebouncedSearch] = useState(search.search ?? "");
   const perPage = search.perPage ?? 10;
 
-  const navigate = Route.useNavigate();
+  const updateDebouncedSearch = useMemo(
+    () =>
+      debounce((value: string) => {
+        setDebouncedSearch(value);
+      }, 200),
+    [],
+  );
+  const handleSearchChange = (value: string) => {
+    setSearchInput(value);
+    updateDebouncedSearch(value);
+  };
+
+  useEffect(() => {
+    if (debouncedSearch === search.search) return;
+    navigate({ search: { ...search, search: debouncedSearch, page: 1 } });
+  }, [debouncedSearch]);
+
+  useEffect(() => {
+    return () => updateDebouncedSearch.clear();
+  }, [updateDebouncedSearch]);
 
   const { data, isPending } = useQuery(
     usersQueryOptions({
       page,
       perPage,
-      search: search.search,
+      search: debouncedSearch,
       account_status: status,
       account_role: role,
     }),
@@ -77,7 +99,7 @@ function RouteComponent() {
             perPage={perPage}
             status={status}
             role={role}
-            search={searchValue}
+            search={searchInput}
             isLoading={isPending}
             isAdmin={isAdmin}
             onPageChange={(page) => navigate({ search: { ...search, page } })}
@@ -90,9 +112,7 @@ function RouteComponent() {
             onRoleChange={(role) =>
               navigate({ search: { ...search, role, page: 1 } })
             }
-            onSearchChange={(search) =>
-              navigate({ search: { search, page: 1 } })
-            }
+            onSearchChange={handleSearchChange}
             onClearFilters={() => navigate({ to: "/users", search: {} })}
           />
         </GridItem>

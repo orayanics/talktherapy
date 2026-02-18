@@ -48,20 +48,7 @@ export type UsersParams = {
 };
 
 export type UsersTableProps = {
-  data: Pick<
-    UserResponse,
-    | "id"
-    | "name"
-    | "email"
-    | "account_status"
-    | "account_role"
-    | "account_permissions"
-    | "created_at"
-    | "updated_at"
-    | "created_by"
-    | "updated_by"
-    | "deleted_at"
-  >[];
+  data: TableResponse | null;
   page: number;
   perPage: number;
   status: string[];
