@@ -1,13 +1,12 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router";
-import { fetchSession } from "~/api/auth";
+import { sessionQueryOptions } from "~/api/auth";
 
 export const Route = createFileRoute("/_public")({
   ssr: false,
   loader: async ({ context: { queryClient } }) => {
-    const session = await queryClient.ensureQueryData({
-      queryKey: ["session"],
-      queryFn: fetchSession,
-    });
+    const session = await queryClient
+      .ensureQueryData(sessionQueryOptions)
+      .catch(() => {});
 
     if (session) {
       throw Route.redirect({

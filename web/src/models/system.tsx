@@ -39,14 +39,22 @@ export interface TableResponse {
   per_page?: number;
 }
 
-export interface TableDataProps {
-  onPageChange: (page: number) => void;
-  onPerPageChange: (perPage: number) => void;
-  isLoading?: boolean;
-  data: TableResponse | null | undefined;
+export type UsersTableProps = {
+  data: any;
   page: number;
   perPage: number;
-}
+  status: string[];
+  role: string[];
+  search: string;
+  isLoading: boolean;
+  isAdmin: boolean;
+  onPageChange: (page: number) => void;
+  onPerPageChange: (perPage: number) => void;
+  onStatusChange: (status: string[]) => void;
+  onRoleChange: (role: string[]) => void;
+  onSearchChange: (search: string) => void;
+  onClearFilters: () => void;
+};
 
 export interface UserResponse {
   id: string;

@@ -2,7 +2,7 @@ import Grid from "~/components/Page/Grid";
 import GridItem from "~/components/Page/GridItem";
 
 interface DashboardData {
-  users: number;
+  total: number;
   patients: number;
   clinicians: number;
   admins: number;
@@ -20,9 +20,9 @@ export default function Index(props: { data: DashboardData }) {
 }
 
 function UserStatsCard(data: DashboardData) {
-  const { users, patients, clinicians, admins } = data;
+  const { total, patients, clinicians, admins } = data;
   const COUNT_ITEMS = [
-    { key: "totalUsers", title: "Total Users", count: users },
+    { key: "totalUsers", title: "Total Users", count: total },
     { key: "patients", title: "Patients", count: patients },
     { key: "clinicians", title: "Clinicians", count: clinicians },
     { key: "admins", title: "Admins", count: admins },

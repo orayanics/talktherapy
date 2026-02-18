@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, createFileRoute } from "@tanstack/react-router";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 
 import Grid from "~/components/Page/Grid";
 import GridItem from "~/components/Page/GridItem";
@@ -17,10 +17,10 @@ import UserAddClinician from "~/modules/users/UserAddClinician";
 
 import { useSession } from "~/context/SessionContext";
 
-import { TableDataProps } from "~/models/system";
+import { UsersTableProps } from "~/models/system";
 import { formatToLocalDateTime } from "~/utils/date";
 import { normalizeSearchArray } from "~/utils/query";
-import { fetchUsers } from "~/api/users";
+import { usersQueryOptions } from "~/api/users";
 
 export const Route = createFileRoute("/_private/(adm-shared)/users/")({
   validateSearch: (search: Record<string, unknown>) => {
@@ -28,12 +28,15 @@ export const Route = createFileRoute("/_private/(adm-shared)/users/")({
     const role = normalizeSearchArray(search.role);
     const page = Number(search.page ?? 1);
     const perPage = Number(search.perPage ?? 10);
+    const searchTerm =
+      typeof search.search === "string" ? search.search : undefined;
 
     return {
       ...(status?.length ? { status } : {}),
       ...(role?.length ? { role } : {}),
       ...(page !== 1 ? { page } : {}),
       ...(perPage !== 10 ? { perPage } : {}),
+      ...(searchTerm ? { search: searchTerm } : {}),
     };
   },
   component: RouteComponent,
@@ -42,28 +45,26 @@ export const Route = createFileRoute("/_private/(adm-shared)/users/")({
 function RouteComponent() {
   const session = useSession();
   const { account_role } = session || {};
+  const isAdmin = account_role === "admin";
 
   const search = Route.useSearch();
-
   const status = search.status ?? [];
   const role = search.role ?? [];
   const page = search.page ?? 1;
+  const searchValue = search.search ?? "";
   const perPage = search.perPage ?? 10;
 
   const navigate = Route.useNavigate();
 
-  const { data, isPending } = useSuspenseQuery({
-    queryKey: ["users", { status, role, page, perPage }],
-    queryFn: () => {
-      return fetchUsers({
-        access: account_role,
-        account_status: status,
-        account_role: role,
-        page,
-        perPage,
-      });
-    },
-  });
+  const { data, isPending } = useQuery(
+    usersQueryOptions({
+      page,
+      perPage,
+      search: search.search,
+      account_status: status,
+      account_role: role,
+    }),
+  );
 
   return (
     <>
@@ -74,11 +75,25 @@ function RouteComponent() {
             data={data}
             page={page}
             perPage={perPage}
+            status={status}
+            role={role}
+            search={searchValue}
             isLoading={isPending}
+            isAdmin={isAdmin}
             onPageChange={(page) => navigate({ search: { ...search, page } })}
-            onPerPageChange={(perPage) => {
-              navigate({ search: { ...search, perPage, page: 1 } });
-            }}
+            onPerPageChange={(perPage) =>
+              navigate({ search: { ...search, perPage, page: 1 } })
+            }
+            onStatusChange={(status) =>
+              navigate({ search: { ...search, status, page: 1 } })
+            }
+            onRoleChange={(role) =>
+              navigate({ search: { ...search, role, page: 1 } })
+            }
+            onSearchChange={(search) =>
+              navigate({ search: { search, page: 1 } })
+            }
+            onClearFilters={() => navigate({ to: "/users", search: {} })}
           />
         </GridItem>
       </Grid>
@@ -86,34 +101,40 @@ function RouteComponent() {
   );
 }
 
-function Table(props: TableDataProps) {
+function Table(props: UsersTableProps) {
   const {
+    isAdmin = false,
     isLoading = false,
     page,
     perPage,
     data,
+    role = [],
+    status = [],
+    search = "",
     onPageChange,
     onPerPageChange,
+    onStatusChange,
+    onRoleChange,
+    onSearchChange,
+    onClearFilters,
   } = props;
   const [isClinicianModalOpen, setClinicianModalOpen] = useState(false);
   const [isAdminModalOpen, setAdminModalOpen] = useState(false);
-  const session = useSession();
-  const { account_role } = session || {};
-  const isAdmin = account_role === "admin";
-
-  const search = Route.useSearch();
-  const { status, role } = search;
-  const navigate = Route.useNavigate();
 
   const { data: usersData = [], total = 0, last_page, to, from } = data || {};
-  const handleClearFilters = () => {
-    navigate({ to: "/users", search: {} });
-  };
 
   return (
     <>
       <div className="flex flex-col md:flex-row gap-2 justify-between">
         <div className="flex flex-col md:flex-row gap-2">
+          <input
+            type="text"
+            placeholder="Search users..."
+            className="input input-bordered w-full md:w-42"
+            value={search}
+            onChange={(e) => onSearchChange(e.target.value)}
+          />
+
           <InputMultiselect
             placeholder="Account Status"
             options={[
@@ -123,7 +144,7 @@ function Table(props: TableDataProps) {
               { value: "suspended", label: "Suspended" },
             ]}
             value={status}
-            onChange={(status) => navigate({ search: { ...search, status } })}
+            onChange={(status) => onStatusChange(status)}
             className={"w-full md:w-42"}
           />
 
@@ -140,11 +161,11 @@ function Table(props: TableDataProps) {
               { value: "clinician", label: "Clinician" },
             ]}
             value={role}
-            onChange={(role) => navigate({ search: { ...search, role } })}
+            onChange={(role) => onRoleChange(role)}
             className={"w-full md:w-42"}
           />
 
-          <button className="btn btn-primary" onClick={handleClearFilters}>
+          <button className="btn btn-primary" onClick={onClearFilters}>
             Clear Filters
           </button>
         </div>

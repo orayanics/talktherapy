@@ -24,6 +24,17 @@ export async function revokeRefreshToken(tokenId: string) {
   });
 }
 
+export async function revokeExpiredTokensForUser(userId: string) {
+  await prisma.refreshToken.updateMany({
+    where: {
+      user_id: userId,
+      expires_at: { lt: new Date() },
+      revoked_at: null,
+    },
+    data: { revoked_at: new Date() },
+  });
+}
+
 export async function rotateRefreshToken(
   tokenId: string,
   userId: string,

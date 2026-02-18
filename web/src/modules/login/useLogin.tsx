@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { LoginPayload } from "~/models/user/credentials";
 import { ErrorResponse } from "~/models/system";
-import { login } from "~/api/auth";
+import { useLogin as useLoginApi } from "~/api/auth";
 
 export default function useLogin() {
   const [errors, setErrors] = useState<ErrorResponse | null>(null);
@@ -15,7 +15,7 @@ export default function useLogin() {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const loginMutation = login();
+  const loginMutation = useLoginApi();
   async function handleSubmit() {
     setErrors(null);
     try {

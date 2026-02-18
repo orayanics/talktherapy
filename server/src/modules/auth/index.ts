@@ -6,6 +6,7 @@ import { jwtPlugin } from "@/plugins/jwt";
 import { prisma } from "prisma/db";
 import {
   findAndMatchRefreshToken,
+  revokeExpiredTokensForUser,
   revokeRefreshToken,
   rotateRefreshToken,
 } from "./helper";
@@ -29,7 +30,6 @@ export const auth = new Elysia({ prefix: "/auth" })
 
       const accessToken = await jwt.sign(signPayload);
       const refreshToken = await jwtRefresh.sign(signPayload);
-      const sameSite = isProd ? "none" : "lax";
 
       session.set({
         ...getCookieOptions(isProd),
@@ -94,8 +94,12 @@ export const auth = new Elysia({ prefix: "/auth" })
       if (!rawToken) return status(401, "Unauthorized");
 
       const payload = await jwtRefresh.verify(rawToken);
-      if (!payload || typeof payload !== "object")
+      if (!payload || typeof payload !== "object") {
+        // token expired or invalid —> clear cookies so frontend knows to redirect
+        session.remove();
+        refresh.remove();
         return status(401, "Unauthorized");
+      }
 
       const data = payload as {
         userId?: string;
@@ -110,8 +114,14 @@ export const auth = new Elysia({ prefix: "/auth" })
         return status(401, "Unauthorized");
       }
 
+      await revokeExpiredTokensForUser(data.userId);
+
       const matched = await findAndMatchRefreshToken(data.userId, rawToken);
-      if (!matched) return status(401, "Unauthorized");
+      if (!matched) {
+        session.remove();
+        refresh.remove();
+        return status(401, "Unauthorized");
+      }
 
       const nextPayload = {
         userId: data.userId,
