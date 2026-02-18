@@ -45,10 +45,11 @@ export namespace AuthModel {
     account_status: t.Optional(t.String({ default: "active" })),
     account_role: t.Optional(t.String({ default: "patient" })),
     account_permissions: t.Optional(t.String({ default: "content:read" })),
-    consent: t.Boolean({
+    consent: t.Literal(true, {
       error: "Consent must be true to continue",
     }),
     diagnosis_id: t.String({
+      minLength: 1,
       error: "Diagnosis is required",
     }),
   });

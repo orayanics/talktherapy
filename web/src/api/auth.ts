@@ -3,7 +3,7 @@ import {
   queryOptions,
   useQueryClient,
 } from "@tanstack/react-query";
-import { useNavigate } from "@tanstack/react-router";
+import { useNavigate, useRouter } from "@tanstack/react-router";
 import { isAxiosError } from "axios";
 import { api } from "~/api/axios";
 
@@ -42,8 +42,8 @@ export const useLogin = () => {
       return data;
     },
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ["session"] });
-      await queryClient.refetchQueries({ queryKey: ["session"] });
+      const session = await queryClient.fetchQuery(sessionQueryOptions);
+      if (!session) return;
       navigate({ to: "/dashboard" });
     },
   });
@@ -65,15 +65,21 @@ export const useLogout = () => {
 };
 
 export const useRegisterPatient = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
+  const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (payload: PatientRegisterPayload) => {
-      const { data } = await api.post("/auth/register/patient", payload);
-      return data;
+      await api.post("/auth/signup/patient", payload);
+
+      await api.post("/auth/login", {
+        email: payload.email,
+        password: payload.password,
+      });
     },
-    onSuccess: () => {
-      navigate({ to: "/dashboard" });
+    onSuccess: async () => {
+      queryClient.removeQueries({ queryKey: ["session"] });
+      router.navigate({ to: "/dashboard" });
     },
     onError: (error) => {
       if (isAxiosError(error)) {

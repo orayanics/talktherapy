@@ -76,7 +76,7 @@ export abstract class Auth {
           name: data.name,
           email: data.email,
           password: hashedPassword,
-          account_status: "pending",
+          account_status: "active",
           account_role: "patient",
           account_permissions: "content:read",
         },
