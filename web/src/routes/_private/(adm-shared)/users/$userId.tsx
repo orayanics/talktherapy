@@ -8,15 +8,12 @@ import PageTitle from "~/components/Page/PageTitle";
 import ProfileAccInfo from "~/modules/profile/ProfileAccInfo";
 import ProfileUserInfo from "~/modules/profile/ProfileUserInfo";
 
-import { fetchUserDetails } from "~/api/users";
+import { userDetailQueryOptions } from "~/api/users";
 
 export const Route = createFileRoute("/_private/(adm-shared)/users/$userId")({
   loader: ({ context: { queryClient }, params }) => {
     const { userId } = params;
-    return queryClient.ensureQueryData({
-      queryKey: ["user-details", userId],
-      queryFn: () => fetchUserDetails(userId),
-    });
+    return queryClient.ensureQueryData(userDetailQueryOptions(userId));
   },
   component: RouteComponent,
 });

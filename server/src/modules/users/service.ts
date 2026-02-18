@@ -56,6 +56,19 @@ export abstract class Users {
       to: Math.min(page * perPage, total),
     };
   }
+
+  static async getUserById(id: string) {
+    const where: Prisma.UserWhereUniqueInput = { id };
+    const user = await prisma.user.findUnique({
+      where: where,
+      omit: { password: true },
+    });
+    if (!user) {
+      throw status(404, "User not found");
+    }
+    return user;
+  }
+
   static async getUserCounts() {
     // get total (no sudo), patients, clinicians, admins
     // get each account status count: active, pending, suspended, deactivated

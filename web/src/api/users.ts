@@ -6,37 +6,34 @@ import {
   AdminRegisterPayload,
 } from "~/models/user/credentials";
 
-type UsersParams = {
-  search?: string;
-  account_status?: string[];
-  account_role?: string[];
-  page?: number;
-  perPage?: number;
-};
-
-const fetchUsers = async (params: UsersParams) => {
-  const { data } = await api.get("/auth/users", {
-    params: {
-      search: params.search || undefined,
-      account_status: params.account_status,
-      account_role: params.account_role,
-      page: params.page ?? 1,
-      per_page: params.perPage ?? 10,
-    },
-  });
-  return data;
-};
+import { UsersParams } from "~/models/system";
 
 export const usersQueryOptions = (params: UsersParams) =>
   queryOptions({
     queryKey: ["users", params],
-    queryFn: () => fetchUsers(params),
+    queryFn: async () => {
+      const { data } = await api.get("/auth/users", {
+        params: {
+          search: params.search || undefined,
+          account_status: params.account_status,
+          account_role: params.account_role,
+          page: params.page ?? 1,
+          per_page: params.perPage ?? 10,
+        },
+      });
+      return data;
+    },
     placeholderData: (prev) => prev, // keeps stale data visible during page transitions
   });
 
-export const fetchUserDetails = async (userId: string) => {
-  const { data } = await api.get(`/users/${userId}`);
-  return data;
+export const userDetailQueryOptions = (userId: string) => {
+  return queryOptions({
+    queryKey: ["users", userId],
+    queryFn: async () => {
+      const { data } = await api.get(`/auth/users/${userId}`);
+      return data;
+    },
+  });
 };
 
 export const addClinician = () => {

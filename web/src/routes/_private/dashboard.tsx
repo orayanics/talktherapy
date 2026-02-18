@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { fetchDashboardData } from "~/api/dashboard";
+import { dashboardDataQueryOptions } from "~/api/dashboard";
 // import { AppointmentStatus, AppointmentStatusValues } from "~/models/content";
 
 import Grid from "~/components/Page/Grid";
@@ -13,10 +13,7 @@ import AdminSharedDashboard from "~/views/dashboard/adm-shared/";
 
 export const Route = createFileRoute("/_private/dashboard")({
   loader: ({ context: { queryClient } }) => {
-    return queryClient.ensureQueryData({
-      queryKey: ["dashboard-data"],
-      queryFn: fetchDashboardData,
-    });
+    return queryClient.ensureQueryData(dashboardDataQueryOptions);
   },
   component: RouteComponent,
 });

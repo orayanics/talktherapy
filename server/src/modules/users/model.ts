@@ -32,6 +32,9 @@ export namespace UserModel {
   export const userInvalid = t.Literal("Invalid user data");
   export type userInvalid = typeof userInvalid.static;
 
+  export const userNotFound = t.Literal("User not found");
+  export type userNotFound = typeof userNotFound.static;
+
   // user counts by: all, patients, clinicians, admins
   // also include counts by account status for each role
   export const userCounts = t.Object({

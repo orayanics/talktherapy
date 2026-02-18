@@ -37,6 +37,27 @@ export const users = new Elysia({ prefix: "/auth" })
       hasRole: ["admin", "sudo"],
     },
   )
+  // get user by id
+  .get(
+    "/users/:id",
+    async ({ params }) => {
+      const user = await Users.getUserById(params.id);
+      return {
+        ...user,
+        created_at: user.created_at.toISOString(),
+        updated_at: user.updated_at.toISOString(),
+        deleted_at: user.deleted_at?.toISOString() ?? null,
+      };
+    },
+    {
+      response: {
+        200: UserModel.user,
+        404: UserModel.userNotFound,
+      },
+      isAuth: true,
+      hasRole: ["admin", "sudo"],
+    },
+  )
   // get users count by: all, patients, clinicians, admins
   .get(
     "/users/count",

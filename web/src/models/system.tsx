@@ -39,8 +39,29 @@ export interface TableResponse {
   per_page?: number;
 }
 
+export type UsersParams = {
+  search?: string;
+  account_status?: string[];
+  account_role?: string[];
+  page?: number;
+  perPage?: number;
+};
+
 export type UsersTableProps = {
-  data: any;
+  data: Pick<
+    UserResponse,
+    | "id"
+    | "name"
+    | "email"
+    | "account_status"
+    | "account_role"
+    | "account_permissions"
+    | "created_at"
+    | "updated_at"
+    | "created_by"
+    | "updated_by"
+    | "deleted_at"
+  >[];
   page: number;
   perPage: number;
   status: string[];

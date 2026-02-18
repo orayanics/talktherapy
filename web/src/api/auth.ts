@@ -43,6 +43,7 @@ export const useLogin = () => {
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["session"] });
+      await queryClient.refetchQueries({ queryKey: ["session"] });
       navigate({ to: "/dashboard" });
     },
   });
