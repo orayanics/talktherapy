@@ -20,14 +20,12 @@ export abstract class Auth {
       },
     });
 
-    if (!user || !(await Bun.password.verify(password, user.password ?? ""))) {
-      throw status(
-        400,
-        "Invalid email or password" satisfies AuthModel.signInInvalid,
-      );
-    }
+    const isValid =
+      user &&
+      user.account_role &&
+      (await Bun.password.verify(password, user.password ?? ""));
 
-    if (!user.account_role) {
+    if (!isValid) {
       throw status(
         400,
         "Invalid email or password" satisfies AuthModel.signInInvalid,
@@ -48,9 +46,16 @@ export abstract class Auth {
   }
 
   static async signUpPatient(data: AuthModel.signUpPatientBody) {
-    const existingUser = await prisma.user.findUnique({
-      where: { email: data.email },
-    });
+    const hashedPassword = await Bun.password.hash(data.password);
+
+    const [existingUser, diagnosis] = await Promise.all([
+      prisma.user.findUnique({ where: { email: data.email } }),
+      prisma.diagnosis.findUnique({
+        where: { id: data.diagnosis_id },
+        select: { id: true },
+      }),
+    ]);
+
     if (existingUser) {
       throw status(
         400,
@@ -58,19 +63,12 @@ export abstract class Auth {
       );
     }
 
-    const diagnosis = await prisma.diagnosis.findUnique({
-      where: { id: data.diagnosis_id },
-      select: { id: true },
-    });
-
     if (!diagnosis) {
       throw status(
         400,
         "Invalid input data" satisfies AuthModel.signUpPatientInvalid,
       );
     }
-
-    const hashedPassword = await Bun.password.hash(data.password);
 
     await prisma.$transaction(async (tx) => {
       const user = await tx.user.create({

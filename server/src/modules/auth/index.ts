@@ -3,6 +3,14 @@ import { Elysia, status } from "elysia";
 import { Auth } from "./service";
 import { AuthModel } from "./model";
 import { jwtPlugin } from "@/plugins/jwt";
+import { prisma } from "prisma/db";
+import {
+  findAndMatchRefreshToken,
+  revokeRefreshToken,
+  rotateRefreshToken,
+} from "./helper";
+import { JWT_CONFIG, type JwtSignPayload } from "@/utils/jwt";
+import { getCookieOptions } from "@/utils/jwt";
 
 export const auth = new Elysia({ prefix: "/auth" })
   .use(jwtPlugin)
@@ -13,24 +21,33 @@ export const auth = new Elysia({ prefix: "/auth" })
     "/login",
     async ({ body, cookie: { session, refresh }, jwt, jwtRefresh, isProd }) => {
       const response = await Auth.signIn(body);
-      const accessToken = await jwt.sign(response.payload as any);
-      const refreshToken = await jwtRefresh.sign(response.payload as any);
+      const signPayload: JwtSignPayload = {
+        userId: response.payload.userId,
+        email: response.payload.email,
+        role: response.payload.role,
+      };
+
+      const accessToken = await jwt.sign(signPayload);
+      const refreshToken = await jwtRefresh.sign(signPayload);
       const sameSite = isProd ? "none" : "lax";
 
       session.set({
+        ...getCookieOptions(isProd),
         value: accessToken,
-        httpOnly: true,
-        sameSite,
-        secure: isProd,
-        path: "/",
       });
 
       refresh.set({
+        ...getCookieOptions(isProd),
         value: refreshToken,
-        httpOnly: true,
-        sameSite,
-        secure: isProd,
-        path: "/",
+      });
+
+      const tokenHash = await Bun.password.hash(refreshToken);
+      await prisma.refreshToken.create({
+        data: {
+          user_id: response.payload.userId,
+          token_hash: tokenHash,
+          expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        },
       });
 
       return {
@@ -46,27 +63,39 @@ export const auth = new Elysia({ prefix: "/auth" })
       },
     },
   )
-  .post("/logout", async ({ cookie: { session, refresh } }) => {
+  .post("/logout", async ({ jwtRefresh, cookie: { session, refresh } }) => {
+    const rawToken = typeof refresh?.value === "string" ? refresh.value : null;
+
+    if (rawToken) {
+      const payload = await jwtRefresh.verify(rawToken);
+      if (
+        payload &&
+        typeof payload === "object" &&
+        typeof payload.userId === "string"
+      ) {
+        const matched = await findAndMatchRefreshToken(
+          payload.userId,
+          rawToken,
+        );
+        if (matched) await revokeRefreshToken(matched.id);
+      }
+    }
+
     session.remove();
     refresh.remove();
-    return {
-      message: "Logged out successfully",
-    };
+
+    return { message: "Logged out successfully" };
   })
   .post(
     "/refresh",
     async ({ jwt, jwtRefresh, cookie: { session, refresh }, isProd }) => {
-      const sameSite = isProd ? "none" : "lax";
-      const refreshToken =
+      const rawToken =
         typeof refresh?.value === "string" ? refresh.value : null;
-      if (!refreshToken) {
-        return status(401, "Unauthorized");
-      }
+      if (!rawToken) return status(401, "Unauthorized");
 
-      const payload = await jwtRefresh.verify(refreshToken);
-      if (!payload || typeof payload !== "object") {
+      const payload = await jwtRefresh.verify(rawToken);
+      if (!payload || typeof payload !== "object")
         return status(401, "Unauthorized");
-      }
 
       const data = payload as {
         userId?: string;
@@ -81,34 +110,30 @@ export const auth = new Elysia({ prefix: "/auth" })
         return status(401, "Unauthorized");
       }
 
+      const matched = await findAndMatchRefreshToken(data.userId, rawToken);
+      if (!matched) return status(401, "Unauthorized");
+
       const nextPayload = {
         userId: data.userId,
         email: data.email,
         role: data.role,
       };
-
       const accessToken = await jwt.sign(nextPayload as any);
       const nextRefreshToken = await jwtRefresh.sign(nextPayload as any);
 
+      await rotateRefreshToken(matched.id, data.userId, nextRefreshToken);
+
       session.set({
+        ...getCookieOptions(isProd),
         value: accessToken,
-        httpOnly: true,
-        sameSite,
-        secure: isProd,
-        path: "/",
       });
 
       refresh.set({
+        ...getCookieOptions(isProd),
         value: nextRefreshToken,
-        httpOnly: true,
-        sameSite,
-        secure: isProd,
-        path: "/",
       });
 
-      return {
-        token: accessToken,
-      };
+      return { token: accessToken };
     },
   )
   .post(
@@ -123,8 +148,6 @@ export const auth = new Elysia({ prefix: "/auth" })
         200: AuthModel.signUpPatientResponse,
         400: AuthModel.signUpPatientInvalid,
       },
-      isAuth: false,
-      hasRole: [],
     },
   )
   .post(

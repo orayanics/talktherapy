@@ -3,21 +3,23 @@ import { cookie } from "@elysiajs/cookie";
 import { jwt } from "@elysiajs/jwt";
 import { JWT_CONFIG, type JwtPayload } from "@/utils/jwt";
 
-const jwtSecret = JWT_CONFIG.secret ?? "default_secret";
+if (!JWT_CONFIG.secret || !JWT_CONFIG.refreshSecret) {
+  throw new Error("JWT secrets must be defined in environment variables");
+}
 
 export const jwtPlugin = new Elysia({ name: "jwt-plugin" })
   .use(cookie())
   .use(
     jwt({
       name: "jwt",
-      secret: jwtSecret,
+      secret: JWT_CONFIG.secret,
       exp: JWT_CONFIG.accessExpiry,
     }),
   )
   .use(
     jwt({
       name: "jwtRefresh",
-      secret: jwtSecret,
+      secret: JWT_CONFIG.refreshSecret,
       exp: JWT_CONFIG.refreshExpiry,
     }),
   )
@@ -49,11 +51,6 @@ export const jwtPlugin = new Elysia({ name: "jwt-plugin" })
       }
       return payload as Record<string, unknown>;
     };
-
-    if (!bearerToken && !sessionToken) {
-      console.warn("JWT: missing token");
-      return { auth: null };
-    }
 
     let data: Record<string, unknown> | null = null;
     if (bearerToken) {
@@ -95,11 +92,7 @@ export const jwtPlugin = new Elysia({ name: "jwt-plugin" })
     },
     hasRole: (roles: string[]) => ({
       beforeHandle({ auth }) {
-        if (!auth) {
-          return status(401, "Unauthorized");
-        }
-
-        if (!roles.includes(auth.role)) {
+        if (!roles.includes(auth!.role)) {
           return status(403, "Forbidden");
         }
       },

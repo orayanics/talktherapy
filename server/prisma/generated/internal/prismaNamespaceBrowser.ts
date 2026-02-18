@@ -58,6 +58,7 @@ export const ModelName = {
   Admin: 'Admin',
   Patient: 'Patient',
   Clinician: 'Clinician',
+  RefreshToken: 'RefreshToken',
   Otps: 'Otps',
   ScheduleRules: 'ScheduleRules',
   ScheduleInstances: 'ScheduleInstances',
@@ -156,6 +157,18 @@ export const ClinicianScalarFieldEnum = {
 } as const
 
 export type ClinicianScalarFieldEnum = (typeof ClinicianScalarFieldEnum)[keyof typeof ClinicianScalarFieldEnum]
+
+
+export const RefreshTokenScalarFieldEnum = {
+  id: 'id',
+  user_id: 'user_id',
+  token_hash: 'token_hash',
+  expires_at: 'expires_at',
+  revoked_at: 'revoked_at',
+  created_at: 'created_at'
+} as const
+
+export type RefreshTokenScalarFieldEnum = (typeof RefreshTokenScalarFieldEnum)[keyof typeof RefreshTokenScalarFieldEnum]
 
 
 export const OtpsScalarFieldEnum = {

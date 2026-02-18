@@ -75,6 +75,11 @@ export type Patient = Prisma.PatientModel
  */
 export type Clinician = Prisma.ClinicianModel
 /**
+ * Model RefreshToken
+ * 
+ */
+export type RefreshToken = Prisma.RefreshTokenModel
+/**
  * Model Otps
  * 
  */
