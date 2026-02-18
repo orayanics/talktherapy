@@ -4,7 +4,6 @@ yarn.lock
 
 .DS_Store
 .cache
-.env
 .vercel
 .output
 /build/
@@ -16,3 +15,9 @@ yarn.lock
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+
+# local env files
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
