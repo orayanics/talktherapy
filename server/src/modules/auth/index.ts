@@ -10,7 +10,7 @@ import {
   revokeRefreshToken,
   rotateRefreshToken,
 } from "./helper";
-import { JWT_CONFIG, type JwtSignPayload } from "@/utils/jwt";
+import { type JwtSignPayload } from "@/utils/jwt";
 import { getCookieOptions } from "@/utils/jwt";
 
 export const auth = new Elysia({ prefix: "/auth" })

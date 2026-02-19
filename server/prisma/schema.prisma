@@ -111,68 +111,123 @@ model Otps {
   created_at DateTime @default(now())
 }
 
-model ScheduleRules {
+model AvailabilityRule {
   id        String   @id @default(uuid())
   clinician_id String
-  start_date DateTime
-  end_date DateTime
-  start_time DateTime
-  end_time DateTime
-  recurrence String?
-  recurrence_meta String?
-  is_active Boolean @default(true)
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-}
 
-model ScheduleInstances {
-  id String  @id @default(uuid())
-  schedule_rule_id String
-  clinician_id String
   starts_at DateTime
   ends_at DateTime
-  status String
+
+  recurrence_rule String? // RFC5545 RRULE string e.g. "FREQ=WEEKLY;BYDAY=MO,WE,FR"
+  is_active Boolean @default(true)
+
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
+
+  slots Slot[] 
 }
 
 model Appointments {
   id String  @id @default(uuid())
-  clinician_id String
+
+  slot_id String @unique
   patient_id String
-  schedule_instance_id String
-  room_id String?
-  status String
-  starts_at DateTime
-  ends_at DateTime
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-  medical_diagnosis String?
-  source_referral String?
-  chief_complaint String?
-  refarral_url String?
-  booked_at DateTime?
+
+  status AppointmentStatus @default(PENDING)
+
+  booked_at DateTime @default(now())
   confirmed_at DateTime?
   cancelled_at DateTime?
   completed_at DateTime?
   rescheduled_at DateTime?
-  cancelled_by String?
-  patient_cancel_reason String?
-  clinician_cancel_reason String?
-  patient_reshedule_reason String?
-  clinician_reschedule_reason String?
-}
 
-model RescheduleRequests {
-  id String @id @default(uuid())
-  appointment_id String
-  clinician_id String
-  patient_id String
-  original_schedule_instance_id String
-  requested_schedule_instance_id String
-  patient_reason String?
-  clinician_reason String?
-  status String
+  room_id String?
+
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
+
+  slot Slot @relation(fields: [slot_id], references: [id])
+  events      AppointmentEvent[]
+  encounter   Encounter?
+}
+
+enum SlotStatus {
+  AVAILABLE
+  BOOKED
+  BLOCKED
+  CANCELLED
+}
+
+model Slot {
+  id String  @id @default(uuid())
+  availability_rule_id String
+  clinician_id String
+
+  starts_at DateTime
+  ends_at DateTime
+
+  status SlotStatus @default(AVAILABLE)
+
+  appointment Appointments?
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  availability_rule AvailabilityRule @relation(fields: [availability_rule_id], references: [id], onDelete: Cascade)
+}
+
+enum AppointmentStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+  NO_SHOW
+}
+
+enum AppointmentEventType {
+  BOOKED
+  CONFIRMED
+  CANCELLED
+  RESCHEDULED
+  COMPLETED
+  NO_SHOW
+}
+
+enum ActorType {
+  PATIENT
+  CLINICIAN
+  SYSTEM
+  ADMIN
+}
+
+model AppointmentEvent {
+  id String @id @default(uuid())
+  appointment_id String
+
+  type AppointmentEventType
+  actor_type ActorType
+  actor_id String
+
+  reason String?
+  metadata Json?
+
+  created_at DateTime @default(now())
+
+  appointment Appointments @relation(fields: [appointment_id], references: [id], onDelete: Cascade)
+} 
+
+model Encounter {
+  id             String   @id @default(uuid())
+  appointment_id String   @unique
+
+  diagnosis      String?
+  chief_complaint String?
+  referral_source String?
+  referral_url    String?
+
+  notes          String?
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+
+  appointment    Appointments @relation(fields: [appointment_id], references: [id])
 }

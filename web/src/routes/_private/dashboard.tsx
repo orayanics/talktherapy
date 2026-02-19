@@ -1,25 +1,44 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+
 import { dashboardDataQueryOptions } from "~/api/dashboard";
 // import { AppointmentStatus, AppointmentStatusValues } from "~/models/content";
-
 import Grid from "~/components/Page/Grid";
 import GridItem from "~/components/Page/GridItem";
 import PageTitle from "~/components/Page/PageTitle";
 
 // import AppointmentStatusBadge from "~/components/Badge/AppointmentStatusBadge";
 
-// import PatientDashboard from "~/views/dashboard/patient";
+import PatientDashboard from "~/views/dashboard/patient";
 import AdminSharedDashboard from "~/views/dashboard/adm-shared/";
+import { useSession } from "~/context/SessionContext";
 
 export const Route = createFileRoute("/_private/dashboard")({
-  loader: ({ context: { queryClient } }) => {
-    return queryClient.ensureQueryData(dashboardDataQueryOptions);
-  },
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  const data = Route.useLoaderData();
+  const { account_role } = useSession();
+  const enabled = account_role === "admin" || account_role === "clinician";
+
+  const { data } = useQuery({
+    ...dashboardDataQueryOptions,
+    enabled: enabled,
+  });
+
+  // condition view render
+  const dashboardView = () => {
+    if (account_role === "admin") {
+      return <AdminSharedDashboard data={data} />;
+    } else if (account_role === "clinician") {
+      return <div>IN PROGRESS: CLINICIAN DASHBOARD</div>;
+    } else if (account_role === "patient") {
+      return <PatientDashboard />;
+    } else {
+      return <div>Unauthorized</div>;
+    }
+  };
+
   return (
     <>
       <PageTitle
@@ -28,12 +47,9 @@ function RouteComponent() {
       />
       <Grid cols={12} gap={2}>
         <GridItem colSpan={12} className="flex flex-col gap-4">
-          <AdminSharedDashboard data={data} />
-          {/* <AppointmentTest /> */}
+          {dashboardView()}
         </GridItem>
       </Grid>
-
-      {/* <PatientDashboard /> */}
     </>
   );
 }

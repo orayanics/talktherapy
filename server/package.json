@@ -14,7 +14,8 @@
     "@prisma/client": "^7.4.0",
     "better-auth": "^1.4.18",
     "dotenv": "^17.3.1",
-    "elysia": "latest"
+    "elysia": "latest",
+    "rrule": "^2.8.1"
   },
   "devDependencies": {
     "bun-types": "latest",

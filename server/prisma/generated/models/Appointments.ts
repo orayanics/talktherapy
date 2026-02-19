@@ -26,166 +26,94 @@ export type AggregateAppointments = {
 
 export type AppointmentsMinAggregateOutputType = {
   id: string | null
-  clinician_id: string | null
+  slot_id: string | null
   patient_id: string | null
-  schedule_instance_id: string | null
-  room_id: string | null
-  status: string | null
-  starts_at: Date | null
-  ends_at: Date | null
-  created_at: Date | null
-  updated_at: Date | null
-  medical_diagnosis: string | null
-  source_referral: string | null
-  chief_complaint: string | null
-  refarral_url: string | null
+  status: $Enums.AppointmentStatus | null
   booked_at: Date | null
   confirmed_at: Date | null
   cancelled_at: Date | null
   completed_at: Date | null
   rescheduled_at: Date | null
-  cancelled_by: string | null
-  patient_cancel_reason: string | null
-  clinician_cancel_reason: string | null
-  patient_reshedule_reason: string | null
-  clinician_reschedule_reason: string | null
+  room_id: string | null
+  created_at: Date | null
+  updated_at: Date | null
 }
 
 export type AppointmentsMaxAggregateOutputType = {
   id: string | null
-  clinician_id: string | null
+  slot_id: string | null
   patient_id: string | null
-  schedule_instance_id: string | null
-  room_id: string | null
-  status: string | null
-  starts_at: Date | null
-  ends_at: Date | null
-  created_at: Date | null
-  updated_at: Date | null
-  medical_diagnosis: string | null
-  source_referral: string | null
-  chief_complaint: string | null
-  refarral_url: string | null
+  status: $Enums.AppointmentStatus | null
   booked_at: Date | null
   confirmed_at: Date | null
   cancelled_at: Date | null
   completed_at: Date | null
   rescheduled_at: Date | null
-  cancelled_by: string | null
-  patient_cancel_reason: string | null
-  clinician_cancel_reason: string | null
-  patient_reshedule_reason: string | null
-  clinician_reschedule_reason: string | null
+  room_id: string | null
+  created_at: Date | null
+  updated_at: Date | null
 }
 
 export type AppointmentsCountAggregateOutputType = {
   id: number
-  clinician_id: number
+  slot_id: number
   patient_id: number
-  schedule_instance_id: number
-  room_id: number
   status: number
-  starts_at: number
-  ends_at: number
-  created_at: number
-  updated_at: number
-  medical_diagnosis: number
-  source_referral: number
-  chief_complaint: number
-  refarral_url: number
   booked_at: number
   confirmed_at: number
   cancelled_at: number
   completed_at: number
   rescheduled_at: number
-  cancelled_by: number
-  patient_cancel_reason: number
-  clinician_cancel_reason: number
-  patient_reshedule_reason: number
-  clinician_reschedule_reason: number
+  room_id: number
+  created_at: number
+  updated_at: number
   _all: number
 }
 
 
 export type AppointmentsMinAggregateInputType = {
   id?: true
-  clinician_id?: true
+  slot_id?: true
   patient_id?: true
-  schedule_instance_id?: true
-  room_id?: true
   status?: true
-  starts_at?: true
-  ends_at?: true
-  created_at?: true
-  updated_at?: true
-  medical_diagnosis?: true
-  source_referral?: true
-  chief_complaint?: true
-  refarral_url?: true
   booked_at?: true
   confirmed_at?: true
   cancelled_at?: true
   completed_at?: true
   rescheduled_at?: true
-  cancelled_by?: true
-  patient_cancel_reason?: true
-  clinician_cancel_reason?: true
-  patient_reshedule_reason?: true
-  clinician_reschedule_reason?: true
+  room_id?: true
+  created_at?: true
+  updated_at?: true
 }
 
 export type AppointmentsMaxAggregateInputType = {
   id?: true
-  clinician_id?: true
+  slot_id?: true
   patient_id?: true
-  schedule_instance_id?: true
-  room_id?: true
   status?: true
-  starts_at?: true
-  ends_at?: true
-  created_at?: true
-  updated_at?: true
-  medical_diagnosis?: true
-  source_referral?: true
-  chief_complaint?: true
-  refarral_url?: true
   booked_at?: true
   confirmed_at?: true
   cancelled_at?: true
   completed_at?: true
   rescheduled_at?: true
-  cancelled_by?: true
-  patient_cancel_reason?: true
-  clinician_cancel_reason?: true
-  patient_reshedule_reason?: true
-  clinician_reschedule_reason?: true
+  room_id?: true
+  created_at?: true
+  updated_at?: true
 }
 
 export type AppointmentsCountAggregateInputType = {
   id?: true
-  clinician_id?: true
+  slot_id?: true
   patient_id?: true
-  schedule_instance_id?: true
-  room_id?: true
   status?: true
-  starts_at?: true
-  ends_at?: true
-  created_at?: true
-  updated_at?: true
-  medical_diagnosis?: true
-  source_referral?: true
-  chief_complaint?: true
-  refarral_url?: true
   booked_at?: true
   confirmed_at?: true
   cancelled_at?: true
   completed_at?: true
   rescheduled_at?: true
-  cancelled_by?: true
-  patient_cancel_reason?: true
-  clinician_cancel_reason?: true
-  patient_reshedule_reason?: true
-  clinician_reschedule_reason?: true
+  room_id?: true
+  created_at?: true
+  updated_at?: true
   _all?: true
 }
 
@@ -263,29 +191,17 @@ export type AppointmentsGroupByArgs<ExtArgs extends runtime.Types.Extensions.Int
 
 export type AppointmentsGroupByOutputType = {
   id: string
-  clinician_id: string
+  slot_id: string
   patient_id: string
-  schedule_instance_id: string
-  room_id: string | null
-  status: string
-  starts_at: Date
-  ends_at: Date
-  created_at: Date
-  updated_at: Date
-  medical_diagnosis: string | null
-  source_referral: string | null
-  chief_complaint: string | null
-  refarral_url: string | null
-  booked_at: Date | null
+  status: $Enums.AppointmentStatus
+  booked_at: Date
   confirmed_at: Date | null
   cancelled_at: Date | null
   completed_at: Date | null
   rescheduled_at: Date | null
-  cancelled_by: string | null
-  patient_cancel_reason: string | null
-  clinician_cancel_reason: string | null
-  patient_reshedule_reason: string | null
-  clinician_reschedule_reason: string | null
+  room_id: string | null
+  created_at: Date
+  updated_at: Date
   _count: AppointmentsCountAggregateOutputType | null
   _min: AppointmentsMinAggregateOutputType | null
   _max: AppointmentsMaxAggregateOutputType | null
@@ -311,113 +227,74 @@ export type AppointmentsWhereInput = {
   OR?: Prisma.AppointmentsWhereInput[]
   NOT?: Prisma.AppointmentsWhereInput | Prisma.AppointmentsWhereInput[]
   id?: Prisma.StringFilter<"Appointments"> | string
-  clinician_id?: Prisma.StringFilter<"Appointments"> | string
+  slot_id?: Prisma.StringFilter<"Appointments"> | string
   patient_id?: Prisma.StringFilter<"Appointments"> | string
-  schedule_instance_id?: Prisma.StringFilter<"Appointments"> | string
-  room_id?: Prisma.StringNullableFilter<"Appointments"> | string | null
-  status?: Prisma.StringFilter<"Appointments"> | string
-  starts_at?: Prisma.DateTimeFilter<"Appointments"> | Date | string
-  ends_at?: Prisma.DateTimeFilter<"Appointments"> | Date | string
-  created_at?: Prisma.DateTimeFilter<"Appointments"> | Date | string
-  updated_at?: Prisma.DateTimeFilter<"Appointments"> | Date | string
-  medical_diagnosis?: Prisma.StringNullableFilter<"Appointments"> | string | null
-  source_referral?: Prisma.StringNullableFilter<"Appointments"> | string | null
-  chief_complaint?: Prisma.StringNullableFilter<"Appointments"> | string | null
-  refarral_url?: Prisma.StringNullableFilter<"Appointments"> | string | null
-  booked_at?: Prisma.DateTimeNullableFilter<"Appointments"> | Date | string | null
+  status?: Prisma.EnumAppointmentStatusFilter<"Appointments"> | $Enums.AppointmentStatus
+  booked_at?: Prisma.DateTimeFilter<"Appointments"> | Date | string
   confirmed_at?: Prisma.DateTimeNullableFilter<"Appointments"> | Date | string | null
   cancelled_at?: Prisma.DateTimeNullableFilter<"Appointments"> | Date | string | null
   completed_at?: Prisma.DateTimeNullableFilter<"Appointments"> | Date | string | null
   rescheduled_at?: Prisma.DateTimeNullableFilter<"Appointments"> | Date | string | null
-  cancelled_by?: Prisma.StringNullableFilter<"Appointments"> | string | null
-  patient_cancel_reason?: Prisma.StringNullableFilter<"Appointments"> | string | null
-  clinician_cancel_reason?: Prisma.StringNullableFilter<"Appointments"> | string | null
-  patient_reshedule_reason?: Prisma.StringNullableFilter<"Appointments"> | string | null
-  clinician_reschedule_reason?: Prisma.StringNullableFilter<"Appointments"> | string | null
+  room_id?: Prisma.StringNullableFilter<"Appointments"> | string | null
+  created_at?: Prisma.DateTimeFilter<"Appointments"> | Date | string
+  updated_at?: Prisma.DateTimeFilter<"Appointments"> | Date | string
+  slot?: Prisma.XOR<Prisma.SlotScalarRelationFilter, Prisma.SlotWhereInput>
+  events?: Prisma.AppointmentEventListRelationFilter
+  encounter?: Prisma.XOR<Prisma.EncounterNullableScalarRelationFilter, Prisma.EncounterWhereInput> | null
 }
 
 export type AppointmentsOrderByWithRelationInput = {
   id?: Prisma.SortOrder
-  clinician_id?: Prisma.SortOrder
+  slot_id?: Prisma.SortOrder
   patient_id?: Prisma.SortOrder
-  schedule_instance_id?: Prisma.SortOrder
-  room_id?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
-  starts_at?: Prisma.SortOrder
-  ends_at?: Prisma.SortOrder
-  created_at?: Prisma.SortOrder
-  updated_at?: Prisma.SortOrder
-  medical_diagnosis?: Prisma.SortOrderInput | Prisma.SortOrder
-  source_referral?: Prisma.SortOrderInput | Prisma.SortOrder
-  chief_complaint?: Prisma.SortOrderInput | Prisma.SortOrder
-  refarral_url?: Prisma.SortOrderInput | Prisma.SortOrder
-  booked_at?: Prisma.SortOrderInput | Prisma.SortOrder
+  booked_at?: Prisma.SortOrder
   confirmed_at?: Prisma.SortOrderInput | Prisma.SortOrder
   cancelled_at?: Prisma.SortOrderInput | Prisma.SortOrder
   completed_at?: Prisma.SortOrderInput | Prisma.SortOrder
   rescheduled_at?: Prisma.SortOrderInput | Prisma.SortOrder
-  cancelled_by?: Prisma.SortOrderInput | Prisma.SortOrder
-  patient_cancel_reason?: Prisma.SortOrderInput | Prisma.SortOrder
-  clinician_cancel_reason?: Prisma.SortOrderInput | Prisma.SortOrder
-  patient_reshedule_reason?: Prisma.SortOrderInput | Prisma.SortOrder
-  clinician_reschedule_reason?: Prisma.SortOrderInput | Prisma.SortOrder
+  room_id?: Prisma.SortOrderInput | Prisma.SortOrder
+  created_at?: Prisma.SortOrder
+  updated_at?: Prisma.SortOrder
+  slot?: Prisma.SlotOrderByWithRelationInput
+  events?: Prisma.AppointmentEventOrderByRelationAggregateInput
+  encounter?: Prisma.EncounterOrderByWithRelationInput
 }
 
 export type AppointmentsWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  slot_id?: string
   AND?: Prisma.AppointmentsWhereInput | Prisma.AppointmentsWhereInput[]
   OR?: Prisma.AppointmentsWhereInput[]
   NOT?: Prisma.AppointmentsWhereInput | Prisma.AppointmentsWhereInput[]
-  clinician_id?: Prisma.StringFilter<"Appointments"> | string
   patient_id?: Prisma.StringFilter<"Appointments"> | string
-  schedule_instance_id?: Prisma.StringFilter<"Appointments"> | string
-  room_id?: Prisma.StringNullableFilter<"Appointments"> | string | null
-  status?: Prisma.StringFilter<"Appointments"> | string
-  starts_at?: Prisma.DateTimeFilter<"Appointments"> | Date | string
-  ends_at?: Prisma.DateTimeFilter<"Appointments"> | Date | string
-  created_at?: Prisma.DateTimeFilter<"Appointments"> | Date | string
-  updated_at?: Prisma.DateTimeFilter<"Appointments"> | Date | string
-  medical_diagnosis?: Prisma.StringNullableFilter<"Appointments"> | string | null
-  source_referral?: Prisma.StringNullableFilter<"Appointments"> | string | null
-  chief_complaint?: Prisma.StringNullableFilter<"Appointments"> | string | null
-  refarral_url?: Prisma.StringNullableFilter<"Appointments"> | string | null
-  booked_at?: Prisma.DateTimeNullableFilter<"Appointments"> | Date | string | null
+  status?: Prisma.EnumAppointmentStatusFilter<"Appointments"> | $Enums.AppointmentStatus
+  booked_at?: Prisma.DateTimeFilter<"Appointments"> | Date | string
   confirmed_at?: Prisma.DateTimeNullableFilter<"Appointments"> | Date | string | null
   cancelled_at?: Prisma.DateTimeNullableFilter<"Appointments"> | Date | string | null
   completed_at?: Prisma.DateTimeNullableFilter<"Appointments"> | Date | string | null
   rescheduled_at?: Prisma.DateTimeNullableFilter<"Appointments"> | Date | string | null
-  cancelled_by?: Prisma.StringNullableFilter<"Appointments"> | string | null
-  patient_cancel_reason?: Prisma.StringNullableFilter<"Appointments"> | string | null
-  clinician_cancel_reason?: Prisma.StringNullableFilter<"Appointments"> | string | null
-  patient_reshedule_reason?: Prisma.StringNullableFilter<"Appointments"> | string | null
-  clinician_reschedule_reason?: Prisma.StringNullableFilter<"Appointments"> | string | null
-}, "id">
+  room_id?: Prisma.StringNullableFilter<"Appointments"> | string | null
+  created_at?: Prisma.DateTimeFilter<"Appointments"> | Date | string
+  updated_at?: Prisma.DateTimeFilter<"Appointments"> | Date | string
+  slot?: Prisma.XOR<Prisma.SlotScalarRelationFilter, Prisma.SlotWhereInput>
+  events?: Prisma.AppointmentEventListRelationFilter
+  encounter?: Prisma.XOR<Prisma.EncounterNullableScalarRelationFilter, Prisma.EncounterWhereInput> | null
+}, "id" | "slot_id">
 
 export type AppointmentsOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
-  clinician_id?: Prisma.SortOrder
+  slot_id?: Prisma.SortOrder
   patient_id?: Prisma.SortOrder
-  schedule_instance_id?: Prisma.SortOrder
-  room_id?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
-  starts_at?: Prisma.SortOrder
-  ends_at?: Prisma.SortOrder
-  created_at?: Prisma.SortOrder
-  updated_at?: Prisma.SortOrder
-  medical_diagnosis?: Prisma.SortOrderInput | Prisma.SortOrder
-  source_referral?: Prisma.SortOrderInput | Prisma.SortOrder
-  chief_complaint?: Prisma.SortOrderInput | Prisma.SortOrder
-  refarral_url?: Prisma.SortOrderInput | Prisma.SortOrder
-  booked_at?: Prisma.SortOrderInput | Prisma.SortOrder
+  booked_at?: Prisma.SortOrder
   confirmed_at?: Prisma.SortOrderInput | Prisma.SortOrder
   cancelled_at?: Prisma.SortOrderInput | Prisma.SortOrder
   completed_at?: Prisma.SortOrderInput | Prisma.SortOrder
   rescheduled_at?: Prisma.SortOrderInput | Prisma.SortOrder
-  cancelled_by?: Prisma.SortOrderInput | Prisma.SortOrder
-  patient_cancel_reason?: Prisma.SortOrderInput | Prisma.SortOrder
-  clinician_cancel_reason?: Prisma.SortOrderInput | Prisma.SortOrder
-  patient_reshedule_reason?: Prisma.SortOrderInput | Prisma.SortOrder
-  clinician_reschedule_reason?: Prisma.SortOrderInput | Prisma.SortOrder
+  room_id?: Prisma.SortOrderInput | Prisma.SortOrder
+  created_at?: Prisma.SortOrder
+  updated_at?: Prisma.SortOrder
   _count?: Prisma.AppointmentsCountOrderByAggregateInput
   _max?: Prisma.AppointmentsMaxOrderByAggregateInput
   _min?: Prisma.AppointmentsMinOrderByAggregateInput
@@ -428,441 +305,621 @@ export type AppointmentsScalarWhereWithAggregatesInput = {
   OR?: Prisma.AppointmentsScalarWhereWithAggregatesInput[]
   NOT?: Prisma.AppointmentsScalarWhereWithAggregatesInput | Prisma.AppointmentsScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"Appointments"> | string
-  clinician_id?: Prisma.StringWithAggregatesFilter<"Appointments"> | string
+  slot_id?: Prisma.StringWithAggregatesFilter<"Appointments"> | string
   patient_id?: Prisma.StringWithAggregatesFilter<"Appointments"> | string
-  schedule_instance_id?: Prisma.StringWithAggregatesFilter<"Appointments"> | string
-  room_id?: Prisma.StringNullableWithAggregatesFilter<"Appointments"> | string | null
-  status?: Prisma.StringWithAggregatesFilter<"Appointments"> | string
-  starts_at?: Prisma.DateTimeWithAggregatesFilter<"Appointments"> | Date | string
-  ends_at?: Prisma.DateTimeWithAggregatesFilter<"Appointments"> | Date | string
-  created_at?: Prisma.DateTimeWithAggregatesFilter<"Appointments"> | Date | string
-  updated_at?: Prisma.DateTimeWithAggregatesFilter<"Appointments"> | Date | string
-  medical_diagnosis?: Prisma.StringNullableWithAggregatesFilter<"Appointments"> | string | null
-  source_referral?: Prisma.StringNullableWithAggregatesFilter<"Appointments"> | string | null
-  chief_complaint?: Prisma.StringNullableWithAggregatesFilter<"Appointments"> | string | null
-  refarral_url?: Prisma.StringNullableWithAggregatesFilter<"Appointments"> | string | null
-  booked_at?: Prisma.DateTimeNullableWithAggregatesFilter<"Appointments"> | Date | string | null
+  status?: Prisma.EnumAppointmentStatusWithAggregatesFilter<"Appointments"> | $Enums.AppointmentStatus
+  booked_at?: Prisma.DateTimeWithAggregatesFilter<"Appointments"> | Date | string
   confirmed_at?: Prisma.DateTimeNullableWithAggregatesFilter<"Appointments"> | Date | string | null
   cancelled_at?: Prisma.DateTimeNullableWithAggregatesFilter<"Appointments"> | Date | string | null
   completed_at?: Prisma.DateTimeNullableWithAggregatesFilter<"Appointments"> | Date | string | null
   rescheduled_at?: Prisma.DateTimeNullableWithAggregatesFilter<"Appointments"> | Date | string | null
-  cancelled_by?: Prisma.StringNullableWithAggregatesFilter<"Appointments"> | string | null
-  patient_cancel_reason?: Prisma.StringNullableWithAggregatesFilter<"Appointments"> | string | null
-  clinician_cancel_reason?: Prisma.StringNullableWithAggregatesFilter<"Appointments"> | string | null
-  patient_reshedule_reason?: Prisma.StringNullableWithAggregatesFilter<"Appointments"> | string | null
-  clinician_reschedule_reason?: Prisma.StringNullableWithAggregatesFilter<"Appointments"> | string | null
+  room_id?: Prisma.StringNullableWithAggregatesFilter<"Appointments"> | string | null
+  created_at?: Prisma.DateTimeWithAggregatesFilter<"Appointments"> | Date | string
+  updated_at?: Prisma.DateTimeWithAggregatesFilter<"Appointments"> | Date | string
 }
 
 export type AppointmentsCreateInput = {
   id?: string
-  clinician_id: string
   patient_id: string
-  schedule_instance_id: string
-  room_id?: string | null
-  status: string
-  starts_at: Date | string
-  ends_at: Date | string
-  created_at?: Date | string
-  updated_at?: Date | string
-  medical_diagnosis?: string | null
-  source_referral?: string | null
-  chief_complaint?: string | null
-  refarral_url?: string | null
-  booked_at?: Date | string | null
+  status?: $Enums.AppointmentStatus
+  booked_at?: Date | string
   confirmed_at?: Date | string | null
   cancelled_at?: Date | string | null
   completed_at?: Date | string | null
   rescheduled_at?: Date | string | null
-  cancelled_by?: string | null
-  patient_cancel_reason?: string | null
-  clinician_cancel_reason?: string | null
-  patient_reshedule_reason?: string | null
-  clinician_reschedule_reason?: string | null
+  room_id?: string | null
+  created_at?: Date | string
+  updated_at?: Date | string
+  slot: Prisma.SlotCreateNestedOneWithoutAppointmentInput
+  events?: Prisma.AppointmentEventCreateNestedManyWithoutAppointmentInput
+  encounter?: Prisma.EncounterCreateNestedOneWithoutAppointmentInput
 }
 
 export type AppointmentsUncheckedCreateInput = {
   id?: string
-  clinician_id: string
+  slot_id: string
   patient_id: string
-  schedule_instance_id: string
-  room_id?: string | null
-  status: string
-  starts_at: Date | string
-  ends_at: Date | string
-  created_at?: Date | string
-  updated_at?: Date | string
-  medical_diagnosis?: string | null
-  source_referral?: string | null
-  chief_complaint?: string | null
-  refarral_url?: string | null
-  booked_at?: Date | string | null
+  status?: $Enums.AppointmentStatus
+  booked_at?: Date | string
   confirmed_at?: Date | string | null
   cancelled_at?: Date | string | null
   completed_at?: Date | string | null
   rescheduled_at?: Date | string | null
-  cancelled_by?: string | null
-  patient_cancel_reason?: string | null
-  clinician_cancel_reason?: string | null
-  patient_reshedule_reason?: string | null
-  clinician_reschedule_reason?: string | null
+  room_id?: string | null
+  created_at?: Date | string
+  updated_at?: Date | string
+  events?: Prisma.AppointmentEventUncheckedCreateNestedManyWithoutAppointmentInput
+  encounter?: Prisma.EncounterUncheckedCreateNestedOneWithoutAppointmentInput
 }
 
 export type AppointmentsUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  clinician_id?: Prisma.StringFieldUpdateOperationsInput | string
   patient_id?: Prisma.StringFieldUpdateOperationsInput | string
-  schedule_instance_id?: Prisma.StringFieldUpdateOperationsInput | string
-  room_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
-  starts_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  ends_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  medical_diagnosis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  source_referral?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chief_complaint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  refarral_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  booked_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  status?: Prisma.EnumAppointmentStatusFieldUpdateOperationsInput | $Enums.AppointmentStatus
+  booked_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   confirmed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   cancelled_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   rescheduled_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  cancelled_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  patient_cancel_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  clinician_cancel_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  patient_reshedule_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  clinician_reschedule_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  room_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  slot?: Prisma.SlotUpdateOneRequiredWithoutAppointmentNestedInput
+  events?: Prisma.AppointmentEventUpdateManyWithoutAppointmentNestedInput
+  encounter?: Prisma.EncounterUpdateOneWithoutAppointmentNestedInput
 }
 
 export type AppointmentsUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  clinician_id?: Prisma.StringFieldUpdateOperationsInput | string
+  slot_id?: Prisma.StringFieldUpdateOperationsInput | string
   patient_id?: Prisma.StringFieldUpdateOperationsInput | string
-  schedule_instance_id?: Prisma.StringFieldUpdateOperationsInput | string
-  room_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
-  starts_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  ends_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  medical_diagnosis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  source_referral?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chief_complaint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  refarral_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  booked_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  status?: Prisma.EnumAppointmentStatusFieldUpdateOperationsInput | $Enums.AppointmentStatus
+  booked_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   confirmed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   cancelled_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   rescheduled_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  cancelled_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  patient_cancel_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  clinician_cancel_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  patient_reshedule_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  clinician_reschedule_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  room_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  events?: Prisma.AppointmentEventUncheckedUpdateManyWithoutAppointmentNestedInput
+  encounter?: Prisma.EncounterUncheckedUpdateOneWithoutAppointmentNestedInput
 }
 
 export type AppointmentsCreateManyInput = {
   id?: string
-  clinician_id: string
+  slot_id: string
   patient_id: string
-  schedule_instance_id: string
-  room_id?: string | null
-  status: string
-  starts_at: Date | string
-  ends_at: Date | string
-  created_at?: Date | string
-  updated_at?: Date | string
-  medical_diagnosis?: string | null
-  source_referral?: string | null
-  chief_complaint?: string | null
-  refarral_url?: string | null
-  booked_at?: Date | string | null
+  status?: $Enums.AppointmentStatus
+  booked_at?: Date | string
   confirmed_at?: Date | string | null
   cancelled_at?: Date | string | null
   completed_at?: Date | string | null
   rescheduled_at?: Date | string | null
-  cancelled_by?: string | null
-  patient_cancel_reason?: string | null
-  clinician_cancel_reason?: string | null
-  patient_reshedule_reason?: string | null
-  clinician_reschedule_reason?: string | null
+  room_id?: string | null
+  created_at?: Date | string
+  updated_at?: Date | string
 }
 
 export type AppointmentsUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  clinician_id?: Prisma.StringFieldUpdateOperationsInput | string
   patient_id?: Prisma.StringFieldUpdateOperationsInput | string
-  schedule_instance_id?: Prisma.StringFieldUpdateOperationsInput | string
-  room_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
-  starts_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  ends_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  medical_diagnosis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  source_referral?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chief_complaint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  refarral_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  booked_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  status?: Prisma.EnumAppointmentStatusFieldUpdateOperationsInput | $Enums.AppointmentStatus
+  booked_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   confirmed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   cancelled_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   rescheduled_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  cancelled_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  patient_cancel_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  clinician_cancel_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  patient_reshedule_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  clinician_reschedule_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  room_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type AppointmentsUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  clinician_id?: Prisma.StringFieldUpdateOperationsInput | string
+  slot_id?: Prisma.StringFieldUpdateOperationsInput | string
   patient_id?: Prisma.StringFieldUpdateOperationsInput | string
-  schedule_instance_id?: Prisma.StringFieldUpdateOperationsInput | string
-  room_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
-  starts_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  ends_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  medical_diagnosis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  source_referral?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chief_complaint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  refarral_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  booked_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  status?: Prisma.EnumAppointmentStatusFieldUpdateOperationsInput | $Enums.AppointmentStatus
+  booked_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   confirmed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   cancelled_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   rescheduled_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  cancelled_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  patient_cancel_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  clinician_cancel_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  patient_reshedule_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  clinician_reschedule_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  room_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type AppointmentsCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  clinician_id?: Prisma.SortOrder
+  slot_id?: Prisma.SortOrder
   patient_id?: Prisma.SortOrder
-  schedule_instance_id?: Prisma.SortOrder
-  room_id?: Prisma.SortOrder
   status?: Prisma.SortOrder
-  starts_at?: Prisma.SortOrder
-  ends_at?: Prisma.SortOrder
-  created_at?: Prisma.SortOrder
-  updated_at?: Prisma.SortOrder
-  medical_diagnosis?: Prisma.SortOrder
-  source_referral?: Prisma.SortOrder
-  chief_complaint?: Prisma.SortOrder
-  refarral_url?: Prisma.SortOrder
   booked_at?: Prisma.SortOrder
   confirmed_at?: Prisma.SortOrder
   cancelled_at?: Prisma.SortOrder
   completed_at?: Prisma.SortOrder
   rescheduled_at?: Prisma.SortOrder
-  cancelled_by?: Prisma.SortOrder
-  patient_cancel_reason?: Prisma.SortOrder
-  clinician_cancel_reason?: Prisma.SortOrder
-  patient_reshedule_reason?: Prisma.SortOrder
-  clinician_reschedule_reason?: Prisma.SortOrder
+  room_id?: Prisma.SortOrder
+  created_at?: Prisma.SortOrder
+  updated_at?: Prisma.SortOrder
 }
 
 export type AppointmentsMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  clinician_id?: Prisma.SortOrder
+  slot_id?: Prisma.SortOrder
   patient_id?: Prisma.SortOrder
-  schedule_instance_id?: Prisma.SortOrder
-  room_id?: Prisma.SortOrder
   status?: Prisma.SortOrder
-  starts_at?: Prisma.SortOrder
-  ends_at?: Prisma.SortOrder
-  created_at?: Prisma.SortOrder
-  updated_at?: Prisma.SortOrder
-  medical_diagnosis?: Prisma.SortOrder
-  source_referral?: Prisma.SortOrder
-  chief_complaint?: Prisma.SortOrder
-  refarral_url?: Prisma.SortOrder
   booked_at?: Prisma.SortOrder
   confirmed_at?: Prisma.SortOrder
   cancelled_at?: Prisma.SortOrder
   completed_at?: Prisma.SortOrder
   rescheduled_at?: Prisma.SortOrder
-  cancelled_by?: Prisma.SortOrder
-  patient_cancel_reason?: Prisma.SortOrder
-  clinician_cancel_reason?: Prisma.SortOrder
-  patient_reshedule_reason?: Prisma.SortOrder
-  clinician_reschedule_reason?: Prisma.SortOrder
+  room_id?: Prisma.SortOrder
+  created_at?: Prisma.SortOrder
+  updated_at?: Prisma.SortOrder
 }
 
 export type AppointmentsMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  clinician_id?: Prisma.SortOrder
+  slot_id?: Prisma.SortOrder
   patient_id?: Prisma.SortOrder
-  schedule_instance_id?: Prisma.SortOrder
-  room_id?: Prisma.SortOrder
   status?: Prisma.SortOrder
-  starts_at?: Prisma.SortOrder
-  ends_at?: Prisma.SortOrder
-  created_at?: Prisma.SortOrder
-  updated_at?: Prisma.SortOrder
-  medical_diagnosis?: Prisma.SortOrder
-  source_referral?: Prisma.SortOrder
-  chief_complaint?: Prisma.SortOrder
-  refarral_url?: Prisma.SortOrder
   booked_at?: Prisma.SortOrder
   confirmed_at?: Prisma.SortOrder
   cancelled_at?: Prisma.SortOrder
   completed_at?: Prisma.SortOrder
   rescheduled_at?: Prisma.SortOrder
-  cancelled_by?: Prisma.SortOrder
-  patient_cancel_reason?: Prisma.SortOrder
-  clinician_cancel_reason?: Prisma.SortOrder
-  patient_reshedule_reason?: Prisma.SortOrder
-  clinician_reschedule_reason?: Prisma.SortOrder
+  room_id?: Prisma.SortOrder
+  created_at?: Prisma.SortOrder
+  updated_at?: Prisma.SortOrder
 }
 
+export type AppointmentsNullableScalarRelationFilter = {
+  is?: Prisma.AppointmentsWhereInput | null
+  isNot?: Prisma.AppointmentsWhereInput | null
+}
+
+export type AppointmentsScalarRelationFilter = {
+  is?: Prisma.AppointmentsWhereInput
+  isNot?: Prisma.AppointmentsWhereInput
+}
+
+export type EnumAppointmentStatusFieldUpdateOperationsInput = {
+  set?: $Enums.AppointmentStatus
+}
+
+export type AppointmentsCreateNestedOneWithoutSlotInput = {
+  create?: Prisma.XOR<Prisma.AppointmentsCreateWithoutSlotInput, Prisma.AppointmentsUncheckedCreateWithoutSlotInput>
+  connectOrCreate?: Prisma.AppointmentsCreateOrConnectWithoutSlotInput
+  connect?: Prisma.AppointmentsWhereUniqueInput
+}
+
+export type AppointmentsUncheckedCreateNestedOneWithoutSlotInput = {
+  create?: Prisma.XOR<Prisma.AppointmentsCreateWithoutSlotInput, Prisma.AppointmentsUncheckedCreateWithoutSlotInput>
+  connectOrCreate?: Prisma.AppointmentsCreateOrConnectWithoutSlotInput
+  connect?: Prisma.AppointmentsWhereUniqueInput
+}
+
+export type AppointmentsUpdateOneWithoutSlotNestedInput = {
+  create?: Prisma.XOR<Prisma.AppointmentsCreateWithoutSlotInput, Prisma.AppointmentsUncheckedCreateWithoutSlotInput>
+  connectOrCreate?: Prisma.AppointmentsCreateOrConnectWithoutSlotInput
+  upsert?: Prisma.AppointmentsUpsertWithoutSlotInput
+  disconnect?: Prisma.AppointmentsWhereInput | boolean
+  delete?: Prisma.AppointmentsWhereInput | boolean
+  connect?: Prisma.AppointmentsWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.AppointmentsUpdateToOneWithWhereWithoutSlotInput, Prisma.AppointmentsUpdateWithoutSlotInput>, Prisma.AppointmentsUncheckedUpdateWithoutSlotInput>
+}
+
+export type AppointmentsUncheckedUpdateOneWithoutSlotNestedInput = {
+  create?: Prisma.XOR<Prisma.AppointmentsCreateWithoutSlotInput, Prisma.AppointmentsUncheckedCreateWithoutSlotInput>
+  connectOrCreate?: Prisma.AppointmentsCreateOrConnectWithoutSlotInput
+  upsert?: Prisma.AppointmentsUpsertWithoutSlotInput
+  disconnect?: Prisma.AppointmentsWhereInput | boolean
+  delete?: Prisma.AppointmentsWhereInput | boolean
+  connect?: Prisma.AppointmentsWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.AppointmentsUpdateToOneWithWhereWithoutSlotInput, Prisma.AppointmentsUpdateWithoutSlotInput>, Prisma.AppointmentsUncheckedUpdateWithoutSlotInput>
+}
+
+export type AppointmentsCreateNestedOneWithoutEventsInput = {
+  create?: Prisma.XOR<Prisma.AppointmentsCreateWithoutEventsInput, Prisma.AppointmentsUncheckedCreateWithoutEventsInput>
+  connectOrCreate?: Prisma.AppointmentsCreateOrConnectWithoutEventsInput
+  connect?: Prisma.AppointmentsWhereUniqueInput
+}
+
+export type AppointmentsUpdateOneRequiredWithoutEventsNestedInput = {
+  create?: Prisma.XOR<Prisma.AppointmentsCreateWithoutEventsInput, Prisma.AppointmentsUncheckedCreateWithoutEventsInput>
+  connectOrCreate?: Prisma.AppointmentsCreateOrConnectWithoutEventsInput
+  upsert?: Prisma.AppointmentsUpsertWithoutEventsInput
+  connect?: Prisma.AppointmentsWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.AppointmentsUpdateToOneWithWhereWithoutEventsInput, Prisma.AppointmentsUpdateWithoutEventsInput>, Prisma.AppointmentsUncheckedUpdateWithoutEventsInput>
+}
+
+export type AppointmentsCreateNestedOneWithoutEncounterInput = {
+  create?: Prisma.XOR<Prisma.AppointmentsCreateWithoutEncounterInput, Prisma.AppointmentsUncheckedCreateWithoutEncounterInput>
+  connectOrCreate?: Prisma.AppointmentsCreateOrConnectWithoutEncounterInput
+  connect?: Prisma.AppointmentsWhereUniqueInput
+}
+
+export type AppointmentsUpdateOneRequiredWithoutEncounterNestedInput = {
+  create?: Prisma.XOR<Prisma.AppointmentsCreateWithoutEncounterInput, Prisma.AppointmentsUncheckedCreateWithoutEncounterInput>
+  connectOrCreate?: Prisma.AppointmentsCreateOrConnectWithoutEncounterInput
+  upsert?: Prisma.AppointmentsUpsertWithoutEncounterInput
+  connect?: Prisma.AppointmentsWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.AppointmentsUpdateToOneWithWhereWithoutEncounterInput, Prisma.AppointmentsUpdateWithoutEncounterInput>, Prisma.AppointmentsUncheckedUpdateWithoutEncounterInput>
+}
+
+export type AppointmentsCreateWithoutSlotInput = {
+  id?: string
+  patient_id: string
+  status?: $Enums.AppointmentStatus
+  booked_at?: Date | string
+  confirmed_at?: Date | string | null
+  cancelled_at?: Date | string | null
+  completed_at?: Date | string | null
+  rescheduled_at?: Date | string | null
+  room_id?: string | null
+  created_at?: Date | string
+  updated_at?: Date | string
+  events?: Prisma.AppointmentEventCreateNestedManyWithoutAppointmentInput
+  encounter?: Prisma.EncounterCreateNestedOneWithoutAppointmentInput
+}
+
+export type AppointmentsUncheckedCreateWithoutSlotInput = {
+  id?: string
+  patient_id: string
+  status?: $Enums.AppointmentStatus
+  booked_at?: Date | string
+  confirmed_at?: Date | string | null
+  cancelled_at?: Date | string | null
+  completed_at?: Date | string | null
+  rescheduled_at?: Date | string | null
+  room_id?: string | null
+  created_at?: Date | string
+  updated_at?: Date | string
+  events?: Prisma.AppointmentEventUncheckedCreateNestedManyWithoutAppointmentInput
+  encounter?: Prisma.EncounterUncheckedCreateNestedOneWithoutAppointmentInput
+}
+
+export type AppointmentsCreateOrConnectWithoutSlotInput = {
+  where: Prisma.AppointmentsWhereUniqueInput
+  create: Prisma.XOR<Prisma.AppointmentsCreateWithoutSlotInput, Prisma.AppointmentsUncheckedCreateWithoutSlotInput>
+}
+
+export type AppointmentsUpsertWithoutSlotInput = {
+  update: Prisma.XOR<Prisma.AppointmentsUpdateWithoutSlotInput, Prisma.AppointmentsUncheckedUpdateWithoutSlotInput>
+  create: Prisma.XOR<Prisma.AppointmentsCreateWithoutSlotInput, Prisma.AppointmentsUncheckedCreateWithoutSlotInput>
+  where?: Prisma.AppointmentsWhereInput
+}
+
+export type AppointmentsUpdateToOneWithWhereWithoutSlotInput = {
+  where?: Prisma.AppointmentsWhereInput
+  data: Prisma.XOR<Prisma.AppointmentsUpdateWithoutSlotInput, Prisma.AppointmentsUncheckedUpdateWithoutSlotInput>
+}
+
+export type AppointmentsUpdateWithoutSlotInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  patient_id?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumAppointmentStatusFieldUpdateOperationsInput | $Enums.AppointmentStatus
+  booked_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  confirmed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelled_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  rescheduled_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  room_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  events?: Prisma.AppointmentEventUpdateManyWithoutAppointmentNestedInput
+  encounter?: Prisma.EncounterUpdateOneWithoutAppointmentNestedInput
+}
+
+export type AppointmentsUncheckedUpdateWithoutSlotInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  patient_id?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumAppointmentStatusFieldUpdateOperationsInput | $Enums.AppointmentStatus
+  booked_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  confirmed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelled_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  rescheduled_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  room_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  events?: Prisma.AppointmentEventUncheckedUpdateManyWithoutAppointmentNestedInput
+  encounter?: Prisma.EncounterUncheckedUpdateOneWithoutAppointmentNestedInput
+}
+
+export type AppointmentsCreateWithoutEventsInput = {
+  id?: string
+  patient_id: string
+  status?: $Enums.AppointmentStatus
+  booked_at?: Date | string
+  confirmed_at?: Date | string | null
+  cancelled_at?: Date | string | null
+  completed_at?: Date | string | null
+  rescheduled_at?: Date | string | null
+  room_id?: string | null
+  created_at?: Date | string
+  updated_at?: Date | string
+  slot: Prisma.SlotCreateNestedOneWithoutAppointmentInput
+  encounter?: Prisma.EncounterCreateNestedOneWithoutAppointmentInput
+}
+
+export type AppointmentsUncheckedCreateWithoutEventsInput = {
+  id?: string
+  slot_id: string
+  patient_id: string
+  status?: $Enums.AppointmentStatus
+  booked_at?: Date | string
+  confirmed_at?: Date | string | null
+  cancelled_at?: Date | string | null
+  completed_at?: Date | string | null
+  rescheduled_at?: Date | string | null
+  room_id?: string | null
+  created_at?: Date | string
+  updated_at?: Date | string
+  encounter?: Prisma.EncounterUncheckedCreateNestedOneWithoutAppointmentInput
+}
+
+export type AppointmentsCreateOrConnectWithoutEventsInput = {
+  where: Prisma.AppointmentsWhereUniqueInput
+  create: Prisma.XOR<Prisma.AppointmentsCreateWithoutEventsInput, Prisma.AppointmentsUncheckedCreateWithoutEventsInput>
+}
+
+export type AppointmentsUpsertWithoutEventsInput = {
+  update: Prisma.XOR<Prisma.AppointmentsUpdateWithoutEventsInput, Prisma.AppointmentsUncheckedUpdateWithoutEventsInput>
+  create: Prisma.XOR<Prisma.AppointmentsCreateWithoutEventsInput, Prisma.AppointmentsUncheckedCreateWithoutEventsInput>
+  where?: Prisma.AppointmentsWhereInput
+}
+
+export type AppointmentsUpdateToOneWithWhereWithoutEventsInput = {
+  where?: Prisma.AppointmentsWhereInput
+  data: Prisma.XOR<Prisma.AppointmentsUpdateWithoutEventsInput, Prisma.AppointmentsUncheckedUpdateWithoutEventsInput>
+}
+
+export type AppointmentsUpdateWithoutEventsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  patient_id?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumAppointmentStatusFieldUpdateOperationsInput | $Enums.AppointmentStatus
+  booked_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  confirmed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelled_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  rescheduled_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  room_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  slot?: Prisma.SlotUpdateOneRequiredWithoutAppointmentNestedInput
+  encounter?: Prisma.EncounterUpdateOneWithoutAppointmentNestedInput
+}
+
+export type AppointmentsUncheckedUpdateWithoutEventsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  slot_id?: Prisma.StringFieldUpdateOperationsInput | string
+  patient_id?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumAppointmentStatusFieldUpdateOperationsInput | $Enums.AppointmentStatus
+  booked_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  confirmed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelled_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  rescheduled_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  room_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  encounter?: Prisma.EncounterUncheckedUpdateOneWithoutAppointmentNestedInput
+}
+
+export type AppointmentsCreateWithoutEncounterInput = {
+  id?: string
+  patient_id: string
+  status?: $Enums.AppointmentStatus
+  booked_at?: Date | string
+  confirmed_at?: Date | string | null
+  cancelled_at?: Date | string | null
+  completed_at?: Date | string | null
+  rescheduled_at?: Date | string | null
+  room_id?: string | null
+  created_at?: Date | string
+  updated_at?: Date | string
+  slot: Prisma.SlotCreateNestedOneWithoutAppointmentInput
+  events?: Prisma.AppointmentEventCreateNestedManyWithoutAppointmentInput
+}
+
+export type AppointmentsUncheckedCreateWithoutEncounterInput = {
+  id?: string
+  slot_id: string
+  patient_id: string
+  status?: $Enums.AppointmentStatus
+  booked_at?: Date | string
+  confirmed_at?: Date | string | null
+  cancelled_at?: Date | string | null
+  completed_at?: Date | string | null
+  rescheduled_at?: Date | string | null
+  room_id?: string | null
+  created_at?: Date | string
+  updated_at?: Date | string
+  events?: Prisma.AppointmentEventUncheckedCreateNestedManyWithoutAppointmentInput
+}
+
+export type AppointmentsCreateOrConnectWithoutEncounterInput = {
+  where: Prisma.AppointmentsWhereUniqueInput
+  create: Prisma.XOR<Prisma.AppointmentsCreateWithoutEncounterInput, Prisma.AppointmentsUncheckedCreateWithoutEncounterInput>
+}
+
+export type AppointmentsUpsertWithoutEncounterInput = {
+  update: Prisma.XOR<Prisma.AppointmentsUpdateWithoutEncounterInput, Prisma.AppointmentsUncheckedUpdateWithoutEncounterInput>
+  create: Prisma.XOR<Prisma.AppointmentsCreateWithoutEncounterInput, Prisma.AppointmentsUncheckedCreateWithoutEncounterInput>
+  where?: Prisma.AppointmentsWhereInput
+}
+
+export type AppointmentsUpdateToOneWithWhereWithoutEncounterInput = {
+  where?: Prisma.AppointmentsWhereInput
+  data: Prisma.XOR<Prisma.AppointmentsUpdateWithoutEncounterInput, Prisma.AppointmentsUncheckedUpdateWithoutEncounterInput>
+}
+
+export type AppointmentsUpdateWithoutEncounterInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  patient_id?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumAppointmentStatusFieldUpdateOperationsInput | $Enums.AppointmentStatus
+  booked_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  confirmed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelled_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  rescheduled_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  room_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  slot?: Prisma.SlotUpdateOneRequiredWithoutAppointmentNestedInput
+  events?: Prisma.AppointmentEventUpdateManyWithoutAppointmentNestedInput
+}
+
+export type AppointmentsUncheckedUpdateWithoutEncounterInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  slot_id?: Prisma.StringFieldUpdateOperationsInput | string
+  patient_id?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumAppointmentStatusFieldUpdateOperationsInput | $Enums.AppointmentStatus
+  booked_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  confirmed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelled_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  rescheduled_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  room_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  events?: Prisma.AppointmentEventUncheckedUpdateManyWithoutAppointmentNestedInput
+}
+
+
+/**
+ * Count Type AppointmentsCountOutputType
+ */
+
+export type AppointmentsCountOutputType = {
+  events: number
+}
+
+export type AppointmentsCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  events?: boolean | AppointmentsCountOutputTypeCountEventsArgs
+}
+
+/**
+ * AppointmentsCountOutputType without action
+ */
+export type AppointmentsCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the AppointmentsCountOutputType
+   */
+  select?: Prisma.AppointmentsCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * AppointmentsCountOutputType without action
+ */
+export type AppointmentsCountOutputTypeCountEventsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AppointmentEventWhereInput
+}
 
 
 export type AppointmentsSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  clinician_id?: boolean
+  slot_id?: boolean
   patient_id?: boolean
-  schedule_instance_id?: boolean
-  room_id?: boolean
   status?: boolean
-  starts_at?: boolean
-  ends_at?: boolean
-  created_at?: boolean
-  updated_at?: boolean
-  medical_diagnosis?: boolean
-  source_referral?: boolean
-  chief_complaint?: boolean
-  refarral_url?: boolean
   booked_at?: boolean
   confirmed_at?: boolean
   cancelled_at?: boolean
   completed_at?: boolean
   rescheduled_at?: boolean
-  cancelled_by?: boolean
-  patient_cancel_reason?: boolean
-  clinician_cancel_reason?: boolean
-  patient_reshedule_reason?: boolean
-  clinician_reschedule_reason?: boolean
+  room_id?: boolean
+  created_at?: boolean
+  updated_at?: boolean
+  slot?: boolean | Prisma.SlotDefaultArgs<ExtArgs>
+  events?: boolean | Prisma.Appointments$eventsArgs<ExtArgs>
+  encounter?: boolean | Prisma.Appointments$encounterArgs<ExtArgs>
+  _count?: boolean | Prisma.AppointmentsCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["appointments"]>
 
 export type AppointmentsSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  clinician_id?: boolean
+  slot_id?: boolean
   patient_id?: boolean
-  schedule_instance_id?: boolean
-  room_id?: boolean
   status?: boolean
-  starts_at?: boolean
-  ends_at?: boolean
-  created_at?: boolean
-  updated_at?: boolean
-  medical_diagnosis?: boolean
-  source_referral?: boolean
-  chief_complaint?: boolean
-  refarral_url?: boolean
   booked_at?: boolean
   confirmed_at?: boolean
   cancelled_at?: boolean
   completed_at?: boolean
   rescheduled_at?: boolean
-  cancelled_by?: boolean
-  patient_cancel_reason?: boolean
-  clinician_cancel_reason?: boolean
-  patient_reshedule_reason?: boolean
-  clinician_reschedule_reason?: boolean
+  room_id?: boolean
+  created_at?: boolean
+  updated_at?: boolean
+  slot?: boolean | Prisma.SlotDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["appointments"]>
 
 export type AppointmentsSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  clinician_id?: boolean
+  slot_id?: boolean
   patient_id?: boolean
-  schedule_instance_id?: boolean
-  room_id?: boolean
   status?: boolean
-  starts_at?: boolean
-  ends_at?: boolean
-  created_at?: boolean
-  updated_at?: boolean
-  medical_diagnosis?: boolean
-  source_referral?: boolean
-  chief_complaint?: boolean
-  refarral_url?: boolean
   booked_at?: boolean
   confirmed_at?: boolean
   cancelled_at?: boolean
   completed_at?: boolean
   rescheduled_at?: boolean
-  cancelled_by?: boolean
-  patient_cancel_reason?: boolean
-  clinician_cancel_reason?: boolean
-  patient_reshedule_reason?: boolean
-  clinician_reschedule_reason?: boolean
+  room_id?: boolean
+  created_at?: boolean
+  updated_at?: boolean
+  slot?: boolean | Prisma.SlotDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["appointments"]>
 
 export type AppointmentsSelectScalar = {
   id?: boolean
-  clinician_id?: boolean
+  slot_id?: boolean
   patient_id?: boolean
-  schedule_instance_id?: boolean
-  room_id?: boolean
   status?: boolean
-  starts_at?: boolean
-  ends_at?: boolean
-  created_at?: boolean
-  updated_at?: boolean
-  medical_diagnosis?: boolean
-  source_referral?: boolean
-  chief_complaint?: boolean
-  refarral_url?: boolean
   booked_at?: boolean
   confirmed_at?: boolean
   cancelled_at?: boolean
   completed_at?: boolean
   rescheduled_at?: boolean
-  cancelled_by?: boolean
-  patient_cancel_reason?: boolean
-  clinician_cancel_reason?: boolean
-  patient_reshedule_reason?: boolean
-  clinician_reschedule_reason?: boolean
+  room_id?: boolean
+  created_at?: boolean
+  updated_at?: boolean
 }
 
-export type AppointmentsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "clinician_id" | "patient_id" | "schedule_instance_id" | "room_id" | "status" | "starts_at" | "ends_at" | "created_at" | "updated_at" | "medical_diagnosis" | "source_referral" | "chief_complaint" | "refarral_url" | "booked_at" | "confirmed_at" | "cancelled_at" | "completed_at" | "rescheduled_at" | "cancelled_by" | "patient_cancel_reason" | "clinician_cancel_reason" | "patient_reshedule_reason" | "clinician_reschedule_reason", ExtArgs["result"]["appointments"]>
+export type AppointmentsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "slot_id" | "patient_id" | "status" | "booked_at" | "confirmed_at" | "cancelled_at" | "completed_at" | "rescheduled_at" | "room_id" | "created_at" | "updated_at", ExtArgs["result"]["appointments"]>
+export type AppointmentsInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  slot?: boolean | Prisma.SlotDefaultArgs<ExtArgs>
+  events?: boolean | Prisma.Appointments$eventsArgs<ExtArgs>
+  encounter?: boolean | Prisma.Appointments$encounterArgs<ExtArgs>
+  _count?: boolean | Prisma.AppointmentsCountOutputTypeDefaultArgs<ExtArgs>
+}
+export type AppointmentsIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  slot?: boolean | Prisma.SlotDefaultArgs<ExtArgs>
+}
+export type AppointmentsIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  slot?: boolean | Prisma.SlotDefaultArgs<ExtArgs>
+}
 
 export type $AppointmentsPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Appointments"
-  objects: {}
+  objects: {
+    slot: Prisma.$SlotPayload<ExtArgs>
+    events: Prisma.$AppointmentEventPayload<ExtArgs>[]
+    encounter: Prisma.$EncounterPayload<ExtArgs> | null
+  }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
-    clinician_id: string
+    slot_id: string
     patient_id: string
-    schedule_instance_id: string
-    room_id: string | null
-    status: string
-    starts_at: Date
-    ends_at: Date
-    created_at: Date
-    updated_at: Date
-    medical_diagnosis: string | null
-    source_referral: string | null
-    chief_complaint: string | null
-    refarral_url: string | null
-    booked_at: Date | null
+    status: $Enums.AppointmentStatus
+    booked_at: Date
     confirmed_at: Date | null
     cancelled_at: Date | null
     completed_at: Date | null
     rescheduled_at: Date | null
-    cancelled_by: string | null
-    patient_cancel_reason: string | null
-    clinician_cancel_reason: string | null
-    patient_reshedule_reason: string | null
-    clinician_reschedule_reason: string | null
+    room_id: string | null
+    created_at: Date
+    updated_at: Date
   }, ExtArgs["result"]["appointments"]>
   composites: {}
 }
@@ -1257,6 +1314,9 @@ readonly fields: AppointmentsFieldRefs;
  */
 export interface Prisma__AppointmentsClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  slot<T extends Prisma.SlotDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SlotDefaultArgs<ExtArgs>>): Prisma.Prisma__SlotClient<runtime.Types.Result.GetResult<Prisma.$SlotPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  events<T extends Prisma.Appointments$eventsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Appointments$eventsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AppointmentEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  encounter<T extends Prisma.Appointments$encounterArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Appointments$encounterArgs<ExtArgs>>): Prisma.Prisma__EncounterClient<runtime.Types.Result.GetResult<Prisma.$EncounterPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1287,29 +1347,17 @@ export interface Prisma__AppointmentsClient<T, Null = never, ExtArgs extends run
  */
 export interface AppointmentsFieldRefs {
   readonly id: Prisma.FieldRef<"Appointments", 'String'>
-  readonly clinician_id: Prisma.FieldRef<"Appointments", 'String'>
+  readonly slot_id: Prisma.FieldRef<"Appointments", 'String'>
   readonly patient_id: Prisma.FieldRef<"Appointments", 'String'>
-  readonly schedule_instance_id: Prisma.FieldRef<"Appointments", 'String'>
-  readonly room_id: Prisma.FieldRef<"Appointments", 'String'>
-  readonly status: Prisma.FieldRef<"Appointments", 'String'>
-  readonly starts_at: Prisma.FieldRef<"Appointments", 'DateTime'>
-  readonly ends_at: Prisma.FieldRef<"Appointments", 'DateTime'>
-  readonly created_at: Prisma.FieldRef<"Appointments", 'DateTime'>
-  readonly updated_at: Prisma.FieldRef<"Appointments", 'DateTime'>
-  readonly medical_diagnosis: Prisma.FieldRef<"Appointments", 'String'>
-  readonly source_referral: Prisma.FieldRef<"Appointments", 'String'>
-  readonly chief_complaint: Prisma.FieldRef<"Appointments", 'String'>
-  readonly refarral_url: Prisma.FieldRef<"Appointments", 'String'>
+  readonly status: Prisma.FieldRef<"Appointments", 'AppointmentStatus'>
   readonly booked_at: Prisma.FieldRef<"Appointments", 'DateTime'>
   readonly confirmed_at: Prisma.FieldRef<"Appointments", 'DateTime'>
   readonly cancelled_at: Prisma.FieldRef<"Appointments", 'DateTime'>
   readonly completed_at: Prisma.FieldRef<"Appointments", 'DateTime'>
   readonly rescheduled_at: Prisma.FieldRef<"Appointments", 'DateTime'>
-  readonly cancelled_by: Prisma.FieldRef<"Appointments", 'String'>
-  readonly patient_cancel_reason: Prisma.FieldRef<"Appointments", 'String'>
-  readonly clinician_cancel_reason: Prisma.FieldRef<"Appointments", 'String'>
-  readonly patient_reshedule_reason: Prisma.FieldRef<"Appointments", 'String'>
-  readonly clinician_reschedule_reason: Prisma.FieldRef<"Appointments", 'String'>
+  readonly room_id: Prisma.FieldRef<"Appointments", 'String'>
+  readonly created_at: Prisma.FieldRef<"Appointments", 'DateTime'>
+  readonly updated_at: Prisma.FieldRef<"Appointments", 'DateTime'>
 }
     
 
@@ -1326,6 +1374,10 @@ export type AppointmentsFindUniqueArgs<ExtArgs extends runtime.Types.Extensions.
    * Omit specific fields from the Appointments
    */
   omit?: Prisma.AppointmentsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AppointmentsInclude<ExtArgs> | null
   /**
    * Filter, which Appointments to fetch.
    */
@@ -1345,6 +1397,10 @@ export type AppointmentsFindUniqueOrThrowArgs<ExtArgs extends runtime.Types.Exte
    */
   omit?: Prisma.AppointmentsOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AppointmentsInclude<ExtArgs> | null
+  /**
    * Filter, which Appointments to fetch.
    */
   where: Prisma.AppointmentsWhereUniqueInput
@@ -1362,6 +1418,10 @@ export type AppointmentsFindFirstArgs<ExtArgs extends runtime.Types.Extensions.I
    * Omit specific fields from the Appointments
    */
   omit?: Prisma.AppointmentsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AppointmentsInclude<ExtArgs> | null
   /**
    * Filter, which Appointments to fetch.
    */
@@ -1411,6 +1471,10 @@ export type AppointmentsFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Exten
    */
   omit?: Prisma.AppointmentsOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AppointmentsInclude<ExtArgs> | null
+  /**
    * Filter, which Appointments to fetch.
    */
   where?: Prisma.AppointmentsWhereInput
@@ -1459,6 +1523,10 @@ export type AppointmentsFindManyArgs<ExtArgs extends runtime.Types.Extensions.In
    */
   omit?: Prisma.AppointmentsOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AppointmentsInclude<ExtArgs> | null
+  /**
    * Filter, which Appointments to fetch.
    */
   where?: Prisma.AppointmentsWhereInput
@@ -1502,6 +1570,10 @@ export type AppointmentsCreateArgs<ExtArgs extends runtime.Types.Extensions.Inte
    */
   omit?: Prisma.AppointmentsOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AppointmentsInclude<ExtArgs> | null
+  /**
    * The data needed to create a Appointments.
    */
   data: Prisma.XOR<Prisma.AppointmentsCreateInput, Prisma.AppointmentsUncheckedCreateInput>
@@ -1533,6 +1605,10 @@ export type AppointmentsCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Ex
    * The data used to create many Appointments.
    */
   data: Prisma.AppointmentsCreateManyInput | Prisma.AppointmentsCreateManyInput[]
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AppointmentsIncludeCreateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1547,6 +1623,10 @@ export type AppointmentsUpdateArgs<ExtArgs extends runtime.Types.Extensions.Inte
    * Omit specific fields from the Appointments
    */
   omit?: Prisma.AppointmentsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AppointmentsInclude<ExtArgs> | null
   /**
    * The data needed to update a Appointments.
    */
@@ -1599,6 +1679,10 @@ export type AppointmentsUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.Ex
    * Limit how many Appointments to update.
    */
   limit?: number
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AppointmentsIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1613,6 +1697,10 @@ export type AppointmentsUpsertArgs<ExtArgs extends runtime.Types.Extensions.Inte
    * Omit specific fields from the Appointments
    */
   omit?: Prisma.AppointmentsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AppointmentsInclude<ExtArgs> | null
   /**
    * The filter to search for the Appointments to update in case it exists.
    */
@@ -1640,6 +1728,10 @@ export type AppointmentsDeleteArgs<ExtArgs extends runtime.Types.Extensions.Inte
    */
   omit?: Prisma.AppointmentsOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AppointmentsInclude<ExtArgs> | null
+  /**
    * Filter which Appointments to delete.
    */
   where: Prisma.AppointmentsWhereUniqueInput
@@ -1660,6 +1752,49 @@ export type AppointmentsDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.
 }
 
 /**
+ * Appointments.events
+ */
+export type Appointments$eventsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the AppointmentEvent
+   */
+  select?: Prisma.AppointmentEventSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the AppointmentEvent
+   */
+  omit?: Prisma.AppointmentEventOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AppointmentEventInclude<ExtArgs> | null
+  where?: Prisma.AppointmentEventWhereInput
+  orderBy?: Prisma.AppointmentEventOrderByWithRelationInput | Prisma.AppointmentEventOrderByWithRelationInput[]
+  cursor?: Prisma.AppointmentEventWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AppointmentEventScalarFieldEnum | Prisma.AppointmentEventScalarFieldEnum[]
+}
+
+/**
+ * Appointments.encounter
+ */
+export type Appointments$encounterArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Encounter
+   */
+  select?: Prisma.EncounterSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Encounter
+   */
+  omit?: Prisma.EncounterOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.EncounterInclude<ExtArgs> | null
+  where?: Prisma.EncounterWhereInput
+}
+
+/**
  * Appointments without action
  */
 export type AppointmentsDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1671,4 +1806,8 @@ export type AppointmentsDefaultArgs<ExtArgs extends runtime.Types.Extensions.Int
    * Omit specific fields from the Appointments
    */
   omit?: Prisma.AppointmentsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AppointmentsInclude<ExtArgs> | null
 }

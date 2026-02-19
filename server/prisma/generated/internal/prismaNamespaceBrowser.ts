@@ -60,10 +60,11 @@ export const ModelName = {
   Clinician: 'Clinician',
   RefreshToken: 'RefreshToken',
   Otps: 'Otps',
-  ScheduleRules: 'ScheduleRules',
-  ScheduleInstances: 'ScheduleInstances',
+  AvailabilityRule: 'AvailabilityRule',
   Appointments: 'Appointments',
-  RescheduleRequests: 'RescheduleRequests'
+  Slot: 'Slot',
+  AppointmentEvent: 'AppointmentEvent',
+  Encounter: 'Encounter'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -183,82 +184,79 @@ export const OtpsScalarFieldEnum = {
 export type OtpsScalarFieldEnum = (typeof OtpsScalarFieldEnum)[keyof typeof OtpsScalarFieldEnum]
 
 
-export const ScheduleRulesScalarFieldEnum = {
+export const AvailabilityRuleScalarFieldEnum = {
   id: 'id',
   clinician_id: 'clinician_id',
-  start_date: 'start_date',
-  end_date: 'end_date',
-  start_time: 'start_time',
-  end_time: 'end_time',
-  recurrence: 'recurrence',
-  recurrence_meta: 'recurrence_meta',
+  starts_at: 'starts_at',
+  ends_at: 'ends_at',
+  recurrence_rule: 'recurrence_rule',
   is_active: 'is_active',
   created_at: 'created_at',
   updated_at: 'updated_at'
 } as const
 
-export type ScheduleRulesScalarFieldEnum = (typeof ScheduleRulesScalarFieldEnum)[keyof typeof ScheduleRulesScalarFieldEnum]
-
-
-export const ScheduleInstancesScalarFieldEnum = {
-  id: 'id',
-  schedule_rule_id: 'schedule_rule_id',
-  clinician_id: 'clinician_id',
-  starts_at: 'starts_at',
-  ends_at: 'ends_at',
-  status: 'status',
-  created_at: 'created_at',
-  updated_at: 'updated_at'
-} as const
-
-export type ScheduleInstancesScalarFieldEnum = (typeof ScheduleInstancesScalarFieldEnum)[keyof typeof ScheduleInstancesScalarFieldEnum]
+export type AvailabilityRuleScalarFieldEnum = (typeof AvailabilityRuleScalarFieldEnum)[keyof typeof AvailabilityRuleScalarFieldEnum]
 
 
 export const AppointmentsScalarFieldEnum = {
   id: 'id',
-  clinician_id: 'clinician_id',
+  slot_id: 'slot_id',
   patient_id: 'patient_id',
-  schedule_instance_id: 'schedule_instance_id',
-  room_id: 'room_id',
   status: 'status',
-  starts_at: 'starts_at',
-  ends_at: 'ends_at',
-  created_at: 'created_at',
-  updated_at: 'updated_at',
-  medical_diagnosis: 'medical_diagnosis',
-  source_referral: 'source_referral',
-  chief_complaint: 'chief_complaint',
-  refarral_url: 'refarral_url',
   booked_at: 'booked_at',
   confirmed_at: 'confirmed_at',
   cancelled_at: 'cancelled_at',
   completed_at: 'completed_at',
   rescheduled_at: 'rescheduled_at',
-  cancelled_by: 'cancelled_by',
-  patient_cancel_reason: 'patient_cancel_reason',
-  clinician_cancel_reason: 'clinician_cancel_reason',
-  patient_reshedule_reason: 'patient_reshedule_reason',
-  clinician_reschedule_reason: 'clinician_reschedule_reason'
+  room_id: 'room_id',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
 } as const
 
 export type AppointmentsScalarFieldEnum = (typeof AppointmentsScalarFieldEnum)[keyof typeof AppointmentsScalarFieldEnum]
 
 
-export const RescheduleRequestsScalarFieldEnum = {
+export const SlotScalarFieldEnum = {
   id: 'id',
-  appointment_id: 'appointment_id',
+  availability_rule_id: 'availability_rule_id',
   clinician_id: 'clinician_id',
-  patient_id: 'patient_id',
-  original_schedule_instance_id: 'original_schedule_instance_id',
-  requested_schedule_instance_id: 'requested_schedule_instance_id',
-  patient_reason: 'patient_reason',
-  clinician_reason: 'clinician_reason',
+  starts_at: 'starts_at',
+  ends_at: 'ends_at',
   status: 'status',
   created_at: 'created_at',
   updated_at: 'updated_at'
 } as const
 
-export type RescheduleRequestsScalarFieldEnum = (typeof RescheduleRequestsScalarFieldEnum)[keyof typeof RescheduleRequestsScalarFieldEnum]
+export type SlotScalarFieldEnum = (typeof SlotScalarFieldEnum)[keyof typeof SlotScalarFieldEnum]
+
+
+export const AppointmentEventScalarFieldEnum = {
+  id: 'id',
+  appointment_id: 'appointment_id',
+  type: 'type',
+  actor_type: 'actor_type',
+  actor_id: 'actor_id',
+  reason: 'reason',
+  metadata: 'metadata',
+  created_at: 'created_at'
+} as const
+
+export type AppointmentEventScalarFieldEnum = (typeof AppointmentEventScalarFieldEnum)[keyof typeof AppointmentEventScalarFieldEnum]
+
+
+export const EncounterScalarFieldEnum = {
+  id: 'id',
+  appointment_id: 'appointment_id',
+  diagnosis: 'diagnosis',
+  chief_complaint: 'chief_complaint',
+  referral_source: 'referral_source',
+  referral_url: 'referral_url',
+  notes: 'notes',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+} as const
+
+export type EncounterScalarFieldEnum = (typeof EncounterScalarFieldEnum)[keyof typeof EncounterScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -269,10 +267,35 @@ export const SortOrder = {
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
+export const NullableJsonNullValueInput = {
+  DbNull: DbNull,
+  JsonNull: JsonNull
+} as const
+
+export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
+
+
 export const NullsOrder = {
   first: 'first',
   last: 'last'
 } as const
 
 export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+export const JsonNullValueFilter = {
+  DbNull: DbNull,
+  JsonNull: JsonNull,
+  AnyNull: AnyNull
+} as const
+
+export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
+
+
+export const QueryMode = {
+  default: 'default',
+  insensitive: 'insensitive'
+} as const
+
+export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
 

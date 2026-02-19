@@ -25,7 +25,7 @@ export interface ResponseData {
 }
 
 export interface ErrorResponse {
-  message?: string;
+  message?: string | { code: number; response: string };
   errors?: Record<string, string[]>;
 }
 

@@ -15,6 +15,7 @@ export default function ScheduleOverview() {
       <Grid cols={12} gap={6}>
         <GridItem colSpan={12} className="flex flex-col gap-4 md:col-span-4">
           <Calendar />
+          <button className="btn btn-primary">Add New Schedule</button>
         </GridItem>
 
         <GridItem colSpan={12} className="flex flex-col gap-4 md:col-span-8">

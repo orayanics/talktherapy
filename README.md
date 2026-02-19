@@ -11,7 +11,9 @@ bun run install
 To migrate sql:
 
 ```bash
+bunx --bun prisma generate
 bunx --bun prisma migrate dev
+(if needed): bunx --bun prisma migrate reset
 bun run seed
 ```
 

@@ -9,7 +9,44 @@
 * 🟢 You can import this file directly.
 */
 
+export const SlotStatus = {
+  AVAILABLE: 'AVAILABLE',
+  BOOKED: 'BOOKED',
+  BLOCKED: 'BLOCKED',
+  CANCELLED: 'CANCELLED'
+} as const
+
+export type SlotStatus = (typeof SlotStatus)[keyof typeof SlotStatus]
 
 
-// This file is empty because there are no enums in the schema.
-export {}
+export const AppointmentStatus = {
+  PENDING: 'PENDING',
+  CONFIRMED: 'CONFIRMED',
+  CANCELLED: 'CANCELLED',
+  COMPLETED: 'COMPLETED',
+  NO_SHOW: 'NO_SHOW'
+} as const
+
+export type AppointmentStatus = (typeof AppointmentStatus)[keyof typeof AppointmentStatus]
+
+
+export const AppointmentEventType = {
+  BOOKED: 'BOOKED',
+  CONFIRMED: 'CONFIRMED',
+  CANCELLED: 'CANCELLED',
+  RESCHEDULED: 'RESCHEDULED',
+  COMPLETED: 'COMPLETED',
+  NO_SHOW: 'NO_SHOW'
+} as const
+
+export type AppointmentEventType = (typeof AppointmentEventType)[keyof typeof AppointmentEventType]
+
+
+export const ActorType = {
+  PATIENT: 'PATIENT',
+  CLINICIAN: 'CLINICIAN',
+  SYSTEM: 'SYSTEM',
+  ADMIN: 'ADMIN'
+} as const
+
+export type ActorType = (typeof ActorType)[keyof typeof ActorType]

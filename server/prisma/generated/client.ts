@@ -85,22 +85,27 @@ export type RefreshToken = Prisma.RefreshTokenModel
  */
 export type Otps = Prisma.OtpsModel
 /**
- * Model ScheduleRules
+ * Model AvailabilityRule
  * 
  */
-export type ScheduleRules = Prisma.ScheduleRulesModel
-/**
- * Model ScheduleInstances
- * 
- */
-export type ScheduleInstances = Prisma.ScheduleInstancesModel
+export type AvailabilityRule = Prisma.AvailabilityRuleModel
 /**
  * Model Appointments
  * 
  */
 export type Appointments = Prisma.AppointmentsModel
 /**
- * Model RescheduleRequests
+ * Model Slot
  * 
  */
-export type RescheduleRequests = Prisma.RescheduleRequestsModel
+export type Slot = Prisma.SlotModel
+/**
+ * Model AppointmentEvent
+ * 
+ */
+export type AppointmentEvent = Prisma.AppointmentEventModel
+/**
+ * Model Encounter
+ * 
+ */
+export type Encounter = Prisma.EncounterModel

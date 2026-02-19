@@ -5,6 +5,7 @@ import { jwtPlugin } from "@/plugins/jwt";
 import { auth } from "@/modules/auth";
 import { publicModule } from "@/modules/public";
 import { users } from "@/modules/users";
+import { schedulingModule } from "./modules/scheduling";
 
 import { customMessages } from "./utils/errors";
 
@@ -74,7 +75,12 @@ export const app = new Elysia()
   }))
 
   .group("/api/v1", (app) =>
-    app.use(jwtPlugin).use(auth).use(publicModule).use(users),
+    app
+      .use(jwtPlugin)
+      .use(auth)
+      .use(publicModule)
+      .use(users)
+      .use(schedulingModule),
   )
 
   .listen(8000);
