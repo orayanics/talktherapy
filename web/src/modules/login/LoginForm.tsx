@@ -11,6 +11,7 @@ export default function LoginForm() {
       }}
     >
       <div className="flex flex-col gap-4">
+        {/* TODO: Check errors.message instanceof */}
         {errors?.message && !errors.errors && (
           <p className="text-error text-center text-xs mt-1">
             {errors.message instanceof Object
