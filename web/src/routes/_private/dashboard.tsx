@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 
 import { dashboardDataQueryOptions } from "~/api/dashboard";
+import { sessionQueryOptions } from "~/api/auth";
 // import { AppointmentStatus, AppointmentStatusValues } from "~/models/content";
 import Grid from "~/components/Page/Grid";
 import GridItem from "~/components/Page/GridItem";
@@ -11,32 +12,30 @@ import PageTitle from "~/components/Page/PageTitle";
 
 import PatientDashboard from "~/views/dashboard/patient";
 import AdminSharedDashboard from "~/views/dashboard/adm-shared/";
-import { useSession } from "~/context/SessionContext";
+import ClinicianDashboard from "~/views/dashboard/clinician";
+import { useAuthGuard } from "~/hooks/useAuthGuard";
 
 export const Route = createFileRoute("/_private/dashboard")({
+  ssr: false,
+  loader: async ({ context: { queryClient } }) => {
+    const session = await queryClient.ensureQueryData(sessionQueryOptions);
+    return session;
+  },
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  const { account_role } = useSession();
-  const enabled = account_role === "admin" || account_role === "sudo";
+  const { is } = useAuthGuard();
 
   const { data } = useQuery({
     ...dashboardDataQueryOptions,
-    enabled: enabled,
+    enabled: is("admin"),
   });
 
-  // condition view render
   const dashboardView = () => {
-    if (account_role === "admin" || account_role === "sudo") {
-      return <AdminSharedDashboard data={data} />;
-    } else if (account_role === "clinician") {
-      return <div>IN PROGRESS: CLINICIAN DASHBOARD</div>;
-    } else if (account_role === "patient") {
-      return <PatientDashboard />;
-    } else {
-      return <div>Unauthorized</div>;
-    }
+    if (is("admin")) return <AdminSharedDashboard data={data} />;
+    if (is("clinician")) return <ClinicianDashboard />;
+    if (is("patient")) return <PatientDashboard />;
   };
 
   return (

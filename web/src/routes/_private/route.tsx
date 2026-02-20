@@ -1,5 +1,6 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 import { sessionQueryOptions } from "~/api/auth";
+
 import { SessionProvider } from "~/context/SessionContext";
 import Sidebar from "~/components/Sidebar/Sidebar";
 
@@ -7,9 +8,7 @@ export const Route = createFileRoute("/_private")({
   ssr: false,
   loader: async ({ context: { queryClient } }) => {
     try {
-      const session = await queryClient
-        .ensureQueryData(sessionQueryOptions)
-        .catch(() => {});
+      const session = await queryClient.ensureQueryData(sessionQueryOptions);
 
       if (!session) throw Route.redirect({ to: "/login" });
 

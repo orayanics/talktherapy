@@ -1,15 +1,23 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useSession } from "~/context/SessionContext";
 
 import AdminOverview from "~/views/schedules/admin/ScheduleOverview";
 import ClinicianOverview from "~/views/schedules/clinician/ScheduleOverview";
 
+import { useAuthGuard } from "~/hooks/useAuthGuard";
 export const Route = createFileRoute("/_private/(shared)/schedules/")({
+  ssr: false,
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  const { account_role } = useSession();
-  const isClinician = account_role === "clinician";
-  return isClinician ? <ClinicianOverview /> : <AdminOverview />;
+  const { is } = useAuthGuard();
+  const isAdmin = is("admin");
+  const isClinician = is("clinician");
+  const isAllowed = isAdmin || isClinician;
+
+  if (!isAllowed) {
+    throw new Error("Unauthorized");
+  }
+
+  return isAdmin ? <AdminOverview /> : <ClinicianOverview />;
 }

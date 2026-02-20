@@ -7,14 +7,19 @@ import PageTitle from "~/components/Page/PageTitle";
 import ProfileAccInfo from "~/modules/profile/ProfileAccInfo";
 import ProfileUserInfo from "~/modules/profile/ProfileUserInfo";
 
-import { useSession } from "~/context/SessionContext";
+import { sessionQueryOptions } from "~/api/auth";
 
 export const Route = createFileRoute("/_private/profile")({
+  ssr: false,
+  loader: async ({ context: { queryClient } }) => {
+    const session = await queryClient.ensureQueryData(sessionQueryOptions);
+    return session;
+  },
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  const session = useSession();
+  const session = Route.useLoaderData();
   return (
     <>
       <PageTitle

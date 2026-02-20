@@ -29,6 +29,7 @@ export default function LoginForm() {
               value={form.email}
               name="email"
               onChange={handleChange}
+              autoComplete="email"
             />
           </label>
           {errors?.errors?.email && (
@@ -45,6 +46,7 @@ export default function LoginForm() {
               value={form.password}
               name="password"
               onChange={handleChange}
+              autoComplete="current-password"
             />
           </label>
           {errors?.errors?.password && (

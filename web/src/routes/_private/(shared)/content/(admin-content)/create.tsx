@@ -10,20 +10,20 @@ import PageTitle from "~/components/Page/PageTitle";
 
 import ContentMediaCreate from "~/modules/content/ContentMediaCreate";
 
-export const Route = createFileRoute("/_private/(shared)/content/create")({
+export const Route = createFileRoute(
+  "/_private/(shared)/content/(admin-content)/create",
+)({
   component: RouteComponent,
 });
 
 function RouteComponent() {
   const [bodyContent, setBodyContent] = useState("");
-  const role = "admin";
 
-  if (role !== "clinician") return null;
   return (
     <>
       <PageTitle
         heading={"Add Content"}
-        subheading={"Add and maange the content of this media."}
+        subheading={"Add and manage the content of this media."}
       />
 
       <Grid cols={12} gap={6} className="w-auto">

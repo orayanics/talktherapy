@@ -23,11 +23,11 @@ function RouteComponent() {
     );
 
   return (
-    <div className="flex items-center container min-h-screen mx-auto">
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-2 mx-auto">
-        <div className="my-auto hidden lg:flex flex-col justify-center h-100 col-span-6 bg-radial-fade relative">
-          <div className="p-6 [&>p]:text-gray-500 [&>p]:text-lg">
-            <h1 className="text-7xl font-bold bg-linear-to-r from-primary via-sky-500 to-blue-400 bg-clip-text text-transparent">
+    <div className="flex items-center container min-h-screen lg:max-h-1 mx-auto">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 mx-auto">
+        <div className="my-auto hidden lg:flex flex-col justify-center h-100 col-span-1 bg-radial-fade relative">
+          <div className=" [&>p]:text-gray-500 [&>p]:text-lg">
+            <h1 className="font-mono text-7xl font-bold bg-linear-to-r from-primary via-sky-500 to-blue-400 bg-clip-text text-transparent">
               TalkTherapy
             </h1>
             <p>
@@ -37,8 +37,8 @@ function RouteComponent() {
           </div>
         </div>
 
-        <div className="flex flex-col gap-4 items-center justify-center col-span-6">
-          <div className="w-auto lg:w-100 border rounded-lg p-6 bg-white relative">
+        <div className="flex flex-col gap-4 items-center justify-center col-span-1">
+          <div className="h-full max-h-[90vh] overflow-auto w-auto lg:w-100 border rounded-lg p-6 bg-white relative shadow-lg/10">
             <div className="flex flex-col items-center mb-4">
               <h1 className="text-4xl font-bold mb-4">Get Started</h1>
               <div className="flex gap-4">

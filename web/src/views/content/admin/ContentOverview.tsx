@@ -130,11 +130,7 @@ function Table() {
           {MEDIA_ITEMS.map((item) => {
             const { id, title, description, authorId, category, tags } = item;
             return (
-              <GridItem
-                key={id}
-                colSpan={12}
-                className="lg:col-span-3 lg:col-span-2"
-              >
+              <GridItem key={id} colSpan={12} className="lg:col-span-3">
                 <div className="grid grid-cols-12 gap-2 rounded-lg bg-base-100 shadow-sm">
                   <figure className="col-span-4 lg:col-span-12">
                     <img

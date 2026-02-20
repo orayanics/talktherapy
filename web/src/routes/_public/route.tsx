@@ -4,16 +4,12 @@ import { sessionQueryOptions } from "~/api/auth";
 export const Route = createFileRoute("/_public")({
   ssr: false,
   loader: async ({ context: { queryClient } }) => {
-    const session = await queryClient
-      .ensureQueryData(sessionQueryOptions)
-      .catch(() => {});
-
+    const session =
+      localStorage.getItem("talktherapy_session") &&
+      (await queryClient.ensureQueryData(sessionQueryOptions));
     if (session) {
-      throw Route.redirect({
-        to: "/dashboard",
-      });
+      throw Route.redirect({ to: "/dashboard" });
     }
-
     return null;
   },
   component: RouteComponent,

@@ -20,11 +20,10 @@ export default function ConsentsPatient(props: ConsentsPatientProps) {
   return (
     <ModalBody isOpen={isOpen} onClose={handleClose}>
       <ModalHeader>Evaluation & Therapy Sessions</ModalHeader>
-      <div>
+      <div className="flex flex-col gap-2">
         <h3 className="font-semibold mb-2">Consent Agreement</h3>
-        <p className="mb-4">
-          Please read and agree to the terms and conditions below.
-        </p>
+        <p>Please read and agree to the terms and conditions below.</p>
+        <hr />
         <div
           ref={bottomRef}
           className="flex flex-col gap-4 h-100 overflow-y-scroll"

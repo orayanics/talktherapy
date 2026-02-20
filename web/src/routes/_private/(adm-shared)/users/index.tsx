@@ -16,12 +16,12 @@ import InputMultiselect from "~/components/Input/InputMultiselect";
 import LoaderTable from "~/components/Loader/LoaderTable";
 import UserAddClinician from "~/modules/users/UserAddClinician";
 
-import { useSession } from "~/context/SessionContext";
-
 import { UsersTableProps } from "~/models/system";
 import { formatToLocalDateTime } from "~/utils/date";
 import { normalizeSearchArray } from "~/utils/query";
+
 import { usersQueryOptions } from "~/api/users";
+import { useAuthGuard } from "~/hooks/useAuthGuard";
 
 export const Route = createFileRoute("/_private/(adm-shared)/users/")({
   validateSearch: (search: Record<string, unknown>) => {
@@ -45,9 +45,8 @@ export const Route = createFileRoute("/_private/(adm-shared)/users/")({
 
 function RouteComponent() {
   const navigate = Route.useNavigate();
-  const session = useSession();
-  const { account_role } = session || {};
-  const isAdmin = account_role === "admin";
+  const { is } = useAuthGuard();
+  const isAdmin = is("admin");
 
   const search = Route.useSearch();
   const status = search.status ?? [];
@@ -70,7 +69,7 @@ function RouteComponent() {
   };
 
   useEffect(() => {
-    if (debouncedSearch === search.search) return;
+    if (debouncedSearch === search.search || !debouncedSearch) return;
     navigate({ search: { ...search, search: debouncedSearch, page: 1 } });
   }, [debouncedSearch]);
 

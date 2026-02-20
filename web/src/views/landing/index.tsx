@@ -13,8 +13,8 @@ export default function index() {
   return (
     <div className="hero min-h-screen pattern-boxes pattern-color-primary pattern-bg-white pattern-size-8">
       <div className="fade-scroll-up hero-content text-center">
-        <div className="max-w-md flex flex-col gap-4 [&>p]:text-gray-500 [&>p]:text-lg">
-          <h1 className="text-7xl font-bold bg-linear-to-r from-primary via-sky-500 to-blue-400 bg-clip-text text-transparent">
+        <div className="max-w-min flex flex-col gap-4 [&>p]:text-gray-500 [&>p]:text-lg">
+          <h1 className="font-mono text-6xl lg:text-7xl font-bold bg-linear-to-r from-primary via-sky-500 to-blue-400 bg-clip-text text-transparent">
             TalkTherapy
           </h1>
           <p>

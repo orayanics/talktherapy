@@ -49,7 +49,7 @@ function ClinicianVerification() {
             key={index}
             type="text"
             maxLength={1}
-            className="input w-full lg:w-full h-11 text-center text-md lg:text-xl"
+            className="input w-full h-11 text-center text-md lg:text-xl"
           />
         ))}
       </div>
@@ -79,7 +79,7 @@ function ClinicianForm() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-6">
+    <div className="mx-auto w-full">
       {status === "blocked" && (
         <ModalBlockNavigation
           isOpen={status === "blocked"}
@@ -93,13 +93,10 @@ function ClinicianForm() {
         </ModalBlockNavigation>
       )}
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-1 lg:gap-4">
         <ClinicianPersonalForm onChange={handleInputChange} />
         <ClinicianAccountForm onChange={handleInputChange} />
-        <button
-          type="submit"
-          className="btn btn-primary px-6 py-2 rounded-lg hover:bg-blue-700 font-medium"
-        >
+        <button type="submit" className="btn btn-primary mt-4">
           Submit
         </button>
       </form>
@@ -118,36 +115,26 @@ function ClinicianPersonalForm({ onChange }: { onChange: VoidFunction }) {
   ];
 
   return (
-    <div className="flex flex-col gap-4">
-      <h1 className="font-semibold text-lg">Personal Information</h1>
+    <div className="flex flex-col gap-1 lg:gap-4">
+      <h1 className="font-semibold">Personal Information</h1>
       <div className="flex flex-col gap-4">
-        <div className="grid lg:grid-cols-2 grid-cols-1 gap-4">
-          <input
-            className="input"
-            type="text"
-            placeholder="First Name"
-            onChange={onChange}
-          />
-          <input
-            className="input"
-            type="text"
-            placeholder="Last Name"
-            onChange={onChange}
-          />
-        </div>
+        <input
+          className="input w-full"
+          type="text"
+          placeholder="Full Name"
+          onChange={onChange}
+        />
 
-        <div className="flex flex-col gap-4">
-          <select className="input" defaultValue="" onChange={onChange}>
-            <option value="" disabled>
-              Select Specialty
+        <select className="input w-full" defaultValue="" onChange={onChange}>
+          <option value="" disabled>
+            Select Specialty
+          </option>
+          {SPECIALTY_OPTIONS.map((specialty) => (
+            <option key={specialty} value={specialty}>
+              {specialty}
             </option>
-            {SPECIALTY_OPTIONS.map((specialty) => (
-              <option key={specialty} value={specialty}>
-                {specialty}
-              </option>
-            ))}
-          </select>
-        </div>
+          ))}
+        </select>
       </div>
     </div>
   );
@@ -155,29 +142,23 @@ function ClinicianPersonalForm({ onChange }: { onChange: VoidFunction }) {
 
 function ClinicianAccountForm({ onChange }: { onChange: VoidFunction }) {
   return (
-    <div className="flex flex-col gap-4">
-      <h1 className="font-semibold text-lg">Account</h1>
+    <div className="flex flex-col gap-1 lg:gap-4">
+      <h1 className="font-semibold">Account</h1>
       <div className="flex flex-col gap-4">
         <input
-          className="input"
-          type="text"
-          placeholder="Username"
-          onChange={onChange}
-        />
-        <input
-          className="input"
+          className="input w-full "
           type="email"
           placeholder="Email"
           onChange={onChange}
         />
         <input
-          className="input"
+          className="input w-full"
           type="password"
           placeholder="Password"
           onChange={onChange}
         />
         <input
-          className="input"
+          className="input w-full"
           type="password"
           placeholder="Confirm Password"
           onChange={onChange}

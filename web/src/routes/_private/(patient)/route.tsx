@@ -2,11 +2,11 @@ import { createFileRoute, Outlet } from "@tanstack/react-router";
 import { sessionQueryOptions } from "~/api/auth";
 import { requireRole } from "~/utils/auth-guard";
 
-export const Route = createFileRoute("/_private/(adm-shared)")({
+export const Route = createFileRoute("/_private/(patient)")({
   ssr: false,
   loader: async ({ context: { queryClient } }) => {
     const session = await queryClient.ensureQueryData(sessionQueryOptions);
-    return requireRole(session, "admin");
+    return requireRole(session, "patient");
   },
   component: () => <Outlet />,
 });

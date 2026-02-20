@@ -78,7 +78,4 @@ export interface UserResponse {
   created_by: string;
   updated_by: string | null;
   deleted_at: string | null;
-  patient: any | null;
-  clinician: any | null;
-  admin: any | null;
 }

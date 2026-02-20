@@ -27,7 +27,7 @@ export default function SidebarNavItems(props: SidebarNavItemsProps) {
             }}
           >
             <span>{icon}</span>
-            <p className="text-sm transition-all duration-300 w-auto opacity-100">
+            <p className="h-min transition-all duration-300 w-auto opacity-100">
               {label}
             </p>
           </Link>

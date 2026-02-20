@@ -26,9 +26,9 @@ export default function RegisterPatient(props: ResponseData) {
         e.preventDefault();
         handleSubmit();
       }}
-      className="flex flex-col gap-4"
+      className="flex flex-col gap-1 lg:gap-4"
     >
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-1 lg:gap-4">
         <h1 className="font-semibold">Personal Information</h1>
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-4 [&>input]:w-full">
@@ -72,7 +72,7 @@ export default function RegisterPatient(props: ResponseData) {
           </div>
         </div>
       </div>
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-1 lg:gap-4">
         <h1 className="font-semibold">Account</h1>
         <div className="flex flex-col gap-4 [&>input]:w-full">
           <div>

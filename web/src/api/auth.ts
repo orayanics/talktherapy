@@ -42,8 +42,8 @@ export const useLogin = () => {
       return data;
     },
     onSuccess: async () => {
-      const session = await queryClient.fetchQuery(sessionQueryOptions);
-      if (!session) return;
+      localStorage.setItem("talktherapy_session", "true");
+      await queryClient.invalidateQueries({ queryKey: ["session"] });
       navigate({ to: "/dashboard" });
     },
   });
@@ -58,6 +58,7 @@ export const useLogout = () => {
       await api.post("/auth/logout");
     },
     onSuccess: async () => {
+      localStorage.removeItem("talktherapy_session");
       queryClient.removeQueries({ queryKey: ["session"] });
       navigate({ to: "/login" });
     },

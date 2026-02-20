@@ -125,11 +125,7 @@ function Table() {
           {MEDIA_ITEMS.map((item) => {
             const { id, title, description, authorId, category, tags } = item;
             return (
-              <GridItem
-                key={id}
-                colSpan={12}
-                className="lg:col-span-3 lg:col-span-2"
-              >
+              <GridItem key={id} colSpan={12} className="lg:col-span-3">
                 <Link
                   to="/content/$contentId"
                   params={{
