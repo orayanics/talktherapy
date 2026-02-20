@@ -28,7 +28,7 @@ function RouteComponent() {
   const { account_role } = session;
   return (
     <SessionProvider value={session}>
-      <div className="flex bg-white/70">
+      <div className="flex bg-white">
         <Sidebar role={account_role as any}>
           <div className="w-full flex-1 overflow-auto min-h-screen p-4">
             <Outlet />

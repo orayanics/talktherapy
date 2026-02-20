@@ -133,17 +133,17 @@ function Table() {
               <GridItem
                 key={id}
                 colSpan={12}
-                className="md:col-span-3 lg:col-span-2"
+                className="lg:col-span-3 lg:col-span-2"
               >
                 <div className="grid grid-cols-12 gap-2 rounded-lg bg-base-100 shadow-sm">
-                  <figure className="col-span-4 md:col-span-12">
+                  <figure className="col-span-4 lg:col-span-12">
                     <img
                       src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp"
                       alt="Shoes"
-                      className="h-full object-cover rounded-s-lg md:rounded-b-none md:rounded-t-lg"
+                      className="h-full object-cover rounded-s-lg lg:rounded-b-none lg:rounded-t-lg"
                     />
                   </figure>
-                  <div className="col-span-8 md:col-span-12 p-4">
+                  <div className="col-span-8 lg:col-span-12 p-4">
                     <h1 className="card-title truncate">{title}</h1>
                     <p className="text-gray-600 truncate">{description}</p>
                     <p>{authorId}</p>

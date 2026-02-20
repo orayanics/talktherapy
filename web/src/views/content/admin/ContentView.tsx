@@ -17,11 +17,11 @@ export default function ContentView() {
       />
 
       <Grid cols={12} gap={6}>
-        <GridItem colSpan={12} className="md:col-span-6">
+        <GridItem colSpan={12} className="lg:col-span-6">
           <ContentMediaInfo {...MEDIA_ITEMS[0]} />
         </GridItem>
 
-        <GridItem colSpan={12} className="md:col-span-6">
+        <GridItem colSpan={12} className="lg:col-span-6">
           <h1 className="font-bold">Content Body Preview</h1>
           <div className="flex flex-col gap-4 bg-gray-50 border-dashed border-gray-200 border p-4 rounded-lg max-h-200 overflow-scroll">
             <Markdown rehypePlugins={[rehypeRaw]}>

@@ -145,12 +145,12 @@ function Table(props: UsersTableProps) {
 
   return (
     <>
-      <div className="flex flex-col md:flex-row gap-2 justify-between">
-        <div className="flex flex-col md:flex-row gap-2">
+      <div className="flex flex-col lg:flex-row gap-2 justify-between">
+        <div className="flex flex-col lg:flex-row gap-2">
           <input
             type="text"
             placeholder="Search users..."
-            className="input input-bordered w-full md:w-42"
+            className="input input-bordered w-full lg:w-42"
             value={search}
             onChange={(e) => onSearchChange(e.target.value)}
           />
@@ -165,7 +165,7 @@ function Table(props: UsersTableProps) {
             ]}
             value={status}
             onChange={(status) => onStatusChange(status)}
-            className={"w-full md:w-42"}
+            className={"w-full lg:w-42"}
           />
 
           <InputMultiselect
@@ -182,7 +182,7 @@ function Table(props: UsersTableProps) {
             ]}
             value={role}
             onChange={(role) => onRoleChange(role)}
-            className={"w-full md:w-42"}
+            className={"w-full lg:w-42"}
           />
 
           <button className="btn btn-primary" onClick={onClearFilters}>
@@ -192,8 +192,8 @@ function Table(props: UsersTableProps) {
 
         <InputDropdown
           label="Add User"
-          className="flex flex-col gap-2 md:w-auto w-full"
-          btnClassName="md:w-auto w-full btn-primary"
+          className="flex flex-col gap-2 lg:w-auto w-full"
+          btnClassName="lg:w-auto w-full btn-primary"
         >
           <button className="btn" onClick={() => setClinicianModalOpen(true)}>
             Clinician

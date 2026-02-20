@@ -10,7 +10,7 @@ export default function PageTitle(props: PageTitleProps) {
     <header>
       <div className="border-b mb-4">
         {brow && (
-          <p className="text-xs font-mono text-primary mb-1 tracking-wide">
+          <p className="text-sm font-mono text-primary mb-1 tracking-wide uppercase font-bold">
             {brow}
           </p>
         )}

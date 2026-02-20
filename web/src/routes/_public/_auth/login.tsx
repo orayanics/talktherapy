@@ -8,15 +8,16 @@ export const Route = createFileRoute("/_public/_auth/login")({
 function RouteComponent() {
   return (
     <div className="container flex items-center min-h-screen mx-auto">
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-2 mx-auto">
-        <div className="hidden md:flex flex-col justify-center h-100 col-span-6 bg-white/60 relative">
-          <div className="flex flex-col gap-4 p-6">
-            <h1 className="text-4xl font-bold">TalkTherapy</h1>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-2 mx-auto">
+        <div className="hidden lg:flex flex-col justify-center h-100 col-span-6 bg-radial-fade relative">
+          <div className="p-6 [&>p]:text-gray-500 [&>p]:text-lg">
+            <h1 className="text-7xl font-bold bg-linear-to-r from-primary via-sky-500 to-blue-400 bg-clip-text text-transparent">
+              TalkTherapy
+            </h1>
             <p>
               Speech service in your hands. Skilled doctors, personalized
-              exercises and feedback system.
+              exercises and feedback system. All-in-one go with TalkTherapy!
             </p>
-            <p>All-in-one go with TalkTherapy!</p>
           </div>
         </div>
 

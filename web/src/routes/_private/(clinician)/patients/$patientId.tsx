@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute(
-  "/_private/(clinician)/patients/$patientId"
+  "/_private/(clinician)/patients/$patientId",
 )({
   component: RouteComponent,
 });
@@ -20,7 +20,7 @@ function RouteComponent() {
         subheading={"View patient profile and manage actions."}
       />
 
-      <Grid cols={8} gap={6} className="w-auto md:w-200">
+      <Grid cols={8} gap={6} className="w-auto lg:w-200">
         <GridItem colSpan={8} className="flex flex-col gap-4 order-1">
           <PatientInfo />
 

@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { FaEnvelope, FaLock } from "react-icons/fa";
 import useLogin from "./useLogin";
 
 export default function LoginForm() {
@@ -21,7 +22,7 @@ export default function LoginForm() {
         )}
         <div>
           <label className="input w-full">
-            <span className="label">Email</span>
+            <FaEnvelope />
             <input
               type="email"
               placeholder="email@email.com"
@@ -37,7 +38,7 @@ export default function LoginForm() {
 
         <div>
           <label className="input w-full">
-            <span className="label">Password</span>
+            <FaLock />
             <input
               type="password"
               placeholder="********"

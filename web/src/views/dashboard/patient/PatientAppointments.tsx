@@ -59,7 +59,7 @@ export default function PatientAppointments() {
         return (
           <div
             key={id}
-            className="flex flex-col md:flex-row gap-2 justify-between py-2"
+            className="flex flex-col lg:flex-row gap-2 justify-between py-2"
           >
             <div className="flex flex-col">
               <div className="flex justify-between items-center gap-2 mb-2">

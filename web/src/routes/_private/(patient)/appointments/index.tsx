@@ -6,9 +6,7 @@ import Grid from "~/components/Page/Grid";
 import GridItem from "~/components/Page/GridItem";
 import { DayPicker } from "react-day-picker";
 
-export const Route = createFileRoute(
-  "/_private/(patient)/appointments/",
-)({
+export const Route = createFileRoute("/_private/(patient)/appointments/")({
   component: RouteComponent,
 });
 
@@ -20,11 +18,11 @@ function RouteComponent() {
         subheading="View clinician schedules and book appointments."
       />
       <Grid cols={12} gap={6}>
-        <GridItem colSpan={12} className="flex flex-col gap-4 md:col-span-4">
+        <GridItem colSpan={12} className="flex flex-col gap-4 lg:col-span-4">
           <Calendar />
         </GridItem>
 
-        <GridItem colSpan={12} className="flex flex-col gap-4 md:col-span-8">
+        <GridItem colSpan={12} className="flex flex-col gap-4 lg:col-span-8">
           <TableSchedule />
         </GridItem>
       </Grid>

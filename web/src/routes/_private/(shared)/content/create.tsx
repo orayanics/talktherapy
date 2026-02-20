@@ -29,7 +29,7 @@ function RouteComponent() {
       <Grid cols={12} gap={6} className="w-auto">
         <GridItem
           colSpan={12}
-          className="flex flex-col gap-4 order-1 md:col-span-6"
+          className="flex flex-col gap-4 order-1 lg:col-span-6"
         >
           <ContentMediaCreate
             bodyValue={bodyContent}
@@ -44,7 +44,7 @@ function RouteComponent() {
 
         <GridItem
           colSpan={12}
-          className="flex flex-col gap-4 order-1 md:col-span-6"
+          className="flex flex-col gap-4 order-1 lg:col-span-6"
         >
           <p className="font-bold">Live Preview of Media Body</p>
           <Markdown rehypePlugins={[rehypeRaw]}>{bodyContent}</Markdown>

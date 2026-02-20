@@ -13,15 +13,15 @@ export default function ScheduleOverview() {
         subheading="View all schedules of clinicians within the system."
       />
       <Grid cols={12} gap={6}>
-        <GridItem colSpan={12} className="flex flex-col gap-4 md:col-span-4">
+        <GridItem colSpan={12} className="flex flex-col gap-4 lg:col-span-4">
           <TableClinician />
         </GridItem>
 
-        <GridItem colSpan={12} className="flex flex-col gap-4 md:col-span-4">
+        <GridItem colSpan={12} className="flex flex-col gap-4 lg:col-span-4">
           <Calendar />
         </GridItem>
 
-        <GridItem colSpan={12} className="flex flex-col gap-4 md:col-span-4">
+        <GridItem colSpan={12} className="flex flex-col gap-4 lg:col-span-4">
           <TableSchedule />
         </GridItem>
       </Grid>

@@ -14,7 +14,7 @@ export default function ContentView() {
       />
 
       <Grid cols={12} gap={6}>
-        <GridItem colSpan={12} className="md:col-span-12">
+        <GridItem colSpan={12} className="lg:col-span-12">
           <h1 className="font-bold">{MEDIA_ITEMS[0].title}</h1>
           <div className="flex flex-col gap-4 bg-gray-50 border-dashed border-gray-200 border p-4 rounded-lg min-h-screen">
             <Markdown rehypePlugins={[rehypeRaw]}>

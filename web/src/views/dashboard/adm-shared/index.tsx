@@ -38,7 +38,7 @@ function UserStatsCard(data: DashboardData) {
         <GridItem
           key={item.key}
           colSpan={12}
-          className={`md:col-span-3 ${item.key === "totalUsers" ? "order-first md:order-0" : ""}`}
+          className={`lg:col-span-3 ${item.key === "totalUsers" ? "order-first lg:order-0" : ""}`}
         >
           <h2>{item.title}</h2>
           <p>{item.count}</p>

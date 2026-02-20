@@ -18,14 +18,14 @@ export default function ScheduleOverview() {
         subheading="View all of your schedules within the system."
       />
       <Grid cols={12} gap={6}>
-        <GridItem colSpan={12} className="flex flex-col gap-4 md:col-span-4">
+        <GridItem colSpan={12} className="flex flex-col gap-4 lg:col-span-4">
           <Calendar />
           <Link to="/schedules/create" className="btn btn-primary">
             Add New Schedule
           </Link>
         </GridItem>
 
-        <GridItem colSpan={12} className="flex flex-col gap-4 md:col-span-8">
+        <GridItem colSpan={12} className="flex flex-col gap-4 lg:col-span-8">
           <TableSchedule />
         </GridItem>
       </Grid>

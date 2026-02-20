@@ -24,20 +24,21 @@ function RouteComponent() {
 
   return (
     <div className="flex items-center container min-h-screen mx-auto">
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-2 mx-auto">
-        <div className="my-auto hidden md:flex flex-col justify-center h-100 col-span-6 bg-white/60 relative">
-          <div className="flex flex-col gap-4 p-6">
-            <h1 className="text-4xl font-bold">TalkTherapy</h1>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-2 mx-auto">
+        <div className="my-auto hidden lg:flex flex-col justify-center h-100 col-span-6 bg-radial-fade relative">
+          <div className="p-6 [&>p]:text-gray-500 [&>p]:text-lg">
+            <h1 className="text-7xl font-bold bg-linear-to-r from-primary via-sky-500 to-blue-400 bg-clip-text text-transparent">
+              TalkTherapy
+            </h1>
             <p>
               Speech service in your hands. Skilled doctors, personalized
-              exercises and feedback system.
+              exercises and feedback system. All-in-one go with TalkTherapy!
             </p>
-            <p>All-in-one go with TalkTherapy!</p>
           </div>
         </div>
 
         <div className="flex flex-col gap-4 items-center justify-center col-span-6">
-          <div className="w-auto md:w-100 border rounded-lg p-6 bg-white relative">
+          <div className="w-auto lg:w-100 border rounded-lg p-6 bg-white relative">
             <div className="flex flex-col items-center mb-4">
               <h1 className="text-4xl font-bold mb-4">Get Started</h1>
               <div className="flex gap-4">

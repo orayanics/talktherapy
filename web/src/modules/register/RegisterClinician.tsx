@@ -49,7 +49,7 @@ function ClinicianVerification() {
             key={index}
             type="text"
             maxLength={1}
-            className="input w-full md:w-full h-11 text-center text-md md:text-xl"
+            className="input w-full lg:w-full h-11 text-center text-md lg:text-xl"
           />
         ))}
       </div>
@@ -121,7 +121,7 @@ function ClinicianPersonalForm({ onChange }: { onChange: VoidFunction }) {
     <div className="flex flex-col gap-4">
       <h1 className="font-semibold text-lg">Personal Information</h1>
       <div className="flex flex-col gap-4">
-        <div className="grid md:grid-cols-2 grid-cols-1 gap-4">
+        <div className="grid lg:grid-cols-2 grid-cols-1 gap-4">
           <input
             className="input"
             type="text"

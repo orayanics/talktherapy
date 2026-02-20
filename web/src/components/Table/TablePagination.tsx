@@ -50,9 +50,9 @@ export default function TablePagination({
 
   return (
     <div
-      className={`flex flex-col md:flex-row md:items-center justify-between gap-2 ${className}`}
+      className={`flex flex-col lg:flex-row lg:items-center justify-between gap-2 ${className}`}
     >
-      <div className="flex items-center justify-center md:justify-start gap-2 w-full">
+      <div className="flex items-center justify-center lg:justify-start gap-2 w-full">
         <button
           className="btn btn-primary p-2"
           onClick={handlePrev}
@@ -71,7 +71,7 @@ export default function TablePagination({
           <FaChevronRight />
         </button>
       </div>
-      <div className="flex flex-row items-center justify-center md:justify-end gap-2 w-auto">
+      <div className="flex flex-row items-center justify-center lg:justify-end gap-2 w-auto">
         {typeof from === "number" && typeof to === "number" && (
           <p className="whitespace-nowrap">
             Showing <strong>{from}</strong>-<strong>{to}</strong> of{" "}

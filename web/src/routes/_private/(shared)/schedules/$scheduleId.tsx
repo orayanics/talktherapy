@@ -22,11 +22,11 @@ function RouteComponent() {
       />
 
       <Grid cols={12} gap={6}>
-        <GridItem colSpan={12} className="flex flex-col gap-4 md:col-span-6">
+        <GridItem colSpan={12} className="flex flex-col gap-4 lg:col-span-6">
           <ScheduleInfo />
         </GridItem>
 
-        <GridItem colSpan={12} className="flex flex-col gap-4 md:col-span-6">
+        <GridItem colSpan={12} className="flex flex-col gap-4 lg:col-span-6">
           <ScheduleAppointmentInfo />
         </GridItem>
       </Grid>

@@ -22,7 +22,7 @@ function RouteComponent() {
         subheading={"Manage your profile information and settings."}
       />
 
-      <Grid cols={8} gap={6} className="w-auto md:w-200">
+      <Grid cols={8} gap={6} className="w-auto lg:w-200">
         <GridItem colSpan={8} className="flex flex-col gap-4 order-1">
           <ProfileUserInfo {...session} />
           <ProfileAccInfo {...session} />

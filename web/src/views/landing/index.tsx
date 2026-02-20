@@ -12,12 +12,14 @@ const LANDING_CTA = [
 export default function index() {
   return (
     <div className="hero min-h-screen pattern-boxes pattern-color-primary pattern-bg-white pattern-size-8">
-      <div className="hero-content text-center">
-        <div className="max-w-md flex flex-col gap-4">
-          <h1 className="text-5xl font-bold">TalkTherapy</h1>
+      <div className="fade-scroll-up hero-content text-center">
+        <div className="max-w-md flex flex-col gap-4 [&>p]:text-gray-500 [&>p]:text-lg">
+          <h1 className="text-7xl font-bold bg-linear-to-r from-primary via-sky-500 to-blue-400 bg-clip-text text-transparent">
+            TalkTherapy
+          </h1>
           <p>
             Speech service in your hands. Skilled doctors, personalized
-            exercises and feedback system. All-in-one go with TalkTherapy.
+            exercises and feedback system.
           </p>
           <p>All-in-one go with TalkTherapy!</p>
 

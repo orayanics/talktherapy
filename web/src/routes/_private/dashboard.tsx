@@ -19,7 +19,7 @@ export const Route = createFileRoute("/_private/dashboard")({
 
 function RouteComponent() {
   const { account_role } = useSession();
-  const enabled = account_role === "admin" || account_role === "clinician";
+  const enabled = account_role === "admin" || account_role === "sudo";
 
   const { data } = useQuery({
     ...dashboardDataQueryOptions,
@@ -28,7 +28,7 @@ function RouteComponent() {
 
   // condition view render
   const dashboardView = () => {
-    if (account_role === "admin") {
+    if (account_role === "admin" || account_role === "sudo") {
       return <AdminSharedDashboard data={data} />;
     } else if (account_role === "clinician") {
       return <div>IN PROGRESS: CLINICIAN DASHBOARD</div>;
@@ -129,7 +129,7 @@ function RouteComponent() {
 //             <h2 className="font-medium text-gray-600 mb-4">
 //               Appointment Summary
 //             </h2>
-//             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+//             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
 //               <div>
 //                 <h3 className="text-gray-500">Total Appointments</h3>
 //                 <p className="text-2xl font-semibold">{totalAppointments}</p>

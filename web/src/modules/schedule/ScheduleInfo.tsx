@@ -27,7 +27,7 @@ export default function ScheduleInfo() {
           </div>
 
           <div className="flex flex-col gap-2">
-            <button className="btn btn-soft btn-primary">Edit Schedule</button>
+            <button className="btn btn-primary">Edit Schedule</button>
             <button className="btn btn-soft btn-error">Delete Schedule</button>
           </div>
         </div>

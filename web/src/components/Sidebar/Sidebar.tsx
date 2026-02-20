@@ -25,7 +25,7 @@ export default function Sidebar(props: SidebarProps) {
     <aside className="drawer lg:drawer-open">
       <input id="my-drawer-3" type="checkbox" className="drawer-toggle" />
       <div className="drawer-content flex flex-col items-center justify-center">
-        <div className="bg-base-100 border-b md:border-0 w-full">
+        <div className="bg-white border-b lg:border-0 w-full">
           <label
             htmlFor="my-drawer-3"
             className="btn btn-primary m-4 lg:hidden"
@@ -41,7 +41,7 @@ export default function Sidebar(props: SidebarProps) {
           aria-label="close sidebar"
           className="drawer-overlay"
         ></label>
-        <div className="menu bg-base-100 border-r min-h-full w-64 gap-2 p-0">
+        <div className="menu bg-white border-r min-h-full w-64 gap-2 p-0 font-mono">
           <LogoText />
           <SidebarNavItems items={navItems} />
           <button onClick={handleLogout} className="btn btn-primary mx-2 mb-4">

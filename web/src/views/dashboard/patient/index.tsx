@@ -10,14 +10,14 @@ export default function index() {
         {/* First Col */}
         <GridItem
           colSpan={12}
-          className="flex flex-col gap-4 border p-4 rounded-lg md:col-span-8"
+          className="flex flex-col gap-4 border p-4 rounded-lg lg:col-span-8"
         >
           <PatientAppointments />
         </GridItem>
 
         <GridItem
           colSpan={12}
-          className="flex flex-col gap-4 border p-4 rounded-lg md:col-span-4"
+          className="flex flex-col gap-4 border p-4 rounded-lg lg:col-span-4"
         >
           <PatientBookmark />
         </GridItem>

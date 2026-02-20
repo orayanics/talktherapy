@@ -24,7 +24,7 @@ const processQueue = (error: unknown) => {
   failedQueue = [];
 };
 
-const SKIP_REFRESH_URLS = ["/auth/session", "/auth/login", "/auth/refresh"];
+const SKIP_REFRESH_URLS = ["/auth/session", "/auth/login"];
 
 instance.interceptors.response.use(
   (response) => response,

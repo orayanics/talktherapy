@@ -1,54 +1,5 @@
 @import "tailwindcss";
 
-@theme inline {
-  /* Colors */
-  /* base: #D1E2FF */
-  /* --color-hawkes-blue-50: #eff5ff;
---color-hawkes-blue-100: #d1e2ff;
---color-hawkes-blue-200: #bdd7ff;
---color-hawkes-blue-300: #90beff;
---color-hawkes-blue-400: #5c9bfe;
---color-hawkes-blue-500: #3675fb;
---color-hawkes-blue-600: #1f55f1;
---color-hawkes-blue-700: #183fdd;
---color-hawkes-blue-800: #1a35b3;
---color-hawkes-blue-900: #1b328d;
---color-hawkes-blue-950: #152056; */
-
-  --color-blue-50: oklch(96.852% 0.01496 260.813);
-  --color-blue-100: oklch(90.919% 0.0439 261.201);
-  --color-blue-200: oklch(87.325% 0.06243 258.944);
-  --color-blue-300: oklch(79.356% 0.10538 257.09);
-  --color-blue-400: oklch(69.3% 0.16026 259.123);
-  --color-blue-500: oklch(59.878% 0.21083 262.798);
-  --color-blue-600: oklch(52.431% 0.23973 264.428);
-  --color-blue-700: oklch(46.675% 0.24028 265.402);
-  --color-blue-800: oklch(40.744% 0.19953 266.569);
-  --color-blue-900: oklch(36.42% 0.15308 267.094);
-  --color-blue-950: oklch(27.138% 0.09858 269.848);
-
-  --color-primary-light: var(--color-blue-900);
-  --color-primary-dark: var(--color-blue-100);
-}
-
-:root {
-  /* for 50 to 300 */
-  /* --text-light: oklch(36.42% 0.15308 267.094); */
-  /* for 400 to 950 */
-  /* --text-dark: oklch(90.919% 0.0439 261.201); */
-
-  /* Gradients
-  100 to 200
-  100 to 300
-  200 to 300
-  300 to 500
-  400 to 600
-  500 to 700
-  600 to 800
-  700 to 900
-  850 to 950 */
-}
-
 @layer base {
   *,
   ::after,
@@ -76,6 +27,15 @@
 
   .using-mouse * {
     outline: none !important;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    line-height: inherit !important;
   }
 }
 
@@ -111,7 +71,7 @@
   }
 
   .pattern-color-primary {
-    --pattern-color: oklch(80% 0.105 251.813 / 0.5);
+    --pattern-color: oklch(79.703% 0.10533 252.533 / 0.5);
   }
 
   .pattern-bg-white {
@@ -129,5 +89,31 @@
   }
   .pattern-size-8 {
     --pattern-size: 48px;
+  }
+
+  .bg-radial-fade {
+    background: #ffffff;
+    background: radial-gradient(
+      circle,
+      rgba(255, 255, 255, 1) 0%,
+      rgb(255, 255, 255, 0.4) 50%,
+      rgba(255, 255, 255, 0) 100%
+    );
+  }
+
+  /* animations */
+  .fade-scroll-up {
+    animation: fade-scroll-up 0.5s ease-out forwards;
+  }
+}
+
+@keyframes fade-scroll-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

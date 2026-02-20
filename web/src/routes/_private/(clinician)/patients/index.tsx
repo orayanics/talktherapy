@@ -124,7 +124,7 @@ function Table(props: TableProps) {
 
   return (
     <>
-      <div className="flex flex-col md:flex-row gap-2 justify-between">
+      <div className="flex flex-col lg:flex-row gap-2 justify-between">
         {/* search input */}
       </div>
 

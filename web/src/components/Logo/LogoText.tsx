@@ -1,10 +1,8 @@
 export default function LogoText() {
   return (
-    <div className="flex flex-row gap-1 p-2 items-center border-b">
-      <h1 className="p-2 border bg-primary text-primary-color w-8 h-8 flex items-center justify-center rounded-lg font-bold">
-        TT
-      </h1>
-      <p className="flex items-center justify-center rounded-lg">TalkTherapy</p>
+    <div className="flex flex-row gap-4 p-4 items-center border-b">
+      <div className="p-2 shadow shadow-primary bg-primary text-primary-content w-4 h-4 flex items-center justify-center rounded font-bold" />
+      <p className="flex items-center justify-center rounded-lg">talktherapy</p>
     </div>
   );
 }

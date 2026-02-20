@@ -13,9 +13,7 @@ import InputMultiselect from "~/components/Input/InputMultiselect";
 import InputDropdown from "~/components/Input/InputDropdown";
 import LoaderTable from "~/components/Loader/LoaderTable";
 import TablePagination from "~/components/Table/TablePagination";
-export const Route = createFileRoute(
-  "/_private/(sudo)/logs"
-)({
+export const Route = createFileRoute("/_private/(sudo)/logs")({
   component: RouteComponent,
 });
 
@@ -87,11 +85,11 @@ function Table(props: TableProps) {
     props;
   return (
     <>
-      <div className="flex flex-col md:flex-row gap-2">
+      <div className="flex flex-col lg:flex-row gap-2">
         <InputDropdown
           label="Filter By Date"
-          className="flex flex-row gap-2 md:w-auto w-full"
-          btnClassName="md:w-auto w-full btn-primary"
+          className="flex flex-row gap-2 lg:w-auto w-full"
+          btnClassName="lg:w-auto w-full btn-primary"
           position="dropdown-start"
         >
           <label className="input w-full">

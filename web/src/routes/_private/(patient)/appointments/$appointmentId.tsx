@@ -6,7 +6,7 @@ import GridItem from "~/components/Page/GridItem";
 
 import AppointmentInfo from "~/modules/appointment/AppointmentInfo";
 export const Route = createFileRoute(
-  "/_private/(patient)/appointments/$appointmentId"
+  "/_private/(patient)/appointments/$appointmentId",
 )({
   component: RouteComponent,
 });
@@ -20,7 +20,7 @@ function RouteComponent() {
       />
 
       <Grid cols={12} gap={6}>
-        <GridItem colSpan={12} className="flex flex-col gap-4 md:col-span-6">
+        <GridItem colSpan={12} className="flex flex-col gap-4 lg:col-span-6">
           <AppointmentInfo />
         </GridItem>
       </Grid>
