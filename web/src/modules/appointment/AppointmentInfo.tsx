@@ -4,7 +4,7 @@ export default function AppointmentInfo() {
   return (
     <>
       <div>
-        <p className="font-bold uppercase text-info">Schedule Information</p>
+        <p className="font-bold uppercase text-primary">Schedule Information</p>
         <div className="[&>div]:py-4 [&>div]:border-y [&>div]:border-gray-100 [&>div]:border-dashed">
           <div className="flex flex-row justify-between gap-2">
             <p className="font-bold">Assigned Clinician</p>
@@ -27,7 +27,9 @@ export default function AppointmentInfo() {
           </div>
 
           <div className="flex flex-col gap-2">
-            <button className="btn btn-soft btn-info">Book Appointment</button>
+            <button className="btn btn-soft btn-primary">
+              Book Appointment
+            </button>
           </div>
         </div>
       </div>

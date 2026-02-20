@@ -10,9 +10,7 @@ import PageTitle from "~/components/Page/PageTitle";
 
 import ContentMediaCreate from "~/modules/content/ContentMediaCreate";
 
-export const Route = createFileRoute(
-  "/_private/(shared)/content/create"
-)({
+export const Route = createFileRoute("/_private/(shared)/content/create")({
   component: RouteComponent,
 });
 
@@ -39,7 +37,7 @@ function RouteComponent() {
           />
 
           <div className="flex flex-col gap-2 col-span-12">
-            <button className="btn btn-soft btn-info">Submit</button>
+            <button className="btn btn-soft btn-primary">Submit</button>
             <button className="btn btn-soft btn-error">Cancel</button>
           </div>
         </GridItem>

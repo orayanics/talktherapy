@@ -5,7 +5,7 @@ export default function ProfileUserInfo(props: UserResponse) {
 
   return (
     <>
-      <p className="font-bold uppercase text-info">User Information</p>
+      <p className="font-bold uppercase text-primary">User Information</p>
       <div className="[&>div]:py-4 [&>div]:border-y [&>div]:border-gray-100 [&>div]:border-dashed">
         <div className="flex flex-row justify-between gap-2">
           <p className="font-bold">User Picture</p>

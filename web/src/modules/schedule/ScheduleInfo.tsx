@@ -4,7 +4,7 @@ export default function ScheduleInfo() {
   return (
     <>
       <div>
-        <p className="font-bold uppercase text-info">Schedule Information</p>
+        <p className="font-bold uppercase text-primary">Schedule Information</p>
         <div className="[&>div]:py-4 [&>div]:border-y [&>div]:border-gray-100 [&>div]:border-dashed">
           <div className="flex flex-row justify-between gap-2">
             <p className="font-bold">Assigned Clinician</p>
@@ -27,7 +27,7 @@ export default function ScheduleInfo() {
           </div>
 
           <div className="flex flex-col gap-2">
-            <button className="btn btn-soft btn-info">Edit Schedule</button>
+            <button className="btn btn-soft btn-primary">Edit Schedule</button>
             <button className="btn btn-soft btn-error">Delete Schedule</button>
           </div>
         </div>

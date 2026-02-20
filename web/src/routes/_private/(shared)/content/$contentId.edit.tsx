@@ -10,7 +10,7 @@ import PageTitle from "~/components/Page/PageTitle";
 
 import ContentMediaInfoEdit from "~/modules/content/ContentMediaInfoEdit";
 export const Route = createFileRoute(
-  "/_private/(shared)/content/$contentId/edit"
+  "/_private/(shared)/content/$contentId/edit",
 )({
   component: RouteComponent,
 });
@@ -72,7 +72,7 @@ function RouteComponent() {
           />
 
           <div className="flex flex-col gap-2 col-span-12">
-            <button className="btn btn-soft btn-info">Save Changes</button>
+            <button className="btn btn-soft btn-primary">Save Changes</button>
             <button className="btn btn-soft btn-error">Cancel</button>
           </div>
         </GridItem>

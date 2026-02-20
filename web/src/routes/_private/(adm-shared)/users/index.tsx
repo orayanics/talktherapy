@@ -230,7 +230,7 @@ function Table(props: UsersTableProps) {
                 <Link
                   to="/users/$userId"
                   params={{ userId: row.id }}
-                  className="link link-hover hover:text-info"
+                  className="link link-hover hover:text-primary"
                 >
                   {value}
                 </Link>
@@ -257,7 +257,7 @@ function Table(props: UsersTableProps) {
                   <Link
                     to={"/users/$userId/edit"}
                     params={{ userId: row.id as string }}
-                    className="btn btn-soft btn-info"
+                    className="btn btn-soft btn-primary"
                   >
                     Edit
                   </Link>

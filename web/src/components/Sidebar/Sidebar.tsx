@@ -44,7 +44,7 @@ export default function Sidebar(props: SidebarProps) {
         <div className="menu bg-base-100 border-r min-h-full w-64 gap-2 p-0">
           <LogoText />
           <SidebarNavItems items={navItems} />
-          <button onClick={handleLogout} className="btn btn-info mx-2 mb-4">
+          <button onClick={handleLogout} className="btn btn-primary mx-2 mb-4">
             Logout
           </button>
         </div>

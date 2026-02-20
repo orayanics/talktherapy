@@ -43,7 +43,7 @@ function RouteComponent() {
               <div className="flex gap-4">
                 <label className="label">
                   <input
-                    className="radio radio-xs radio-info"
+                    className="radio radio-xs radio-primary"
                     type="radio"
                     value={0}
                     checked={registerType === 0}
@@ -54,7 +54,7 @@ function RouteComponent() {
 
                 <label className="label">
                   <input
-                    className="radio radio-xs radio-info"
+                    className="radio radio-xs radio-primary"
                     type="radio"
                     value={1}
                     checked={registerType === 1}

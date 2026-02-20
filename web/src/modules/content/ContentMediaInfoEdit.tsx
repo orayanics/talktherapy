@@ -22,7 +22,7 @@ export default function ContentMediaInfoEdit(props: ContentMedaiInfoEditProps) {
   } = props;
   return (
     <>
-      <p className="font-bold uppercase text-info">Content Information</p>
+      <p className="font-bold uppercase text-primary">Content Information</p>
       <div className="[&>div]:py-4 [&>div]:border-y [&>div]:border-gray-100 [&>div]:border-dashed">
         <div className="flex flex-row justify-between gap-2">
           <p className="font-bold">Title</p>

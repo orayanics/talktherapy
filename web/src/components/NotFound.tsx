@@ -17,7 +17,7 @@ export function NotFound({ children }: { children?: any }) {
           </button>
           <Link
             to="/"
-            className="btn btn-info text-white rounded-sm uppercase font-black text-sm"
+            className="btn btn-primary text-white rounded-sm uppercase font-black text-sm"
           >
             Start Over
           </Link>

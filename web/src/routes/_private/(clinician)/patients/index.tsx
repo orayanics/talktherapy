@@ -7,9 +7,7 @@ import LoaderTable from "~/components/Loader/LoaderTable";
 import TableContent from "~/components/Table/TableContent";
 import TablePagination from "~/components/Table/TablePagination";
 
-export const Route = createFileRoute(
-  "/_private/(clinician)/patients/"
-)({
+export const Route = createFileRoute("/_private/(clinician)/patients/")({
   component: RouteComponent,
 });
 
@@ -142,7 +140,7 @@ function Table(props: TableProps) {
                 <Link
                   to="/patients/$patientId"
                   params={{ patientId: row.id.toString() }}
-                  className="link link-hover hover:text-info"
+                  className="link link-hover hover:text-primary"
                 >
                   {(value as { firstName: string; lastName: string }).firstName}{" "}
                   {(value as { firstName: string; lastName: string }).lastName}

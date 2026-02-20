@@ -39,7 +39,7 @@ export function DefaultCatchBoundary({ error }: ErrorComponentProps) {
           ) : (
             <Link
               to="/"
-              className={`btn btn-info rounded-sm uppercase font-extrabold`}
+              className={`btn btn-primary rounded-sm uppercase font-extrabold`}
               onClick={(e) => {
                 e.preventDefault();
                 window.history.back();

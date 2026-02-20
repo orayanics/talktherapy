@@ -14,7 +14,7 @@ export default function useSchedule() {
     end_time: "",
     freq: "none",
     selected_days: [],
-    horizon_days: 30,
+    horizon_days: 1,
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -41,7 +41,7 @@ export default function useSchedule() {
       const payload: CreateAvailabilityPayload = {
         starts_at: toISODateTime(form.date, form.start_time),
         ends_at: toISODateTime(form.date, form.end_time),
-        horizon_days: form.horizon_days,
+        horizon_days: parseInt(form.horizon_days.toString(), 10), // to int
       };
 
       const rrule = buildRRule(form.freq, form.selected_days);

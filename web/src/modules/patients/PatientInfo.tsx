@@ -1,7 +1,7 @@
 export default function PatientInfo() {
   return (
     <>
-      <p className="font-bold uppercase text-info">Patient Information</p>
+      <p className="font-bold uppercase text-primary">Patient Information</p>
       <div className="[&>div]:py-4 [&>div]:border-y [&>div]:border-gray-100 [&>div]:border-dashed">
         <div className="flex flex-row justify-between gap-2">
           <p className="font-bold">Name</p>

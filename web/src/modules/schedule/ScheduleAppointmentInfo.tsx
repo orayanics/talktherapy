@@ -2,7 +2,7 @@ export default function ScheduleAppointmentInfo() {
   return (
     <>
       <div>
-        <p className="font-bold uppercase text-info">Appointment Details</p>
+        <p className="font-bold uppercase text-primary">Appointment Details</p>
         <div className="[&>div]:py-4 [&>div]:border-y [&>div]:border-gray-100 [&>div]:border-dashed">
           <div className="flex flex-row justify-between gap-2">
             <p className="font-bold">Assigned Patient</p>
@@ -22,7 +22,7 @@ export default function ScheduleAppointmentInfo() {
       </div>
 
       <div>
-        <p className="font-bold uppercase text-info">Patient Details</p>
+        <p className="font-bold uppercase text-primary">Patient Details</p>
         <div className="[&>div]:py-4 [&>div]:border-y [&>div]:border-gray-100 [&>div]:border-dashed">
           <div className="flex flex-row justify-between gap-2">
             <p className="font-bold">Medical Diagnosis</p>
