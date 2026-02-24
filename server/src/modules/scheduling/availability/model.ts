@@ -50,4 +50,18 @@ export namespace AvailabilityModel {
     ),
   });
   export type ruleResponse = typeof ruleResponse.static;
+
+  export const listQuery = t.Object({
+    from: t.Optional(t.String({ format: "date-time" })),
+    to: t.Optional(t.String({ format: "date-time" })),
+    status: t.Optional(
+      t.Union([
+        t.Literal("AVAILABLE"),
+        t.Literal("BOOKED"),
+        t.Literal("BLOCKED"),
+        t.Literal("CANCELLED"),
+      ]),
+    ),
+  });
+  export type listQuery = typeof listQuery.static;
 }

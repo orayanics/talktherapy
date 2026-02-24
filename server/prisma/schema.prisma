@@ -89,6 +89,7 @@ model Clinician {
 
   user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
   diagnosis Diagnosis? @relation(fields: [diagnosis_id], references: [id], onDelete: SetNull)
+  slots Slot[]
 }
 
 model RefreshToken {
@@ -173,6 +174,7 @@ model Slot {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
+  clinician Clinician @relation(fields: [clinician_id], references: [id], onDelete: Cascade)
   availability_rule AvailabilityRule @relation(fields: [availability_rule_id], references: [id], onDelete: Cascade)
 }
 

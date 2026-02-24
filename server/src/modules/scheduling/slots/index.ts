@@ -9,6 +9,22 @@ export const slotController = new Elysia({
   detail: { tags: ["Clinician / Slots"] },
 })
   .use(jwtPlugin)
+  .guard({ isAuth: true, hasRole: ["patient"] }, (app) =>
+    app
+      // ── GET /slots ──────────────────────────────────────────────
+      .get(
+        "/available",
+        async ({ query }) => {
+          return SlotService.listAllSlots(query);
+        },
+        {
+          query: SlotModel.listQuery,
+          detail: {
+            summary: "List all slots with optional filters (admin only)",
+          },
+        },
+      ),
+  )
   .guard({ isAuth: true, hasRole: ["clinician"] }, (app) =>
     app
       // ── GET /slots ──────────────────────────────────────────────

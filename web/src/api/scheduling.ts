@@ -5,16 +5,32 @@ import {
 } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { isAxiosError } from "axios";
+import { format } from "date-fns/format";
 import { api } from "~/api/axios";
 
 import { CreateAvailabilityPayload } from "~/models/schedule";
 
 // query options
-export const availabilityRulesQuery = () =>
+export const availabilityRulesQuery = (date?: Date) =>
   queryOptions({
-    queryKey: ["availability"],
+    queryKey: ["availability", date],
     queryFn: async () => {
-      const { data } = await api.get(`/scheduling/availability`);
+      const params = date ? { from: format(date, "yyyy-MM-dd") } : {};
+      const { data } = await api.get(`/scheduling/availability`, { params });
+      return data;
+    },
+    staleTime: 1000 * 60 * 5,
+    retry: false,
+  });
+
+export const appointmentsQuery = (date?: Date) =>
+  queryOptions({
+    queryKey: ["appointments", date],
+    queryFn: async () => {
+      const params = date ? { from: format(date, "yyyy-MM-dd") } : {};
+      const { data } = await api.get(`/scheduling/slots/available`, {
+        params,
+      });
       return data;
     },
     staleTime: 1000 * 60 * 5,

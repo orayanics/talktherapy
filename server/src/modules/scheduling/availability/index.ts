@@ -13,13 +13,14 @@ export const availabilityController = new Elysia({
       // ── GET /availability ───────────────────────────────────────
       .get(
         "/",
-        async ({ auth }) => {
+        async ({ auth, query }) => {
           const clinician_id = await AvailabilityService.resolveClinicianId(
             auth!.userId,
           );
-          return AvailabilityService.listRules(clinician_id);
+          return AvailabilityService.listRules(clinician_id, query);
         },
         {
+          query: AvailabilityModel.listQuery,
           detail: { summary: "List own availability rules" },
         },
       )

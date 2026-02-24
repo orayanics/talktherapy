@@ -21,11 +21,34 @@ export abstract class AvailabilityService {
   /**
    * Returns all availability rules belonging to the clinician.
    */
-  static async listRules(clinician_id: string) {
+  static async listRules(
+    clinician_id: string,
+    query: AvailabilityModel.listQuery,
+  ) {
+    const { from, status: slotStatus } = query;
+
+    const UTC_OFFSET_HOURS = 8;
+
+    const slotFilter = from
+      ? {
+          starts_at: {
+            gte: new Date(`${from}T00:00:00+08:00`),
+            lte: new Date(`${from}T23:59:59.999+08:00`),
+          },
+        }
+      : {};
+
+    const hasFilter = Object.keys(slotFilter).length > 0;
+
     return prisma.availabilityRule.findMany({
-      where: { clinician_id },
+      where: {
+        clinician_id,
+        ...(slotStatus && { status: slotStatus }),
+        ...(hasFilter && { slots: { some: slotFilter } }),
+      },
       include: {
         slots: {
+          where: hasFilter ? slotFilter : undefined,
           select: { id: true, starts_at: true, ends_at: true, status: true },
           orderBy: { starts_at: "asc" },
         },
@@ -33,7 +56,6 @@ export abstract class AvailabilityService {
       orderBy: { created_at: "desc" },
     });
   }
-
   /**
    * Returns a single rule owned by the clinician.
    */

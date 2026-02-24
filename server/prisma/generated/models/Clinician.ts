@@ -184,6 +184,7 @@ export type ClinicianWhereInput = {
   updated_at?: Prisma.DateTimeFilter<"Clinician"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   diagnosis?: Prisma.XOR<Prisma.DiagnosisNullableScalarRelationFilter, Prisma.DiagnosisWhereInput> | null
+  slots?: Prisma.SlotListRelationFilter
 }
 
 export type ClinicianOrderByWithRelationInput = {
@@ -194,6 +195,7 @@ export type ClinicianOrderByWithRelationInput = {
   updated_at?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
   diagnosis?: Prisma.DiagnosisOrderByWithRelationInput
+  slots?: Prisma.SlotOrderByRelationAggregateInput
 }
 
 export type ClinicianWhereUniqueInput = Prisma.AtLeast<{
@@ -207,6 +209,7 @@ export type ClinicianWhereUniqueInput = Prisma.AtLeast<{
   updated_at?: Prisma.DateTimeFilter<"Clinician"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   diagnosis?: Prisma.XOR<Prisma.DiagnosisNullableScalarRelationFilter, Prisma.DiagnosisWhereInput> | null
+  slots?: Prisma.SlotListRelationFilter
 }, "id" | "user_id">
 
 export type ClinicianOrderByWithAggregationInput = {
@@ -237,6 +240,7 @@ export type ClinicianCreateInput = {
   updated_at?: Date | string
   user: Prisma.UserCreateNestedOneWithoutClinicianInput
   diagnosis?: Prisma.DiagnosisCreateNestedOneWithoutClinicianInput
+  slots?: Prisma.SlotCreateNestedManyWithoutClinicianInput
 }
 
 export type ClinicianUncheckedCreateInput = {
@@ -245,6 +249,7 @@ export type ClinicianUncheckedCreateInput = {
   diagnosis_id?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  slots?: Prisma.SlotUncheckedCreateNestedManyWithoutClinicianInput
 }
 
 export type ClinicianUpdateInput = {
@@ -253,6 +258,7 @@ export type ClinicianUpdateInput = {
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutClinicianNestedInput
   diagnosis?: Prisma.DiagnosisUpdateOneWithoutClinicianNestedInput
+  slots?: Prisma.SlotUpdateManyWithoutClinicianNestedInput
 }
 
 export type ClinicianUncheckedUpdateInput = {
@@ -261,6 +267,7 @@ export type ClinicianUncheckedUpdateInput = {
   diagnosis_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  slots?: Prisma.SlotUncheckedUpdateManyWithoutClinicianNestedInput
 }
 
 export type ClinicianCreateManyInput = {
@@ -322,6 +329,11 @@ export type ClinicianMinOrderByAggregateInput = {
   diagnosis_id?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
+}
+
+export type ClinicianScalarRelationFilter = {
+  is?: Prisma.ClinicianWhereInput
+  isNot?: Prisma.ClinicianWhereInput
 }
 
 export type ClinicianCreateNestedManyWithoutDiagnosisInput = {
@@ -398,11 +410,26 @@ export type ClinicianUncheckedUpdateOneWithoutUserNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ClinicianUpdateToOneWithWhereWithoutUserInput, Prisma.ClinicianUpdateWithoutUserInput>, Prisma.ClinicianUncheckedUpdateWithoutUserInput>
 }
 
+export type ClinicianCreateNestedOneWithoutSlotsInput = {
+  create?: Prisma.XOR<Prisma.ClinicianCreateWithoutSlotsInput, Prisma.ClinicianUncheckedCreateWithoutSlotsInput>
+  connectOrCreate?: Prisma.ClinicianCreateOrConnectWithoutSlotsInput
+  connect?: Prisma.ClinicianWhereUniqueInput
+}
+
+export type ClinicianUpdateOneRequiredWithoutSlotsNestedInput = {
+  create?: Prisma.XOR<Prisma.ClinicianCreateWithoutSlotsInput, Prisma.ClinicianUncheckedCreateWithoutSlotsInput>
+  connectOrCreate?: Prisma.ClinicianCreateOrConnectWithoutSlotsInput
+  upsert?: Prisma.ClinicianUpsertWithoutSlotsInput
+  connect?: Prisma.ClinicianWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ClinicianUpdateToOneWithWhereWithoutSlotsInput, Prisma.ClinicianUpdateWithoutSlotsInput>, Prisma.ClinicianUncheckedUpdateWithoutSlotsInput>
+}
+
 export type ClinicianCreateWithoutDiagnosisInput = {
   id?: string
   created_at?: Date | string
   updated_at?: Date | string
   user: Prisma.UserCreateNestedOneWithoutClinicianInput
+  slots?: Prisma.SlotCreateNestedManyWithoutClinicianInput
 }
 
 export type ClinicianUncheckedCreateWithoutDiagnosisInput = {
@@ -410,6 +437,7 @@ export type ClinicianUncheckedCreateWithoutDiagnosisInput = {
   user_id: string
   created_at?: Date | string
   updated_at?: Date | string
+  slots?: Prisma.SlotUncheckedCreateNestedManyWithoutClinicianInput
 }
 
 export type ClinicianCreateOrConnectWithoutDiagnosisInput = {
@@ -453,6 +481,7 @@ export type ClinicianCreateWithoutUserInput = {
   created_at?: Date | string
   updated_at?: Date | string
   diagnosis?: Prisma.DiagnosisCreateNestedOneWithoutClinicianInput
+  slots?: Prisma.SlotCreateNestedManyWithoutClinicianInput
 }
 
 export type ClinicianUncheckedCreateWithoutUserInput = {
@@ -460,6 +489,7 @@ export type ClinicianUncheckedCreateWithoutUserInput = {
   diagnosis_id?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  slots?: Prisma.SlotUncheckedCreateNestedManyWithoutClinicianInput
 }
 
 export type ClinicianCreateOrConnectWithoutUserInput = {
@@ -483,10 +513,60 @@ export type ClinicianUpdateWithoutUserInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   diagnosis?: Prisma.DiagnosisUpdateOneWithoutClinicianNestedInput
+  slots?: Prisma.SlotUpdateManyWithoutClinicianNestedInput
 }
 
 export type ClinicianUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  diagnosis_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  slots?: Prisma.SlotUncheckedUpdateManyWithoutClinicianNestedInput
+}
+
+export type ClinicianCreateWithoutSlotsInput = {
+  id?: string
+  created_at?: Date | string
+  updated_at?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutClinicianInput
+  diagnosis?: Prisma.DiagnosisCreateNestedOneWithoutClinicianInput
+}
+
+export type ClinicianUncheckedCreateWithoutSlotsInput = {
+  id?: string
+  user_id: string
+  diagnosis_id?: string | null
+  created_at?: Date | string
+  updated_at?: Date | string
+}
+
+export type ClinicianCreateOrConnectWithoutSlotsInput = {
+  where: Prisma.ClinicianWhereUniqueInput
+  create: Prisma.XOR<Prisma.ClinicianCreateWithoutSlotsInput, Prisma.ClinicianUncheckedCreateWithoutSlotsInput>
+}
+
+export type ClinicianUpsertWithoutSlotsInput = {
+  update: Prisma.XOR<Prisma.ClinicianUpdateWithoutSlotsInput, Prisma.ClinicianUncheckedUpdateWithoutSlotsInput>
+  create: Prisma.XOR<Prisma.ClinicianCreateWithoutSlotsInput, Prisma.ClinicianUncheckedCreateWithoutSlotsInput>
+  where?: Prisma.ClinicianWhereInput
+}
+
+export type ClinicianUpdateToOneWithWhereWithoutSlotsInput = {
+  where?: Prisma.ClinicianWhereInput
+  data: Prisma.XOR<Prisma.ClinicianUpdateWithoutSlotsInput, Prisma.ClinicianUncheckedUpdateWithoutSlotsInput>
+}
+
+export type ClinicianUpdateWithoutSlotsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutClinicianNestedInput
+  diagnosis?: Prisma.DiagnosisUpdateOneWithoutClinicianNestedInput
+}
+
+export type ClinicianUncheckedUpdateWithoutSlotsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  user_id?: Prisma.StringFieldUpdateOperationsInput | string
   diagnosis_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -504,6 +584,7 @@ export type ClinicianUpdateWithoutDiagnosisInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutClinicianNestedInput
+  slots?: Prisma.SlotUpdateManyWithoutClinicianNestedInput
 }
 
 export type ClinicianUncheckedUpdateWithoutDiagnosisInput = {
@@ -511,6 +592,7 @@ export type ClinicianUncheckedUpdateWithoutDiagnosisInput = {
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  slots?: Prisma.SlotUncheckedUpdateManyWithoutClinicianNestedInput
 }
 
 export type ClinicianUncheckedUpdateManyWithoutDiagnosisInput = {
@@ -521,6 +603,35 @@ export type ClinicianUncheckedUpdateManyWithoutDiagnosisInput = {
 }
 
 
+/**
+ * Count Type ClinicianCountOutputType
+ */
+
+export type ClinicianCountOutputType = {
+  slots: number
+}
+
+export type ClinicianCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  slots?: boolean | ClinicianCountOutputTypeCountSlotsArgs
+}
+
+/**
+ * ClinicianCountOutputType without action
+ */
+export type ClinicianCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ClinicianCountOutputType
+   */
+  select?: Prisma.ClinicianCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * ClinicianCountOutputType without action
+ */
+export type ClinicianCountOutputTypeCountSlotsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.SlotWhereInput
+}
+
 
 export type ClinicianSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -530,6 +641,8 @@ export type ClinicianSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   updated_at?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   diagnosis?: boolean | Prisma.Clinician$diagnosisArgs<ExtArgs>
+  slots?: boolean | Prisma.Clinician$slotsArgs<ExtArgs>
+  _count?: boolean | Prisma.ClinicianCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["clinician"]>
 
 export type ClinicianSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -564,6 +677,8 @@ export type ClinicianOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs 
 export type ClinicianInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   diagnosis?: boolean | Prisma.Clinician$diagnosisArgs<ExtArgs>
+  slots?: boolean | Prisma.Clinician$slotsArgs<ExtArgs>
+  _count?: boolean | Prisma.ClinicianCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ClinicianIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -579,6 +694,7 @@ export type $ClinicianPayload<ExtArgs extends runtime.Types.Extensions.InternalA
   objects: {
     user: Prisma.$UserPayload<ExtArgs>
     diagnosis: Prisma.$DiagnosisPayload<ExtArgs> | null
+    slots: Prisma.$SlotPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -982,6 +1098,7 @@ export interface Prisma__ClinicianClient<T, Null = never, ExtArgs extends runtim
   readonly [Symbol.toStringTag]: "PrismaPromise"
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   diagnosis<T extends Prisma.Clinician$diagnosisArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Clinician$diagnosisArgs<ExtArgs>>): Prisma.Prisma__DiagnosisClient<runtime.Types.Result.GetResult<Prisma.$DiagnosisPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  slots<T extends Prisma.Clinician$slotsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Clinician$slotsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SlotPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1426,6 +1543,30 @@ export type Clinician$diagnosisArgs<ExtArgs extends runtime.Types.Extensions.Int
    */
   include?: Prisma.DiagnosisInclude<ExtArgs> | null
   where?: Prisma.DiagnosisWhereInput
+}
+
+/**
+ * Clinician.slots
+ */
+export type Clinician$slotsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Slot
+   */
+  select?: Prisma.SlotSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Slot
+   */
+  omit?: Prisma.SlotOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SlotInclude<ExtArgs> | null
+  where?: Prisma.SlotWhereInput
+  orderBy?: Prisma.SlotOrderByWithRelationInput | Prisma.SlotOrderByWithRelationInput[]
+  cursor?: Prisma.SlotWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.SlotScalarFieldEnum | Prisma.SlotScalarFieldEnum[]
 }
 
 /**

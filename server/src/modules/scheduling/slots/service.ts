@@ -1,7 +1,6 @@
 import { status } from "elysia";
 import { prisma } from "prisma/db";
 import type { SlotModel } from "./model";
-import { AvailabilityService } from "../availability/service";
 
 export abstract class SlotService {
   /**
@@ -69,6 +68,60 @@ export abstract class SlotService {
     return prisma.slot.update({
       where: { id: slot_id },
       data: { status: "AVAILABLE" },
+    });
+  }
+
+  /**
+   * Lists all slots in the system, with optional filters. For patient users, this will only return slots that are AVAILABLE and in the future.
+   * Default: return slots of current date
+   */
+  static async listAllSlots(query: SlotModel.listQuery) {
+    const { from, to, status: slotStatus } = query;
+
+    const fromDate = from ? new Date(`${from}T00:00:00`) : null;
+    const toDate = from
+      ? new Date(`${from}T23:59:59.999`)
+      : to
+        ? new Date(`${to}T23:59:59.999`)
+        : null;
+
+    return prisma.slot.findMany({
+      where: {
+        ...(slotStatus && { status: slotStatus }),
+        ...(fromDate && { starts_at: { gte: fromDate, lte: toDate! } }),
+      },
+      omit: {
+        clinician_id: true,
+        created_at: true,
+        updated_at: true,
+        availability_rule_id: true,
+      },
+      include: {
+        appointment: {
+          select: {
+            id: true,
+            patient_id: true,
+            status: true,
+          },
+        },
+        clinician: {
+          select: {
+            id: true,
+            user: {
+              select: {
+                name: true,
+              },
+            },
+            diagnosis: {
+              select: {
+                value: true,
+                label: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: { starts_at: "asc" },
     });
   }
 }
