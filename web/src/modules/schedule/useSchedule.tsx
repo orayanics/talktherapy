@@ -5,6 +5,7 @@ import { useCreateSchedule } from "~/api/scheduling";
 import { CreateAvailabilityPayload } from "~/models/schedule";
 import { toISODateTime } from "~/utils/date";
 import { buildRRule } from "~/utils/rrule";
+import { differenceInDays, addMonths } from "date-fns";
 
 export default function useSchedule() {
   const [errors, setErrors] = useState<ErrorResponse | null>(null);
@@ -38,10 +39,19 @@ export default function useSchedule() {
     setErrors(null);
 
     try {
+      const days = parseInt(form.horizon_days.toString(), 10);
+      const horizonDays =
+        form.freq === "MONTHLY"
+          ? differenceInDays(
+              addMonths(new Date(form.date), days),
+              new Date(form.date),
+            )
+          : days;
+
       const payload: CreateAvailabilityPayload = {
         starts_at: toISODateTime(form.date, form.start_time),
         ends_at: toISODateTime(form.date, form.end_time),
-        horizon_days: parseInt(form.horizon_days.toString(), 10), // to int
+        horizon_days: horizonDays,
       };
 
       const rrule = buildRRule(form.freq, form.selected_days);

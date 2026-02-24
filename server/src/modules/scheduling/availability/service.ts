@@ -27,8 +27,6 @@ export abstract class AvailabilityService {
   ) {
     const { from, status: slotStatus } = query;
 
-    const UTC_OFFSET_HOURS = 8;
-
     const slotFilter = from
       ? {
           starts_at: {

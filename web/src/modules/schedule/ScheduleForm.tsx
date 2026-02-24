@@ -152,7 +152,7 @@ export default function ScheduleForm() {
         )}
       </section>
 
-      {form.freq !== "none" && (
+      {form.freq !== "none" && form.freq !== "MONTHLY" && (
         <>
           <hr />
 
@@ -182,6 +182,42 @@ export default function ScheduleForm() {
                 Slots will be pre-generated up to {form.horizon_days} day
                 {form.horizon_days !== 1 ? "s" : ""} from today. Maximum is 30
                 days.
+              </p>
+            </fieldset>
+          </section>
+        </>
+      )}
+
+      {form.freq !== "none" && form.freq !== "WEEKLY" && (
+        <>
+          <hr />
+
+          <section className="flex flex-col gap-2">
+            <h2 className="font-mono text-sm text-primary uppercase">
+              Expansion Window
+            </h2>
+
+            <fieldset>
+              <legend className="fieldset-legend font-mono text-xs uppercase text-gray-400">
+                {`Generate slots for the next ${form.horizon_days} month${form.horizon_days !== 1 ? "s" : ""}`}
+              </legend>
+              <div className="flex items-center gap-4">
+                <span className="font-mono text-xs text-gray-400">1</span>
+                <input
+                  type="range"
+                  name="horizon_days"
+                  min={1}
+                  max={6}
+                  value={form.horizon_days}
+                  onChange={handleChange}
+                  className="range range-primary range-xs w-full"
+                />
+                <span className="font-mono text-xs text-gray-400">6</span>
+              </div>
+              <p className="text-xs text-gray-400">
+                Slots will be pre-generated up to {form.horizon_days} month
+                {form.horizon_days !== 1 ? "s" : ""} from today. Maximum is 6
+                months.
               </p>
             </fieldset>
           </section>
