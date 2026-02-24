@@ -24,7 +24,7 @@ const processQueue = (error: unknown) => {
   failedQueue = [];
 };
 
-const SKIP_REFRESH_URLS = ["/auth/session", "/auth/login", "/auth/refresh"];
+const SKIP_REFRESH_URLS = ["/auth/login", "/auth/refresh"];
 
 instance.interceptors.response.use(
   (response) => response,
@@ -32,15 +32,12 @@ instance.interceptors.response.use(
     const original: AxiosRequestConfig & { _retry?: boolean } = error.config;
 
     const is401 = error.response?.status === 401;
-    const shouldSkip = SKIP_REFRESH_URLS.some((url) =>
-      original.url?.includes(url),
-    );
+    const shouldSkip = SKIP_REFRESH_URLS.some((url) => original.url === url);
     const alreadyRetried = original._retry;
 
-    if (!is401 || shouldSkip || alreadyRetried) {
+    if (!original || !is401 || shouldSkip || alreadyRetried) {
       return Promise.reject(error);
     }
-
     if (isRefreshing) {
       return new Promise((resolve, reject) => {
         failedQueue.push({
