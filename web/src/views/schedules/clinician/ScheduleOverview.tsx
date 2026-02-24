@@ -8,7 +8,7 @@ import Grid from "~/components/Page/Grid";
 import GridItem from "~/components/Page/GridItem";
 
 import { availabilityRulesQuery } from "~/api/scheduling";
-import { formatToLocalDate, getDay, getTime } from "~/utils/date";
+import ScheduleCard from "~/modules/schedule/list/ScheduleCard";
 
 export default function ScheduleOverview() {
   return (
@@ -35,41 +35,7 @@ export default function ScheduleOverview() {
 
 function TableSchedule() {
   const { data = [], isLoading, error } = useQuery(availabilityRulesQuery());
-  console.log(data);
-  return (
-    <div
-      id="table-schedule"
-      className="flex flex-col gap-4 max-h-[88vh] overflow-y-auto"
-    >
-      {data.map((item: any) => {
-        const { id, starts_at, ends_at, is_active, recurrence_rule } = item;
-        const day = getDay(starts_at);
-        const date = formatToLocalDate(starts_at);
-        const start = getTime(starts_at);
-        const end = getTime(ends_at);
-        return (
-          <Link
-            to="/schedules/$scheduleId"
-            params={{ scheduleId: id }}
-            key={id}
-            className="flex flex-col gap-2 border rounded-lg p-4 hover:cursor-pointer hover:bg-gray-100"
-          >
-            <div className="flex flex-row justify-between items-center">
-              <p className="font-semibold text-xl">{day}</p>
-              <p className="font-semibold text-xl">{date}</p>
-              <span className="badge">{is_active ? "Active" : "Inactive"}</span>
-            </div>
-
-            <p>
-              {start} – {end}
-            </p>
-
-            {recurrence_rule && <p className="badge">{recurrence_rule}</p>}
-          </Link>
-        );
-      })}
-    </div>
-  );
+  return <ScheduleCard item={data} />;
 }
 
 function Calendar() {
@@ -88,6 +54,7 @@ function Calendar() {
         mode="single"
         selected={selected || undefined}
         onSelect={setSelected}
+        disabled={{ before: new Date() }}
         footer={selected ? `Selected: ${selected}` : "Pick a day."}
       />
     </>
