@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { isAxiosError } from "axios";
 import { addClinician, addAdmin } from "~/api/users";
 
 import { ErrorResponse } from "~/models/system";
@@ -23,8 +24,8 @@ export function registerClinician() {
     try {
       await addClinicianMutation.mutateAsync(form);
       return true;
-    } catch (error: any) {
-      setErrors(error.response?.data ?? null);
+    } catch (error: unknown) {
+      setErrors(isAxiosError(error) ? (error.response?.data ?? null) : null);
       return false;
     } finally {
       setForm(initialForm);
@@ -76,8 +77,8 @@ export function registerAdmin() {
     try {
       await addAdminMutation.mutateAsync(form);
       return true;
-    } catch (error: any) {
-      setErrors(error.response?.data ?? null);
+    } catch (error: unknown) {
+      setErrors(isAxiosError(error) ? (error.response?.data ?? null) : null);
       return false;
     } finally {
       setForm(initialForm);

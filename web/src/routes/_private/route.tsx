@@ -3,6 +3,7 @@ import { sessionQueryOptions } from "~/api/auth";
 
 import { SessionProvider } from "~/context/SessionContext";
 import Sidebar from "~/components/Sidebar/Sidebar";
+import { UserType } from "~/models/user/user";
 
 export const Route = createFileRoute("/_private")({
   ssr: false,
@@ -28,7 +29,7 @@ function RouteComponent() {
   return (
     <SessionProvider value={session}>
       <div className="flex bg-white">
-        <Sidebar role={account_role as any}>
+        <Sidebar role={account_role as UserType}>
           <div className="w-full flex-1 overflow-auto min-h-screen p-4">
             <Outlet />
           </div>

@@ -6,12 +6,14 @@ import PageTitle from "~/components/Page/PageTitle";
 import Grid from "~/components/Page/Grid";
 import GridItem from "~/components/Page/GridItem";
 
-import { availabilityRulesQuery } from "~/api/scheduling";
 import CalenderSingle from "~/components/Calendar/CalenderSingle";
-import ScheduleCard from "~/modules/schedule/list/ScheduleCard";
 import LoaderTable from "~/components/Loader/LoaderTable";
 import SkeletonError from "~/components/Skeleton/SkeletonError";
 import SkeletonNull from "~/components/Skeleton/SkeletonNull";
+
+import ScheduleCard from "~/modules/schedule/list/ScheduleCard";
+
+import { availabilityRulesQuery } from "~/api/scheduling";
 
 export default function ScheduleOverview() {
   const [selected, setSelected] = useState<Date | undefined>(new Date());
@@ -47,7 +49,7 @@ function ScheduleList({ date }: { date?: Date }) {
 
   if (isLoading) return <LoaderTable />;
   if (error) return <SkeletonError />;
-  if (!data.length) return <SkeletonNull />;
+  if (!data) return <SkeletonNull />;
 
-  return <ScheduleCard item={data} />;
+  return <ScheduleCard data={data} />;
 }

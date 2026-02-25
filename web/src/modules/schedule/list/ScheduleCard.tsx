@@ -1,22 +1,24 @@
 import { useState } from "react";
+import { Link } from "@tanstack/react-router";
 import { formatToLocalDate, getDay, getTime } from "~/utils/date";
 import { parseRRule } from "~/utils/rrule";
 import ScheduleRecurrence from "./ScheduleRecurrence";
+import { AvailabilityRuleWithSlots } from "~/models/schedule";
 
 interface ScheduleCardProps {
-  item: any;
+  data: AvailabilityRuleWithSlots[];
 }
 
 export default function ScheduleCard(props: ScheduleCardProps) {
-  const { item } = props;
-  const [current, setCurrent] = useState<string>(item?.id || "");
+  const { data } = props;
+  const [current, setCurrent] = useState<string>(data?.[0]?.id || "");
 
   return (
     <div
       id="table-schedule"
       className="flex flex-col gap-4 max-h-[88vh] overflow-y-auto"
     >
-      {item.map((item: any) => {
+      {data.map((item: any) => {
         const { id, starts_at, recurrence_rule, slots } = item;
         const day = getDay(starts_at);
         const date = formatToLocalDate(starts_at);
@@ -43,8 +45,16 @@ export default function ScheduleCard(props: ScheduleCardProps) {
             <div className="collapse-title">
               <div className="flex flex-row gap-4 items-center">
                 <span className="text-primary">*</span>
-                <p className="">{day}</p>
-                <p className="">{date}</p>
+                <Link
+                  to={"/schedules/$scheduleId"}
+                  params={{
+                    scheduleId: id,
+                  }}
+                  className="flex flex-row gap-4 z-1 hover:text-primary"
+                >
+                  <p className="">{day}</p>
+                  <p className="">{date}</p>
+                </Link>
               </div>
             </div>
 

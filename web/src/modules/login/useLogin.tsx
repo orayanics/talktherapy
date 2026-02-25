@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { LoginPayload } from "~/models/user/credentials";
 import { ErrorResponse } from "~/models/system";
 import { useLogin as useLoginApi } from "~/api/auth";
+import { isAxiosError } from "axios";
 
 export default function useLogin() {
   const [errors, setErrors] = useState<ErrorResponse | null>(null);
@@ -20,8 +21,12 @@ export default function useLogin() {
     setErrors(null);
     try {
       await loginMutation.mutateAsync(form);
-    } catch (error: any) {
-      setErrors(error.response?.data ?? null);
+    } catch (error: unknown) {
+      if (isAxiosError(error)) {
+        setErrors(error.response?.data ?? null);
+      } else {
+        setErrors(null);
+      }
     }
   }
 

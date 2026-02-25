@@ -23,6 +23,17 @@ export const availabilityRulesQuery = (date?: Date) =>
     retry: false,
   });
 
+export const availabilityByIdQuery = (ruleId: string) =>
+  queryOptions({
+    queryKey: ["availability", ruleId],
+    queryFn: async () => {
+      const { data } = await api.get(`/scheduling/availability/${ruleId}`);
+      return data;
+    },
+    staleTime: 1000 * 60 * 5,
+    retry: false,
+  });
+
 export const appointmentsQuery = (date?: Date) =>
   queryOptions({
     queryKey: ["appointments", date],

@@ -10,8 +10,11 @@ export default function Index() {
   );
 }
 
-function AppointmentStatsCard(data: any) {
-  const { appointments } = data;
+interface AppointmentStatsCardProps {
+  appointments?: number;
+}
+
+function AppointmentStatsCard({ appointments }: AppointmentStatsCardProps) {
   return (
     <div className="bg-white p-4 rounded-lg border">
       {appointments ? (

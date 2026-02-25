@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { getTime } from "~/utils/date";
+import { AvailableSlot } from "~/models/schedule";
 
 interface AppointmentCardProps {
-  data: any;
+  data: AvailableSlot[];
 }
 
 export default function AppointmentCard(props: AppointmentCardProps) {
@@ -13,7 +14,7 @@ export default function AppointmentCard(props: AppointmentCardProps) {
       id="slot-list"
       className="flex flex-col gap-4 max-h-[88vh] overflow-y-auto"
     >
-      {data.map((item: any) => {
+      {data.map((item: AvailableSlot) => {
         const { id, starts_at, ends_at, clinician } = item;
         const startTime = getTime(starts_at);
         const endTime = getTime(ends_at);

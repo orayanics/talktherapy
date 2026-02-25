@@ -44,7 +44,7 @@ function AppointmentList({ date }: { date?: Date }) {
 
   if (isLoading) return <LoaderTable />;
   if (error) return <SkeletonError />;
-  if (!data.length) return <SkeletonNull />;
+  if (!data) return <SkeletonNull />;
 
   return <AppointmentCard data={data} />;
 }

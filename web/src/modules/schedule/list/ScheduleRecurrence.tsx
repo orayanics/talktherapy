@@ -1,10 +1,5 @@
 import { formatToLocalDate } from "~/utils/date";
-
-interface ScheduleRecurrenceProps {
-  recurrenceInfo: any;
-  date: string;
-  lastSlot: any;
-}
+import { ScheduleRecurrenceProps } from "~/models/schedule";
 
 export default function ScheduleRecurrence(props: ScheduleRecurrenceProps) {
   const { recurrenceInfo, date, lastSlot } = props;
@@ -15,13 +10,15 @@ export default function ScheduleRecurrence(props: ScheduleRecurrenceProps) {
         <p>
           Recurring{" "}
           <span className="font-mono text-primary">{recurrenceInfo.freq}</span>
-          {recurrenceInfo?.byday?.length > 0 && (
+          {recurrenceInfo.byday && recurrenceInfo.byday.length > 0 && (
             <>
               <span> on </span>[
               {recurrenceInfo.byday.map((slot: string, index: number) => (
                 <span key={index} className="font-mono text-primary">
                   {slot}
-                  {index < recurrenceInfo.byday.length - 1 && ","}
+                  {recurrenceInfo.byday &&
+                    index < recurrenceInfo.byday.length - 1 &&
+                    ","}
                 </span>
               ))}
               ]

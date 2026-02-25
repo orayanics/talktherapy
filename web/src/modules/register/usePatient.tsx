@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useRegisterPatient } from "~/api/auth";
 import { PatientRegisterPayload } from "~/models/user/credentials";
+import { isAxiosError } from "axios";
 
 export default function usePatientRegister() {
   const [errors, setErrors] = useState<Record<string, string[]> | null>(null);
@@ -31,8 +32,12 @@ export default function usePatientRegister() {
     setErrors(null);
     try {
       await register.mutateAsync(form);
-    } catch (error: any) {
-      setErrors(error.response?.data?.errors ?? null);
+    } catch (error: unknown) {
+      if (isAxiosError(error)) {
+        setErrors(error.response?.data?.errors ?? null);
+      } else {
+        setErrors(null);
+      }
     }
   }
 

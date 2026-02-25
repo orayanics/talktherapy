@@ -6,6 +6,7 @@ import { CreateAvailabilityPayload } from "~/models/schedule";
 import { toISODateTime } from "~/utils/date";
 import { buildRRule } from "~/utils/rrule";
 import { differenceInDays, addMonths } from "date-fns";
+import { isAxiosError } from "axios";
 
 export default function useSchedule() {
   const [errors, setErrors] = useState<ErrorResponse | null>(null);
@@ -58,8 +59,12 @@ export default function useSchedule() {
       if (rrule) payload.recurrence_rule = rrule;
 
       await scheduleMutation.mutateAsync(payload);
-    } catch (error: any) {
-      setErrors(error.response?.data ?? null);
+    } catch (error: unknown) {
+      if (isAxiosError(error)) {
+        setErrors(error.response?.data ?? null);
+      } else {
+        setErrors(null);
+      }
     }
   }
 

@@ -29,9 +29,9 @@ export interface ErrorResponse {
   errors?: Record<string, string[]>;
 }
 
-export interface TableResponse {
+export interface TableResponse<T = unknown> {
   current_page?: number;
-  data: any[];
+  data: T[];
   total?: number;
   last_page?: number;
   from?: number | null;
