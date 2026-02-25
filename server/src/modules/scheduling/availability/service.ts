@@ -26,6 +26,10 @@ export abstract class AvailabilityService {
     query: AvailabilityModel.listQuery,
   ) {
     const { from, status: slotStatus } = query;
+    const PAGE_SIZE = 10;
+    const page = query.page || 1;
+    const perPage = query.per_page || PAGE_SIZE;
+    const skip = (page - 1) * perPage;
 
     const slotFilter = from
       ? {
@@ -37,22 +41,40 @@ export abstract class AvailabilityService {
       : {};
 
     const hasFilter = Object.keys(slotFilter).length > 0;
+    const where = {
+      clinician_id,
+      ...(slotStatus && { status: slotStatus }),
+      ...(hasFilter && { slots: { some: slotFilter } }),
+    };
 
-    return prisma.availabilityRule.findMany({
-      where: {
-        clinician_id,
-        ...(slotStatus && { status: slotStatus }),
-        ...(hasFilter && { slots: { some: slotFilter } }),
-      },
-      include: {
-        slots: {
-          where: hasFilter ? slotFilter : undefined,
-          select: { id: true, starts_at: true, ends_at: true, status: true },
-          orderBy: { starts_at: "asc" },
+    const [total, rules] = await prisma.$transaction([
+      prisma.availabilityRule.count({ where }),
+      prisma.availabilityRule.findMany({
+        where,
+        include: {
+          slots: {
+            where: hasFilter ? slotFilter : undefined,
+            select: { id: true, starts_at: true, ends_at: true, status: true },
+            orderBy: { starts_at: "asc" },
+          },
         },
+        orderBy: { created_at: "desc" },
+        skip,
+        take: perPage,
+      }),
+    ]);
+
+    return {
+      data: rules,
+      meta: {
+        total,
+        page,
+        page_size: perPage,
+        page_count: Math.ceil(total / perPage),
+        to: skip + rules.length,
+        from: skip + 1,
       },
-      orderBy: { created_at: "desc" },
-    });
+    };
   }
   /**
    * Returns a single rule owned by the clinician.
@@ -84,7 +106,7 @@ export abstract class AvailabilityService {
     const ends_at = new Date(body.ends_at);
 
     if (ends_at <= starts_at) {
-      throw status(400, "ends_at must be after starts_at");
+      throw status(400, "End time must be after start time");
     }
 
     const occurrences = expandRRule(

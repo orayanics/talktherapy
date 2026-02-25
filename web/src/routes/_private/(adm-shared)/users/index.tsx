@@ -255,7 +255,7 @@ function Table(props: UsersTableProps) {
                 >
                   <Link
                     to={"/users/$userId/edit"}
-                    params={{ userId: row.id as string }}
+                    params={{ userId: row.id }}
                     className="btn btn-soft btn-primary"
                   >
                     Edit
@@ -263,7 +263,7 @@ function Table(props: UsersTableProps) {
                   <Link
                     // TODO: Add deactivate user functionality
                     to={"/users/$userId"}
-                    params={{ userId: row.id as string }}
+                    params={{ userId: row.id }}
                     className="btn btn-soft btn-error"
                   >
                     Deactivate

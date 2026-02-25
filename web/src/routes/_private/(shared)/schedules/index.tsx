@@ -6,6 +6,18 @@ import ClinicianOverview from "~/views/schedules/clinician/ScheduleOverview";
 import { useAuthGuard } from "~/hooks/useAuthGuard";
 export const Route = createFileRoute("/_private/(shared)/schedules/")({
   ssr: false,
+  validateSearch: (search: Record<string, unknown>) => {
+    const date =
+      typeof search.date === "string" ? new Date(search.date) : undefined;
+    const page = Number(search.page ?? 1);
+    const perPage = Number(search.perPage ?? 10);
+
+    return {
+      ...(date ? { date } : {}),
+      ...(page !== 1 ? { page } : {}),
+      ...(perPage !== 10 ? { perPage } : {}),
+    };
+  },
   component: RouteComponent,
 });
 
@@ -19,5 +31,11 @@ function RouteComponent() {
     throw new Error("Unauthorized");
   }
 
-  return isAdmin ? <AdminOverview /> : <ClinicianOverview />;
+  const searchProps = Route.useSearch();
+
+  return isAdmin ? (
+    <AdminOverview />
+  ) : (
+    <ClinicianOverview search={searchProps} />
+  );
 }

@@ -8,15 +8,24 @@ import { isAxiosError } from "axios";
 import { format } from "date-fns/format";
 import { api } from "~/api/axios";
 
-import { CreateAvailabilityPayload } from "~/models/schedule";
+import {
+  AvailabilityRulesParams,
+  CreateAvailabilityPayload,
+} from "~/models/schedule";
 
 // query options
-export const availabilityRulesQuery = (date?: Date) =>
+export const availabilityRulesQuery = (params: AvailabilityRulesParams) =>
   queryOptions({
-    queryKey: ["availability", date],
+    queryKey: ["availability", "list", params],
     queryFn: async () => {
-      const params = date ? { from: format(date, "yyyy-MM-dd") } : {};
-      const { data } = await api.get(`/scheduling/availability`, { params });
+      const apiParams = {
+        ...(params.date && { from: format(params.date, "yyyy-MM-dd") }),
+        page: params.page ?? 1,
+        per_page: params.perPage ?? 10,
+      };
+      const { data } = await api.get(`/scheduling/availability`, {
+        params: apiParams,
+      });
       return data;
     },
     staleTime: 1000 * 60 * 5,

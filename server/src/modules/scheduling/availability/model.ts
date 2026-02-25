@@ -8,7 +8,7 @@ export namespace AvailabilityModel {
     ends_at: t.String({ format: "date-time" }),
     recurrence_rule: t.Optional(t.String()),
     horizon_days: t.Optional(
-      t.Number({ minimum: 1, maximum: 30, default: 30 }),
+      t.Number({ minimum: 1, maximum: 365, default: 30 }),
     ),
   });
   export type createBody = typeof createBody.static;
@@ -19,7 +19,7 @@ export namespace AvailabilityModel {
     recurrence_rule: t.Optional(t.Nullable(t.String())),
     is_active: t.Optional(t.Boolean()),
     horizon_days: t.Optional(
-      t.Number({ minimum: 1, maximum: 30, default: 30 }),
+      t.Number({ minimum: 1, maximum: 365, default: 30 }),
     ),
   });
   export type updateBody = typeof updateBody.static;
@@ -62,6 +62,8 @@ export namespace AvailabilityModel {
         t.Literal("CANCELLED"),
       ]),
     ),
+    page: t.Optional(t.Number({ minimum: 1, default: 1 })),
+    per_page: t.Optional(t.Number({ minimum: 1, maximum: 100, default: 10 })),
   });
   export type listQuery = typeof listQuery.static;
 }

@@ -48,7 +48,7 @@ export type UsersParams = {
 };
 
 export type UsersTableProps = {
-  data: TableResponse | null;
+  data: TableResponse<UserResponse> | null;
   page: number;
   perPage: number;
   status: string[];
@@ -78,4 +78,5 @@ export interface UserResponse {
   created_by: string;
   updated_by: string | null;
   deleted_at: string | null;
+  last_login: string | null;
 }

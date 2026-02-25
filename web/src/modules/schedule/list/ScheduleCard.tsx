@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { formatToLocalDate, getDay, getTime } from "~/utils/date";
+
 import { parseRRule } from "~/utils/rrule";
-import ScheduleRecurrence from "./ScheduleRecurrence";
+import { formatToLocalDate, getDay, getTime } from "~/utils/date";
 import { AvailabilityRuleWithSlots } from "~/models/schedule";
+
+import ScheduleRecurrence from "./ScheduleRecurrence";
 
 interface ScheduleCardProps {
   data: AvailabilityRuleWithSlots[];
@@ -11,12 +13,12 @@ interface ScheduleCardProps {
 
 export default function ScheduleCard(props: ScheduleCardProps) {
   const { data } = props;
-  const [current, setCurrent] = useState<string>(data?.[0]?.id || "");
+  const [current, setCurrent] = useState<string>(data[0]?.id || "");
 
   return (
     <div
       id="table-schedule"
-      className="flex flex-col gap-4 max-h-[88vh] overflow-y-auto"
+      className="flex flex-col gap-4 h-[80vh] min-h-[80vh] max-h-[80vh] overflow-auto"
     >
       {data.map((item: any) => {
         const { id, starts_at, recurrence_rule, slots } = item;
@@ -33,14 +35,16 @@ export default function ScheduleCard(props: ScheduleCardProps) {
 
         return (
           <div
-            className="collapse collapse-plus bg-base-100 border border-base-300"
+            className="min-h-fit max-h-100 collapse collapse-plus bg-base-100 border border-base-300"
             key={id}
           >
             <input
-              type="radio"
+              type="checkbox"
               name={`accordion-${id}`}
-              onChange={() => setCurrent(id)}
-              checked={current === id || false}
+              onChange={() => {
+                setCurrent(current === id ? "" : id);
+              }}
+              checked={current === id}
             />
             <div className="collapse-title">
               <div className="flex flex-row gap-4 items-center">

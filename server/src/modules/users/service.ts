@@ -48,12 +48,14 @@ export abstract class Users {
 
     return {
       data: users,
-      total,
-      page,
-      per_page: perPage,
-      last_page,
-      from: total === 0 ? 0 : (page - 1) * perPage + 1,
-      to: Math.min(page * perPage, total),
+      meta: {
+        total,
+        page,
+        per_page: perPage,
+        last_page,
+        from: total === 0 ? 0 : (page - 1) * perPage + 1,
+        to: Math.min(page * perPage, total),
+      },
     };
   }
 

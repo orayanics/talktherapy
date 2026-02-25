@@ -2,6 +2,19 @@ import { RRule, RRuleSet } from "rrule";
 import type { ExpandedOccurrence } from "./types";
 import { SLOT_EXPANSION_DAYS } from "./types";
 
+const FREQ_HORIZON_MAP: Record<string, number> = {
+  WEEKLY: 30,
+  MONTHLY: 365,
+};
+const DEFAULT_HORIZON = SLOT_EXPANSION_DAYS;
+
+function getMaxHorizon(rrule: string | null): number {
+  if (!rrule) return DEFAULT_HORIZON;
+  const match = rrule.match(/FREQ=(\w+)/);
+  if (!match) return DEFAULT_HORIZON;
+  return FREQ_HORIZON_MAP[match[1]] ?? DEFAULT_HORIZON;
+}
+
 /**
  * Expands an RRULE string into concrete DateTime occurrences within
  * the expansion window (up to SLOT_EXPANSION_DAYS from now).
@@ -17,17 +30,17 @@ export function expandRRule(
   starts_at: Date,
   ends_at: Date,
   rrule: string | null,
-  horizonDays?: number
+  horizonDays?: number,
 ): ExpandedOccurrence[] {
-  const cappedHorizon = Math.min(horizonDays ?? SLOT_EXPANSION_DAYS, SLOT_EXPANSION_DAYS);
+  const maxHorizon = getMaxHorizon(rrule);
+  const cappedHorizon = Math.min(horizonDays ?? maxHorizon, maxHorizon);
+
   const horizon = new Date();
   horizon.setDate(horizon.getDate() + cappedHorizon);
 
-  // Duration in milliseconds between start and end of a single occurrence
   const durationMs = ends_at.getTime() - starts_at.getTime();
 
   if (!rrule) {
-    // Single non-recurring slot
     if (starts_at > horizon) return [];
     return [{ starts_at, ends_at }];
   }
@@ -40,7 +53,6 @@ export function expandRRule(
   }
 
   const occurrences = rule.between(new Date(), horizon, true);
-
   return occurrences.map((occ) => ({
     starts_at: occ,
     ends_at: new Date(occ.getTime() + durationMs),
@@ -54,7 +66,7 @@ export function hasOverlap(
   aStart: Date,
   aEnd: Date,
   bStart: Date,
-  bEnd: Date
+  bEnd: Date,
 ): boolean {
   return aStart < bEnd && aEnd > bStart;
 }

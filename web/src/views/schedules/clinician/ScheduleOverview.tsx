@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 
 import PageTitle from "~/components/Page/PageTitle";
@@ -14,8 +14,13 @@ import SkeletonNull from "~/components/Skeleton/SkeletonNull";
 import ScheduleCard from "~/modules/schedule/list/ScheduleCard";
 
 import { availabilityRulesQuery } from "~/api/scheduling";
+import TablePagination from "~/components/Table/TablePagination";
 
-export default function ScheduleOverview() {
+interface ScheduleOverviewProps {
+  search: Record<string, unknown>;
+}
+
+export default function ScheduleOverview({ search }: ScheduleOverviewProps) {
   const [selected, setSelected] = useState<Date | undefined>(new Date());
 
   return (
@@ -27,29 +32,76 @@ export default function ScheduleOverview() {
       <Grid cols={12} gap={6}>
         <GridItem colSpan={12} className="flex flex-col gap-4 lg:col-span-4">
           <CalenderSingle date={selected} onSelect={setSelected} />
+          <button className="btn" onClick={() => setSelected(undefined)}>
+            View All Schedules
+          </button>
           <Link to="/schedules/create" className="btn btn-primary">
             Add New Schedule
           </Link>
         </GridItem>
 
-        <GridItem colSpan={12} className="flex flex-col gap-4 lg:col-span-8">
-          <ScheduleList date={selected} />
+        <GridItem
+          colSpan={12}
+          className="flex flex-col gap-4 lg:col-span-8 min-h-0"
+        >
+          <ScheduleList date={selected} search={search} />
         </GridItem>
       </Grid>
     </>
   );
 }
 
-function ScheduleList({ date }: { date?: Date }) {
+function ScheduleList({
+  date,
+  search,
+}: {
+  date?: Date;
+  search: Record<string, unknown>;
+}) {
+  const page = search.page ?? 1;
+  const perPage = search.perPage ?? 10;
+
   const {
     data = [],
     isLoading,
     error,
-  } = useQuery(availabilityRulesQuery(date));
+  } = useQuery(
+    availabilityRulesQuery({
+      date,
+      page: Number(page),
+      perPage: Number(perPage),
+    }),
+  );
+
+  const navigate = useNavigate();
 
   if (isLoading) return <LoaderTable />;
   if (error) return <SkeletonError />;
   if (!data) return <SkeletonNull />;
 
-  return <ScheduleCard data={data} />;
+  return (
+    <>
+      <ScheduleCard data={data.data} />
+
+      <TablePagination
+        page={Number(page)}
+        perPage={data.meta.page_size}
+        total={data.meta.total}
+        onPageChange={(page) =>
+          navigate({
+            to: ".",
+            search: { ...search, page },
+          })
+        }
+        onPerPageChange={(perPage) =>
+          navigate({
+            to: ".",
+            search: { ...search, perPage },
+          })
+        }
+        from={data.meta.from}
+        to={data.meta.to}
+      />
+    </>
+  );
 }

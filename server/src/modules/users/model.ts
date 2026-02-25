@@ -73,12 +73,14 @@ export namespace UserModel {
 
   export const userPaginatedResponse = t.Object({
     data: userArray,
-    total: t.Number(),
-    page: t.Number(),
-    per_page: t.Number(),
-    last_page: t.Number(),
-    from: t.Number(),
-    to: t.Number(),
+    meta: t.Object({
+      total: t.Number(),
+      page: t.Number(),
+      per_page: t.Number(),
+      last_page: t.Number(),
+      from: t.Number(),
+      to: t.Number(),
+    }),
   });
 
   export const getUsersResponse = userPaginatedResponse;

@@ -1,6 +1,12 @@
 export type Freq = "none" | "DAILY" | "WEEKLY" | "MONTHLY";
 export type SlotStatus = "AVAILABLE" | "BOOKED" | "BLOCKED" | "CANCELLED";
 
+export interface AvailabilityRulesParams {
+  date?: Date;
+  page?: number;
+  perPage?: number;
+}
+
 export interface SlotDto {
   id: string;
   starts_at: string;

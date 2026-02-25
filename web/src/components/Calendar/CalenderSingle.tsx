@@ -10,6 +10,10 @@ export default function CalenderSingle(props: CalenderSingleProps) {
   const { date, onSelect } = props;
   const dateStr = date ? format(date, "yyyy-MM-dd") : undefined;
 
+  const handleSelect = (date: Date | undefined) => {
+    if (!date) return;
+    onSelect(date);
+  };
   return (
     <DayPicker
       className="react-day-picker bg-white"
@@ -21,7 +25,7 @@ export default function CalenderSingle(props: CalenderSingleProps) {
       }}
       mode="single"
       selected={date}
-      onSelect={onSelect}
+      onSelect={handleSelect}
       disabled={{ before: new Date() }}
       footer={date ? `Selected: ${dateStr}` : "Pick a day."}
     />
