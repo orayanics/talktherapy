@@ -1,12 +1,12 @@
-import React, { useState } from "react";
-import { FaFilter } from "react-icons/fa";
+import React, { useState } from 'react'
+import { FaFilter } from 'react-icons/fa'
 
 type FilterDrawerProps = {
-  children: React.ReactNode;
-};
+  children: React.ReactNode
+}
 
 export default function FilterDrawer({ children }: FilterDrawerProps) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false)
 
   return (
     <>
@@ -20,14 +20,14 @@ export default function FilterDrawer({ children }: FilterDrawerProps) {
 
       {/* Overlay */}
       <div
-        className={`fixed inset-0 z-40 bg-black/50 duration-300 ${open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
+        className={`fixed inset-0 z-40 bg-black/50 duration-300 ${open ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
         onClick={() => setOpen(false)}
         aria-hidden="true"
       />
 
       <aside
         className={`flex flex-col justify-between p-6 gap-2 fixed top-0 right-0 z-50 h-full w-100 max-w-md bg-white shadow-lg transform transition-transform duration-300 ease-in-out
-          ${open ? "translate-x-0" : "translate-x-full"}
+          ${open ? 'translate-x-0' : 'translate-x-full'}
 
         `}
         aria-modal="true"
@@ -46,5 +46,5 @@ export default function FilterDrawer({ children }: FilterDrawerProps) {
         </button>
       </aside>
     </>
-  );
+  )
 }

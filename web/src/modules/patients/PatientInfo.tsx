@@ -18,5 +18,5 @@ export default function PatientInfo() {
         </div>
       </div>
     </>
-  );
+  )
 }

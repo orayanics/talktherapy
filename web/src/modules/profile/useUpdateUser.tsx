@@ -1,34 +1,34 @@
-import React, { useState } from "react";
-import { isAxiosError } from "axios";
+import React, { useState } from 'react'
+import { isAxiosError } from 'axios'
 
-import { UpdateUserPayload } from "~/models/user/credentials";
+import { UpdateUserPayload } from '~/models/user/credentials'
 
-import { useEditProfile } from "~/api/auth";
-import { ParsedError, parseError } from "~/utils/errors";
+import { useEditProfile } from '~/api/auth'
+import { ParsedError, parseError } from '~/utils/errors'
 
 export default function useUpdateUser({ name }: { name: string }) {
-  const [errors, setErrors] = useState<ParsedError | null>(null);
+  const [errors, setErrors] = useState<ParsedError | null>(null)
   const [form, setForm] = useState<UpdateUserPayload>({
     name: name,
-  });
+  })
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setErrors(null);
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
-  };
+    setErrors(null)
+    const { name, value } = e.target
+    setForm((prev) => ({ ...prev, [name]: value }))
+  }
 
-  const updateUserMutation = useEditProfile();
+  const updateUserMutation = useEditProfile()
 
   async function handleSubmit() {
-    setErrors(null);
+    setErrors(null)
     try {
-      await updateUserMutation.mutateAsync(form);
+      await updateUserMutation.mutateAsync(form)
     } catch (error: unknown) {
       if (isAxiosError(error) && error.response) {
-        setErrors(parseError(error.response.data));
+        setErrors(parseError(error.response.data))
       } else {
-        setErrors(null);
+        setErrors(null)
       }
     }
   }
@@ -39,5 +39,5 @@ export default function useUpdateUser({ name }: { name: string }) {
     handleChange,
     handleSubmit,
     isLoading: updateUserMutation.isPending,
-  };
+  }
 }

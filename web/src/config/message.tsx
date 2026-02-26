@@ -1,64 +1,64 @@
 export const PROFILE_UPDATE = {
-  success: "Profile updated successfully!",
-  error: "Failed to update profile. Please try again.",
-};
+  success: 'Profile updated successfully!',
+  error: 'Failed to update profile. Please try again.',
+}
 
 export const PASSWORD_UPDATE = {
-  success: "Password updated successfully!",
-  error: "Failed to update password. Please try again.",
-};
+  success: 'Password updated successfully!',
+  error: 'Failed to update password. Please try again.',
+}
 
 export const REGISTRATION_PATIENT = {
-  success: "Registration successful! You can now log in.",
-  error: "Registration failed. Please check your details and try again.",
-};
+  success: 'Registration successful! You can now log in.',
+  error: 'Registration failed. Please check your details and try again.',
+}
 
 export const LOGOUT = {
-  success: "Logged out successfully!",
-  error: "Logout failed. Please try again.",
-};
+  success: 'Logged out successfully!',
+  error: 'Logout failed. Please try again.',
+}
 
 export const LOGIN = {
-  success: "Logged in successfully!",
-  error: "Login failed. Please check your credentials and try again.",
-};
+  success: 'Logged in successfully!',
+  error: 'Login failed. Please check your credentials and try again.',
+}
 
 export const SESSION = {
-  expired: "Your session has expired. Please log in again.",
-  error: "An error occurred while checking your session. Please log in again.",
-};
+  expired: 'Your session has expired. Please log in again.',
+  error: 'An error occurred while checking your session. Please log in again.',
+}
 
 export const AXIOS = {
-  networkError: "Network error. Please check your connection and try again.",
-  generalError: "An error occurred. Please try again.",
-};
+  networkError: 'Network error. Please check your connection and try again.',
+  generalError: 'An error occurred. Please try again.',
+}
 
 export const USER = {
   create: {
-    success: "User created successfully!",
-    error: "Failed to create user. Please try again.",
+    success: 'User created successfully!',
+    error: 'Failed to create user. Please try again.',
   },
   update: {
-    success: "User updated successfully!",
-    error: "Failed to update user. Please try again.",
+    success: 'User updated successfully!',
+    error: 'Failed to update user. Please try again.',
   },
   delete: {
-    success: "User deleted successfully!",
-    error: "Failed to delete user. Please try again.",
+    success: 'User deleted successfully!',
+    error: 'Failed to delete user. Please try again.',
   },
-};
+}
 
 export const SCHEDULE = {
   create: {
-    success: "Schedule created successfully!",
-    error: "Failed to create schedule. Please try again.",
+    success: 'Schedule created successfully!',
+    error: 'Failed to create schedule. Please try again.',
   },
   update: {
-    success: "Schedule updated successfully!",
-    error: "Failed to update schedule. Please try again.",
+    success: 'Schedule updated successfully!',
+    error: 'Failed to update schedule. Please try again.',
   },
   delete: {
-    success: "Schedule deleted successfully!",
-    error: "Failed to delete schedule. Please try again.",
+    success: 'Schedule deleted successfully!',
+    error: 'Failed to delete schedule. Please try again.',
   },
-};
+}

@@ -1,17 +1,17 @@
-import { Freq } from "~/models/schedule";
-import { DAYS } from "~/utils/rrule";
-import { FaSpinner } from "react-icons/fa";
-import useSchedule from "./useSchedule";
-import { fieldError, hasOnlyMessage } from "~/utils/errors";
+import { Freq } from '~/models/schedule'
+import { DAYS } from '~/utils/rrule'
+import { FaSpinner } from 'react-icons/fa'
+import useSchedule from './useSchedule'
+import { fieldError, hasOnlyMessage } from '~/utils/errors'
 
 export default function ScheduleForm() {
   const { form, errors, isLoading, handleChange, handleSubmit, toggleDay } =
-    useSchedule();
+    useSchedule()
   return (
     <form
       onSubmit={(e) => {
-        e.preventDefault();
-        handleSubmit();
+        e.preventDefault()
+        handleSubmit()
       }}
       noValidate
       className="border rounded-lg p-6 shadow-sm/10 bg-white flex flex-col gap-6"
@@ -41,12 +41,12 @@ export default function ScheduleForm() {
             aria-required
             className="input validator w-full"
             placeholder="Pick a date"
-            min={new Date().toISOString().split("T")[0]}
+            min={new Date().toISOString().split('T')[0]}
             title="Must be valid date"
           />
-          {fieldError(errors, "date") && (
+          {fieldError(errors, 'date') && (
             <p className="text-error text-sm mt-1">
-              {fieldError(errors, "date")}
+              {fieldError(errors, 'date')}
             </p>
           )}
         </fieldset>
@@ -64,9 +64,9 @@ export default function ScheduleForm() {
             required
             aria-required
           />
-          {fieldError(errors, "start_time") && (
+          {fieldError(errors, 'start_time') && (
             <p className="text-error text-sm mt-1">
-              {fieldError(errors, "start_time")}
+              {fieldError(errors, 'start_time')}
             </p>
           )}
         </fieldset>
@@ -85,9 +85,9 @@ export default function ScheduleForm() {
             required
             aria-required
           />
-          {fieldError(errors, "end_time") && (
+          {fieldError(errors, 'end_time') && (
             <p className="text-error text-sm mt-1">
-              {fieldError(errors, "end_time")}
+              {fieldError(errors, 'end_time')}
             </p>
           )}
         </fieldset>
@@ -99,7 +99,7 @@ export default function ScheduleForm() {
         <h2 className="font-mono text-sm text-primary uppercase">Recurrence</h2>
 
         <div className="flex gap-2 flex-wrap">
-          {(["none", "DAILY", "WEEKLY", "MONTHLY"] as Freq[]).map((f) => (
+          {(['none', 'DAILY', 'WEEKLY', 'MONTHLY'] as Freq[]).map((f) => (
             <label key={f} className="cursor-pointer">
               <input
                 type="radio"
@@ -110,17 +110,17 @@ export default function ScheduleForm() {
                 className="sr-only"
               />
               <span
-                className={`btn btn-sm ${form.freq === f ? "btn-primary" : "btn-ghost border border-base-300"}`}
+                className={`btn btn-sm ${form.freq === f ? 'btn-primary' : 'btn-ghost border border-base-300'}`}
               >
-                {f === "none"
-                  ? "One-time"
+                {f === 'none'
+                  ? 'One-time'
                   : f.charAt(0) + f.slice(1).toLowerCase()}
               </span>
             </label>
           ))}
         </div>
 
-        {form.freq === "WEEKLY" && (
+        {form.freq === 'WEEKLY' && (
           <div className="flex flex-col gap-2">
             <p className="text-sm text-gray-400 font-mono uppercase">
               Days <span className="text-primary">*</span>
@@ -131,7 +131,7 @@ export default function ScheduleForm() {
               aria-label="Select days of the week"
             >
               {DAYS.map((d) => {
-                const active = form.selected_days.includes(d.value);
+                const active = form.selected_days.includes(d.value)
                 return (
                   <label key={d.value} className="cursor-pointer">
                     <input
@@ -144,24 +144,24 @@ export default function ScheduleForm() {
                       aria-label={d.label}
                     />
                     <span
-                      className={`btn btn-sm ${active ? "btn-primary" : "btn-ghost border border-base-300"}`}
+                      className={`btn btn-sm ${active ? 'btn-primary' : 'btn-ghost border border-base-300'}`}
                     >
                       {d.label}
                     </span>
                   </label>
-                );
+                )
               })}
             </div>
-            {fieldError(errors, "selected_days") && (
+            {fieldError(errors, 'selected_days') && (
               <p className="text-error text-sm font-medium" role="alert">
-                {fieldError(errors, "selected_days")}
+                {fieldError(errors, 'selected_days')}
               </p>
             )}
           </div>
         )}
       </section>
 
-      {form.freq !== "none" && form.freq !== "MONTHLY" && (
+      {form.freq !== 'none' && form.freq !== 'MONTHLY' && (
         <>
           <hr />
 
@@ -172,7 +172,7 @@ export default function ScheduleForm() {
 
             <fieldset>
               <legend className="fieldset-legend font-mono text-sm uppercase text-gray-400">
-                {`Generate slots for the next ${form.horizon_days} day${form.horizon_days !== 1 ? "s" : ""}`}
+                {`Generate slots for the next ${form.horizon_days} day${form.horizon_days !== 1 ? 's' : ''}`}
               </legend>
               <div className="flex items-center gap-4">
                 <span className="font-mono text-sm text-gray-400">1</span>
@@ -189,7 +189,7 @@ export default function ScheduleForm() {
               </div>
               <p className="text-sm text-gray-400">
                 Slots will be pre-generated up to {form.horizon_days} day
-                {form.horizon_days !== 1 ? "s" : ""} from today. Maximum is 30
+                {form.horizon_days !== 1 ? 's' : ''} from today. Maximum is 30
                 days.
               </p>
             </fieldset>
@@ -197,9 +197,9 @@ export default function ScheduleForm() {
         </>
       )}
 
-      {form.freq !== "none" &&
-        form.freq !== "WEEKLY" &&
-        form.freq !== "DAILY" && (
+      {form.freq !== 'none' &&
+        form.freq !== 'WEEKLY' &&
+        form.freq !== 'DAILY' && (
           <>
             <hr />
 
@@ -210,7 +210,7 @@ export default function ScheduleForm() {
 
               <fieldset>
                 <legend className="fieldset-legend font-mono text-sm uppercase text-gray-400">
-                  {`Generate slots for the next ${form.horizon_days} month${form.horizon_days !== 1 ? "s" : ""}`}
+                  {`Generate slots for the next ${form.horizon_days} month${form.horizon_days !== 1 ? 's' : ''}`}
                 </legend>
                 <div className="flex items-center gap-4">
                   <span className="font-mono text-sm text-gray-400">1</span>
@@ -227,7 +227,7 @@ export default function ScheduleForm() {
                 </div>
                 <p className="text-sm text-gray-400">
                   Slots will be pre-generated up to {form.horizon_days} month
-                  {form.horizon_days !== 1 ? "s" : ""} from today. Maximum is 6
+                  {form.horizon_days !== 1 ? 's' : ''} from today. Maximum is 6
                   months.
                 </p>
               </fieldset>
@@ -241,28 +241,28 @@ export default function ScheduleForm() {
         <h2 className="font-mono text-sm text-primary uppercase">Preview</h2>
 
         <div className="border rounded-lg bg-gray-50">
-          <Row label="Date" value={form.date || "—"} />
+          <Row label="Date" value={form.date || '—'} />
           <Row
             label="Time"
             value={
               form.start_time && form.end_time
                 ? `${form.start_time} → ${form.end_time}`
-                : "—"
+                : '—'
             }
           />
           <Row
             label="Recurrence"
             value={
-              form.freq === "none"
-                ? "One-time"
-                : form.freq === "WEEKLY" && form.selected_days.length > 0
-                  ? `Weekly on [${form.selected_days.join(", ")}]`
-                  : form.freq === "WEEKLY"
-                    ? "Weekly (no days selected)"
+              form.freq === 'none'
+                ? 'One-time'
+                : form.freq === 'WEEKLY' && form.selected_days.length > 0
+                  ? `Weekly on [${form.selected_days.join(', ')}]`
+                  : form.freq === 'WEEKLY'
+                    ? 'Weekly (no days selected)'
                     : form.freq.charAt(0) + form.freq.slice(1).toLowerCase()
             }
           />
-          {form.freq !== "none" && (
+          {form.freq !== 'none' && (
             <Row label="Window" value={`${form.horizon_days} days`} />
           )}
         </div>
@@ -273,7 +273,7 @@ export default function ScheduleForm() {
         {isLoading && <FaSpinner className="animate-spin" />} Create Schedule
       </button>
     </form>
-  );
+  )
 }
 
 function Row({ label, value }: { label: string; value: string }) {
@@ -282,5 +282,5 @@ function Row({ label, value }: { label: string; value: string }) {
       <span>{label}</span>
       <span>{value}</span>
     </div>
-  );
+  )
 }

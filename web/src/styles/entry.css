@@ -1,11 +1,11 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 @plugin "daisyui";
 
 @plugin "daisyui/theme" {
-  name: "light";
+  name: 'light';
   default: true;
   prefersdark: true;
-  color-scheme: "light";
+  color-scheme: 'light';
   --color-base-100: oklch(100% 0 0);
   --color-base-200: oklch(98% 0 0);
   --color-base-300: oklch(95% 0 0);
@@ -51,7 +51,7 @@
 }
 
 .fade-to-top::before {
-  content: "";
+  content: '';
   position: absolute;
   bottom: 0;
   left: 0;
@@ -68,7 +68,7 @@
 }
 
 .fade-to-bottom::before {
-  content: "";
+  content: '';
   position: absolute;
   top: 0;
   left: 0;
@@ -83,4 +83,4 @@
   );
 }
 
-@import "./app.css";
+@import './app.css';

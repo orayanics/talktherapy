@@ -1,10 +1,10 @@
-import { useNavigate } from "@tanstack/react-router";
-import useUpdatePassword from "./useUpdatePassword";
-import { fieldError, hasOnlyMessage } from "~/utils/errors";
+import { useNavigate } from '@tanstack/react-router'
+import useUpdatePassword from './useUpdatePassword'
+import { fieldError, hasOnlyMessage } from '~/utils/errors'
 export default function ProfilePassword() {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
   const { form, errors, handleChange, handleSubmit, isLoading } =
-    useUpdatePassword();
+    useUpdatePassword()
 
   return (
     <>
@@ -16,8 +16,8 @@ export default function ProfilePassword() {
       )}
       <form
         onSubmit={(e) => {
-          e.preventDefault();
-          handleSubmit();
+          e.preventDefault()
+          handleSubmit()
         }}
         className="[&>div]:py-4 [&>div]:border-y [&>div]:border-gray-100 [&>div]:border-dashed"
       >
@@ -32,9 +32,9 @@ export default function ProfilePassword() {
               className="input input-bordered w-full max-w-xs"
               disabled={isLoading}
             />
-            {fieldError(errors, "current_password") && (
+            {fieldError(errors, 'current_password') && (
               <p className="text-error text-sm mt-1">
-                {fieldError(errors, "current_password")}
+                {fieldError(errors, 'current_password')}
               </p>
             )}
           </div>
@@ -51,9 +51,9 @@ export default function ProfilePassword() {
               className="input input-bordered w-full max-w-xs"
               disabled={isLoading}
             />
-            {fieldError(errors, "new_password") && (
+            {fieldError(errors, 'new_password') && (
               <p className="text-error text-sm mt-1">
-                {fieldError(errors, "new_password")}
+                {fieldError(errors, 'new_password')}
               </p>
             )}
           </div>
@@ -70,9 +70,9 @@ export default function ProfilePassword() {
               className="input input-bordered w-full max-w-xs"
               disabled={isLoading}
             />
-            {fieldError(errors, "new_password_confirmation") && (
+            {fieldError(errors, 'new_password_confirmation') && (
               <p className="text-error text-sm mt-1">
-                {fieldError(errors, "new_password_confirmation")}
+                {fieldError(errors, 'new_password_confirmation')}
               </p>
             )}
           </div>
@@ -88,7 +88,7 @@ export default function ProfilePassword() {
           </button>
           <button
             className="btn btn-neutral"
-            onClick={() => navigate({ to: "/profile" })}
+            onClick={() => navigate({ to: '/profile' })}
             disabled={isLoading}
           >
             Cancel
@@ -96,5 +96,5 @@ export default function ProfilePassword() {
         </div>
       </form>
     </>
-  );
+  )
 }

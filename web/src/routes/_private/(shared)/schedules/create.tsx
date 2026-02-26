@@ -1,10 +1,10 @@
-import { createFileRoute } from "@tanstack/react-router";
-import ScheduleCreate from "~/modules/schedule/create";
+import { createFileRoute } from '@tanstack/react-router'
+import ScheduleCreate from '~/modules/schedule/create'
 
-export const Route = createFileRoute("/_private/(shared)/schedules/create")({
+export const Route = createFileRoute('/_private/(shared)/schedules/create')({
   component: RouteComponent,
-});
+})
 
 function RouteComponent() {
-  return <ScheduleCreate />;
+  return <ScheduleCreate />
 }

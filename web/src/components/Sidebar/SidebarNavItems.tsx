@@ -1,21 +1,21 @@
-import { Link } from "@tanstack/react-router";
+import { Link } from '@tanstack/react-router'
 
 interface NavItem {
-  label: string;
-  to: string;
-  icon: React.ReactNode;
+  label: string
+  to: string
+  icon: React.ReactNode
 }
 
 interface SidebarNavItemsProps {
-  items: NavItem[];
+  items: NavItem[]
 }
 export default function SidebarNavItems(props: SidebarNavItemsProps) {
-  const { items } = props;
+  const { items } = props
 
   return (
     <nav className="flex-1 flex flex-col px-4">
       {items.map((item) => {
-        const { label, to, icon } = item;
+        const { label, to, icon } = item
         return (
           <Link
             key={to}
@@ -23,7 +23,7 @@ export default function SidebarNavItems(props: SidebarNavItemsProps) {
             className="flex items-center justify-start gap-4 py-3 text-gray-400 hover:text-black"
             activeProps={{
               className:
-                "text-primary hover:text-primary [&>span]:drop-shadow [&>span]:drop-shadow-primary/30",
+                'text-primary hover:text-primary [&>span]:drop-shadow [&>span]:drop-shadow-primary/30',
             }}
           >
             <span>{icon}</span>
@@ -31,8 +31,8 @@ export default function SidebarNavItems(props: SidebarNavItemsProps) {
               {label}
             </p>
           </Link>
-        );
+        )
       })}
     </nav>
-  );
+  )
 }

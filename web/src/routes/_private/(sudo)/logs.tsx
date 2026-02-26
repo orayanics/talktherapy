@@ -1,26 +1,26 @@
-import { useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { useState } from 'react'
+import { createFileRoute } from '@tanstack/react-router'
 
-import Grid from "~/components/Page/Grid";
-import GridItem from "~/components/Page/GridItem";
+import Grid from '~/components/Page/Grid'
+import GridItem from '~/components/Page/GridItem'
 
-import TableHeader from "~/components/Table/TableHeader";
-import TableContent from "~/components/Table/TableContent";
-import FilterDropdown from "~/components/Input/InputSelect";
-import FilterDrawer from "~/components/Filters/FilterDrawer";
-import PageTitle from "~/components/Page/PageTitle";
-import InputMultiselect from "~/components/Input/InputMultiselect";
-import InputDropdown from "~/components/Input/InputDropdown";
-import LoaderTable from "~/components/Loader/LoaderTable";
-import TablePagination from "~/components/Table/TablePagination";
-export const Route = createFileRoute("/_private/(sudo)/logs")({
+import TableHeader from '~/components/Table/TableHeader'
+import TableContent from '~/components/Table/TableContent'
+import FilterDropdown from '~/components/Input/InputSelect'
+import FilterDrawer from '~/components/Filters/FilterDrawer'
+import PageTitle from '~/components/Page/PageTitle'
+import InputMultiselect from '~/components/Input/InputMultiselect'
+import InputDropdown from '~/components/Input/InputDropdown'
+import LoaderTable from '~/components/Loader/LoaderTable'
+import TablePagination from '~/components/Table/TablePagination'
+export const Route = createFileRoute('/_private/(sudo)/logs')({
   component: RouteComponent,
-});
+})
 
 function RouteComponent() {
-  const [page, setPage] = useState(1);
-  const [perPage, setPerPage] = useState(10);
-  const isLoading = false;
+  const [page, setPage] = useState(1)
+  const [perPage, setPerPage] = useState(10)
+  const isLoading = false
 
   return (
     <>
@@ -37,52 +37,52 @@ function RouteComponent() {
             isLoading={isLoading}
             onPageChange={setPage}
             onPerPageChange={(val) => {
-              setPerPage(val);
-              setPage(1);
+              setPerPage(val)
+              setPage(1)
             }}
           />
         </GridItem>
       </Grid>
     </>
-  );
+  )
 }
 
 const SAMPLE_LOGS = [
   {
-    id: "1",
-    timestamp: "10/01/2024 10:00 AM",
-    userId: "user1",
-    action: "Login",
-    details: "User logged in successfully",
+    id: '1',
+    timestamp: '10/01/2024 10:00 AM',
+    userId: 'user1',
+    action: 'Login',
+    details: 'User logged in successfully',
   },
   {
-    id: "2",
-    timestamp: "10/01/2024 10:05 AM",
-    userId: "user2",
-    action: "File Upload",
-    details: "Uploaded file report.pdf",
+    id: '2',
+    timestamp: '10/01/2024 10:05 AM',
+    userId: 'user2',
+    action: 'File Upload',
+    details: 'Uploaded file report.pdf',
   },
   {
-    id: "3",
-    timestamp: "10/01/2024 10:05 AM",
-    userId: "user3",
-    action: "Password Change",
-    details: "Changed password successfully",
+    id: '3',
+    timestamp: '10/01/2024 10:05 AM',
+    userId: 'user3',
+    action: 'Password Change',
+    details: 'Changed password successfully',
   },
-];
+]
 
 interface TableProps {
-  onPageChange: (page: number) => void;
-  onPerPageChange: (perPage: number) => void;
-  isLoading?: boolean;
-  data: typeof SAMPLE_LOGS;
-  page: number;
-  perPage: number;
+  onPageChange: (page: number) => void
+  onPerPageChange: (perPage: number) => void
+  isLoading?: boolean
+  data: typeof SAMPLE_LOGS
+  page: number
+  perPage: number
 }
 
 function Table(props: TableProps) {
   const { data, isLoading, page, perPage, onPageChange, onPerPageChange } =
-    props;
+    props
   return (
     <>
       <div className="flex flex-col lg:flex-row gap-2">
@@ -109,10 +109,10 @@ function Table(props: TableProps) {
       ) : (
         <TableContent
           columns={[
-            { header: "Timestamp", accessor: "timestamp" },
-            { header: "User ID", accessor: "userId" },
-            { header: "Action", accessor: "action" },
-            { header: "Details", accessor: "details" },
+            { header: 'Timestamp', accessor: 'timestamp' },
+            { header: 'User ID', accessor: 'userId' },
+            { header: 'Action', accessor: 'action' },
+            { header: 'Details', accessor: 'details' },
           ]}
           data={data}
         />
@@ -126,5 +126,5 @@ function Table(props: TableProps) {
         onPerPageChange={onPerPageChange}
       />
     </>
-  );
+  )
 }

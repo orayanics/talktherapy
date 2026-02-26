@@ -1,12 +1,12 @@
-import { AvailabilityRuleWithSlots, SlotDto } from "~/models/schedule";
+import { AvailabilityRuleWithSlots, SlotDto } from '~/models/schedule'
 
 interface ScheduleSlotProps {
-  data: AvailabilityRuleWithSlots;
+  data: AvailabilityRuleWithSlots
 }
 
 export default function ScheduleSlot(props: ScheduleSlotProps) {
-  const { data } = props;
-  const slots: SlotDto[] = data?.slots ?? [];
+  const { data } = props
+  const slots: SlotDto[] = data?.slots ?? []
 
   return (
     <>
@@ -14,7 +14,7 @@ export default function ScheduleSlot(props: ScheduleSlotProps) {
         <p className="font-mono uppercase text-primary">Schedule Slots</p>
         <div className="[&>div]:py-4 [&>div]:border-y [&>div]:border-gray-100 [&>div]:border-dashed">
           {slots.map((slot: SlotDto) => {
-            const { starts_at, ends_at, status } = slot;
+            const { starts_at, ends_at, status } = slot
             return (
               <div
                 key={slot.id}
@@ -22,15 +22,15 @@ export default function ScheduleSlot(props: ScheduleSlotProps) {
               >
                 <p className="font-bold">Slot Time</p>
                 <p>
-                  {new Date(starts_at).toLocaleTimeString()} -{" "}
+                  {new Date(starts_at).toLocaleTimeString()} -{' '}
                   {new Date(ends_at).toLocaleTimeString()}
                 </p>
                 <p className="badge badge-soft">{status}</p>
               </div>
-            );
+            )
           })}
         </div>
       </div>
     </>
-  );
+  )
 }

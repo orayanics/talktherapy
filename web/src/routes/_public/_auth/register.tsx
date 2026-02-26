@@ -1,26 +1,26 @@
-import { useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
-import RegisterClinician from "~/modules/register/RegisterClinician";
-import RegisterPatient from "~/modules/register/RegisterPatient";
+import { useState } from 'react'
+import { createFileRoute } from '@tanstack/react-router'
+import RegisterClinician from '~/modules/register/RegisterClinician'
+import RegisterPatient from '~/modules/register/RegisterPatient'
 
-import { useGetPublicDiagnoses } from "~/api/public";
+import { useGetPublicDiagnoses } from '~/api/public'
 
-export const Route = createFileRoute("/_public/_auth/register")({
+export const Route = createFileRoute('/_public/_auth/register')({
   loader: ({ context: { queryClient } }) => {
-    return queryClient.ensureQueryData(useGetPublicDiagnoses);
+    return queryClient.ensureQueryData(useGetPublicDiagnoses)
   },
   component: RouteComponent,
-});
+})
 
 function RouteComponent() {
-  const publicDiagnoses = Route.useLoaderData();
-  const [registerType, setRegisterType] = useState(0);
+  const publicDiagnoses = Route.useLoaderData()
+  const [registerType, setRegisterType] = useState(0)
   const showRegister =
     registerType === 0 ? (
       <RegisterPatient data={publicDiagnoses} />
     ) : (
       <RegisterClinician />
-    );
+    )
 
   return (
     <div className="flex items-center container min-h-screen lg:max-h-1 mx-auto">
@@ -70,5 +70,5 @@ function RouteComponent() {
         </div>
       </div>
     </div>
-  );
+  )
 }

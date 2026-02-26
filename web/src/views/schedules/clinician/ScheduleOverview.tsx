@@ -1,27 +1,27 @@
-import { useState } from "react";
-import { Link, useNavigate } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useState } from 'react'
+import { Link, useNavigate } from '@tanstack/react-router'
+import { useQuery } from '@tanstack/react-query'
 
-import PageTitle from "~/components/Page/PageTitle";
-import Grid from "~/components/Page/Grid";
-import GridItem from "~/components/Page/GridItem";
+import PageTitle from '~/components/Page/PageTitle'
+import Grid from '~/components/Page/Grid'
+import GridItem from '~/components/Page/GridItem'
 
-import CalenderSingle from "~/components/Calendar/CalenderSingle";
-import LoaderTable from "~/components/Loader/LoaderTable";
-import SkeletonError from "~/components/Skeleton/SkeletonError";
-import SkeletonNull from "~/components/Skeleton/SkeletonNull";
+import CalenderSingle from '~/components/Calendar/CalenderSingle'
+import LoaderTable from '~/components/Loader/LoaderTable'
+import SkeletonError from '~/components/Skeleton/SkeletonError'
+import SkeletonNull from '~/components/Skeleton/SkeletonNull'
 
-import ScheduleCard from "~/modules/schedule/list/ScheduleCard";
+import ScheduleCard from '~/modules/schedule/list/ScheduleCard'
 
-import { availabilityRulesQuery } from "~/api/scheduling";
-import TablePagination from "~/components/Table/TablePagination";
+import { availabilityRulesQuery } from '~/api/scheduling'
+import TablePagination from '~/components/Table/TablePagination'
 
 interface ScheduleOverviewProps {
-  search: Record<string, unknown>;
+  search: Record<string, unknown>
 }
 
 export default function ScheduleOverview({ search }: ScheduleOverviewProps) {
-  const [selected, setSelected] = useState<Date | undefined>(new Date());
+  const [selected, setSelected] = useState<Date | undefined>(new Date())
 
   return (
     <>
@@ -49,18 +49,18 @@ export default function ScheduleOverview({ search }: ScheduleOverviewProps) {
         </GridItem>
       </Grid>
     </>
-  );
+  )
 }
 
 function ScheduleList({
   date,
   search,
 }: {
-  date?: Date;
-  search: Record<string, unknown>;
+  date?: Date
+  search: Record<string, unknown>
 }) {
-  const page = search.page ?? 1;
-  const perPage = search.perPage ?? 10;
+  const page = search.page ?? 1
+  const perPage = search.perPage ?? 10
 
   const {
     data = [],
@@ -72,13 +72,13 @@ function ScheduleList({
       page: Number(page),
       perPage: Number(perPage),
     }),
-  );
+  )
 
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
-  if (isLoading) return <LoaderTable />;
-  if (error) return <SkeletonError />;
-  if (!data) return <SkeletonNull />;
+  if (isLoading) return <LoaderTable />
+  if (error) return <SkeletonError />
+  if (!data) return <SkeletonNull />
 
   return (
     <>
@@ -90,13 +90,13 @@ function ScheduleList({
         total={data.meta.total}
         onPageChange={(page) =>
           navigate({
-            to: ".",
+            to: '.',
             search: { ...search, page },
           })
         }
         onPerPageChange={(perPage) =>
           navigate({
-            to: ".",
+            to: '.',
             search: { ...search, perPage },
           })
         }
@@ -104,5 +104,5 @@ function ScheduleList({
         to={data.meta.to}
       />
     </>
-  );
+  )
 }

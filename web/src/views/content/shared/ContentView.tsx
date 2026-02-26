@@ -1,16 +1,16 @@
-import Markdown from "react-markdown";
-import rehypeRaw from "rehype-raw";
+import Markdown from 'react-markdown'
+import rehypeRaw from 'rehype-raw'
 
-import Grid from "~/components/Page/Grid";
-import GridItem from "~/components/Page/GridItem";
-import PageTitle from "~/components/Page/PageTitle";
+import Grid from '~/components/Page/Grid'
+import GridItem from '~/components/Page/GridItem'
+import PageTitle from '~/components/Page/PageTitle'
 
 export default function ContentView() {
   return (
     <>
       <PageTitle
-        heading={"Content Shared Overview"}
-        subheading={"Manage media content."}
+        heading={'Content Shared Overview'}
+        subheading={'Manage media content.'}
       />
 
       <Grid cols={12} gap={6}>
@@ -24,14 +24,14 @@ export default function ContentView() {
         </GridItem>
       </Grid>
     </>
-  );
+  )
 }
 
 export const MEDIA_ITEMS = [
   {
-    id: "1",
-    title: "Getting Started with TypeScript",
-    description: "An introduction to TypeScript and its core features.",
+    id: '1',
+    title: 'Getting Started with TypeScript',
+    description: 'An introduction to TypeScript and its core features.',
     body: `
 ## TypeScript Basics
 
@@ -55,10 +55,10 @@ It helps developers catch errors early, improve code quality, and build more mai
   allowfullscreen
 ></iframe>
 `,
-    authorId: "author-001",
-    createdAt: "2025-06-27",
-    updatedAt: "2025-06-29",
-    category: "Programming",
-    tags: ["typescript", "javascript", "basics", "node"],
+    authorId: 'author-001',
+    createdAt: '2025-06-27',
+    updatedAt: '2025-06-29',
+    category: 'Programming',
+    tags: ['typescript', 'javascript', 'basics', 'node'],
   },
-];
+]

@@ -1,15 +1,15 @@
-import { Link } from "@tanstack/react-router";
-import { FaEnvelope, FaLock } from "react-icons/fa";
-import useLogin from "./useLogin";
-import { fieldError, hasOnlyMessage } from "~/utils/errors";
+import { Link } from '@tanstack/react-router'
+import { FaEnvelope, FaLock } from 'react-icons/fa'
+import useLogin from './useLogin'
+import { fieldError, hasOnlyMessage } from '~/utils/errors'
 
 export default function LoginForm() {
-  const { form, errors, isLoading, handleChange, handleSubmit } = useLogin();
+  const { form, errors, isLoading, handleChange, handleSubmit } = useLogin()
   return (
     <form
       onSubmit={(e) => {
-        e.preventDefault();
-        handleSubmit();
+        e.preventDefault()
+        handleSubmit()
       }}
     >
       <div className="flex flex-col gap-4">
@@ -30,9 +30,9 @@ export default function LoginForm() {
               autoComplete="email"
             />
           </label>
-          {fieldError(errors, "email") && (
+          {fieldError(errors, 'email') && (
             <p className="text-error text-sm mt-1">
-              {fieldError(errors, "email")}
+              {fieldError(errors, 'email')}
             </p>
           )}
         </div>
@@ -49,9 +49,9 @@ export default function LoginForm() {
               autoComplete="current-password"
             />
           </label>
-          {fieldError(errors, "password") && (
+          {fieldError(errors, 'password') && (
             <p className="text-error text-sm mt-1">
-              {fieldError(errors, "password")}
+              {fieldError(errors, 'password')}
             </p>
           )}
         </div>
@@ -64,11 +64,11 @@ export default function LoginForm() {
             Login
           </button>
           <Link to="/register">
-            Don't have an account?{" "}
+            Don't have an account?{' '}
             <span className="link link-hover">Register here!</span>
           </Link>
         </div>
       </div>
     </form>
-  );
+  )
 }

@@ -1,31 +1,29 @@
-import { Link, createFileRoute } from "@tanstack/react-router";
-import PageTitle from "~/components/Page/PageTitle";
-import Grid from "~/components/Page/Grid";
-import GridItem from "~/components/Page/GridItem";
+import { Link, createFileRoute } from '@tanstack/react-router'
+import PageTitle from '~/components/Page/PageTitle'
+import Grid from '~/components/Page/Grid'
+import GridItem from '~/components/Page/GridItem'
 
-import Markdown from "react-markdown";
-import rehypeRaw from "rehype-raw";
+import Markdown from 'react-markdown'
+import rehypeRaw from 'rehype-raw'
 
-export const Route = createFileRoute(
-  "/_private/(patient)/records/",
-)({
+export const Route = createFileRoute('/_private/(patient)/records/')({
   component: RouteComponent,
-});
+})
 
 const SAMPLE_RECORDS = [
   {
-    id: "1",
-    date: "2023-01-15",
-    clinician: "Dr. Smith",
+    id: '1',
+    date: '2023-01-15',
+    clinician: 'Dr. Smith',
     feedback: `# Feedback\n\nYour blood pressure is improving. Keep up the good work with your diet and exercise!\n\n## Diagnosis\n\n- Hypertension Stage 1\n- Recommend lifestyle changes and follow-up in 3 months.`,
   },
   {
-    id: "2",
-    date: "2023-03-10",
-    clinician: "Dr. Johnson",
+    id: '2',
+    date: '2023-03-10',
+    clinician: 'Dr. Johnson',
     feedback: `# Feedback\n\nYour cholesterol levels have decreased significantly. Continue with your current medication and diet.\n\n## Diagnosis\n\n- Hyperlipidemia\n- Continue statin therapy and monitor lipid levels in 6 months.`,
   },
-];
+]
 
 function RouteComponent() {
   return (
@@ -44,7 +42,7 @@ function RouteComponent() {
         </GridItem>
       </Grid>
     </>
-  );
+  )
 }
 
 function RecordList() {
@@ -58,13 +56,13 @@ function RecordList() {
         </div>
       ))}
     </div>
-  );
+  )
 }
 
 function RecordDetail({ recordId }: { recordId: string }) {
-  const record = SAMPLE_RECORDS.find((r) => r.id === recordId);
+  const record = SAMPLE_RECORDS.find((r) => r.id === recordId)
   if (!record) {
-    return <div>Record not found.</div>;
+    return <div>Record not found.</div>
   }
 
   return (
@@ -77,5 +75,5 @@ function RecordDetail({ recordId }: { recordId: string }) {
         <Markdown rehypePlugins={[rehypeRaw]}>{record.feedback}</Markdown>
       </div>
     </div>
-  );
+  )
 }

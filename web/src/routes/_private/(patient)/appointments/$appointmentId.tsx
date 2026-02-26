@@ -1,15 +1,15 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute } from '@tanstack/react-router'
 
-import PageTitle from "~/components/Page/PageTitle";
-import Grid from "~/components/Page/Grid";
-import GridItem from "~/components/Page/GridItem";
+import PageTitle from '~/components/Page/PageTitle'
+import Grid from '~/components/Page/Grid'
+import GridItem from '~/components/Page/GridItem'
 
-import AppointmentInfo from "~/modules/appointment/AppointmentInfo";
+import AppointmentInfo from '~/modules/appointment/AppointmentInfo'
 export const Route = createFileRoute(
-  "/_private/(patient)/appointments/$appointmentId",
+  '/_private/(patient)/appointments/$appointmentId',
 )({
   component: RouteComponent,
-});
+})
 
 function RouteComponent() {
   return (
@@ -25,5 +25,5 @@ function RouteComponent() {
         </GridItem>
       </Grid>
     </>
-  );
+  )
 }

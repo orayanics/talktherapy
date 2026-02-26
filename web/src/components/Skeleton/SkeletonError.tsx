@@ -1,4 +1,4 @@
-import { FaExclamationCircle } from "react-icons/fa";
+import { FaExclamationCircle } from 'react-icons/fa'
 
 export default function SkeletonError() {
   return (
@@ -6,5 +6,5 @@ export default function SkeletonError() {
       <FaExclamationCircle className="text-error" />
       <span className="text-sm text-error">Failed to load data</span>
     </div>
-  );
+  )
 }

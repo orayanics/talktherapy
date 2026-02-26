@@ -1,11 +1,11 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute(
-  "/_private/(adm-shared)/users/$userId/edit",
+  '/_private/(adm-shared)/users/$userId/edit',
 )({
   component: RouteComponent,
-});
+})
 
 function RouteComponent() {
-  return <div>Hello users/$userId/edit</div>;
+  return <div>Hello users/$userId/edit</div>
 }

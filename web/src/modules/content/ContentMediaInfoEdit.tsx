@@ -1,9 +1,9 @@
-import { MediaContentClient } from "~/models/content";
-import MDEditor from "@uiw/react-md-editor";
+import { MediaContentClient } from '~/models/content'
+import MDEditor from '@uiw/react-md-editor'
 
 interface ContentMedaiInfoEditProps extends MediaContentClient {
-  bodyValue: string;
-  onBodyChange: (value: string) => void;
+  bodyValue: string
+  onBodyChange: (value: string) => void
 }
 
 export default function ContentMediaInfoEdit(props: ContentMedaiInfoEditProps) {
@@ -19,7 +19,7 @@ export default function ContentMediaInfoEdit(props: ContentMedaiInfoEditProps) {
     tags,
     bodyValue,
     onBodyChange,
-  } = props;
+  } = props
   return (
     <>
       <p className="font-bold uppercase text-primary">Content Information</p>
@@ -43,11 +43,11 @@ export default function ContentMediaInfoEdit(props: ContentMedaiInfoEditProps) {
           <p className="font-bold">Body</p>
           <MDEditor
             value={bodyValue}
-            onChange={(val) => onBodyChange(val || "")}
+            onChange={(val) => onBodyChange(val || '')}
             height={400}
             preview="edit"
             commandsFilter={(cmd) =>
-              !["preview", "live"].includes(cmd.name as string) && cmd
+              !['preview', 'live'].includes(cmd.name as string) && cmd
             }
           />
         </div>
@@ -68,7 +68,7 @@ export default function ContentMediaInfoEdit(props: ContentMedaiInfoEditProps) {
                     <span key={tag} className="badge">
                       {tag}
                     </span>
-                  );
+                  )
                 })}
               </>
             )}
@@ -86,5 +86,5 @@ export default function ContentMediaInfoEdit(props: ContentMedaiInfoEditProps) {
         </div>
       </div>
     </>
-  );
+  )
 }

@@ -1,16 +1,16 @@
-import ModalHeader from "~/components/Modal/ModalHeader";
-import ModalBody from "~/components/Modal/ModalBody";
-import ModalFooter from "~/components/Modal/ModalFooter";
+import ModalHeader from '~/components/Modal/ModalHeader'
+import ModalBody from '~/components/Modal/ModalBody'
+import ModalFooter from '~/components/Modal/ModalFooter'
 
 interface ModalBlockNavigationProps {
-  isOpen: boolean;
-  onReset: () => void;
-  onProceed: () => void;
-  children?: React.ReactNode;
+  isOpen: boolean
+  onReset: () => void
+  onProceed: () => void
+  children?: React.ReactNode
 }
 
 export default function ModalBlockNavigation(props: ModalBlockNavigationProps) {
-  const { isOpen, onReset, onProceed, children } = props;
+  const { isOpen, onReset, onProceed, children } = props
 
   return (
     <ModalBody isOpen={isOpen} onClose={onReset}>
@@ -31,5 +31,5 @@ export default function ModalBlockNavigation(props: ModalBlockNavigationProps) {
         </button>
       </ModalFooter>
     </ModalBody>
-  );
+  )
 }

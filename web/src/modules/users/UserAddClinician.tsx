@@ -1,31 +1,31 @@
-import ModalHeader from "~/components/Modal/ModalHeader";
-import ModalBody from "~/components/Modal/ModalBody";
-import { useRegisterClinician } from "./useUserAdd";
-import { fieldError, hasOnlyMessage } from "~/utils/errors";
+import ModalHeader from '~/components/Modal/ModalHeader'
+import ModalBody from '~/components/Modal/ModalBody'
+import { useRegisterClinician } from './useUserAdd'
+import { fieldError, hasOnlyMessage } from '~/utils/errors'
 
 interface UserAddClinicianProps {
-  isOpen: boolean;
-  onClose: () => void;
+  isOpen: boolean
+  onClose: () => void
 }
 
 export default function UserAddClinician(props: UserAddClinicianProps) {
-  const { isOpen, onClose } = props;
+  const { isOpen, onClose } = props
   const { form, handleChange, handleSubmit, resetState, errors, isLoading } =
-    useRegisterClinician();
+    useRegisterClinician()
 
   const handleClose = () => {
-    resetState();
-    onClose();
-  };
+    resetState()
+    onClose()
+  }
 
   return (
     <ModalBody isOpen={isOpen} onClose={handleClose}>
       <form
         onSubmit={async (e) => {
-          e.preventDefault();
-          const isSuccess = await handleSubmit();
+          e.preventDefault()
+          const isSuccess = await handleSubmit()
           if (isSuccess) {
-            handleClose();
+            handleClose()
           }
         }}
         aria-disabled={isLoading}
@@ -48,9 +48,9 @@ export default function UserAddClinician(props: UserAddClinicianProps) {
                 {errors!.message}
               </p>
             )}
-            {fieldError(errors, "email") && (
+            {fieldError(errors, 'email') && (
               <p className="text-error text-sm mt-1">
-                {fieldError(errors, "email")}
+                {fieldError(errors, 'email')}
               </p>
             )}
           </div>
@@ -70,5 +70,5 @@ export default function UserAddClinician(props: UserAddClinicianProps) {
         </div>
       </form>
     </ModalBody>
-  );
+  )
 }

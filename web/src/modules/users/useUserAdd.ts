@@ -1,43 +1,43 @@
-import { useState } from "react";
-import { isAxiosError } from "axios";
-import { useAddClinician, useAddAdmin } from "~/api/users";
+import { useState } from 'react'
+import { isAxiosError } from 'axios'
+import { useAddClinician, useAddAdmin } from '~/api/users'
 
-import { PermissionKey } from "~/models/user/permissions";
-import { ParsedError, parseError } from "~/utils/errors";
+import { PermissionKey } from '~/models/user/permissions'
+import { ParsedError, parseError } from '~/utils/errors'
 
 export function useRegisterClinician() {
-  const [errors, setErrors] = useState<ParsedError | null>(null);
+  const [errors, setErrors] = useState<ParsedError | null>(null)
   const initialForm = {
-    email: "",
-  };
-  const [form, setForm] = useState(initialForm);
+    email: '',
+  }
+  const [form, setForm] = useState(initialForm)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
-  };
+    const { name, value } = e.target
+    setForm((prev) => ({ ...prev, [name]: value }))
+  }
 
-  const addClinicianMutation = useAddClinician();
+  const addClinicianMutation = useAddClinician()
 
   async function handleSubmit() {
-    setErrors(null);
+    setErrors(null)
     try {
-      await addClinicianMutation.mutateAsync(form);
-      return true;
+      await addClinicianMutation.mutateAsync(form)
+      return true
     } catch (error: unknown) {
       setErrors(
         isAxiosError(error) ? parseError(error.response?.data ?? null) : null,
-      );
-      return false;
+      )
+      return false
     } finally {
-      setForm(initialForm);
+      setForm(initialForm)
     }
   }
 
   const resetState = () => {
-    setErrors(null);
-    setForm(initialForm);
-  };
+    setErrors(null)
+    setForm(initialForm)
+  }
 
   return {
     form,
@@ -46,53 +46,53 @@ export function useRegisterClinician() {
     handleChange,
     handleSubmit,
     resetState,
-  };
+  }
 }
 
 export function useRegisterAdmin() {
-  const [errors, setErrors] = useState<ParsedError | null>(null);
+  const [errors, setErrors] = useState<ParsedError | null>(null)
   const initialForm = {
-    email: "",
+    email: '',
     abilities: [] as PermissionKey[],
-  };
-  const [form, setForm] = useState(initialForm);
+  }
+  const [form, setForm] = useState(initialForm)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
-  };
+    const { name, value } = e.target
+    setForm((prev) => ({ ...prev, [name]: value }))
+  }
 
   const handlePermissionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value, checked } = e.target;
+    const { value, checked } = e.target
     setForm((prev) => ({
       ...prev,
       abilities: checked
         ? [...prev.abilities, value as PermissionKey]
         : prev.abilities.filter((p) => p !== value),
-    }));
-  };
+    }))
+  }
 
-  const addAdminMutation = useAddAdmin();
+  const addAdminMutation = useAddAdmin()
 
   async function handleSubmit() {
-    setErrors(null);
+    setErrors(null)
     try {
-      await addAdminMutation.mutateAsync(form);
-      return true;
+      await addAdminMutation.mutateAsync(form)
+      return true
     } catch (error: unknown) {
       setErrors(
         isAxiosError(error) ? parseError(error.response?.data ?? null) : null,
-      );
-      return false;
+      )
+      return false
     } finally {
-      setForm(initialForm);
+      setForm(initialForm)
     }
   }
 
   const resetState = () => {
-    setErrors(null);
-    setForm(initialForm);
-  };
+    setErrors(null)
+    setForm(initialForm)
+  }
 
   return {
     form,
@@ -102,5 +102,5 @@ export function useRegisterAdmin() {
     handlePermissionChange,
     handleSubmit,
     resetState,
-  };
+  }
 }

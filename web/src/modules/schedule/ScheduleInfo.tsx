@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link } from '@tanstack/react-router'
 
 export default function ScheduleInfo() {
   return (
@@ -33,5 +33,5 @@ export default function ScheduleInfo() {
         </div>
       </div>
     </>
-  );
+  )
 }

@@ -1,36 +1,36 @@
-import { useEffect } from "react";
+import { useEffect } from 'react'
 
 interface ModalBodyProps {
-  children: React.ReactNode;
-  className?: string;
-  isOpen: boolean;
-  onClose: () => void;
+  children: React.ReactNode
+  className?: string
+  isOpen: boolean
+  onClose: () => void
 }
 
 export default function ModalBody(props: ModalBodyProps) {
-  const { children, onClose, className, isOpen } = props;
+  const { children, onClose, className, isOpen } = props
 
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen) return
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        onClose();
+      if (event.key === 'Escape') {
+        onClose()
       }
-    };
+    }
 
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, onClose]);
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [isOpen, onClose])
 
   const modalClassName = [
-    "modal",
-    "modal-middle",
-    isOpen ? "modal-open" : "",
-    className || "",
+    'modal',
+    'modal-middle',
+    isOpen ? 'modal-open' : '',
+    className || '',
   ]
     .filter(Boolean)
-    .join(" ");
+    .join(' ')
 
   return (
     <div className={modalClassName}>
@@ -39,5 +39,5 @@ export default function ModalBody(props: ModalBodyProps) {
         Close
       </button>
     </div>
-  );
+  )
 }

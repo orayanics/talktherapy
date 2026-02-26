@@ -1,36 +1,36 @@
-import { useEffect, useMemo, useState } from "react";
-import { Link, createFileRoute } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
-import debounce from "debounce";
+import { useEffect, useMemo, useState } from 'react'
+import { Link, createFileRoute } from '@tanstack/react-router'
+import { useQuery } from '@tanstack/react-query'
+import debounce from 'debounce'
 
-import Grid from "~/components/Page/Grid";
-import GridItem from "~/components/Page/GridItem";
-import TableContent from "~/components/Table/TableContent";
-import TablePagination from "~/components/Table/TablePagination";
-import AccountStatusBadge from "~/components/Badge/AccountStatusBadge";
-import RoleBadge from "~/components/Badge/RoleBadge";
-import PageTitle from "~/components/Page/PageTitle";
-import UserAddAdmin from "~/modules/users/UserAddAdmin";
-import InputDropdown from "~/components/Input/InputDropdown";
-import InputMultiselect from "~/components/Input/InputMultiselect";
-import LoaderTable from "~/components/Loader/LoaderTable";
-import UserAddClinician from "~/modules/users/UserAddClinician";
+import Grid from '~/components/Page/Grid'
+import GridItem from '~/components/Page/GridItem'
+import TableContent from '~/components/Table/TableContent'
+import TablePagination from '~/components/Table/TablePagination'
+import AccountStatusBadge from '~/components/Badge/AccountStatusBadge'
+import RoleBadge from '~/components/Badge/RoleBadge'
+import PageTitle from '~/components/Page/PageTitle'
+import UserAddAdmin from '~/modules/users/UserAddAdmin'
+import InputDropdown from '~/components/Input/InputDropdown'
+import InputMultiselect from '~/components/Input/InputMultiselect'
+import LoaderTable from '~/components/Loader/LoaderTable'
+import UserAddClinician from '~/modules/users/UserAddClinician'
 
-import { UsersTableProps } from "~/models/system";
-import { formatToLocalDateTime } from "~/utils/date";
-import { normalizeSearchArray } from "~/utils/query";
+import { UsersTableProps } from '~/models/system'
+import { formatToLocalDateTime } from '~/utils/date'
+import { normalizeSearchArray } from '~/utils/query'
 
-import { usersQueryOptions } from "~/api/users";
-import { useAuthGuard } from "~/hooks/useAuthGuard";
+import { usersQueryOptions } from '~/api/users'
+import { useAuthGuard } from '~/hooks/useAuthGuard'
 
-export const Route = createFileRoute("/_private/(adm-shared)/users/")({
+export const Route = createFileRoute('/_private/(adm-shared)/users/')({
   validateSearch: (search: Record<string, unknown>) => {
-    const status = normalizeSearchArray(search.status);
-    const role = normalizeSearchArray(search.role);
-    const page = Number(search.page ?? 1);
-    const perPage = Number(search.perPage ?? 10);
+    const status = normalizeSearchArray(search.status)
+    const role = normalizeSearchArray(search.role)
+    const page = Number(search.page ?? 1)
+    const perPage = Number(search.perPage ?? 10)
     const searchTerm =
-      typeof search.search === "string" ? search.search : undefined;
+      typeof search.search === 'string' ? search.search : undefined
 
     return {
       ...(status?.length ? { status } : {}),
@@ -38,42 +38,42 @@ export const Route = createFileRoute("/_private/(adm-shared)/users/")({
       ...(page !== 1 ? { page } : {}),
       ...(perPage !== 10 ? { perPage } : {}),
       ...(searchTerm ? { search: searchTerm } : {}),
-    };
+    }
   },
   component: RouteComponent,
-});
+})
 
 function RouteComponent() {
-  const navigate = Route.useNavigate();
+  const navigate = Route.useNavigate()
 
-  const search = Route.useSearch();
-  const status = search.status ?? [];
-  const role = search.role ?? [];
-  const page = search.page ?? 1;
-  const [searchInput, setSearchInput] = useState(search.search ?? "");
-  const [debouncedSearch, setDebouncedSearch] = useState(search.search ?? "");
-  const perPage = search.perPage ?? 10;
+  const search = Route.useSearch()
+  const status = search.status ?? []
+  const role = search.role ?? []
+  const page = search.page ?? 1
+  const [searchInput, setSearchInput] = useState(search.search ?? '')
+  const [debouncedSearch, setDebouncedSearch] = useState(search.search ?? '')
+  const perPage = search.perPage ?? 10
 
   const updateDebouncedSearch = useMemo(
     () =>
       debounce((value: string) => {
-        setDebouncedSearch(value);
+        setDebouncedSearch(value)
       }, 200),
     [],
-  );
+  )
   const handleSearchChange = (value: string) => {
-    setSearchInput(value);
-    updateDebouncedSearch(value);
-  };
+    setSearchInput(value)
+    updateDebouncedSearch(value)
+  }
 
   useEffect(() => {
-    if (debouncedSearch === search.search || !debouncedSearch) return;
-    navigate({ search: { ...search, search: debouncedSearch, page: 1 } });
-  }, [debouncedSearch]);
+    if (debouncedSearch === search.search || !debouncedSearch) return
+    navigate({ search: { ...search, search: debouncedSearch, page: 1 } })
+  }, [debouncedSearch])
 
   useEffect(() => {
-    return () => updateDebouncedSearch.clear();
-  }, [updateDebouncedSearch]);
+    return () => updateDebouncedSearch.clear()
+  }, [updateDebouncedSearch])
 
   const { data, isPending } = useQuery(
     usersQueryOptions({
@@ -83,7 +83,7 @@ function RouteComponent() {
       account_status: status,
       account_role: role,
     }),
-  );
+  )
 
   return (
     <>
@@ -109,12 +109,12 @@ function RouteComponent() {
               navigate({ search: { ...search, role, page: 1 } })
             }
             onSearchChange={handleSearchChange}
-            onClearFilters={() => navigate({ to: "/users", search: {} })}
+            onClearFilters={() => navigate({ to: '/users', search: {} })}
           />
         </GridItem>
       </Grid>
     </>
-  );
+  )
 }
 
 function Table(props: UsersTableProps) {
@@ -125,21 +125,21 @@ function Table(props: UsersTableProps) {
     data,
     role = [],
     status = [],
-    search = "",
+    search = '',
     onPageChange,
     onPerPageChange,
     onStatusChange,
     onRoleChange,
     onSearchChange,
     onClearFilters,
-  } = props;
-  const [isClinicianModalOpen, setClinicianModalOpen] = useState(false);
-  const [isAdminModalOpen, setAdminModalOpen] = useState(false);
+  } = props
+  const [isClinicianModalOpen, setClinicianModalOpen] = useState(false)
+  const [isAdminModalOpen, setAdminModalOpen] = useState(false)
 
-  const { data: usersData = [], total = 0, last_page, to, from } = data || {};
+  const { data: usersData = [], total = 0, last_page, to, from } = data || {}
 
-  const { is } = useAuthGuard();
-  const isSudo = is("sudo");
+  const { is } = useAuthGuard()
+  const isSudo = is('sudo')
 
   return (
     <>
@@ -156,14 +156,14 @@ function Table(props: UsersTableProps) {
           <InputMultiselect
             placeholder="Account Status"
             options={[
-              { value: "active", label: "Active" },
-              { value: "inactive", label: "Inactive" },
-              { value: "pending", label: "Pending" },
-              { value: "suspended", label: "Suspended" },
+              { value: 'active', label: 'Active' },
+              { value: 'inactive', label: 'Inactive' },
+              { value: 'pending', label: 'Pending' },
+              { value: 'suspended', label: 'Suspended' },
             ]}
             value={status}
             onChange={(status) => onStatusChange(status)}
-            className={"w-full lg:w-42"}
+            className={'w-full lg:w-42'}
           />
 
           <InputMultiselect
@@ -171,16 +171,16 @@ function Table(props: UsersTableProps) {
             options={[
               ...(isSudo
                 ? [
-                    { value: "sudo", label: "Super Admin" },
-                    { value: "admin", label: "Admin" },
+                    { value: 'sudo', label: 'Super Admin' },
+                    { value: 'admin', label: 'Admin' },
                   ]
                 : []),
-              { value: "patient", label: "Patient" },
-              { value: "clinician", label: "Clinician" },
+              { value: 'patient', label: 'Patient' },
+              { value: 'clinician', label: 'Clinician' },
             ]}
             value={role}
             onChange={(role) => onRoleChange(role)}
-            className={"w-full lg:w-42"}
+            className={'w-full lg:w-42'}
           />
 
           <button className="btn btn-primary" onClick={onClearFilters}>
@@ -220,10 +220,10 @@ function Table(props: UsersTableProps) {
       ) : (
         <TableContent
           columns={[
-            { header: "Account Status", accessor: "account_status" },
+            { header: 'Account Status', accessor: 'account_status' },
             {
-              header: "Name",
-              accessor: "name",
+              header: 'Name',
+              accessor: 'name',
               render: (value, row) => (
                 <Link
                   to="/users/$userId"
@@ -234,17 +234,17 @@ function Table(props: UsersTableProps) {
                 </Link>
               ),
             },
-            { header: "Email", accessor: "email" },
-            { header: "User Type", accessor: "account_role" },
+            { header: 'Email', accessor: 'email' },
+            { header: 'User Type', accessor: 'account_role' },
             {
-              header: "Created At",
-              accessor: "created_at",
+              header: 'Created At',
+              accessor: 'created_at',
               render: (value) => formatToLocalDateTime(value),
             },
-            { header: "Last Login", accessor: "last_login" },
+            { header: 'Last Login', accessor: 'last_login' },
             {
-              header: "Actions",
-              accessor: "id",
+              header: 'Actions',
+              accessor: 'id',
               render: (_value, row) => (
                 <InputDropdown
                   label="Actions"
@@ -253,7 +253,7 @@ function Table(props: UsersTableProps) {
                   position="dropdown-center dropdown-left"
                 >
                   <Link
-                    to={"/users/$userId/edit"}
+                    to={'/users/$userId/edit'}
                     params={{ userId: row.id }}
                     className="btn btn-soft btn-primary"
                   >
@@ -261,7 +261,7 @@ function Table(props: UsersTableProps) {
                   </Link>
                   <Link
                     // TODO: Add deactivate user functionality
-                    to={"/users/$userId"}
+                    to={'/users/$userId'}
                     params={{ userId: row.id }}
                     className="btn btn-soft btn-error"
                   >
@@ -290,5 +290,5 @@ function Table(props: UsersTableProps) {
         onPerPageChange={onPerPageChange}
       />
     </>
-  );
+  )
 }

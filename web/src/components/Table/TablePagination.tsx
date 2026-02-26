@@ -1,21 +1,21 @@
-import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
-import FilterDropdown from "~/components/Input/InputSelect";
+import { FaChevronLeft, FaChevronRight } from 'react-icons/fa'
+import FilterDropdown from '~/components/Input/InputSelect'
 
 type TablePaginationProps = {
-  page: number;
-  perPage: number;
-  total: number;
-  lastPage?: number;
-  from?: number | null;
-  to?: number | null;
-  onPageChange: (page: number) => void;
-  onPerPageChange: (perPage: number) => void;
+  page: number
+  perPage: number
+  total: number
+  lastPage?: number
+  from?: number | null
+  to?: number | null
+  onPageChange: (page: number) => void
+  onPerPageChange: (perPage: number) => void
   perPageOptions?: {
-    value: number;
-    label: string;
-  }[];
-  className?: string;
-};
+    value: number
+    label: string
+  }[]
+  className?: string
+}
 
 export default function TablePagination({
   page,
@@ -27,26 +27,26 @@ export default function TablePagination({
   onPageChange,
   onPerPageChange,
   perPageOptions = [
-    { value: 10, label: "10" },
-    { value: 20, label: "20" },
-    { value: 50, label: "50" },
-    { value: 100, label: "100" },
+    { value: 10, label: '10' },
+    { value: 20, label: '20' },
+    { value: 50, label: '50' },
+    { value: 100, label: '100' },
   ],
-  className = "",
+  className = '',
 }: TablePaginationProps) {
   const totalPages = Math.max(
     1,
     Number.isFinite(lastPage) ? Number(lastPage) : Math.ceil(total / perPage),
-  );
+  )
 
-  const currentPage = Math.min(Math.max(page, 1), totalPages);
+  const currentPage = Math.min(Math.max(page, 1), totalPages)
 
   const handlePrev = () => {
-    if (currentPage > 1) onPageChange(currentPage - 1);
-  };
+    if (currentPage > 1) onPageChange(currentPage - 1)
+  }
   const handleNext = () => {
-    if (currentPage < totalPages) onPageChange(currentPage + 1);
-  };
+    if (currentPage < totalPages) onPageChange(currentPage + 1)
+  }
 
   return (
     <div
@@ -72,9 +72,9 @@ export default function TablePagination({
         </button>
       </div>
       <div className="flex flex-row items-center justify-center lg:justify-end gap-2 w-auto">
-        {typeof from === "number" && typeof to === "number" && (
+        {typeof from === 'number' && typeof to === 'number' && (
           <p className="whitespace-nowrap">
-            Showing <strong>{from}</strong>-<strong>{to}</strong> of{" "}
+            Showing <strong>{from}</strong>-<strong>{to}</strong> of{' '}
             <strong>{total}</strong>
           </p>
         )}
@@ -84,11 +84,11 @@ export default function TablePagination({
           options={perPageOptions}
           value={perPage}
           onChange={(e) =>
-            onPerPageChange(typeof e === "number" ? e : parseInt(e, 10))
+            onPerPageChange(typeof e === 'number' ? e : parseInt(e, 10))
           }
           className="w-auto"
         />
       </div>
     </div>
-  );
+  )
 }

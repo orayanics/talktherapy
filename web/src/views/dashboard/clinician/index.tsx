@@ -1,5 +1,5 @@
-import Grid from "~/components/Page/Grid";
-import GridItem from "~/components/Page/GridItem";
+import Grid from '~/components/Page/Grid'
+import GridItem from '~/components/Page/GridItem'
 
 export default function Index() {
   return (
@@ -7,11 +7,11 @@ export default function Index() {
       <h1>Clinician</h1>
       <AppointmentStatsCard />
     </>
-  );
+  )
 }
 
 interface AppointmentStatsCardProps {
-  appointments?: number;
+  appointments?: number
 }
 
 function AppointmentStatsCard({ appointments }: AppointmentStatsCardProps) {
@@ -26,5 +26,5 @@ function AppointmentStatsCard({ appointments }: AppointmentStatsCardProps) {
         <h2 className="font-medium text-gray-600">No Appointments</h2>
       )}
     </div>
-  );
+  )
 }

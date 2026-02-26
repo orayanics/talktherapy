@@ -1,46 +1,46 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { createFileRoute } from '@tanstack/react-router'
+import { useQuery } from '@tanstack/react-query'
 
-import { dashboardDataQueryOptions } from "~/api/dashboard";
-import { sessionQueryOptions } from "~/api/auth";
+import { dashboardDataQueryOptions } from '~/api/dashboard'
+import { sessionQueryOptions } from '~/api/auth'
 // import { AppointmentStatus, AppointmentStatusValues } from "~/models/content";
-import Grid from "~/components/Page/Grid";
-import GridItem from "~/components/Page/GridItem";
-import PageTitle from "~/components/Page/PageTitle";
+import Grid from '~/components/Page/Grid'
+import GridItem from '~/components/Page/GridItem'
+import PageTitle from '~/components/Page/PageTitle'
 
 // import AppointmentStatusBadge from "~/components/Badge/AppointmentStatusBadge";
 
-import PatientDashboard from "~/views/dashboard/patient";
-import AdminSharedDashboard from "~/views/dashboard/adm-shared/";
-import ClinicianDashboard from "~/views/dashboard/clinician";
-import { useAuthGuard } from "~/hooks/useAuthGuard";
+import PatientDashboard from '~/views/dashboard/patient'
+import AdminSharedDashboard from '~/views/dashboard/adm-shared/'
+import ClinicianDashboard from '~/views/dashboard/clinician'
+import { useAuthGuard } from '~/hooks/useAuthGuard'
 
-import { useAlert } from "~/context/AlertContext";
+import { useAlert } from '~/context/AlertContext'
 
-export const Route = createFileRoute("/_private/dashboard")({
+export const Route = createFileRoute('/_private/dashboard')({
   ssr: false,
   loader: async ({ context: { queryClient } }) => {
-    const session = await queryClient.ensureQueryData(sessionQueryOptions);
-    return session;
+    const session = await queryClient.ensureQueryData(sessionQueryOptions)
+    return session
   },
   component: RouteComponent,
-});
+})
 
 function RouteComponent() {
-  const { is } = useAuthGuard();
+  const { is } = useAuthGuard()
 
   const { data } = useQuery({
     ...dashboardDataQueryOptions,
-    enabled: is("admin"),
-  });
+    enabled: is('admin'),
+  })
 
   const dashboardView = () => {
-    if (is("admin")) return <AdminSharedDashboard data={data} />;
-    if (is("clinician")) return <ClinicianDashboard />;
-    if (is("patient")) return <PatientDashboard />;
-  };
+    if (is('admin')) return <AdminSharedDashboard data={data} />
+    if (is('clinician')) return <ClinicianDashboard />
+    if (is('patient')) return <PatientDashboard />
+  }
 
-  const { showAlert, hideAlert } = useAlert();
+  const { showAlert, hideAlert } = useAlert()
 
   return (
     <>
@@ -54,7 +54,7 @@ function RouteComponent() {
         </GridItem>
       </Grid>
     </>
-  );
+  )
 }
 
 // function AppointmentTest() {

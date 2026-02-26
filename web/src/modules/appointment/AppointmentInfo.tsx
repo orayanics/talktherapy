@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link } from '@tanstack/react-router'
 
 export default function AppointmentInfo() {
   return (
@@ -34,5 +34,5 @@ export default function AppointmentInfo() {
         </div>
       </div>
     </>
-  );
+  )
 }

@@ -1,32 +1,32 @@
-import Grid from "~/components/Page/Grid";
-import GridItem from "~/components/Page/GridItem";
+import Grid from '~/components/Page/Grid'
+import GridItem from '~/components/Page/GridItem'
 
 interface DashboardData {
-  total: number;
-  patients: number;
-  clinicians: number;
-  admins: number;
-  appointments: number;
+  total: number
+  patients: number
+  clinicians: number
+  admins: number
+  appointments: number
 }
 
 export default function Index(props: { data: DashboardData }) {
-  const { data } = props;
+  const { data } = props
   return (
     <>
       <UserStatsCard {...data} />
       <AppointmentStatsCard {...data} />
     </>
-  );
+  )
 }
 
 function UserStatsCard(data: DashboardData) {
-  const { total, patients, clinicians, admins } = data;
+  const { total, patients, clinicians, admins } = data
   const COUNT_ITEMS = [
-    { key: "totalUsers", title: "Total Users", count: total },
-    { key: "patients", title: "Patients", count: patients },
-    { key: "clinicians", title: "Clinicians", count: clinicians },
-    { key: "admins", title: "Admins", count: admins },
-  ];
+    { key: 'totalUsers', title: 'Total Users', count: total },
+    { key: 'patients', title: 'Patients', count: patients },
+    { key: 'clinicians', title: 'Clinicians', count: clinicians },
+    { key: 'admins', title: 'Admins', count: admins },
+  ]
   return (
     <Grid
       cols={12}
@@ -38,18 +38,18 @@ function UserStatsCard(data: DashboardData) {
         <GridItem
           key={item.key}
           colSpan={12}
-          className={`lg:col-span-3 ${item.key === "totalUsers" ? "order-first lg:order-0" : ""}`}
+          className={`lg:col-span-3 ${item.key === 'totalUsers' ? 'order-first lg:order-0' : ''}`}
         >
           <h2>{item.title}</h2>
           <p>{item.count}</p>
         </GridItem>
       ))}
     </Grid>
-  );
+  )
 }
 
 function AppointmentStatsCard(data: DashboardData) {
-  const { appointments } = data;
+  const { appointments } = data
   return (
     <div className="bg-white p-4 rounded-lg border">
       {appointments ? (
@@ -61,5 +61,5 @@ function AppointmentStatsCard(data: DashboardData) {
         <h2 className="font-medium text-gray-600">No Appointments</h2>
       )}
     </div>
-  );
+  )
 }

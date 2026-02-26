@@ -1,16 +1,16 @@
-import ModalHeader from "~/components/Modal/ModalHeader";
-import ModalBody from "~/components/Modal/ModalBody";
-import { useRegisterAdmin } from "./useUserAdd";
-import { PermissionKey, PermissionLabels } from "~/models/user/permissions";
-import { fieldError, hasOnlyMessage } from "~/utils/errors";
+import ModalHeader from '~/components/Modal/ModalHeader'
+import ModalBody from '~/components/Modal/ModalBody'
+import { useRegisterAdmin } from './useUserAdd'
+import { PermissionKey, PermissionLabels } from '~/models/user/permissions'
+import { fieldError, hasOnlyMessage } from '~/utils/errors'
 
 interface UserAddAdminProps {
-  isOpen: boolean;
-  onClose: () => void;
+  isOpen: boolean
+  onClose: () => void
 }
 
 export default function UserAddAdmin(props: UserAddAdminProps) {
-  const { isOpen, onClose } = props;
+  const { isOpen, onClose } = props
   const {
     form,
     handleChange,
@@ -19,21 +19,21 @@ export default function UserAddAdmin(props: UserAddAdminProps) {
     resetState,
     errors,
     isLoading,
-  } = useRegisterAdmin();
+  } = useRegisterAdmin()
 
   const handleClose = () => {
-    resetState();
-    onClose();
-  };
+    resetState()
+    onClose()
+  }
 
   return (
     <ModalBody isOpen={isOpen} onClose={handleClose}>
       <form
         onSubmit={async (e) => {
-          e.preventDefault();
-          const isSuccess = await handleSubmit();
+          e.preventDefault()
+          const isSuccess = await handleSubmit()
           if (isSuccess) {
-            handleClose();
+            handleClose()
           }
         }}
         aria-disabled={isLoading}
@@ -56,9 +56,9 @@ export default function UserAddAdmin(props: UserAddAdminProps) {
                 {errors!.message}
               </p>
             )}
-            {fieldError(errors, "email") && (
+            {fieldError(errors, 'email') && (
               <p className="text-error text-sm mt-1">
-                {fieldError(errors, "email")}
+                {fieldError(errors, 'email')}
               </p>
             )}
           </div>
@@ -97,5 +97,5 @@ export default function UserAddAdmin(props: UserAddAdminProps) {
         </div>
       </form>
     </ModalBody>
-  );
+  )
 }

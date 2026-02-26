@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react'
 
 export default function ProfileUserInfo() {
   return (
@@ -21,5 +21,5 @@ export default function ProfileUserInfo() {
         </div>
       </div>
     </>
-  );
+  )
 }

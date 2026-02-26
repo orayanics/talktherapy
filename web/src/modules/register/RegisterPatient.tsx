@@ -1,31 +1,31 @@
-import { useState } from "react";
-import { Link } from "@tanstack/react-router";
+import { useState } from 'react'
+import { Link } from '@tanstack/react-router'
 
-import ConsentsPatient from "~/components/Consents/ConsentsPatient";
-import usePatient from "./usePatient";
-import { ResponseData } from "~/models/system";
-import { fieldError } from "~/utils/errors";
+import ConsentsPatient from '~/components/Consents/ConsentsPatient'
+import usePatient from './usePatient'
+import { ResponseData } from '~/models/system'
+import { fieldError } from '~/utils/errors'
 
 export default function RegisterPatient(props: ResponseData) {
-  const { data } = props;
+  const { data } = props
   const { form, errors, isLoading, handleConsent, handleChange, handleSubmit } =
-    usePatient();
-  const [isModalOpen, setIsModalOpen] = useState(false);
+    usePatient()
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   const handleTriggerModal = () => {
-    setIsModalOpen(true);
-  };
+    setIsModalOpen(true)
+  }
 
   const handleModalConsent = (isConsent: boolean) => {
-    handleConsent(isConsent);
-    setIsModalOpen(false);
-  };
+    handleConsent(isConsent)
+    setIsModalOpen(false)
+  }
 
   return (
     <form
       onSubmit={(e) => {
-        e.preventDefault();
-        handleSubmit();
+        e.preventDefault()
+        handleSubmit()
       }}
       className="flex flex-col gap-1 lg:gap-4"
     >
@@ -42,9 +42,9 @@ export default function RegisterPatient(props: ResponseData) {
                 value={form.name}
                 onChange={handleChange}
               />
-              {fieldError(errors, "name") && (
+              {fieldError(errors, 'name') && (
                 <span className="mt-2 text-sm text-error">
-                  {fieldError(errors, "name")}
+                  {fieldError(errors, 'name')}
                 </span>
               )}
             </div>
@@ -64,9 +64,9 @@ export default function RegisterPatient(props: ResponseData) {
                   ))}
                 </select>
               )}
-              {fieldError(errors, "diagnosis_id") && (
+              {fieldError(errors, 'diagnosis_id') && (
                 <span className="mt-2 text-sm text-error">
-                  {fieldError(errors, "diagnosis_id")}
+                  {fieldError(errors, 'diagnosis_id')}
                 </span>
               )}
             </div>
@@ -85,9 +85,9 @@ export default function RegisterPatient(props: ResponseData) {
               value={form.email}
               onChange={handleChange}
             />
-            {fieldError(errors, "email") && (
+            {fieldError(errors, 'email') && (
               <span className="mt-2 text-sm text-error">
-                {fieldError(errors, "email")}
+                {fieldError(errors, 'email')}
               </span>
             )}
           </div>
@@ -108,14 +108,14 @@ export default function RegisterPatient(props: ResponseData) {
               value={form.password_confirmation}
               onChange={handleChange}
             />
-            {fieldError(errors, "password") && (
+            {fieldError(errors, 'password') && (
               <span className="mt-2 text-sm text-error">
-                {fieldError(errors, "password")}
+                {fieldError(errors, 'password')}
               </span>
             )}
-            {fieldError(errors, "password_confirmation") && (
+            {fieldError(errors, 'password_confirmation') && (
               <span className="mt-2 text-sm text-error">
-                {fieldError(errors, "password_confirmation")}
+                {fieldError(errors, 'password_confirmation')}
               </span>
             )}
           </div>
@@ -137,9 +137,9 @@ export default function RegisterPatient(props: ResponseData) {
               Read the terms and conditions before consenting.
             </span>
           </label>
-          {fieldError(errors, "consent") && (
+          {fieldError(errors, 'consent') && (
             <span className="mt-2 text-sm text-error text-center">
-              {fieldError(errors, "consent")}
+              {fieldError(errors, 'consent')}
             </span>
           )}
           {isModalOpen && (
@@ -155,9 +155,9 @@ export default function RegisterPatient(props: ResponseData) {
         Submit
       </button>
       <Link className="mx-auto" to="/login">
-        I already have an account.{" "}
+        I already have an account.{' '}
         <span className="link link-hover">Login here.</span>
       </Link>
     </form>
-  );
+  )
 }

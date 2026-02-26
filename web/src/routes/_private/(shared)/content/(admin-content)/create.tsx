@@ -1,29 +1,29 @@
-import { useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { useState } from 'react'
+import { createFileRoute } from '@tanstack/react-router'
 
-import Markdown from "react-markdown";
-import rehypeRaw from "rehype-raw";
+import Markdown from 'react-markdown'
+import rehypeRaw from 'rehype-raw'
 
-import Grid from "~/components/Page/Grid";
-import GridItem from "~/components/Page/GridItem";
-import PageTitle from "~/components/Page/PageTitle";
+import Grid from '~/components/Page/Grid'
+import GridItem from '~/components/Page/GridItem'
+import PageTitle from '~/components/Page/PageTitle'
 
-import ContentMediaCreate from "~/modules/content/ContentMediaCreate";
+import ContentMediaCreate from '~/modules/content/ContentMediaCreate'
 
 export const Route = createFileRoute(
-  "/_private/(shared)/content/(admin-content)/create",
+  '/_private/(shared)/content/(admin-content)/create',
 )({
   component: RouteComponent,
-});
+})
 
 function RouteComponent() {
-  const [bodyContent, setBodyContent] = useState("");
+  const [bodyContent, setBodyContent] = useState('')
 
   return (
     <>
       <PageTitle
-        heading={"Add Content"}
-        subheading={"Add and manage the content of this media."}
+        heading={'Add Content'}
+        subheading={'Add and manage the content of this media.'}
       />
 
       <Grid cols={12} gap={6} className="w-auto">
@@ -51,5 +51,5 @@ function RouteComponent() {
         </GridItem>
       </Grid>
     </>
-  );
+  )
 }

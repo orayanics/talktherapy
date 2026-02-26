@@ -1,25 +1,25 @@
-import { useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { useState } from 'react'
+import { createFileRoute } from '@tanstack/react-router'
 
-import Markdown from "react-markdown";
-import rehypeRaw from "rehype-raw";
+import Markdown from 'react-markdown'
+import rehypeRaw from 'rehype-raw'
 
-import Grid from "~/components/Page/Grid";
-import GridItem from "~/components/Page/GridItem";
-import PageTitle from "~/components/Page/PageTitle";
+import Grid from '~/components/Page/Grid'
+import GridItem from '~/components/Page/GridItem'
+import PageTitle from '~/components/Page/PageTitle'
 
-import ContentMediaInfoEdit from "~/modules/content/ContentMediaInfoEdit";
+import ContentMediaInfoEdit from '~/modules/content/ContentMediaInfoEdit'
 export const Route = createFileRoute(
-  "/_private/(shared)/content/(admin-content)/$contentId/edit",
+  '/_private/(shared)/content/(admin-content)/$contentId/edit',
 )({
   component: RouteComponent,
-});
+})
 
 export const MEDIA_ITEMS = [
   {
-    id: "1",
-    title: "Getting Started with TypeScript",
-    description: "An introduction to TypeScript and its core features.",
+    id: '1',
+    title: 'Getting Started with TypeScript',
+    description: 'An introduction to TypeScript and its core features.',
     body: `
 ## TypeScript Basics
 
@@ -43,21 +43,21 @@ It helps developers catch errors early, improve code quality, and build more mai
   allowfullscreen
 ></iframe>
 `,
-    authorId: "author-001",
-    createdAt: "2025-06-27",
-    updatedAt: "2025-06-29",
-    category: "Programming",
-    tags: ["typescript", "javascript", "basics", "node"],
+    authorId: 'author-001',
+    createdAt: '2025-06-27',
+    updatedAt: '2025-06-29',
+    category: 'Programming',
+    tags: ['typescript', 'javascript', 'basics', 'node'],
   },
-];
+]
 
 function RouteComponent() {
-  const [bodyContent, setBodyContent] = useState(MEDIA_ITEMS[0].body);
+  const [bodyContent, setBodyContent] = useState(MEDIA_ITEMS[0].body)
   return (
     <>
       <PageTitle
-        heading={"Edit Content"}
-        subheading={"Manage the content of this media."}
+        heading={'Edit Content'}
+        subheading={'Manage the content of this media.'}
       />
 
       <Grid cols={12} gap={6} className="w-auto">
@@ -86,5 +86,5 @@ function RouteComponent() {
         </GridItem>
       </Grid>
     </>
-  );
+  )
 }

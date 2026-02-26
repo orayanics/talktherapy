@@ -1,11 +1,11 @@
-import RoleBadge from "~/components/Badge/RoleBadge";
-import AccountStatusBadge from "~/components/Badge/AccountStatusBadge";
+import RoleBadge from '~/components/Badge/RoleBadge'
+import AccountStatusBadge from '~/components/Badge/AccountStatusBadge'
 
-import { UserResponse } from "~/models/system";
-import { formatToLocalDateTime } from "~/utils/date";
+import { UserResponse } from '~/models/system'
+import { formatToLocalDateTime } from '~/utils/date'
 
 export default function ProfileAccInfo(props: UserResponse) {
-  const { account_role, account_status, created_at } = props;
+  const { account_role, account_status, created_at } = props
 
   return (
     <>
@@ -16,7 +16,7 @@ export default function ProfileAccInfo(props: UserResponse) {
           <RoleBadge role={account_role} />
         </div>
 
-        {account_role === "clinician" && (
+        {account_role === 'clinician' && (
           <div className="flex flex-row justify-between gap-2">
             <p className="font-bold">Specialization</p>
             <p>SLP</p>
@@ -38,5 +38,5 @@ export default function ProfileAccInfo(props: UserResponse) {
         </div>
       </div>
     </>
-  );
+  )
 }

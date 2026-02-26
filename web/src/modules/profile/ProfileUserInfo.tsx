@@ -1,7 +1,7 @@
-import { UserResponse } from "~/models/system";
+import { UserResponse } from '~/models/system'
 
 export default function ProfileUserInfo(props: UserResponse) {
-  const { name, email } = props;
+  const { name, email } = props
 
   return (
     <>
@@ -23,5 +23,5 @@ export default function ProfileUserInfo(props: UserResponse) {
         </div>
       </div>
     </>
-  );
+  )
 }

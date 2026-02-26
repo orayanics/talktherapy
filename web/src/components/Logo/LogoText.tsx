@@ -1,4 +1,4 @@
-import LogoSvg from "./LogoSvg";
+import LogoSvg from './LogoSvg'
 
 export default function LogoText() {
   return (
@@ -7,5 +7,5 @@ export default function LogoText() {
         <LogoSvg size="sm" />
       </div>
     </div>
-  );
+  )
 }

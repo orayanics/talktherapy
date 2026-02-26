@@ -1,32 +1,32 @@
-import { useState } from "react";
-import { getTime } from "~/utils/date";
-import { AvailableSlot } from "~/models/schedule";
+import { useState } from 'react'
+import { getTime } from '~/utils/date'
+import { AvailableSlot } from '~/models/schedule'
 
 interface AppointmentCardProps {
-  data: AvailableSlot[];
+  data: AvailableSlot[]
 }
 
 export default function AppointmentCard(props: AppointmentCardProps) {
-  const { data } = props;
-  const [current, setCurrent] = useState<string>(data[0]?.id || "");
+  const { data } = props
+  const [current, setCurrent] = useState<string>(data[0]?.id || '')
   return (
     <div
       id="slot-list"
       className="space-y-2 min-h-[70vh] max-h-[70vh] overflow-y-auto"
     >
       {data.map((item: AvailableSlot) => {
-        const { id, starts_at, ends_at, clinician } = item;
-        const startTime = getTime(starts_at);
-        const endTime = getTime(ends_at);
+        const { id, starts_at, ends_at, clinician } = item
+        const startTime = getTime(starts_at)
+        const endTime = getTime(ends_at)
         const {
           user: { name },
           diagnosis: { label },
-        } = clinician;
+        } = clinician
 
         return (
           <div
             key={id}
-            className={`${current === id && "border-primary"} collapse collapse-plus bg-base-100 border border-base-300`}
+            className={`${current === id && 'border-primary'} collapse collapse-plus bg-base-100 border border-base-300`}
             id={`slot-${id}`}
           >
             <input
@@ -56,8 +56,8 @@ export default function AppointmentCard(props: AppointmentCardProps) {
               </div>
             </div>
           </div>
-        );
+        )
       })}
     </div>
-  );
+  )
 }

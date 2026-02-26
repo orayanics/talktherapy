@@ -1,11 +1,11 @@
 interface PageTitleProps {
-  heading: string;
-  subheading?: string;
-  brow?: string;
+  heading: string
+  subheading?: string
+  brow?: string
 }
 
 export default function PageTitle(props: PageTitleProps) {
-  const { heading, subheading, brow } = props;
+  const { heading, subheading, brow } = props
   return (
     <header>
       <div className="border-b mb-4">
@@ -15,7 +15,7 @@ export default function PageTitle(props: PageTitleProps) {
           </p>
         )}
         <h1
-          className={`font-bold text-2xl col-span-12 ${!subheading && "mb-4"}`}
+          className={`font-bold text-2xl col-span-12 ${!subheading && 'mb-4'}`}
         >
           {heading}
         </h1>
@@ -24,5 +24,5 @@ export default function PageTitle(props: PageTitleProps) {
         )}
       </div>
     </header>
-  );
+  )
 }

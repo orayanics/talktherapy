@@ -1,35 +1,35 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute } from '@tanstack/react-router'
 
-import PageTitle from "~/components/Page/PageTitle";
-import Grid from "~/components/Page/Grid";
-import GridItem from "~/components/Page/GridItem";
+import PageTitle from '~/components/Page/PageTitle'
+import Grid from '~/components/Page/Grid'
+import GridItem from '~/components/Page/GridItem'
 
-import LoaderTable from "~/components/Loader/LoaderTable";
-import SkeletonError from "~/components/Skeleton/SkeletonError";
-import SkeletonNull from "~/components/Skeleton/SkeletonNull";
+import LoaderTable from '~/components/Loader/LoaderTable'
+import SkeletonError from '~/components/Skeleton/SkeletonError'
+import SkeletonNull from '~/components/Skeleton/SkeletonNull'
 
-import ScheduleDetailsId from "~/modules/schedule/id/ScheduleInfo";
-import ScheduleSlot from "~/modules/schedule/id/ScheduleSlot";
-import { availabilityByIdQuery } from "~/api/scheduling";
-import { useQuery } from "@tanstack/react-query";
+import ScheduleDetailsId from '~/modules/schedule/id/ScheduleInfo'
+import ScheduleSlot from '~/modules/schedule/id/ScheduleSlot'
+import { availabilityByIdQuery } from '~/api/scheduling'
+import { useQuery } from '@tanstack/react-query'
 
 export const Route = createFileRoute(
-  "/_private/(shared)/schedules/$scheduleId",
+  '/_private/(shared)/schedules/$scheduleId',
 )({
   component: RouteComponent,
-});
+})
 
 function RouteComponent() {
-  const { scheduleId } = Route.useParams();
+  const { scheduleId } = Route.useParams()
   const {
     data = [],
     isLoading,
     error,
-  } = useQuery(availabilityByIdQuery(scheduleId));
+  } = useQuery(availabilityByIdQuery(scheduleId))
 
-  if (isLoading) return <LoaderTable />;
-  if (error) return <SkeletonError />;
-  if (!data) return <SkeletonNull />;
+  if (isLoading) return <LoaderTable />
+  if (error) return <SkeletonError />
+  if (!data) return <SkeletonNull />
 
   return (
     <>
@@ -48,5 +48,5 @@ function RouteComponent() {
         </GridItem>
       </Grid>
     </>
-  );
+  )
 }

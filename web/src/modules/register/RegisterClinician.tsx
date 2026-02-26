@@ -1,17 +1,17 @@
-import { useEffect, useState } from "react";
-import { Link, useBlocker } from "@tanstack/react-router";
-import ModalBlockNavigation from "~/components/Modal/ModalBlockNavigation";
+import { useEffect, useState } from 'react'
+import { Link, useBlocker } from '@tanstack/react-router'
+import ModalBlockNavigation from '~/components/Modal/ModalBlockNavigation'
 
 export default function RegisterClinician() {
-  const [isVerified, setIsVerified] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isVerified, setIsVerified] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
   async function handleVerification() {
     // async simulation
-    setIsLoading(true);
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    setIsLoading(false);
-    setIsVerified(true);
+    setIsLoading(true)
+    await new Promise((resolve) => setTimeout(resolve, 500))
+    setIsLoading(false)
+    setIsVerified(true)
   }
 
   return (
@@ -28,11 +28,11 @@ export default function RegisterClinician() {
         </button>
       )}
       <Link to="/login">
-        I already have an account.{" "}
+        I already have an account.{' '}
         <span className="link link-hover">Login here.</span>
       </Link>
     </div>
-  );
+  )
 }
 
 function ClinicianVerification() {
@@ -54,35 +54,35 @@ function ClinicianVerification() {
         ))}
       </div>
     </div>
-  );
+  )
 }
 
 function ClinicianForm() {
-  const [formIsDirty, setFormIsDirty] = useState(false);
+  const [formIsDirty, setFormIsDirty] = useState(false)
 
   const { proceed, reset, status } = useBlocker({
     shouldBlockFn: () => formIsDirty,
     enableBeforeUnload: formIsDirty,
     withResolver: true,
-  });
+  })
 
   const handleInputChange = () => {
     if (!formIsDirty) {
-      setFormIsDirty(true);
+      setFormIsDirty(true)
     }
-  };
+  }
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    alert("Form submitted!");
-    setFormIsDirty(false);
-  };
+    e.preventDefault()
+    alert('Form submitted!')
+    setFormIsDirty(false)
+  }
 
   return (
     <div className="mx-auto w-full">
-      {status === "blocked" && (
+      {status === 'blocked' && (
         <ModalBlockNavigation
-          isOpen={status === "blocked"}
+          isOpen={status === 'blocked'}
           onProceed={proceed}
           onReset={reset}
         >
@@ -101,18 +101,18 @@ function ClinicianForm() {
         </button>
       </form>
     </div>
-  );
+  )
 }
 
 function ClinicianPersonalForm({ onChange }: { onChange: VoidFunction }) {
   const SPECIALTY_OPTIONS = [
-    "Psychologist",
-    "Psychiatrist",
-    "Therapist",
-    "Counselor",
-    "Social Worker",
-    "Other",
-  ];
+    'Psychologist',
+    'Psychiatrist',
+    'Therapist',
+    'Counselor',
+    'Social Worker',
+    'Other',
+  ]
 
   return (
     <div className="flex flex-col gap-1 lg:gap-4">
@@ -137,7 +137,7 @@ function ClinicianPersonalForm({ onChange }: { onChange: VoidFunction }) {
         </select>
       </div>
     </div>
-  );
+  )
 }
 
 function ClinicianAccountForm({ onChange }: { onChange: VoidFunction }) {
@@ -165,5 +165,5 @@ function ClinicianAccountForm({ onChange }: { onChange: VoidFunction }) {
         />
       </div>
     </div>
-  );
+  )
 }

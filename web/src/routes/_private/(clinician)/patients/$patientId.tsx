@@ -1,23 +1,23 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute(
-  "/_private/(clinician)/patients/$patientId",
+  '/_private/(clinician)/patients/$patientId',
 )({
   component: RouteComponent,
-});
+})
 
-import Grid from "~/components/Page/Grid";
-import GridItem from "~/components/Page/GridItem";
+import Grid from '~/components/Page/Grid'
+import GridItem from '~/components/Page/GridItem'
 
-import PageTitle from "~/components/Page/PageTitle";
-import PatientInfo from "~/modules/patients/PatientInfo";
+import PageTitle from '~/components/Page/PageTitle'
+import PatientInfo from '~/modules/patients/PatientInfo'
 
 function RouteComponent() {
   return (
     <>
       <PageTitle
-        heading={"Patient Overview"}
-        subheading={"View patient profile and manage actions."}
+        heading={'Patient Overview'}
+        subheading={'View patient profile and manage actions.'}
       />
 
       <Grid cols={8} gap={6} className="w-auto lg:w-200">
@@ -34,5 +34,5 @@ function RouteComponent() {
         </GridItem>
       </Grid>
     </>
-  );
+  )
 }

@@ -1,8 +1,8 @@
 // ~/lib/auth-guards.ts
-import { redirect } from "@tanstack/react-router";
-import { UserResponse } from "~/models/system";
+import { redirect } from '@tanstack/react-router'
+import { UserResponse } from '~/models/system'
 
-export type AccountRole = UserResponse["account_role"];
+export type AccountRole = UserResponse['account_role']
 
 /**
  * sudo bypasses all role checks.
@@ -11,29 +11,29 @@ export function hasRole(
   user: UserResponse,
   ...allowedRoles: AccountRole[]
 ): boolean {
-  if (user.account_role === "sudo") return true;
-  return allowedRoles.includes(user.account_role);
+  if (user.account_role === 'sudo') return true
+  return allowedRoles.includes(user.account_role)
 }
 
 export function hasPermission(user: UserResponse, permission: string): boolean {
-  if (user.account_role === "sudo") return true;
-  return user.account_permissions?.includes(permission) ?? false;
+  if (user.account_role === 'sudo') return true
+  return user.account_permissions?.includes(permission) ?? false
 }
 
 export function hasAllPermissions(
   user: UserResponse,
   permissions: string[],
 ): boolean {
-  if (user.account_role === "sudo") return true;
-  return permissions.every((p) => user.account_permissions?.includes(p));
+  if (user.account_role === 'sudo') return true
+  return permissions.every((p) => user.account_permissions?.includes(p))
 }
 
 export function hasAnyPermission(
   user: UserResponse,
   permissions: string[],
 ): boolean {
-  if (user.account_role === "sudo") return true;
-  return permissions.some((p) => user.account_permissions?.includes(p));
+  if (user.account_role === 'sudo') return true
+  return permissions.some((p) => user.account_permissions?.includes(p))
 }
 
 /**
@@ -45,9 +45,9 @@ export function requireRole(
   ...allowedRoles: AccountRole[]
 ): UserResponse {
   if (!hasRole(user, ...allowedRoles)) {
-    throw redirect({ to: "/unauthorized" });
+    throw redirect({ to: '/unauthorized' })
   }
-  return user;
+  return user
 }
 
 export function requirePermission(
@@ -55,9 +55,9 @@ export function requirePermission(
   permission: string,
 ): UserResponse {
   if (!hasPermission(user, permission)) {
-    throw redirect({ to: "/unauthorized" });
+    throw redirect({ to: '/unauthorized' })
   }
-  return user;
+  return user
 }
 
 export function requireAllPermissions(
@@ -65,9 +65,9 @@ export function requireAllPermissions(
   permissions: string[],
 ): UserResponse {
   if (!hasAllPermissions(user, permissions)) {
-    throw redirect({ to: "/unauthorized" });
+    throw redirect({ to: '/unauthorized' })
   }
-  return user;
+  return user
 }
 
 export function requireAnyPermission(
@@ -75,7 +75,7 @@ export function requireAnyPermission(
   permissions: string[],
 ): UserResponse {
   if (!hasAnyPermission(user, permissions)) {
-    throw redirect({ to: "/unauthorized" });
+    throw redirect({ to: '/unauthorized' })
   }
-  return user;
+  return user
 }

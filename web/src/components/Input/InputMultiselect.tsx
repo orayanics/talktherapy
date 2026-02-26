@@ -1,27 +1,27 @@
 interface Option {
-  value: unknown;
-  label: string;
+  value: unknown
+  label: string
 }
 
 interface InputMultiSelectProps {
-  placeholder?: string;
-  options: Option[];
-  value?: string[];
-  onChange?: (value: string[]) => void;
-  className?: string;
+  placeholder?: string
+  options: Option[]
+  value?: string[]
+  onChange?: (value: string[]) => void
+  className?: string
 }
 
 export default function InputMultiselect(props: InputMultiSelectProps) {
-  const { placeholder, options, value = [], onChange, className } = props;
-  const label = value.length === 0 ? placeholder : `${value.length} selected`;
+  const { placeholder, options, value = [], onChange, className } = props
+  const label = value.length === 0 ? placeholder : `${value.length} selected`
 
   const toggleOption = (option: string) => {
     const nextValue = value.includes(option)
       ? value.filter((v) => v !== option)
-      : [...value, option];
+      : [...value, option]
 
-    onChange?.(nextValue);
-  };
+    onChange?.(nextValue)
+  }
 
   return (
     <div className="dropdown dropdown-start">
@@ -53,5 +53,5 @@ export default function InputMultiselect(props: InputMultiSelectProps) {
         ))}
       </ul>
     </div>
-  );
+  )
 }

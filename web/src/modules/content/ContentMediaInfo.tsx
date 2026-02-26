@@ -1,5 +1,5 @@
-import { Link } from "@tanstack/react-router";
-import { MediaContentClient } from "~/models/content";
+import { Link } from '@tanstack/react-router'
+import { MediaContentClient } from '~/models/content'
 
 export default function ContentMediaInfo(props: MediaContentClient) {
   const {
@@ -11,7 +11,7 @@ export default function ContentMediaInfo(props: MediaContentClient) {
     updatedAt,
     category,
     tags,
-  } = props;
+  } = props
 
   return (
     <>
@@ -49,7 +49,7 @@ export default function ContentMediaInfo(props: MediaContentClient) {
                       <span key={tag} className="badge">
                         {tag}
                       </span>
-                    );
+                    )
                   })}
                 </>
               )}
@@ -81,5 +81,5 @@ export default function ContentMediaInfo(props: MediaContentClient) {
         </div>
       </div>
     </>
-  );
+  )
 }

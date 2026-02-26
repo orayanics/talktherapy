@@ -1,24 +1,24 @@
-import React from "react";
+import React from 'react'
 
 type ColumnForKey<T, K extends keyof T> = {
-  header: string;
-  accessor: K;
-  render?: (value: T[K], row: T) => React.ReactNode;
-};
+  header: string
+  accessor: K
+  render?: (value: T[K], row: T) => React.ReactNode
+}
 
-export type Column<T> = { [K in keyof T]: ColumnForKey<T, K> }[keyof T];
+export type Column<T> = { [K in keyof T]: ColumnForKey<T, K> }[keyof T]
 
 export type TableContentProps<T> = {
-  columns: Column<T>[];
-  data: T[];
-  renderers?: Partial<Record<keyof T, (value: any, row: T) => React.ReactNode>>;
-};
+  columns: Column<T>[]
+  data: T[]
+  renderers?: Partial<Record<keyof T, (value: any, row: T) => React.ReactNode>>
+}
 
 function getRowId<T extends { id?: React.Key }>(
   row: T,
   rowIndex: number,
 ): React.Key {
-  return row.id ?? rowIndex;
+  return row.id ?? rowIndex
 }
 
 export default function TableContent<T extends { id?: React.Key }>({
@@ -59,7 +59,7 @@ export default function TableContent<T extends { id?: React.Key }>({
               className="transition-colors hover:bg-gray-50"
             >
               {columns.map((col) => {
-                const value = row[col.accessor];
+                const value = row[col.accessor]
                 return (
                   <td
                     key={String(col.accessor)}
@@ -70,17 +70,17 @@ export default function TableContent<T extends { id?: React.Key }>({
                       : renderers[col.accessor]
                         ? renderers[col.accessor]!(value, row)
                         : value != null
-                          ? typeof value === "object"
+                          ? typeof value === 'object'
                             ? JSON.stringify(value)
                             : (value as unknown as React.ReactNode)
-                          : ""}
+                          : ''}
                   </td>
-                );
+                )
               })}
             </tr>
           ))}
         </tbody>
       </table>
     </div>
-  );
+  )
 }

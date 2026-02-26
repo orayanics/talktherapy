@@ -4,17 +4,17 @@ import {
   rootRouteId,
   useMatch,
   useRouter,
-} from "@tanstack/react-router";
-import type { ErrorComponentProps } from "@tanstack/react-router";
+} from '@tanstack/react-router'
+import type { ErrorComponentProps } from '@tanstack/react-router'
 
 export function DefaultCatchBoundary({ error }: ErrorComponentProps) {
-  const router = useRouter();
+  const router = useRouter()
   const isRoot = useMatch({
     strict: false,
     select: (state) => state.id === rootRouteId,
-  });
+  })
 
-  console.error(error);
+  console.error(error)
 
   return (
     <div className="min-w-0 flex flex-col items-center justify-center z-10 fixed inset-0">
@@ -23,7 +23,7 @@ export function DefaultCatchBoundary({ error }: ErrorComponentProps) {
         <div className="flex gap-2 items-center flex-wrap">
           <button
             onClick={() => {
-              router.invalidate();
+              router.invalidate()
             }}
             className={`btn btn-success rounded-sm uppercase font-extrabold`}
           >
@@ -41,8 +41,8 @@ export function DefaultCatchBoundary({ error }: ErrorComponentProps) {
               to="/"
               className={`btn btn-primary rounded-sm uppercase font-extrabold`}
               onClick={(e) => {
-                e.preventDefault();
-                window.history.back();
+                e.preventDefault()
+                window.history.back()
               }}
             >
               Go Back
@@ -51,5 +51,5 @@ export function DefaultCatchBoundary({ error }: ErrorComponentProps) {
         </div>
       </div>
     </div>
-  );
+  )
 }

@@ -1,5 +1,5 @@
 @theme inline {
-  --font-mono: "Space Mono", monospace;
+  --font-mono: 'Space Mono', monospace;
 }
 
 @layer base {
@@ -64,7 +64,7 @@
   }
 
   .pattern-boxes::before {
-    content: "";
+    content: '';
     position: absolute;
     top: 0;
     left: 0;

@@ -1,25 +1,25 @@
-import React from "react";
-import { NAV_BY_ROLE } from "~/config/sidebar";
-import { UserType } from "~/models/user/user";
-import { FaBars } from "react-icons/fa";
+import React from 'react'
+import { NAV_BY_ROLE } from '~/config/sidebar'
+import { UserType } from '~/models/user/user'
+import { FaBars } from 'react-icons/fa'
 
-import LogoText from "~/components/Logo/LogoText";
-import SidebarNavItems from "./SidebarNavItems";
-import { useLogout } from "~/api/auth";
+import LogoText from '~/components/Logo/LogoText'
+import SidebarNavItems from './SidebarNavItems'
+import { useLogout } from '~/api/auth'
 
 interface SidebarProps {
-  children: React.ReactNode;
-  role: UserType;
+  children: React.ReactNode
+  role: UserType
 }
 
 export default function Sidebar(props: SidebarProps) {
-  const { children, role } = props;
-  const navItems = NAV_BY_ROLE[role] ?? [];
+  const { children, role } = props
+  const navItems = NAV_BY_ROLE[role] ?? []
 
-  const { mutateAsync: logout } = useLogout();
+  const { mutateAsync: logout } = useLogout()
   const handleLogout = async () => {
-    await logout();
-  };
+    await logout()
+  }
 
   return (
     <aside className="drawer lg:drawer-open">
@@ -50,5 +50,5 @@ export default function Sidebar(props: SidebarProps) {
         </div>
       </div>
     </aside>
-  );
+  )
 }

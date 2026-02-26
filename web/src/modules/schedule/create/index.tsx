@@ -1,5 +1,5 @@
-import PageTitle from "~/components/Page/PageTitle";
-import ScheduleForm from "../ScheduleForm";
+import PageTitle from '~/components/Page/PageTitle'
+import ScheduleForm from '../ScheduleForm'
 
 export default function index() {
   return (
@@ -11,5 +11,5 @@ export default function index() {
       />
       <ScheduleForm />
     </div>
-  );
+  )
 }
