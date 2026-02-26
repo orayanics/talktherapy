@@ -83,7 +83,7 @@ export default function PatientBookmark() {
               <div>
                 <h3 className="font-semibold">{title}</h3>
                 <p className="text-sm text-gray-600">{description}</p>
-                <p className="text-xs text-gray-500 italic">{category}</p>
+                <p className="text-sm text-gray-500 italic">{category}</p>
               </div>
               <button className="btn btn-primary">
                 <FaBookmark />

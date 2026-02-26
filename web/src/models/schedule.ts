@@ -7,6 +7,13 @@ export interface AvailabilityRulesParams {
   perPage?: number;
 }
 
+export interface PatientAppointmentsQueryParams {
+  date?: Date;
+  diagnosis?: string;
+  page?: number;
+  perPage?: number;
+}
+
 export interface SlotDto {
   id: string;
   starts_at: string;

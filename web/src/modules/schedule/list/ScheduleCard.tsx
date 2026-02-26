@@ -18,7 +18,7 @@ export default function ScheduleCard(props: ScheduleCardProps) {
   return (
     <div
       id="table-schedule"
-      className="flex flex-col gap-4 h-[80vh] min-h-[80vh] max-h-[80vh] overflow-auto"
+      className="space-y-2 min-h-[70vh] max-h-[70vh] overflow-y-auto"
     >
       {data.map((item: any) => {
         const { id, starts_at, recurrence_rule, slots } = item;
@@ -35,8 +35,9 @@ export default function ScheduleCard(props: ScheduleCardProps) {
 
         return (
           <div
-            className="min-h-fit max-h-100 collapse collapse-plus bg-base-100 border border-base-300"
+            className={`${current === id && "border-primary"} collapse collapse-plus bg-base-100 border border-base-300`}
             key={id}
+            id={`schedule-${id}`}
           >
             <input
               type="checkbox"
@@ -45,6 +46,7 @@ export default function ScheduleCard(props: ScheduleCardProps) {
                 setCurrent(current === id ? "" : id);
               }}
               checked={current === id}
+              className="p-0"
             />
             <div className="collapse-title">
               <div className="flex flex-row gap-4 items-center">
@@ -74,36 +76,38 @@ export default function ScheduleCard(props: ScheduleCardProps) {
 
                   <div>
                     <h4 className="font-mono text-primary">TIME SCHEDULE</h4>
-                    <p className="text-xs text-gray-400">
+                    <p className="text-sm text-gray-400">
                       These are the time slots available for this schedule.
                     </p>
                   </div>
 
-                  {slots.map((slot: any) => {
-                    const slotStart = getTime(slot.starts_at);
-                    const slotEnd = getTime(slot.ends_at);
-                    const slotDate = formatToLocalDate(slot.starts_at);
-                    return (
-                      <div
-                        key={slot.id}
-                        className="flex flex-row justify-between items-center border rounded-lg p-2 hover:bg-gray-50"
-                      >
-                        <div className="flex gap-2 justify-between">
-                          <p className="text-sm border-r pr-3 w-24">
-                            {slotDate}
-                          </p>
-                          <p className="text-sm pl-3">
-                            {slotStart} – {slotEnd}
-                          </p>
-                        </div>
-                        <span
-                          className={`font-mono badge badge-ghost ${slot.is_booked ? "badge-error" : "badge-success"}`}
+                  <div className="space-y-2">
+                    {slots.map((slot: any) => {
+                      const slotStart = getTime(slot.starts_at);
+                      const slotEnd = getTime(slot.ends_at);
+                      const slotDate = formatToLocalDate(slot.starts_at);
+                      return (
+                        <div
+                          key={slot.id}
+                          className="flex flex-row justify-between items-center border rounded-lg p-2 hover:bg-gray-50"
                         >
-                          {slot.is_booked ? "Booked" : "Available"}
-                        </span>
-                      </div>
-                    );
-                  })}
+                          <div className="flex gap-2 justify-between">
+                            <p className="text-sm border-r pr-3 w-24">
+                              {slotDate}
+                            </p>
+                            <p className="text-sm pl-3">
+                              {slotStart} – {slotEnd}
+                            </p>
+                          </div>
+                          <span
+                            className={`font-mono badge badge-ghost ${slot.is_booked ? "badge-error" : "badge-success"}`}
+                          >
+                            {slot.is_booked ? "Booked" : "Available"}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               )}
             </div>

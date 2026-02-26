@@ -14,7 +14,7 @@ export default function LoginForm() {
       <div className="flex flex-col gap-4">
         {/* TODO: Check errors.message instanceof */}
         {errors?.message && !errors.errors && (
-          <p className="text-error text-center text-xs mt-1">
+          <p className="text-error text-center text-sm mt-1">
             {errors.message instanceof Object
               ? errors.message.response
               : errors.message}
@@ -33,7 +33,7 @@ export default function LoginForm() {
             />
           </label>
           {errors?.errors?.email && (
-            <p className="text-error text-xs mt-1">{errors.errors.email[0]}</p>
+            <p className="text-error text-sm mt-1">{errors.errors.email[0]}</p>
           )}
         </div>
 
@@ -50,7 +50,7 @@ export default function LoginForm() {
             />
           </label>
           {errors?.errors?.password && (
-            <p className="text-error text-xs mt-1">
+            <p className="text-error text-sm mt-1">
               {errors.errors.password[0]}
             </p>
           )}

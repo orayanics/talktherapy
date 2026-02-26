@@ -11,6 +11,7 @@ import { api } from "~/api/axios";
 import {
   AvailabilityRulesParams,
   CreateAvailabilityPayload,
+  PatientAppointmentsQueryParams,
 } from "~/models/schedule";
 
 // query options
@@ -43,13 +44,18 @@ export const availabilityByIdQuery = (ruleId: string) =>
     retry: false,
   });
 
-export const appointmentsQuery = (date?: Date) =>
+export const appointmentsQuery = (params: PatientAppointmentsQueryParams) =>
   queryOptions({
-    queryKey: ["appointments", date],
+    queryKey: ["appointments", params],
     queryFn: async () => {
-      const params = date ? { from: format(date, "yyyy-MM-dd") } : {};
+      const apiParams = {
+        ...(params.date && { from: format(params.date, "yyyy-MM-dd") }),
+        ...(params.diagnosis && { diagnosis: params.diagnosis }),
+        page: params.page ?? 1,
+        per_page: params.perPage ?? 10,
+      };
       const { data } = await api.get(`/scheduling/slots/available`, {
-        params,
+        params: apiParams,
       });
       return data;
     },

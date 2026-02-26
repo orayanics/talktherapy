@@ -31,7 +31,7 @@ export default function ScheduleForm() {
         </h2>
 
         <fieldset>
-          <legend className="fieldset-legend font-mono text-xs uppercase text-gray-400">
+          <legend className="fieldset-legend font-mono text-sm uppercase text-gray-400">
             <span className="text-primary mr-1">*</span>
             Schedule Date
           </legend>
@@ -50,7 +50,7 @@ export default function ScheduleForm() {
           {errors?.errors?.date && <p>{errors.errors.date[0]}</p>}
         </fieldset>
         <fieldset>
-          <legend className="fieldset-legend font-mono text-xs uppercase text-gray-400">
+          <legend className="fieldset-legend font-mono text-sm uppercase text-gray-400">
             <span className="text-primary mr-1">*</span>
             Start Time
           </legend>
@@ -67,7 +67,7 @@ export default function ScheduleForm() {
         </fieldset>
 
         <fieldset>
-          <legend className="fieldset-legend font-mono text-xs uppercase text-gray-400">
+          <legend className="fieldset-legend font-mono text-sm uppercase text-gray-400">
             <span className="text-primary mr-1">*</span>
             End Time
           </legend>
@@ -113,7 +113,7 @@ export default function ScheduleForm() {
 
         {form.freq === "WEEKLY" && (
           <div className="flex flex-col gap-2">
-            <p className="text-xs text-gray-400 font-mono uppercase">
+            <p className="text-sm text-gray-400 font-mono uppercase">
               Days <span className="text-primary">*</span>
             </p>
             <div
@@ -144,7 +144,7 @@ export default function ScheduleForm() {
               })}
             </div>
             {errors?.errors?.selected_days && (
-              <p className="text-error text-xs font-medium" role="alert">
+              <p className="text-error text-sm font-medium" role="alert">
                 {errors.errors.selected_days}
               </p>
             )}
@@ -162,11 +162,11 @@ export default function ScheduleForm() {
             </h2>
 
             <fieldset>
-              <legend className="fieldset-legend font-mono text-xs uppercase text-gray-400">
+              <legend className="fieldset-legend font-mono text-sm uppercase text-gray-400">
                 {`Generate slots for the next ${form.horizon_days} day${form.horizon_days !== 1 ? "s" : ""}`}
               </legend>
               <div className="flex items-center gap-4">
-                <span className="font-mono text-xs text-gray-400">1</span>
+                <span className="font-mono text-sm text-gray-400">1</span>
                 <input
                   type="range"
                   name="horizon_days"
@@ -176,9 +176,9 @@ export default function ScheduleForm() {
                   onChange={handleChange}
                   className="range range-primary range-xs w-full"
                 />
-                <span className="font-mono text-xs text-gray-400">30</span>
+                <span className="font-mono text-sm text-gray-400">30</span>
               </div>
-              <p className="text-xs text-gray-400">
+              <p className="text-sm text-gray-400">
                 Slots will be pre-generated up to {form.horizon_days} day
                 {form.horizon_days !== 1 ? "s" : ""} from today. Maximum is 30
                 days.
@@ -188,41 +188,43 @@ export default function ScheduleForm() {
         </>
       )}
 
-      {form.freq !== "none" && form.freq !== "WEEKLY" && (
-        <>
-          <hr />
+      {form.freq !== "none" &&
+        form.freq !== "WEEKLY" &&
+        form.freq !== "DAILY" && (
+          <>
+            <hr />
 
-          <section className="flex flex-col gap-2">
-            <h2 className="font-mono text-sm text-primary uppercase">
-              Expansion Window
-            </h2>
+            <section className="flex flex-col gap-2">
+              <h2 className="font-mono text-sm text-primary uppercase">
+                Expansion Window
+              </h2>
 
-            <fieldset>
-              <legend className="fieldset-legend font-mono text-xs uppercase text-gray-400">
-                {`Generate slots for the next ${form.horizon_days} month${form.horizon_days !== 1 ? "s" : ""}`}
-              </legend>
-              <div className="flex items-center gap-4">
-                <span className="font-mono text-xs text-gray-400">1</span>
-                <input
-                  type="range"
-                  name="horizon_days"
-                  min={1}
-                  max={6}
-                  value={form.horizon_days}
-                  onChange={handleChange}
-                  className="range range-primary range-xs w-full"
-                />
-                <span className="font-mono text-xs text-gray-400">6</span>
-              </div>
-              <p className="text-xs text-gray-400">
-                Slots will be pre-generated up to {form.horizon_days} month
-                {form.horizon_days !== 1 ? "s" : ""} from today. Maximum is 6
-                months.
-              </p>
-            </fieldset>
-          </section>
-        </>
-      )}
+              <fieldset>
+                <legend className="fieldset-legend font-mono text-sm uppercase text-gray-400">
+                  {`Generate slots for the next ${form.horizon_days} month${form.horizon_days !== 1 ? "s" : ""}`}
+                </legend>
+                <div className="flex items-center gap-4">
+                  <span className="font-mono text-sm text-gray-400">1</span>
+                  <input
+                    type="range"
+                    name="horizon_days"
+                    min={1}
+                    max={6}
+                    value={form.horizon_days}
+                    onChange={handleChange}
+                    className="range range-primary range-xs w-full"
+                  />
+                  <span className="font-mono text-sm text-gray-400">6</span>
+                </div>
+                <p className="text-sm text-gray-400">
+                  Slots will be pre-generated up to {form.horizon_days} month
+                  {form.horizon_days !== 1 ? "s" : ""} from today. Maximum is 6
+                  months.
+                </p>
+              </fieldset>
+            </section>
+          </>
+        )}
 
       <hr />
 
@@ -267,7 +269,7 @@ export default function ScheduleForm() {
 
 function Row({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex flex-row justify-between items-center text-xs px-4 py-2 font-mono text-gray-400 uppercase">
+    <div className="flex flex-row justify-between items-center text-sm px-4 py-2 font-mono text-gray-400 uppercase">
       <span>{label}</span>
       <span>{value}</span>
     </div>

@@ -42,7 +42,7 @@ export default function RegisterPatient(props: ResponseData) {
                 onChange={handleChange}
               />
               {errors?.name && (
-                <span className="mt-2 text-xs text-error">
+                <span className="mt-2 text-sm text-error">
                   {errors.name[0]}
                 </span>
               )}
@@ -64,7 +64,7 @@ export default function RegisterPatient(props: ResponseData) {
                 </select>
               )}
               {errors?.diagnosis_id && (
-                <span className="mt-2 text-xs text-error">
+                <span className="mt-2 text-sm text-error">
                   {errors.diagnosis_id[0]}
                 </span>
               )}
@@ -85,7 +85,7 @@ export default function RegisterPatient(props: ResponseData) {
               onChange={handleChange}
             />
             {errors?.email && (
-              <span className="mt-2 text-xs text-error">{errors.email[0]}</span>
+              <span className="mt-2 text-sm text-error">{errors.email[0]}</span>
             )}
           </div>
           <input
@@ -106,12 +106,12 @@ export default function RegisterPatient(props: ResponseData) {
               onChange={handleChange}
             />
             {errors?.password && (
-              <span className="mt-2 text-xs text-error">
+              <span className="mt-2 text-sm text-error">
                 {errors.password[0]}
               </span>
             )}
             {errors?.password && errors.password[1] && (
-              <span className="mt-2 text-xs text-error">
+              <span className="mt-2 text-sm text-error">
                 {errors.password[1]}
               </span>
             )}
@@ -128,14 +128,14 @@ export default function RegisterPatient(props: ResponseData) {
               readOnly
             />
             <span
-              className="text-xs link link-hover"
+              className="text-sm link link-hover"
               onClick={handleTriggerModal}
             >
               Read the terms and conditions before consenting.
             </span>
           </label>
           {errors?.consent && (
-            <span className="mt-2 text-xs text-error text-center">
+            <span className="mt-2 text-sm text-error text-center">
               {errors.consent[0]}
             </span>
           )}

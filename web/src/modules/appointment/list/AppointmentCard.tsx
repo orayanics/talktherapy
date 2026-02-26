@@ -12,7 +12,7 @@ export default function AppointmentCard(props: AppointmentCardProps) {
   return (
     <div
       id="slot-list"
-      className="flex flex-col gap-4 max-h-[88vh] overflow-y-auto"
+      className="space-y-2 min-h-[70vh] max-h-[70vh] overflow-y-auto"
     >
       {data.map((item: AvailableSlot) => {
         const { id, starts_at, ends_at, clinician } = item;
@@ -26,7 +26,8 @@ export default function AppointmentCard(props: AppointmentCardProps) {
         return (
           <div
             key={id}
-            className="collapse collapse-plus bg-base-100 border border-base-300"
+            className={`${current === id && "border-primary"} collapse collapse-plus bg-base-100 border border-base-300`}
+            id={`slot-${id}`}
           >
             <input
               type="radio"

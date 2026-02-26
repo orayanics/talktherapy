@@ -43,12 +43,12 @@ export default function UserAddClinician(props: UserAddClinicianProps) {
               />
             </label>
             {errors?.message && !errors.errors && (
-              <p className="text-error text-center text-xs mt-1">
+              <p className="text-error text-center text-sm mt-1">
                 {errors.message}
               </p>
             )}
             {errors?.errors?.email && (
-              <p className="text-error text-xs mt-1">
+              <p className="text-error text-sm mt-1">
                 {errors.errors.email[0]}
               </p>
             )}

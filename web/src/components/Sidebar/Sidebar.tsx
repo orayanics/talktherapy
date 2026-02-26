@@ -41,7 +41,7 @@ export default function Sidebar(props: SidebarProps) {
           aria-label="close sidebar"
           className="drawer-overlay"
         ></label>
-        <div className="menu bg-white border-r min-h-full w-64 gap-2 p-0 font-mono">
+        <div className="menu bg-white border-r min-h-full w-64 gap-2 p-0">
           <LogoText />
           <SidebarNavItems items={navItems} />
           <button onClick={handleLogout} className="btn btn-primary mx-2 mb-4">

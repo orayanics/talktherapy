@@ -75,8 +75,16 @@ export abstract class SlotService {
    * Lists all slots in the system, with optional filters. For patient users, this will only return slots that are AVAILABLE and in the future.
    * Default: return slots of current date
    */
+
   static async listAllSlots(query: SlotModel.listQuery) {
-    const { from, to, status: slotStatus } = query;
+    const {
+      from,
+      to,
+      status: slotStatus,
+      diagnosis,
+      page = 1,
+      per_page = 20,
+    } = query;
 
     const fromDate = from ? new Date(`${from}T00:00:00`) : null;
     const toDate = from
@@ -85,43 +93,60 @@ export abstract class SlotService {
         ? new Date(`${to}T23:59:59.999`)
         : null;
 
-    return prisma.slot.findMany({
-      where: {
-        ...(slotStatus && { status: slotStatus }),
-        ...(fromDate && { starts_at: { gte: fromDate, lte: toDate! } }),
-      },
-      omit: {
-        clinician_id: true,
-        created_at: true,
-        updated_at: true,
-        availability_rule_id: true,
-      },
-      include: {
-        appointment: {
-          select: {
-            id: true,
-            patient_id: true,
-            status: true,
-          },
-        },
+    const where = {
+      ...(slotStatus && { status: slotStatus }),
+      ...(fromDate && { starts_at: { gte: fromDate, lte: toDate! } }),
+      ...(diagnosis && {
         clinician: {
-          select: {
-            id: true,
-            user: {
-              select: {
-                name: true,
-              },
-            },
-            diagnosis: {
-              select: {
-                value: true,
-                label: true,
-              },
-            },
-          },
+          diagnosis: { value: { in: diagnosis } },
         },
+      }),
+    };
+
+    const skip = (page - 1) * per_page;
+
+    const [data, total] = await prisma.$transaction([
+      prisma.slot.findMany({
+        where,
+        ...SLOT_SELECT,
+        orderBy: { starts_at: "asc" },
+        skip,
+        take: per_page,
+      }),
+      prisma.slot.count({ where }),
+    ]);
+
+    return {
+      data,
+      meta: {
+        total,
+        page,
+        page_size: per_page,
+        page_count: Math.ceil(total / per_page),
+        to: skip + data.length,
+        from: skip + 1,
       },
-      orderBy: { starts_at: "asc" },
-    });
+    };
   }
 }
+
+const SLOT_SELECT = {
+  omit: {
+    clinician_id: true,
+    created_at: true,
+    updated_at: true,
+    availability_rule_id: true,
+  },
+  include: {
+    appointment: {
+      select: { id: true, patient_id: true, status: true },
+    },
+    clinician: {
+      select: {
+        id: true,
+        user: { select: { name: true } },
+        diagnosis: { select: { value: true, label: true } },
+      },
+    },
+  },
+} as const;

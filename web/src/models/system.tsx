@@ -55,7 +55,6 @@ export type UsersTableProps = {
   role: string[];
   search: string;
   isLoading: boolean;
-  isAdmin: boolean;
   onPageChange: (page: number) => void;
   onPerPageChange: (perPage: number) => void;
   onStatusChange: (status: string[]) => void;

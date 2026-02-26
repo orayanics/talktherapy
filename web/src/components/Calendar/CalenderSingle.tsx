@@ -18,8 +18,8 @@ export default function CalenderSingle(props: CalenderSingleProps) {
     <DayPicker
       className="react-day-picker bg-white"
       classNames={{
-        months: "w-full max-w-full",
-        month_grid: "w-100 mx-auto",
+        months: "min-w-full",
+        month_grid: "mx-auto",
         day_button: "p-2 rounded-lg hover:text-primary hover:bg-primary/10",
         selected: "font-bold text-primary rounded-lg",
       }}

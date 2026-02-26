@@ -15,8 +15,11 @@ export namespace SlotModel {
         t.Literal("BOOKED"),
         t.Literal("BLOCKED"),
         t.Literal("CANCELLED"),
-      ])
+      ]),
     ),
+    diagnosis: t.Optional(t.Array(t.String())),
+    page: t.Optional(t.Number({ minimum: 1, default: 1 })),
+    per_page: t.Optional(t.Number({ minimum: 1, maximum: 100, default: 10 })),
   });
   export type listQuery = typeof listQuery.static;
 

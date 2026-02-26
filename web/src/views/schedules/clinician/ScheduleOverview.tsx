@@ -30,7 +30,7 @@ export default function ScheduleOverview({ search }: ScheduleOverviewProps) {
         subheading="View all of your schedules within the system."
       />
       <Grid cols={12} gap={6}>
-        <GridItem colSpan={12} className="flex flex-col gap-4 lg:col-span-4">
+        <GridItem colSpan={12} className="flex flex-col gap-4 lg:col-span-3">
           <CalenderSingle date={selected} onSelect={setSelected} />
           <button className="btn" onClick={() => setSelected(undefined)}>
             View All Schedules
@@ -40,10 +40,11 @@ export default function ScheduleOverview({ search }: ScheduleOverviewProps) {
           </Link>
         </GridItem>
 
-        <GridItem
-          colSpan={12}
-          className="flex flex-col gap-4 lg:col-span-8 min-h-0"
-        >
+        <GridItem colSpan={12} className="flex flex-col gap-4 lg:col-span-9">
+          <p className="text-sm text-gray-500">
+            These are your available schedules for the selected date. Filtered
+            by your availability settings and timeslots.
+          </p>
           <ScheduleList date={selected} search={search} />
         </GridItem>
       </Grid>

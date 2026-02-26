@@ -45,8 +45,6 @@ export const Route = createFileRoute("/_private/(adm-shared)/users/")({
 
 function RouteComponent() {
   const navigate = Route.useNavigate();
-  const { is } = useAuthGuard();
-  const isAdmin = is("admin");
 
   const search = Route.useSearch();
   const status = search.status ?? [];
@@ -100,7 +98,6 @@ function RouteComponent() {
             role={role}
             search={searchInput}
             isLoading={isPending}
-            isAdmin={isAdmin}
             onPageChange={(page) => navigate({ search: { ...search, page } })}
             onPerPageChange={(perPage) =>
               navigate({ search: { ...search, perPage, page: 1 } })
@@ -122,7 +119,6 @@ function RouteComponent() {
 
 function Table(props: UsersTableProps) {
   const {
-    isAdmin = false,
     isLoading = false,
     page,
     perPage,
@@ -141,6 +137,9 @@ function Table(props: UsersTableProps) {
   const [isAdminModalOpen, setAdminModalOpen] = useState(false);
 
   const { data: usersData = [], total = 0, last_page, to, from } = data || {};
+
+  const { is } = useAuthGuard();
+  const isSudo = is("sudo");
 
   return (
     <>
@@ -170,7 +169,7 @@ function Table(props: UsersTableProps) {
           <InputMultiselect
             placeholder="User Type"
             options={[
-              ...(!isAdmin
+              ...(isSudo
                 ? [
                     { value: "sudo", label: "Super Admin" },
                     { value: "admin", label: "Admin" },
@@ -197,7 +196,7 @@ function Table(props: UsersTableProps) {
           <button className="btn" onClick={() => setClinicianModalOpen(true)}>
             Clinician
           </button>
-          {!isAdmin && (
+          {isSudo && (
             <button className="btn" onClick={() => setAdminModalOpen(true)}>
               Admin
             </button>
@@ -208,7 +207,7 @@ function Table(props: UsersTableProps) {
           isOpen={isClinicianModalOpen}
           onClose={() => setClinicianModalOpen(false)}
         />
-        {!isAdmin && (
+        {isSudo && (
           <UserAddAdmin
             isOpen={isAdminModalOpen}
             onClose={() => setAdminModalOpen(false)}
