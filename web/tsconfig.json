@@ -4,8 +4,7 @@
     "**/*.tsx",
     "public/script*.js",
     "prettier.config.ts",
-    "vite.config.ts",
-    "eslint.config.ts"
+    "eslint.config.js"
   ],
   "compilerOptions": {
     "strict": true,

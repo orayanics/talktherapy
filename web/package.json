@@ -8,7 +8,7 @@
     "build": "vite build && tsc --noEmit",
     "preview": "vite preview",
     "start": "pnpx srvx --prod -s ../client dist/server/server.js",
-    "lint": "eslint . --ext .ts,.tsx",
+    "lint": "bunx --bun eslint . --ext .ts,.tsx",
     "format": "prettier --write ."
   },
   "dependencies": {
@@ -43,6 +43,7 @@
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",
     "@vitejs/plugin-react": "^4.3.4",
+    "eslint": "^10.0.2",
     "prettier": "3.8.1",
     "tailwindcss": "^4.1.18",
     "typescript": "^5.7.2",

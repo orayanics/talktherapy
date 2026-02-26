@@ -64,7 +64,7 @@ export namespace AuthModel {
     email: EmailField,
     ...accountFields("clinician"),
     diagnosis_id: t.Optional(t.String({ error: "Diagnosis is required" })),
-    created_by: t.String(),
+    created_by: t.Optional(t.String()),
   });
   export type signUpClinicianBody = typeof signUpClinicianBody.static;
   export const signUpClinicianResponse = MessageResponse;
@@ -76,7 +76,7 @@ export namespace AuthModel {
   export const signUpAdminBody = t.Object({
     email: EmailField,
     ...accountFields("admin"),
-    created_by: t.String(),
+    created_by: t.Optional(t.String()),
   });
   export type signUpAdminBody = typeof signUpAdminBody.static;
   export const signUpAdminResponse = MessageResponse;

@@ -88,16 +88,16 @@ function ScheduleList({
         page={Number(page)}
         perPage={data.meta.page_size}
         total={data.meta.total}
-        onPageChange={() =>
+        onPageChange={(newPage) =>
           navigate({
             to: '.',
-            search: { ...search, page: Number(page) },
+            search: { ...search, page: newPage },
           })
         }
-        onPerPageChange={() =>
+        onPerPageChange={(newPerPage) =>
           navigate({
             to: '.',
-            search: { ...search, perPage: Number(perPage) },
+            search: { ...search, perPage: newPerPage, page: 1 },
           })
         }
         from={data.meta.from}

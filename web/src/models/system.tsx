@@ -24,19 +24,16 @@ export interface ResponseData {
   data: Array<string>
 }
 
-export interface ErrorResponse {
-  message?: string | { code: number; response: string }
-  errors?: Record<string, Array<string>>
-}
-
 export interface TableResponse<T = unknown> {
-  current_page?: number
   data: Array<T>
-  total?: number
-  last_page?: number
-  from?: number | null
-  to?: number | null
-  per_page?: number
+  meta: {
+    total: number
+    page: number
+    per_page: number
+    last_page: number
+    from: number | null
+    to: number | null
+  }
 }
 
 export type UsersParams = {
@@ -72,7 +69,7 @@ export interface UserResponse {
   updated_at: string
   account_status: 'active' | 'inactive' | 'pending' | 'suspended'
   account_role: 'sudo' | 'admin' | 'clinician' | 'patient'
-  account_permissions: Array<string> | null
+  account_permissions: string | null
   account_icon: string | null
   created_by: string
   updated_by: string | null

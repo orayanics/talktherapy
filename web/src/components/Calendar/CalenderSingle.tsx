@@ -10,9 +10,9 @@ export default function CalenderSingle(props: CalenderSingleProps) {
   const { date, onSelect } = props
   const dateStr = date ? format(date, 'yyyy-MM-dd') : undefined
 
-  const handleSelect = () => {
-    if (!date) return
-    onSelect(date)
+  const handleSelect = (selectedDate: Date | undefined) => {
+    if (!selectedDate) return
+    onSelect(selectedDate)
   }
 
   return (

@@ -1,5 +1,9 @@
 import { useNavigate } from '@tanstack/react-router'
-import { queryOptions, useMutation } from '@tanstack/react-query'
+import {
+  queryOptions,
+  useMutation,
+  useQueryClient,
+} from '@tanstack/react-query'
 import { isAxiosError } from 'axios'
 
 import type {
@@ -43,14 +47,16 @@ export const userDetailQueryOptions = (userId: string) => {
 
 export const useAddClinician = () => {
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
   const { showAlert } = useAlert()
 
   return useMutation({
     mutationFn: async (payload: ClinicianRegisterPayload) => {
-      const { data } = await api.post(`/auth/register/clinician`, payload)
+      const { data } = await api.post(`/auth/signup/clinician`, payload)
       return data
     },
-    onSuccess: () => {
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['users'] })
       showAlert(USER.create.success, 'success')
       navigate({
         to: '/users',
@@ -73,14 +79,18 @@ export const useAddClinician = () => {
 
 export const useAddAdmin = () => {
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
   const { showAlert } = useAlert()
+
   return useMutation({
     mutationFn: async (payload: AdminRegisterPayload) => {
-      const { data } = await api.post(`/auth/register/admin`, payload)
+      const { data } = await api.post(`/auth/signup/admin`, payload)
       return data
     },
-    onSuccess: () => {
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['users'] })
       showAlert(USER.create.success, 'success')
+
       navigate({
         to: '/users',
         search: {

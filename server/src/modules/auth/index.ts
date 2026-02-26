@@ -162,8 +162,8 @@ export const auth = new Elysia({ prefix: "/auth" })
   )
   .post(
     "/signup/clinician",
-    async ({ body }) => {
-      const response = await Auth.signUpClinician(body);
+    async ({ body, auth }) => {
+      const response = await Auth.signUpClinician(body, auth?.userId);
       return response;
     },
     {
@@ -178,8 +178,8 @@ export const auth = new Elysia({ prefix: "/auth" })
   )
   .post(
     "/signup/admin",
-    async ({ body }) => {
-      const response = await Auth.signUpAdmin(body);
+    async ({ body, auth }) => {
+      const response = await Auth.signUpAdmin(body, auth?.userId);
       return response;
     },
     {

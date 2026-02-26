@@ -98,15 +98,17 @@ function RouteComponent() {
             role={role}
             search={searchInput}
             isLoading={isPending}
-            onPageChange={() => navigate({ search: { ...search, page } })}
-            onPerPageChange={(perPage) =>
-              navigate({ search: { ...search, perPage, page: 1 } })
+            onPageChange={(newPage) =>
+              navigate({ search: { ...search, page: newPage } })
             }
-            onStatusChange={(status) =>
-              navigate({ search: { ...search, status, page: 1 } })
+            onPerPageChange={(newPerPage) =>
+              navigate({ search: { ...search, perPage: newPerPage, page: 1 } })
             }
-            onRoleChange={(role) =>
-              navigate({ search: { ...search, role, page: 1 } })
+            onStatusChange={(newStatus) =>
+              navigate({ search: { ...search, status: newStatus, page: 1 } })
+            }
+            onRoleChange={(newRole) =>
+              navigate({ search: { ...search, role: newRole, page: 1 } })
             }
             onSearchChange={handleSearchChange}
             onClearFilters={() => navigate({ to: '/users', search: {} })}
@@ -136,7 +138,8 @@ function Table(props: UsersTableProps) {
   const [isClinicianModalOpen, setClinicianModalOpen] = useState(false)
   const [isAdminModalOpen, setAdminModalOpen] = useState(false)
 
-  const { data: usersData = [], total = 0, last_page, to, from } = data || {}
+  const { data: usersData = [], meta } = data || {}
+  const { total, last_page, from, to } = meta ?? {}
 
   const { is } = useAuthGuard()
   const isSudo = is('sudo')
@@ -162,7 +165,7 @@ function Table(props: UsersTableProps) {
               { value: 'suspended', label: 'Suspended' },
             ]}
             value={status}
-            onChange={(status) => onStatusChange(status)}
+            onChange={(newStatus) => onStatusChange(newStatus)}
             className={'w-full lg:w-42'}
           />
 
@@ -179,7 +182,7 @@ function Table(props: UsersTableProps) {
               { value: 'clinician', label: 'Clinician' },
             ]}
             value={role}
-            onChange={(role) => onRoleChange(role)}
+            onChange={(newRole) => onRoleChange(newRole)}
             className={'w-full lg:w-42'}
           />
 

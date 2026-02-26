@@ -95,7 +95,7 @@ export abstract class Auth {
     };
   }
 
-  static async signUpClinician(data: AuthModel.signUpClinicianBody) {
+  static async signUpClinician(data: AuthModel.signUpClinicianBody, auth?: string) {
     const existingUser = await prisma.user.findUnique({
       where: { email: data.email },
     });
@@ -127,7 +127,7 @@ export abstract class Auth {
           account_status: "active",
           account_role: "clinician",
           account_permissions: "content:read",
-          created_by: data.created_by,
+          created_by: auth,
         },
       });
 
@@ -144,7 +144,7 @@ export abstract class Auth {
     };
   }
 
-  static async signUpAdmin(data: AuthModel.signUpAdminBody) {
+  static async signUpAdmin(data: AuthModel.signUpAdminBody, auth?: string) {
     const existingUser = await prisma.user.findUnique({
       where: { email: data.email },
     });
@@ -164,7 +164,7 @@ export abstract class Auth {
           account_permissions: data.account_permissions
             ? data.account_permissions
             : "content:read",
-          created_by: data.created_by,
+          created_by: auth,
         },
       });
 
