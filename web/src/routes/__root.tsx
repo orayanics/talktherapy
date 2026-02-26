@@ -25,9 +25,8 @@ export const Route = createRootRouteWithContext<{
         content: "width=device-width, initial-scale=1",
       },
       ...seo({
-        title:
-          "TanStack Start | Type-Safe, Client-First, Full-Stack React Framework",
-        description: `TanStack Start is a type-safe, client-first, full-stack React framework. `,
+        title: "TalkTherapy",
+        description: `TalkTherapy is a SLP (Speech-Language Pathologist) tool for therapy sessions. It provides a variety of features to help SLPs manage their therapy sessions, including session notes, progress tracking, and more.`,
       }),
     ],
     links: [
@@ -35,19 +34,19 @@ export const Route = createRootRouteWithContext<{
       {
         rel: "apple-touch-icon",
         sizes: "180x180",
-        href: "/apple-touch-icon.png",
+        href: "/192x192.png",
       },
       {
         rel: "icon",
         type: "image/png",
         sizes: "32x32",
-        href: "/favicon-32x32.png",
+        href: "/32x32.png",
       },
       {
         rel: "icon",
         type: "image/png",
         sizes: "16x16",
-        href: "/favicon-16x16.png",
+        href: "/16x16.png",
       },
       { rel: "manifest", href: "/site.webmanifest", color: "#fffff" },
       { rel: "icon", href: "/favicon.ico" },
