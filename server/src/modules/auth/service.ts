@@ -198,4 +198,26 @@ export abstract class Auth {
       user,
     };
   }
+
+  static async updateUserInfo(data: AuthModel.updateProfileBody) {
+    const user = await prisma.user.update({
+      where: {
+        id: data.id,
+      },
+      data: {
+        name: data.name,
+      },
+      omit: {
+        password: true,
+      },
+    });
+
+    if (!user) {
+      throw status(404, "User not found");
+    }
+
+    return {
+      message: "Profile updated successfully",
+    };
+  }
 }

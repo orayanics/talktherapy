@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 
 import Grid from "~/components/Page/Grid";
 import GridItem from "~/components/Page/GridItem";
@@ -8,8 +8,9 @@ import ProfileAccInfo from "~/modules/profile/ProfileAccInfo";
 import ProfileUserInfo from "~/modules/profile/ProfileUserInfo";
 
 import { sessionQueryOptions } from "~/api/auth";
+import { useState } from "react";
 
-export const Route = createFileRoute("/_private/profile")({
+export const Route = createFileRoute("/_private/profile/")({
   ssr: false,
   loader: async ({ context: { queryClient } }) => {
     const session = await queryClient.ensureQueryData(sessionQueryOptions);
@@ -20,6 +21,8 @@ export const Route = createFileRoute("/_private/profile")({
 
 function RouteComponent() {
   const session = Route.useLoaderData();
+  const navigate = useNavigate();
+
   return (
     <>
       <PageTitle
@@ -33,7 +36,12 @@ function RouteComponent() {
           <ProfileAccInfo {...session} />
 
           <div className="flex flex-col gap-2 col-span-12">
-            <button className="btn btn-primary">Edit Profile</button>
+            <button
+              className="btn btn-primary"
+              onClick={() => navigate({ to: "/profile/edit" })}
+            >
+              Edit Profile
+            </button>
             <button className="btn btn-neutral">Change Password</button>
           </div>
         </GridItem>

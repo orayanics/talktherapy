@@ -23,5 +23,4 @@ export interface AdminRegisterPayload {
 
 export interface UpdateUserPayload {
   name?: string;
-  account_icon?: string; // this is a url
 }

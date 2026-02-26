@@ -201,4 +201,19 @@ export const auth = new Elysia({ prefix: "/auth" })
     {
       isAuth: true,
     },
+  )
+  .put(
+    "/profile/update",
+    async ({ body, auth }) => {
+      const response = await Auth.updateUserInfo({ ...body, id: auth?.userId });
+      return response;
+    },
+    {
+      body: AuthModel.updateProfileBody,
+      response: {
+        200: AuthModel.updateProfileResponse,
+        400: AuthModel.updateProfileInvalid,
+      },
+      isAuth: true,
+    },
   );

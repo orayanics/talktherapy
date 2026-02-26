@@ -72,14 +72,14 @@
     height: 100%;
     background: radial-gradient(
       circle,
-      rgba(255, 255, 255, 0.6) 0%,
+      rgba(255, 255, 255, 0.3) 0%,
       rgb(255, 255, 255, 0.82) 60%
     );
     pointer-events: none;
   }
 
   .pattern-color-primary {
-    --pattern-color: oklch(79.703% 0.10533 252.533 / 0.5);
+    --pattern-color: oklch(79.703% 0.10533 252.533 / 0.62);
   }
 
   .pattern-bg-white {

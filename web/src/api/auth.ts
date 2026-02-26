@@ -96,7 +96,7 @@ export const useEditProfile = () => {
 
   return useMutation({
     mutationFn: async (payload: UpdateUserPayload) => {
-      const { data } = await api.put("/auth/update-user", payload);
+      const { data } = await api.put("/auth/profile/update", payload);
       return data;
     },
     onSuccess: async () => {
