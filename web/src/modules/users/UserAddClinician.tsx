@@ -1,6 +1,6 @@
 import ModalHeader from "~/components/Modal/ModalHeader";
 import ModalBody from "~/components/Modal/ModalBody";
-import { registerClinician } from "./useUserAdd";
+import { useRegisterClinician } from "./useUserAdd";
 
 interface UserAddClinicianProps {
   isOpen: boolean;
@@ -10,7 +10,7 @@ interface UserAddClinicianProps {
 export default function UserAddClinician(props: UserAddClinicianProps) {
   const { isOpen, onClose } = props;
   const { form, handleChange, handleSubmit, resetState, errors, isLoading } =
-    registerClinician();
+    useRegisterClinician();
 
   const handleClose = () => {
     resetState();

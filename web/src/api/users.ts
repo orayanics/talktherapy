@@ -39,7 +39,7 @@ export const userDetailQueryOptions = (userId: string) => {
   });
 };
 
-export const addClinician = () => {
+export const useAddClinician = () => {
   const navigate = useNavigate();
   const { showAlert } = useAlert();
 
@@ -69,7 +69,7 @@ export const addClinician = () => {
   });
 };
 
-export const addAdmin = () => {
+export const useAddAdmin = () => {
   const navigate = useNavigate();
   const { showAlert } = useAlert();
   return useMutation({

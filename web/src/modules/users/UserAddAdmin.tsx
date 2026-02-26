@@ -1,6 +1,6 @@
 import ModalHeader from "~/components/Modal/ModalHeader";
 import ModalBody from "~/components/Modal/ModalBody";
-import { registerAdmin } from "./useUserAdd";
+import { useRegisterAdmin } from "./useUserAdd";
 import { PermissionKey, PermissionLabels } from "~/models/user/permissions";
 
 interface UserAddAdminProps {
@@ -18,7 +18,7 @@ export default function UserAddAdmin(props: UserAddAdminProps) {
     resetState,
     errors,
     isLoading,
-  } = registerAdmin();
+  } = useRegisterAdmin();
 
   const handleClose = () => {
     resetState();

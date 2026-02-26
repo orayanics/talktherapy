@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { isAxiosError } from "axios";
-import { addClinician, addAdmin } from "~/api/users";
+import { useAddClinician, useAddAdmin } from "~/api/users";
 
 import { ErrorResponse } from "~/models/system";
 import { PermissionKey } from "~/models/user/permissions";
 
-export function registerClinician() {
+export function useRegisterClinician() {
   const [errors, setErrors] = useState<ErrorResponse | null>(null);
   const initialForm = {
     email: "",
@@ -17,7 +17,7 @@ export function registerClinician() {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const addClinicianMutation = addClinician();
+  const addClinicianMutation = useAddClinician();
 
   async function handleSubmit() {
     setErrors(null);
@@ -47,7 +47,7 @@ export function registerClinician() {
   };
 }
 
-export function registerAdmin() {
+export function useRegisterAdmin() {
   const [errors, setErrors] = useState<ErrorResponse | null>(null);
   const initialForm = {
     email: "",
@@ -70,7 +70,7 @@ export function registerAdmin() {
     }));
   };
 
-  const addAdminMutation = addAdmin();
+  const addAdminMutation = useAddAdmin();
 
   async function handleSubmit() {
     setErrors(null);

@@ -14,7 +14,7 @@ import {
   REGISTRATION_PATIENT,
   SESSION,
 } from "~/config/message";
-import { useAlert } from "~/context/AlertContext";
+import { useAlert, showAlertGlobal } from "~/context/AlertContext";
 
 import {
   LoginPayload,
@@ -31,12 +31,11 @@ export const sessionQueryOptions = queryOptions({
       const { data } = await api.get("/auth/session");
       return data.user ?? null;
     } catch (error) {
-      const { showAlert } = useAlert();
       if (isAxiosError(error) && error.response?.status === 401) {
-        showAlert(SESSION.expired, "error");
+        showAlertGlobal(SESSION.expired, "error");
         return null; // unauthenticated is not an error state
       }
-      showAlert(SESSION.error, "error");
+      showAlertGlobal(SESSION.error, "error");
       throw error; // network errors, 500s — still throw
     }
   },
