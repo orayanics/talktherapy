@@ -10,6 +10,7 @@ import { api } from "~/api/axios";
 import {
   LoginPayload,
   PatientRegisterPayload,
+  UpdatePasswordPayload,
   UpdateUserPayload,
 } from "~/models/user/credentials";
 
@@ -106,6 +107,27 @@ export const useEditProfile = () => {
     onError: (error) => {
       if (isAxiosError(error)) {
         console.error("Profile update failed:", error.response?.data);
+      }
+    },
+  });
+};
+
+export const useEditPassword = () => {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (payload: UpdatePasswordPayload) => {
+      const { data } = await api.put("/auth/profile/password", payload);
+      return data;
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["session"] });
+      navigate({ to: "/profile" });
+    },
+    onError: (error) => {
+      if (isAxiosError(error)) {
+        console.error("Password update failed:", error.response?.data);
       }
     },
   });

@@ -24,3 +24,9 @@ export interface AdminRegisterPayload {
 export interface UpdateUserPayload {
   name?: string;
 }
+
+export interface UpdatePasswordPayload {
+  current_password: string;
+  new_password: string;
+  new_password_confirmation: string;
+}

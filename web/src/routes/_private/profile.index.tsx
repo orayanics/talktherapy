@@ -42,7 +42,12 @@ function RouteComponent() {
             >
               Edit Profile
             </button>
-            <button className="btn btn-neutral">Change Password</button>
+            <button
+              className="btn btn-neutral"
+              onClick={() => navigate({ to: "/password" })}
+            >
+              Change Password
+            </button>
           </div>
         </GridItem>
       </Grid>

@@ -13,6 +13,7 @@ import { Route as UnauthorizedRouteImport } from './routes/unauthorized'
 import { Route as PublicRouteRouteImport } from './routes/_public/route'
 import { Route as PrivateRouteRouteImport } from './routes/_private/route'
 import { Route as PublicIndexRouteImport } from './routes/_public/index'
+import { Route as PrivatePasswordRouteImport } from './routes/_private/password'
 import { Route as PrivateDashboardRouteImport } from './routes/_private/dashboard'
 import { Route as PublicAuthRouteRouteImport } from './routes/_public/_auth/route'
 import { Route as PrivatesudoRouteRouteImport } from './routes/_private/(sudo)/route'
@@ -60,6 +61,11 @@ const PublicIndexRoute = PublicIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => PublicRouteRoute,
+} as any)
+const PrivatePasswordRoute = PrivatePasswordRouteImport.update({
+  id: '/password',
+  path: '/password',
+  getParentRoute: () => PrivateRouteRoute,
 } as any)
 const PrivateDashboardRoute = PrivateDashboardRouteImport.update({
   id: '/dashboard',
@@ -220,6 +226,7 @@ export interface FileRoutesByFullPath {
   '/': typeof PublicIndexRoute
   '/unauthorized': typeof UnauthorizedRoute
   '/dashboard': typeof PrivateDashboardRoute
+  '/password': typeof PrivatePasswordRoute
   '/logs': typeof PrivatesudoLogsRoute
   '/profile/edit': typeof PrivateProfileEditRoute
   '/login': typeof PublicAuthLoginRoute
@@ -246,6 +253,7 @@ export interface FileRoutesByTo {
   '/': typeof PublicIndexRoute
   '/unauthorized': typeof UnauthorizedRoute
   '/dashboard': typeof PrivateDashboardRoute
+  '/password': typeof PrivatePasswordRoute
   '/logs': typeof PrivatesudoLogsRoute
   '/profile/edit': typeof PrivateProfileEditRoute
   '/login': typeof PublicAuthLoginRoute
@@ -280,6 +288,7 @@ export interface FileRoutesById {
   '/_private/(sudo)': typeof PrivatesudoRouteRouteWithChildren
   '/_public/_auth': typeof PublicAuthRouteRouteWithChildren
   '/_private/dashboard': typeof PrivateDashboardRoute
+  '/_private/password': typeof PrivatePasswordRoute
   '/_public/': typeof PublicIndexRoute
   '/_private/(sudo)/logs': typeof PrivatesudoLogsRoute
   '/_private/profile/edit': typeof PrivateProfileEditRoute
@@ -309,6 +318,7 @@ export interface FileRouteTypes {
     | '/'
     | '/unauthorized'
     | '/dashboard'
+    | '/password'
     | '/logs'
     | '/profile/edit'
     | '/login'
@@ -335,6 +345,7 @@ export interface FileRouteTypes {
     | '/'
     | '/unauthorized'
     | '/dashboard'
+    | '/password'
     | '/logs'
     | '/profile/edit'
     | '/login'
@@ -368,6 +379,7 @@ export interface FileRouteTypes {
     | '/_private/(sudo)'
     | '/_public/_auth'
     | '/_private/dashboard'
+    | '/_private/password'
     | '/_public/'
     | '/_private/(sudo)/logs'
     | '/_private/profile/edit'
@@ -427,6 +439,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof PublicIndexRouteImport
       parentRoute: typeof PublicRouteRoute
+    }
+    '/_private/password': {
+      id: '/_private/password'
+      path: '/password'
+      fullPath: '/password'
+      preLoaderRoute: typeof PrivatePasswordRouteImport
+      parentRoute: typeof PrivateRouteRoute
     }
     '/_private/dashboard': {
       id: '/_private/dashboard'
@@ -755,6 +774,7 @@ interface PrivateRouteRouteChildren {
   PrivatesharedRouteRoute: typeof PrivatesharedRouteRouteWithChildren
   PrivatesudoRouteRoute: typeof PrivatesudoRouteRouteWithChildren
   PrivateDashboardRoute: typeof PrivateDashboardRoute
+  PrivatePasswordRoute: typeof PrivatePasswordRoute
   PrivateProfileEditRoute: typeof PrivateProfileEditRoute
   PrivateProfileIndexRoute: typeof PrivateProfileIndexRoute
 }
@@ -767,6 +787,7 @@ const PrivateRouteRouteChildren: PrivateRouteRouteChildren = {
   PrivatesharedRouteRoute: PrivatesharedRouteRouteWithChildren,
   PrivatesudoRouteRoute: PrivatesudoRouteRouteWithChildren,
   PrivateDashboardRoute: PrivateDashboardRoute,
+  PrivatePasswordRoute: PrivatePasswordRoute,
   PrivateProfileEditRoute: PrivateProfileEditRoute,
   PrivateProfileIndexRoute: PrivateProfileIndexRoute,
 }

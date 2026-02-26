@@ -220,4 +220,59 @@ export abstract class Auth {
       message: "Profile updated successfully",
     };
   }
+
+  static async changePassword(data: AuthModel.changePasswordBody) {
+    const user = await prisma.user.findUnique({
+      where: {
+        id: data.id,
+      },
+      select: {
+        password: true,
+      },
+    });
+
+    if (!user) {
+      throw status(404, "User not found");
+    }
+
+    const isCurrentValid = await Bun.password.verify(
+      data.current_password,
+      user.password ?? "",
+    );
+
+    if (!isCurrentValid) {
+      throw status(400, "Current password is incorrect.");
+    }
+
+    const isSamePassword = await Bun.password.verify(
+      data.new_password,
+      user.password ?? "",
+    );
+
+    if (isSamePassword) {
+      throw status(
+        400,
+        "New password must not be the same as current password.",
+      );
+    }
+
+    if (data.new_password !== data.new_password_confirmation) {
+      throw status(400, "New password and confirmation do not match.");
+    }
+
+    const hashedPassword = await Bun.password.hash(data.new_password);
+
+    await prisma.user.update({
+      where: {
+        id: data.id,
+      },
+      data: {
+        password: hashedPassword,
+      },
+    });
+
+    return {
+      message: "Password changed successfully",
+    };
+  }
 }

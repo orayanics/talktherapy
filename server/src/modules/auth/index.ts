@@ -216,4 +216,19 @@ export const auth = new Elysia({ prefix: "/auth" })
       },
       isAuth: true,
     },
+  )
+  .put(
+    "/profile/password",
+    async ({ body, auth }) => {
+      const response = await Auth.changePassword({ ...body, id: auth?.userId });
+      return response;
+    },
+    {
+      body: AuthModel.changePasswordBody,
+      response: {
+        200: AuthModel.changePasswordResponse,
+        400: AuthModel.changePasswordInvalid,
+      },
+      isAuth: true,
+    },
   );

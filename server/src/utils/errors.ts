@@ -22,4 +22,9 @@ export const customMessages: Record<string, string> = {
   name: "Name must be between 2 and 100 characters long.",
   consent: "Consent must be true to continue.",
   diagnosis_id: "Diagnosis is required.",
+  current_password: "Current password is required.",
+  new_password:
+    "New password must contain uppercase, lowercase, number, and special character",
+  new_password_confirmation:
+    "Confirmation must contain uppercase, lowercase, number, and special character",
 };

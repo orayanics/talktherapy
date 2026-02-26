@@ -15,6 +15,15 @@ const MessageResponse = t.Object({ message: t.String() });
 const InvalidInput = t.Literal("Invalid input data");
 
 export namespace AuthModel {
+  const StrongPassword = (error?: string) =>
+    t.String({
+      minLength: 8,
+      pattern: "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9]).+$",
+      error:
+        error ??
+        "Password must be at least 8 characters and include uppercase, lowercase, number, and special character",
+    });
+
   // SignIn
   export const signInBody = t.Object({
     email: EmailField,
@@ -39,10 +48,7 @@ export namespace AuthModel {
       error: "Name must be between 2 and 100 characters long",
     }),
     email: EmailField,
-    password: t.String({
-      minLength: 6,
-      error: "Password must be at least 6 characters long",
-    }),
+    password: StrongPassword(),
     ...accountFields("patient"),
     consent: t.Literal(true, { error: "Consent must be true to continue" }),
     diagnosis_id: t.String({ minLength: 1, error: "Diagnosis is required" }),
@@ -94,4 +100,23 @@ export namespace AuthModel {
   export type updateProfileResponse = typeof updateProfileResponse.static;
   export const updateProfileInvalid = InvalidInput;
   export type updateProfileInvalid = typeof updateProfileInvalid.static;
+
+  // Change Password
+  export const changePasswordBody = t.Object({
+    id: t.Optional(t.String()),
+    current_password: t.String({
+      minLength: 1,
+      error: "Password is required",
+    }),
+    new_password: StrongPassword(),
+    new_password_confirmation: StrongPassword(
+      "Confirmation must meet password requirements",
+    ),
+  });
+
+  export type changePasswordBody = typeof changePasswordBody.static;
+  export const changePasswordResponse = MessageResponse;
+  export type changePasswordResponse = typeof changePasswordResponse.static;
+  export const changePasswordInvalid = InvalidInput;
+  export type changePasswordInvalid = typeof changePasswordInvalid.static;
 }
