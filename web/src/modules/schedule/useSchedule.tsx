@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { ErrorResponse } from "~/models/system";
 import { CreateSchedulePayload } from "~/models/schedule";
 import { useCreateSchedule } from "~/api/scheduling";
 import { CreateAvailabilityPayload } from "~/models/schedule";
@@ -7,9 +6,10 @@ import { toISODateTime } from "~/utils/date";
 import { buildRRule } from "~/utils/rrule";
 import { differenceInDays, addMonths } from "date-fns";
 import { isAxiosError } from "axios";
+import { ParsedError, parseError } from "~/utils/errors";
 
 export default function useSchedule() {
-  const [errors, setErrors] = useState<ErrorResponse | null>(null);
+  const [errors, setErrors] = useState<ParsedError | null>(null);
   const [form, setForm] = useState<CreateSchedulePayload>({
     date: "",
     start_time: "",
@@ -31,7 +31,7 @@ export default function useSchedule() {
         ? prev.selected_days.filter((d) => d !== day)
         : [...prev.selected_days, day],
     }));
-    setErrors((prev) => ({ ...prev, selected_days: undefined }));
+    setErrors(null);
   }
 
   const scheduleMutation = useCreateSchedule();
@@ -61,7 +61,7 @@ export default function useSchedule() {
       await scheduleMutation.mutateAsync(payload);
     } catch (error: unknown) {
       if (isAxiosError(error)) {
-        setErrors(error.response?.data ?? null);
+        setErrors(parseError(error.response?.data ?? null));
       } else {
         setErrors(null);
       }

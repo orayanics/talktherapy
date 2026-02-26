@@ -2,9 +2,10 @@ import React, { useState } from "react";
 import { useRegisterPatient } from "~/api/auth";
 import { PatientRegisterPayload } from "~/models/user/credentials";
 import { isAxiosError } from "axios";
+import { ParsedError, parseError } from "~/utils/errors";
 
 export default function usePatientRegister() {
-  const [errors, setErrors] = useState<Record<string, string[]> | null>(null);
+  const [errors, setErrors] = useState<ParsedError | null>(null);
   const [form, setForm] = useState<PatientRegisterPayload>({
     name: "",
     diagnosis_id: "",
@@ -34,7 +35,7 @@ export default function usePatientRegister() {
       await register.mutateAsync(form);
     } catch (error: unknown) {
       if (isAxiosError(error)) {
-        setErrors(error.response?.data?.errors ?? null);
+        setErrors(parseError(error.response?.data));
       } else {
         setErrors(null);
       }

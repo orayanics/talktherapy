@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { isAxiosError } from "axios";
 
-import { ErrorResponse } from "~/models/system";
 import { UpdatePasswordPayload } from "~/models/user/credentials";
 
 import { useEditPassword } from "~/api/auth";
+import { ParsedError, parseError } from "~/utils/errors";
 
 export default function useUpdatePassword() {
-  const [errors, setErrors] = useState<ErrorResponse | null>(null);
+  const [errors, setErrors] = useState<ParsedError | null>(null);
   const [form, setForm] = useState<UpdatePasswordPayload>({
     current_password: "",
     new_password: "",
@@ -28,7 +28,7 @@ export default function useUpdatePassword() {
       await updateUserMutation.mutateAsync(form);
     } catch (error: unknown) {
       if (isAxiosError(error) && error.response) {
-        setErrors(error.response.data);
+        setErrors(parseError(error.response.data));
       } else {
         setErrors(null);
       }

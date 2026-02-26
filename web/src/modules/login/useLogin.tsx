@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { LoginPayload } from "~/models/user/credentials";
-import { ErrorResponse } from "~/models/system";
 import { useLogin as useLoginApi } from "~/api/auth";
 import { isAxiosError } from "axios";
+import { ParsedError, parseError } from "~/utils/errors";
 
 export default function useLogin() {
-  const [errors, setErrors] = useState<ErrorResponse | null>(null);
+  const [errors, setErrors] = useState<ParsedError | null>(null);
   const [form, setForm] = useState<LoginPayload>({
     email: "",
     password: "",
@@ -23,7 +23,7 @@ export default function useLogin() {
       await loginMutation.mutateAsync(form);
     } catch (error: unknown) {
       if (isAxiosError(error)) {
-        setErrors(error.response?.data ?? null);
+        setErrors(parseError(error.response?.data));
       } else {
         setErrors(null);
       }

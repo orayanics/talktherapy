@@ -51,24 +51,6 @@ function RouteComponent() {
       <Grid cols={12} gap={2}>
         <GridItem colSpan={12} className="flex flex-col gap-4">
           {dashboardView()}
-          <button
-            className="btn btn-soft btn-primary"
-            onClick={() => showAlert("Manual toast message", "info")}
-          >
-            Show info toast
-          </button>
-          <button
-            className="btn"
-            onClick={() => showAlert("success toast message", "success")}
-          >
-            Show success toast
-          </button>
-          <button
-            className="btn"
-            onClick={() => showAlert("error toast message", "error")}
-          >
-            Show error toast
-          </button>
         </GridItem>
       </Grid>
     </>

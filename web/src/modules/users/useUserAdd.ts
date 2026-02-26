@@ -2,11 +2,11 @@ import { useState } from "react";
 import { isAxiosError } from "axios";
 import { useAddClinician, useAddAdmin } from "~/api/users";
 
-import { ErrorResponse } from "~/models/system";
 import { PermissionKey } from "~/models/user/permissions";
+import { ParsedError, parseError } from "~/utils/errors";
 
 export function useRegisterClinician() {
-  const [errors, setErrors] = useState<ErrorResponse | null>(null);
+  const [errors, setErrors] = useState<ParsedError | null>(null);
   const initialForm = {
     email: "",
   };
@@ -25,7 +25,9 @@ export function useRegisterClinician() {
       await addClinicianMutation.mutateAsync(form);
       return true;
     } catch (error: unknown) {
-      setErrors(isAxiosError(error) ? (error.response?.data ?? null) : null);
+      setErrors(
+        isAxiosError(error) ? parseError(error.response?.data ?? null) : null,
+      );
       return false;
     } finally {
       setForm(initialForm);
@@ -48,7 +50,7 @@ export function useRegisterClinician() {
 }
 
 export function useRegisterAdmin() {
-  const [errors, setErrors] = useState<ErrorResponse | null>(null);
+  const [errors, setErrors] = useState<ParsedError | null>(null);
   const initialForm = {
     email: "",
     abilities: [] as PermissionKey[],
@@ -78,7 +80,9 @@ export function useRegisterAdmin() {
       await addAdminMutation.mutateAsync(form);
       return true;
     } catch (error: unknown) {
-      setErrors(isAxiosError(error) ? (error.response?.data ?? null) : null);
+      setErrors(
+        isAxiosError(error) ? parseError(error.response?.data ?? null) : null,
+      );
       return false;
     } finally {
       setForm(initialForm);

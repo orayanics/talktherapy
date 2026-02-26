@@ -1,6 +1,7 @@
 import { useNavigate } from "@tanstack/react-router";
 import { UserResponse } from "~/models/system";
 import useUpdateUser from "./useUpdateUser";
+import { fieldError } from "~/utils/errors";
 
 export default function ProfileUpdate(props: UserResponse) {
   const { name } = props;
@@ -35,8 +36,10 @@ export default function ProfileUpdate(props: UserResponse) {
               className="input input-bordered w-full max-w-xs"
               disabled={isLoading}
             />
-            {errors?.errors?.name && (
-              <p className="text-error text-sm mt-1">{errors.errors.name[0]}</p>
+            {fieldError(errors, "name") && (
+              <p className="text-error text-sm mt-1">
+                {fieldError(errors, "name")}
+              </p>
             )}
           </div>
         </div>

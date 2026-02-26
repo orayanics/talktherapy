@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { FaEnvelope, FaLock } from "react-icons/fa";
 import useLogin from "./useLogin";
+import { fieldError, hasOnlyMessage } from "~/utils/errors";
 
 export default function LoginForm() {
   const { form, errors, isLoading, handleChange, handleSubmit } = useLogin();
@@ -12,12 +13,9 @@ export default function LoginForm() {
       }}
     >
       <div className="flex flex-col gap-4">
-        {/* TODO: Check errors.message instanceof */}
-        {errors?.message && !errors.errors && (
+        {hasOnlyMessage(errors) && (
           <p className="text-error text-center text-sm mt-1">
-            {errors.message instanceof Object
-              ? errors.message.response
-              : errors.message}
+            {errors!.message}
           </p>
         )}
         <div>
@@ -32,8 +30,10 @@ export default function LoginForm() {
               autoComplete="email"
             />
           </label>
-          {errors?.errors?.email && (
-            <p className="text-error text-sm mt-1">{errors.errors.email[0]}</p>
+          {fieldError(errors, "email") && (
+            <p className="text-error text-sm mt-1">
+              {fieldError(errors, "email")}
+            </p>
           )}
         </div>
 
@@ -49,9 +49,9 @@ export default function LoginForm() {
               autoComplete="current-password"
             />
           </label>
-          {errors?.errors?.password && (
+          {fieldError(errors, "password") && (
             <p className="text-error text-sm mt-1">
-              {errors.errors.password[0]}
+              {fieldError(errors, "password")}
             </p>
           )}
         </div>

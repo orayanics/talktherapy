@@ -1,6 +1,7 @@
 import ModalHeader from "~/components/Modal/ModalHeader";
 import ModalBody from "~/components/Modal/ModalBody";
 import { useRegisterClinician } from "./useUserAdd";
+import { fieldError, hasOnlyMessage } from "~/utils/errors";
 
 interface UserAddClinicianProps {
   isOpen: boolean;
@@ -42,14 +43,14 @@ export default function UserAddClinician(props: UserAddClinicianProps) {
                 onChange={handleChange}
               />
             </label>
-            {errors?.message && !errors.errors && (
+            {hasOnlyMessage(errors) && (
               <p className="text-error text-center text-sm mt-1">
-                {errors.message}
+                {errors!.message}
               </p>
             )}
-            {errors?.errors?.email && (
+            {fieldError(errors, "email") && (
               <p className="text-error text-sm mt-1">
-                {errors.errors.email[0]}
+                {fieldError(errors, "email")}
               </p>
             )}
           </div>

@@ -1,6 +1,6 @@
 import { useNavigate } from "@tanstack/react-router";
 import useUpdatePassword from "./useUpdatePassword";
-
+import { fieldError, hasOnlyMessage } from "~/utils/errors";
 export default function ProfilePassword() {
   const navigate = useNavigate();
   const { form, errors, handleChange, handleSubmit, isLoading } =
@@ -9,14 +9,9 @@ export default function ProfilePassword() {
   return (
     <>
       <p className="font-bold uppercase text-primary">User Information</p>
-      {errors?.message && !errors.errors && (
+      {hasOnlyMessage(errors) && (
         <div className="alert alert-error shadow-lg">
-          <p>
-            {" "}
-            {errors.message instanceof Object
-              ? errors.message.response
-              : errors.message}
-          </p>
+          <p>{errors!.message}</p>
         </div>
       )}
       <form
@@ -37,9 +32,9 @@ export default function ProfilePassword() {
               className="input input-bordered w-full max-w-xs"
               disabled={isLoading}
             />
-            {errors?.errors?.current_password && (
+            {fieldError(errors, "current_password") && (
               <p className="text-error text-sm mt-1">
-                {errors.errors.current_password[0]}
+                {fieldError(errors, "current_password")}
               </p>
             )}
           </div>
@@ -56,9 +51,9 @@ export default function ProfilePassword() {
               className="input input-bordered w-full max-w-xs"
               disabled={isLoading}
             />
-            {errors?.errors?.new_password && (
+            {fieldError(errors, "new_password") && (
               <p className="text-error text-sm mt-1">
-                {errors.errors.new_password[0]}
+                {fieldError(errors, "new_password")}
               </p>
             )}
           </div>
@@ -75,9 +70,9 @@ export default function ProfilePassword() {
               className="input input-bordered w-full max-w-xs"
               disabled={isLoading}
             />
-            {errors?.errors?.new_password_confirmation && (
+            {fieldError(errors, "new_password_confirmation") && (
               <p className="text-error text-sm mt-1">
-                {errors.errors.new_password_confirmation[0]}
+                {fieldError(errors, "new_password_confirmation")}
               </p>
             )}
           </div>

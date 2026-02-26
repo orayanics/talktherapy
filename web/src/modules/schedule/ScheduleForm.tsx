@@ -2,6 +2,7 @@ import { Freq } from "~/models/schedule";
 import { DAYS } from "~/utils/rrule";
 import { FaSpinner } from "react-icons/fa";
 import useSchedule from "./useSchedule";
+import { fieldError, hasOnlyMessage } from "~/utils/errors";
 
 export default function ScheduleForm() {
   const { form, errors, isLoading, handleChange, handleSubmit, toggleDay } =
@@ -15,13 +16,9 @@ export default function ScheduleForm() {
       noValidate
       className="border rounded-lg p-6 shadow-sm/10 bg-white flex flex-col gap-6"
     >
-      {errors?.message && !errors.errors && (
+      {hasOnlyMessage(errors) && (
         <div role="alert" className="alert alert-error alert-soft">
-          <span>
-            {errors.message instanceof Object
-              ? errors.message.response
-              : errors.message}
-          </span>
+          <span>{errors!.message}</span>
         </div>
       )}
 
@@ -47,7 +44,11 @@ export default function ScheduleForm() {
             min={new Date().toISOString().split("T")[0]}
             title="Must be valid date"
           />
-          {errors?.errors?.date && <p>{errors.errors.date[0]}</p>}
+          {fieldError(errors, "date") && (
+            <p className="text-error text-sm mt-1">
+              {fieldError(errors, "date")}
+            </p>
+          )}
         </fieldset>
         <fieldset>
           <legend className="fieldset-legend font-mono text-sm uppercase text-gray-400">
@@ -63,7 +64,11 @@ export default function ScheduleForm() {
             required
             aria-required
           />
-          {errors?.errors?.start_time && <p>{errors.errors.start_time[0]}</p>}
+          {fieldError(errors, "start_time") && (
+            <p className="text-error text-sm mt-1">
+              {fieldError(errors, "start_time")}
+            </p>
+          )}
         </fieldset>
 
         <fieldset>
@@ -80,7 +85,11 @@ export default function ScheduleForm() {
             required
             aria-required
           />
-          {errors?.errors?.end_time && <p>{errors.errors.end_time[0]}</p>}
+          {fieldError(errors, "end_time") && (
+            <p className="text-error text-sm mt-1">
+              {fieldError(errors, "end_time")}
+            </p>
+          )}
         </fieldset>
       </section>
 
@@ -143,9 +152,9 @@ export default function ScheduleForm() {
                 );
               })}
             </div>
-            {errors?.errors?.selected_days && (
+            {fieldError(errors, "selected_days") && (
               <p className="text-error text-sm font-medium" role="alert">
-                {errors.errors.selected_days}
+                {fieldError(errors, "selected_days")}
               </p>
             )}
           </div>
