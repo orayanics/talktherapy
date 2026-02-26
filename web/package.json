@@ -35,14 +35,17 @@
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.1.18",
+    "@tanstack/eslint-config": "^0.4.0",
+    "@types/bun": "latest",
     "@types/node": "^22.5.4",
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",
     "@vitejs/plugin-react": "^4.3.4",
+    "prettier": "3.8.1",
     "tailwindcss": "^4.1.18",
     "typescript": "^5.7.2",
+    "typescript-eslint": "^8.56.1",
     "vite": "^7.3.1",
-    "vite-tsconfig-paths": "^5.1.4",
-    "@types/bun": "latest"
+    "vite-tsconfig-paths": "^5.1.4"
   }
 }

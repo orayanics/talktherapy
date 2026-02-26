@@ -1,5 +1,12 @@
 {
-  "include": ["**/*.ts", "**/*.tsx", "public/script*.js"],
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "public/script*.js",
+    "prettier.config.ts",
+    "vite.config.ts",
+    "eslint.config.ts"
+  ],
   "compilerOptions": {
     "strict": true,
     "esModuleInterop": true,

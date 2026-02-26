@@ -1,31 +1,31 @@
-import { createFileRoute, Outlet } from "@tanstack/react-router";
-import { sessionQueryOptions } from "~/api/auth";
+import { createFileRoute, Outlet } from '@tanstack/react-router'
+import type { UserType } from '~/models/user/user'
+import { sessionQueryOptions } from '~/api/auth'
 
-import { SessionProvider } from "~/context/SessionContext";
-import Sidebar from "~/components/Sidebar/Sidebar";
-import { UserType } from "~/models/user/user";
+import { SessionProvider } from '~/context/SessionContext'
+import Sidebar from '~/components/Sidebar/Sidebar'
 
-export const Route = createFileRoute("/_private")({
+export const Route = createFileRoute('/_private')({
   ssr: false,
   loader: async ({ context: { queryClient } }) => {
     try {
-      const session = await queryClient.ensureQueryData(sessionQueryOptions);
+      const session = await queryClient.ensureQueryData(sessionQueryOptions)
 
-      if (!session) throw Route.redirect({ to: "/login" });
+      if (!session) throw Route.redirect({ to: '/login' })
 
-      return session;
+      return session
     } catch (err) {
       throw Route.redirect({
-        to: "/login",
-      });
+        to: '/login',
+      })
     }
   },
   component: RouteComponent,
-});
+})
 
 function RouteComponent() {
-  const session = Route.useLoaderData();
-  const { account_role } = session;
+  const session = Route.useLoaderData()
+  const { account_role } = session
   return (
     <SessionProvider value={session}>
       <div className="flex bg-white">
@@ -36,5 +36,5 @@ function RouteComponent() {
         </Sidebar>
       </div>
     </SessionProvider>
-  );
+  )
 }
