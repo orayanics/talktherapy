@@ -44,7 +44,7 @@ function RouteComponent() {
             </button>
             <button
               className="btn btn-neutral"
-              onClick={() => navigate({ to: "/password" })}
+              onClick={() => navigate({ to: "/profile/password" })}
             >
               Change Password
             </button>

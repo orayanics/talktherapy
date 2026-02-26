@@ -1,5 +1,6 @@
 import { useNavigate } from "@tanstack/react-router";
 import { useMutation, queryOptions } from "@tanstack/react-query";
+import { isAxiosError } from "axios";
 import { api } from "~/api/axios";
 import {
   ClinicianRegisterPayload,
@@ -7,6 +8,8 @@ import {
 } from "~/models/user/credentials";
 
 import { UsersParams } from "~/models/system";
+import { useAlert } from "~/context/AlertContext";
+import { USER } from "~/config/message";
 
 export const usersQueryOptions = (params: UsersParams) =>
   queryOptions({
@@ -38,12 +41,15 @@ export const userDetailQueryOptions = (userId: string) => {
 
 export const addClinician = () => {
   const navigate = useNavigate();
+  const { showAlert } = useAlert();
+
   return useMutation({
     mutationFn: async (payload: ClinicianRegisterPayload) => {
       const { data } = await api.post(`/auth/register/clinician`, payload);
       return data;
     },
     onSuccess: () => {
+      showAlert(USER.create.success, "success");
       navigate({
         to: "/users",
         search: {
@@ -53,18 +59,26 @@ export const addClinician = () => {
           status: [],
         },
       });
+    },
+    onError: (error) => {
+      if (isAxiosError(error)) {
+        console.error("Failed to add clinician:", error.response?.data);
+      }
+      showAlert(USER.create.error, "error");
     },
   });
 };
 
 export const addAdmin = () => {
   const navigate = useNavigate();
+  const { showAlert } = useAlert();
   return useMutation({
     mutationFn: async (payload: AdminRegisterPayload) => {
       const { data } = await api.post(`/auth/register/admin`, payload);
       return data;
     },
     onSuccess: () => {
+      showAlert(USER.create.success, "success");
       navigate({
         to: "/users",
         search: {
@@ -74,6 +88,12 @@ export const addAdmin = () => {
           status: [],
         },
       });
+    },
+    onError: (error) => {
+      if (isAxiosError(error)) {
+        console.error("Failed to add admin:", error.response?.data);
+      }
+      showAlert(USER.create.error, "error");
     },
   });
 };

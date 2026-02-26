@@ -1,5 +1,7 @@
 import axios, { type AxiosRequestConfig } from "axios";
 import qs from "qs";
+import { AXIOS, SESSION } from "~/config/message";
+import { useAlert } from "~/context/AlertContext";
 
 const instance = axios.create({
   baseURL: import.meta.env.VITE_APP_API_URL,
@@ -36,6 +38,12 @@ instance.interceptors.response.use(
     const alreadyRetried = original._retry;
 
     if (!original || !is401 || shouldSkip || alreadyRetried) {
+      const { showAlert } = useAlert();
+      if (is401) {
+        showAlert(SESSION.expired, "error");
+      } else {
+        showAlert(AXIOS.generalError, "error");
+      }
       return Promise.reject(error);
     }
     if (isRefreshing) {
@@ -56,6 +64,8 @@ instance.interceptors.response.use(
       return instance(original);
     } catch (refreshError) {
       processQueue(refreshError);
+      const { showAlert } = useAlert();
+      showAlert(SESSION.expired, "error");
       window.location.href = "/login";
       return Promise.reject(refreshError);
     } finally {

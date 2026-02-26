@@ -6,6 +6,15 @@ import {
 import { useNavigate, useRouter } from "@tanstack/react-router";
 import { isAxiosError } from "axios";
 import { api } from "~/api/axios";
+import {
+  LOGIN,
+  LOGOUT,
+  PASSWORD_UPDATE,
+  PROFILE_UPDATE,
+  REGISTRATION_PATIENT,
+  SESSION,
+} from "~/config/message";
+import { useAlert } from "~/context/AlertContext";
 
 import {
   LoginPayload,
@@ -22,9 +31,12 @@ export const sessionQueryOptions = queryOptions({
       const { data } = await api.get("/auth/session");
       return data.user ?? null;
     } catch (error) {
+      const { showAlert } = useAlert();
       if (isAxiosError(error) && error.response?.status === 401) {
+        showAlert(SESSION.expired, "error");
         return null; // unauthenticated is not an error state
       }
+      showAlert(SESSION.error, "error");
       throw error; // network errors, 500s — still throw
     }
   },
@@ -36,6 +48,7 @@ export const sessionQueryOptions = queryOptions({
 export const useLogin = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { showAlert } = useAlert();
 
   return useMutation({
     mutationFn: async (payload: LoginPayload) => {
@@ -45,7 +58,14 @@ export const useLogin = () => {
     onSuccess: async () => {
       localStorage.setItem("talktherapy_session", "true");
       await queryClient.invalidateQueries({ queryKey: ["session"] });
+      showAlert(LOGIN.success, "success");
       navigate({ to: "/dashboard" });
+    },
+    onError: (error) => {
+      if (isAxiosError(error)) {
+        console.error("Login failed:", error.response?.data);
+      }
+      showAlert(LOGIN.error, "error");
     },
   });
 };
@@ -53,6 +73,7 @@ export const useLogin = () => {
 export const useLogout = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { showAlert } = useAlert();
 
   return useMutation({
     mutationFn: async () => {
@@ -61,7 +82,14 @@ export const useLogout = () => {
     onSuccess: async () => {
       localStorage.removeItem("talktherapy_session");
       queryClient.removeQueries({ queryKey: ["session"] });
+      showAlert(LOGOUT.success, "success");
       navigate({ to: "/login" });
+    },
+    onError: (error) => {
+      if (isAxiosError(error)) {
+        console.error("Logout failed:", error.response?.data);
+      }
+      showAlert(LOGOUT.error, "error");
     },
   });
 };
@@ -69,6 +97,7 @@ export const useLogout = () => {
 export const useRegisterPatient = () => {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const { showAlert } = useAlert();
 
   return useMutation({
     mutationFn: async (payload: PatientRegisterPayload) => {
@@ -81,12 +110,14 @@ export const useRegisterPatient = () => {
     },
     onSuccess: async () => {
       queryClient.removeQueries({ queryKey: ["session"] });
+      showAlert(REGISTRATION_PATIENT.success, "success");
       router.navigate({ to: "/dashboard" });
     },
     onError: (error) => {
       if (isAxiosError(error)) {
         console.error("Registration failed:", error.response?.data);
       }
+      showAlert(REGISTRATION_PATIENT.error, "error");
     },
   });
 };
@@ -94,6 +125,7 @@ export const useRegisterPatient = () => {
 export const useEditProfile = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { showAlert } = useAlert();
 
   return useMutation({
     mutationFn: async (payload: UpdateUserPayload) => {
@@ -102,12 +134,14 @@ export const useEditProfile = () => {
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["session"] });
+      showAlert(PROFILE_UPDATE.success, "success");
       navigate({ to: "/profile" });
     },
     onError: (error) => {
       if (isAxiosError(error)) {
         console.error("Profile update failed:", error.response?.data);
       }
+      showAlert(PROFILE_UPDATE.error, "error");
     },
   });
 };
@@ -115,6 +149,7 @@ export const useEditProfile = () => {
 export const useEditPassword = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { showAlert } = useAlert();
 
   return useMutation({
     mutationFn: async (payload: UpdatePasswordPayload) => {
@@ -123,12 +158,14 @@ export const useEditPassword = () => {
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["session"] });
+      showAlert(PASSWORD_UPDATE.success, "success");
       navigate({ to: "/profile" });
     },
     onError: (error) => {
       if (isAxiosError(error)) {
         console.error("Password update failed:", error.response?.data);
       }
+      showAlert(PASSWORD_UPDATE.error, "error");
     },
   });
 };

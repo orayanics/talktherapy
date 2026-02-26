@@ -13,7 +13,6 @@ import { Route as UnauthorizedRouteImport } from './routes/unauthorized'
 import { Route as PublicRouteRouteImport } from './routes/_public/route'
 import { Route as PrivateRouteRouteImport } from './routes/_private/route'
 import { Route as PublicIndexRouteImport } from './routes/_public/index'
-import { Route as PrivatePasswordRouteImport } from './routes/_private/password'
 import { Route as PrivateDashboardRouteImport } from './routes/_private/dashboard'
 import { Route as PublicAuthRouteRouteImport } from './routes/_public/_auth/route'
 import { Route as PrivatesudoRouteRouteImport } from './routes/_private/(sudo)/route'
@@ -25,6 +24,7 @@ import { Route as PrivateadmSharedRouteRouteImport } from './routes/_private/(ad
 import { Route as PrivateProfileIndexRouteImport } from './routes/_private/profile.index'
 import { Route as PublicAuthRegisterRouteImport } from './routes/_public/_auth/register'
 import { Route as PublicAuthLoginRouteImport } from './routes/_public/_auth/login'
+import { Route as PrivateProfilePasswordRouteImport } from './routes/_private/profile.password'
 import { Route as PrivateProfileEditRouteImport } from './routes/_private/profile.edit'
 import { Route as PrivatesudoLogsRouteImport } from './routes/_private/(sudo)/logs'
 import { Route as PrivatesharedSchedulesIndexRouteImport } from './routes/_private/(shared)/schedules/index'
@@ -61,11 +61,6 @@ const PublicIndexRoute = PublicIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => PublicRouteRoute,
-} as any)
-const PrivatePasswordRoute = PrivatePasswordRouteImport.update({
-  id: '/password',
-  path: '/password',
-  getParentRoute: () => PrivateRouteRoute,
 } as any)
 const PrivateDashboardRoute = PrivateDashboardRouteImport.update({
   id: '/dashboard',
@@ -114,6 +109,11 @@ const PublicAuthLoginRoute = PublicAuthLoginRouteImport.update({
   id: '/login',
   path: '/login',
   getParentRoute: () => PublicAuthRouteRoute,
+} as any)
+const PrivateProfilePasswordRoute = PrivateProfilePasswordRouteImport.update({
+  id: '/profile/password',
+  path: '/profile/password',
+  getParentRoute: () => PrivateRouteRoute,
 } as any)
 const PrivateProfileEditRoute = PrivateProfileEditRouteImport.update({
   id: '/profile/edit',
@@ -226,9 +226,9 @@ export interface FileRoutesByFullPath {
   '/': typeof PublicIndexRoute
   '/unauthorized': typeof UnauthorizedRoute
   '/dashboard': typeof PrivateDashboardRoute
-  '/password': typeof PrivatePasswordRoute
   '/logs': typeof PrivatesudoLogsRoute
   '/profile/edit': typeof PrivateProfileEditRoute
+  '/profile/password': typeof PrivateProfilePasswordRoute
   '/login': typeof PublicAuthLoginRoute
   '/register': typeof PublicAuthRegisterRoute
   '/profile/': typeof PrivateProfileIndexRoute
@@ -253,9 +253,9 @@ export interface FileRoutesByTo {
   '/': typeof PublicIndexRoute
   '/unauthorized': typeof UnauthorizedRoute
   '/dashboard': typeof PrivateDashboardRoute
-  '/password': typeof PrivatePasswordRoute
   '/logs': typeof PrivatesudoLogsRoute
   '/profile/edit': typeof PrivateProfileEditRoute
+  '/profile/password': typeof PrivateProfilePasswordRoute
   '/login': typeof PublicAuthLoginRoute
   '/register': typeof PublicAuthRegisterRoute
   '/profile': typeof PrivateProfileIndexRoute
@@ -288,10 +288,10 @@ export interface FileRoutesById {
   '/_private/(sudo)': typeof PrivatesudoRouteRouteWithChildren
   '/_public/_auth': typeof PublicAuthRouteRouteWithChildren
   '/_private/dashboard': typeof PrivateDashboardRoute
-  '/_private/password': typeof PrivatePasswordRoute
   '/_public/': typeof PublicIndexRoute
   '/_private/(sudo)/logs': typeof PrivatesudoLogsRoute
   '/_private/profile/edit': typeof PrivateProfileEditRoute
+  '/_private/profile/password': typeof PrivateProfilePasswordRoute
   '/_public/_auth/login': typeof PublicAuthLoginRoute
   '/_public/_auth/register': typeof PublicAuthRegisterRoute
   '/_private/profile/': typeof PrivateProfileIndexRoute
@@ -318,9 +318,9 @@ export interface FileRouteTypes {
     | '/'
     | '/unauthorized'
     | '/dashboard'
-    | '/password'
     | '/logs'
     | '/profile/edit'
+    | '/profile/password'
     | '/login'
     | '/register'
     | '/profile/'
@@ -345,9 +345,9 @@ export interface FileRouteTypes {
     | '/'
     | '/unauthorized'
     | '/dashboard'
-    | '/password'
     | '/logs'
     | '/profile/edit'
+    | '/profile/password'
     | '/login'
     | '/register'
     | '/profile'
@@ -379,10 +379,10 @@ export interface FileRouteTypes {
     | '/_private/(sudo)'
     | '/_public/_auth'
     | '/_private/dashboard'
-    | '/_private/password'
     | '/_public/'
     | '/_private/(sudo)/logs'
     | '/_private/profile/edit'
+    | '/_private/profile/password'
     | '/_public/_auth/login'
     | '/_public/_auth/register'
     | '/_private/profile/'
@@ -439,13 +439,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof PublicIndexRouteImport
       parentRoute: typeof PublicRouteRoute
-    }
-    '/_private/password': {
-      id: '/_private/password'
-      path: '/password'
-      fullPath: '/password'
-      preLoaderRoute: typeof PrivatePasswordRouteImport
-      parentRoute: typeof PrivateRouteRoute
     }
     '/_private/dashboard': {
       id: '/_private/dashboard'
@@ -523,6 +516,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/login'
       preLoaderRoute: typeof PublicAuthLoginRouteImport
       parentRoute: typeof PublicAuthRouteRoute
+    }
+    '/_private/profile/password': {
+      id: '/_private/profile/password'
+      path: '/profile/password'
+      fullPath: '/profile/password'
+      preLoaderRoute: typeof PrivateProfilePasswordRouteImport
+      parentRoute: typeof PrivateRouteRoute
     }
     '/_private/profile/edit': {
       id: '/_private/profile/edit'
@@ -774,8 +774,8 @@ interface PrivateRouteRouteChildren {
   PrivatesharedRouteRoute: typeof PrivatesharedRouteRouteWithChildren
   PrivatesudoRouteRoute: typeof PrivatesudoRouteRouteWithChildren
   PrivateDashboardRoute: typeof PrivateDashboardRoute
-  PrivatePasswordRoute: typeof PrivatePasswordRoute
   PrivateProfileEditRoute: typeof PrivateProfileEditRoute
+  PrivateProfilePasswordRoute: typeof PrivateProfilePasswordRoute
   PrivateProfileIndexRoute: typeof PrivateProfileIndexRoute
 }
 
@@ -787,8 +787,8 @@ const PrivateRouteRouteChildren: PrivateRouteRouteChildren = {
   PrivatesharedRouteRoute: PrivatesharedRouteRouteWithChildren,
   PrivatesudoRouteRoute: PrivatesudoRouteRouteWithChildren,
   PrivateDashboardRoute: PrivateDashboardRoute,
-  PrivatePasswordRoute: PrivatePasswordRoute,
   PrivateProfileEditRoute: PrivateProfileEditRoute,
+  PrivateProfilePasswordRoute: PrivateProfilePasswordRoute,
   PrivateProfileIndexRoute: PrivateProfileIndexRoute,
 }
 

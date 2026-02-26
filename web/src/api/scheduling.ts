@@ -7,6 +7,8 @@ import { useNavigate } from "@tanstack/react-router";
 import { isAxiosError } from "axios";
 import { format } from "date-fns/format";
 import { api } from "~/api/axios";
+import { SCHEDULE } from "~/config/message";
+import { useAlert } from "~/context/AlertContext";
 
 import {
   AvailabilityRulesParams,
@@ -67,6 +69,7 @@ export const appointmentsQuery = (params: PatientAppointmentsQueryParams) =>
 export const useCreateSchedule = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { showAlert } = useAlert();
 
   return useMutation({
     mutationFn: async (payload: CreateAvailabilityPayload) => {
@@ -75,12 +78,14 @@ export const useCreateSchedule = () => {
     },
     onSuccess: async () => {
       queryClient.invalidateQueries({ queryKey: ["availability"] });
+      showAlert(SCHEDULE.create.success, "success");
       navigate({ to: "/schedules" });
     },
     onError: (error) => {
       if (isAxiosError(error)) {
         console.error("Failed to create:", error.response?.data);
       }
+      showAlert(SCHEDULE.create.error, "error");
     },
   });
 };

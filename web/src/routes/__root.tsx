@@ -12,6 +12,8 @@ import { NotFound } from "~/components/NotFound";
 import appCss from "~/styles/entry.css?url";
 import { seo } from "~/utils/seo";
 
+import { AlertProvider } from "~/context/AlertContext";
+
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
 }>()({
@@ -79,7 +81,9 @@ export const Route = createRootRouteWithContext<{
 function RootComponent() {
   return (
     <RootDocument>
-      <Outlet />
+      <AlertProvider>
+        <Outlet />
+      </AlertProvider>
     </RootDocument>
   );
 }

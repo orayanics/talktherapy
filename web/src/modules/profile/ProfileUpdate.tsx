@@ -24,16 +24,21 @@ export default function ProfileUpdate(props: UserResponse) {
           <div className="h-20 w-20 bg-gray-300 rounded-lg" />
         </div>
 
-        <div className="flex flex-row justify-between gap-2">
+        <div className="flex flex-col lg:flex-row justify-between gap-2">
           <p className="font-bold">Full Name</p>
-          <input
-            type="text"
-            name="name"
-            value={form.name}
-            onChange={handleChange}
-            className="input input-bordered w-full max-w-xs"
-            disabled={isLoading}
-          />
+          <div>
+            <input
+              type="text"
+              name="name"
+              value={form.name}
+              onChange={handleChange}
+              className="input input-bordered w-full max-w-xs"
+              disabled={isLoading}
+            />
+            {errors?.errors?.name && (
+              <p className="text-error text-sm mt-1">{errors.errors.name[0]}</p>
+            )}
+          </div>
         </div>
 
         <div className="flex flex-row justify-between gap-2">

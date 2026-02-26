@@ -13,6 +13,7 @@ export default function useUpdateUser({ name }: { name: string }) {
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setErrors(null);
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };

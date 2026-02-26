@@ -5,7 +5,6 @@ import {
   FaUser,
   FaCalendar,
   FaMedkit,
-  FaUserFriends,
 } from "react-icons/fa";
 import { UserType } from "~/models/user/user";
 
