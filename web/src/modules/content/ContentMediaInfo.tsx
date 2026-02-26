@@ -1,5 +1,5 @@
 import { Link } from '@tanstack/react-router'
-import { MediaContentClient } from '~/models/content'
+import type { MediaContentClient } from '~/models/content'
 
 export default function ContentMediaInfo(props: MediaContentClient) {
   const {
@@ -44,7 +44,7 @@ export default function ContentMediaInfo(props: MediaContentClient) {
             <div className="flex gap-1">
               {tags && (
                 <>
-                  {tags?.map((tag) => {
+                  {tags.map((tag) => {
                     return (
                       <span key={tag} className="badge">
                         {tag}

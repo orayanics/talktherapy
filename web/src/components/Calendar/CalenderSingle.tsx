@@ -10,10 +10,11 @@ export default function CalenderSingle(props: CalenderSingleProps) {
   const { date, onSelect } = props
   const dateStr = date ? format(date, 'yyyy-MM-dd') : undefined
 
-  const handleSelect = (date: Date | undefined) => {
+  const handleSelect = () => {
     if (!date) return
     onSelect(date)
   }
+
   return (
     <DayPicker
       className="react-day-picker bg-white"

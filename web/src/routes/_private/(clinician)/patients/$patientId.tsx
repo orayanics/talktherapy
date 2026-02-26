@@ -1,16 +1,16 @@
 import { createFileRoute } from '@tanstack/react-router'
 
-export const Route = createFileRoute(
-  '/_private/(clinician)/patients/$patientId',
-)({
-  component: RouteComponent,
-})
-
 import Grid from '~/components/Page/Grid'
 import GridItem from '~/components/Page/GridItem'
 
 import PageTitle from '~/components/Page/PageTitle'
 import PatientInfo from '~/modules/patients/PatientInfo'
+
+export const Route = createFileRoute(
+  '/_private/(clinician)/patients/$patientId',
+)({
+  component: RouteComponent,
+})
 
 function RouteComponent() {
   return (

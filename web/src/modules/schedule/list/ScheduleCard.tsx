@@ -1,14 +1,14 @@
 import { useState } from 'react'
 import { Link } from '@tanstack/react-router'
 
+import ScheduleRecurrence from './ScheduleRecurrence'
+import type { AvailabilityRuleWithSlots } from '~/models/schedule'
 import { parseRRule } from '~/utils/rrule'
 import { formatToLocalDate, getDay, getTime } from '~/utils/date'
-import { AvailabilityRuleWithSlots } from '~/models/schedule'
 
-import ScheduleRecurrence from './ScheduleRecurrence'
 
 interface ScheduleCardProps {
-  data: AvailabilityRuleWithSlots[]
+  data: Array<AvailabilityRuleWithSlots>
 }
 
 export default function ScheduleCard(props: ScheduleCardProps) {

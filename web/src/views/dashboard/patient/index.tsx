@@ -1,8 +1,9 @@
+import PatientAppointments from './PatientAppointments'
+import PatientBookmark from './PatientBookmark'
 import Grid from '~/components/Page/Grid'
 import GridItem from '~/components/Page/GridItem'
 
-import PatientAppointments from './PatientAppointments'
-import PatientBookmark from './PatientBookmark'
+
 export default function index() {
   return (
     <>

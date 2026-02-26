@@ -1,7 +1,8 @@
+import { useRegisterAdmin } from './useUserAdd'
+import type { PermissionKey} from '~/models/user/permissions';
 import ModalHeader from '~/components/Modal/ModalHeader'
 import ModalBody from '~/components/Modal/ModalBody'
-import { useRegisterAdmin } from './useUserAdd'
-import { PermissionKey, PermissionLabels } from '~/models/user/permissions'
+import { PermissionLabels } from '~/models/user/permissions'
 import { fieldError, hasOnlyMessage } from '~/utils/errors'
 
 interface UserAddAdminProps {

@@ -1,10 +1,10 @@
 import React from 'react'
-import { NAV_BY_ROLE } from '~/config/sidebar'
-import { UserType } from '~/models/user/user'
 import { FaBars } from 'react-icons/fa'
+import SidebarNavItems from './SidebarNavItems'
+import type { UserType } from '~/models/user/user'
+import { NAV_BY_ROLE } from '~/config/sidebar'
 
 import LogoText from '~/components/Logo/LogoText'
-import SidebarNavItems from './SidebarNavItems'
 import { useLogout } from '~/api/auth'
 
 interface SidebarProps {
@@ -14,7 +14,7 @@ interface SidebarProps {
 
 export default function Sidebar(props: SidebarProps) {
   const { children, role } = props
-  const navItems = NAV_BY_ROLE[role] ?? []
+  const navItems = NAV_BY_ROLE[role]
 
   const { mutateAsync: logout } = useLogout()
   const handleLogout = async () => {

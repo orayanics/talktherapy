@@ -1,5 +1,5 @@
-import { MediaContentClient } from '~/models/content'
 import MDEditor from '@uiw/react-md-editor'
+import type { MediaContentClient } from '~/models/content'
 
 interface ContentMedaiInfoEditProps extends MediaContentClient {
   bodyValue: string
@@ -63,7 +63,7 @@ export default function ContentMediaInfoEdit(props: ContentMedaiInfoEditProps) {
           <div className="flex gap-1">
             {tags && (
               <>
-                {tags?.map((tag) => {
+                {tags.map((tag) => {
                   return (
                     <span key={tag} className="badge">
                       {tag}

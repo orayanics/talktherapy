@@ -1,20 +1,21 @@
 import {
-  useMutation,
   queryOptions,
+  useMutation,
   useQueryClient,
 } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import { isAxiosError } from 'axios'
 import { format } from 'date-fns/format'
-import { api } from '~/api/axios'
-import { SCHEDULE } from '~/config/message'
-import { useAlert } from '~/context/AlertContext'
 
-import {
+import type {
   AvailabilityRulesParams,
   CreateAvailabilityPayload,
   PatientAppointmentsQueryParams,
 } from '~/models/schedule'
+
+import { api } from '~/api/axios'
+import { SCHEDULE } from '~/config/message'
+import { useAlert } from '~/context/AlertContext'
 
 // query options
 export const availabilityRulesQuery = (params: AvailabilityRulesParams) =>
@@ -76,7 +77,7 @@ export const useCreateSchedule = () => {
       const { data } = await api.post('/scheduling/availability', payload)
       return data
     },
-    onSuccess: async () => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['availability'] })
       showAlert(SCHEDULE.create.success, 'success')
       navigate({ to: '/schedules' })

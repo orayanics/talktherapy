@@ -1,13 +1,13 @@
 import { useNavigate } from '@tanstack/react-router'
-import { UserResponse } from '~/models/system'
 import useUpdateUser from './useUpdateUser'
+import type { UserResponse } from '~/models/system'
 import { fieldError } from '~/utils/errors'
 
 export default function ProfileUpdate(props: UserResponse) {
   const { name } = props
   const navigate = useNavigate()
   const { form, errors, handleChange, handleSubmit, isLoading } = useUpdateUser(
-    { name: name },
+    { user_name: name },
   )
 
   return (

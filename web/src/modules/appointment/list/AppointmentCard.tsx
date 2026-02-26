@@ -1,9 +1,9 @@
 import { useState } from 'react'
+import type { AvailableSlot } from '~/models/schedule'
 import { getTime } from '~/utils/date'
-import { AvailableSlot } from '~/models/schedule'
 
 interface AppointmentCardProps {
-  data: AvailableSlot[]
+  data: Array<AvailableSlot>
 }
 
 export default function AppointmentCard(props: AppointmentCardProps) {

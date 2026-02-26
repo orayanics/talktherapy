@@ -9,6 +9,7 @@ import GridItem from '~/components/Page/GridItem'
 import PageTitle from '~/components/Page/PageTitle'
 
 import ContentMediaInfoEdit from '~/modules/content/ContentMediaInfoEdit'
+
 export const Route = createFileRoute(
   '/_private/(shared)/content/(admin-content)/$contentId/edit',
 )({

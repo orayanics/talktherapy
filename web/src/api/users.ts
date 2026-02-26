@@ -1,13 +1,15 @@
 import { useNavigate } from '@tanstack/react-router'
-import { useMutation, queryOptions } from '@tanstack/react-query'
+import { queryOptions, useMutation } from '@tanstack/react-query'
 import { isAxiosError } from 'axios'
-import { api } from '~/api/axios'
-import {
-  ClinicianRegisterPayload,
-  AdminRegisterPayload,
-} from '~/models/user/credentials'
 
-import { UsersParams } from '~/models/system'
+import type {
+  AdminRegisterPayload,
+  ClinicianRegisterPayload,
+} from '~/models/user/credentials'
+import type { UsersParams } from '~/models/system'
+
+import { api } from '~/api/axios'
+
 import { useAlert } from '~/context/AlertContext'
 import { USER } from '~/config/message'
 

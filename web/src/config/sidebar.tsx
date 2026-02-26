@@ -1,12 +1,12 @@
 import {
-  FaHome,
-  FaFile,
-  FaCog,
-  FaUser,
   FaCalendar,
+  FaCog,
+  FaFile,
+  FaHome,
   FaMedkit,
+  FaUser,
 } from 'react-icons/fa'
-import { UserType } from '~/models/user/user'
+import type { UserType } from '~/models/user/user'
 
 export interface NavItem {
   label: string
@@ -121,7 +121,7 @@ export const PATIENT_NAV_ITEMS = [
   },
 ]
 
-export const NAV_BY_ROLE: Record<UserType, NavItem[]> = {
+export const NAV_BY_ROLE: Record<UserType, Array<NavItem>> = {
   sudo: SUDO_NAV_ITEMS,
   admin: ADMIN_NAV_ITEMS,
   clinician: CLINICIAN_NAV_ITEMS,

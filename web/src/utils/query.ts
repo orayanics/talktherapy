@@ -1,6 +1,6 @@
 export function normalizeSearchArray(
-  value: string | string[] | unknown,
-): string[] {
+  value: string | Array<string> | unknown,
+): Array<string> {
   if (Array.isArray(value)) {
     return value.map((item) => String(item)).filter(Boolean)
   }

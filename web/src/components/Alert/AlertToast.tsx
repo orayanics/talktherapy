@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { FaCheck, FaExclamation } from 'react-icons/fa'
+
 type AlertType = 'success' | 'error' | 'info' | 'warning'
 
 interface AlertToastProps {

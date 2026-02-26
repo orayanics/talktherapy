@@ -1,8 +1,10 @@
-import React, { useState } from 'react'
-import { useRegisterPatient } from '~/api/auth'
-import { PatientRegisterPayload } from '~/models/user/credentials'
+import { useState } from 'react'
 import { isAxiosError } from 'axios'
-import { ParsedError, parseError } from '~/utils/errors'
+import type React from 'react';
+import type { PatientRegisterPayload } from '~/models/user/credentials'
+import type { ParsedError} from '~/utils/errors';
+import { useRegisterPatient } from '~/api/auth'
+import { parseError } from '~/utils/errors'
 
 export default function usePatientRegister() {
   const [errors, setErrors] = useState<ParsedError | null>(null)

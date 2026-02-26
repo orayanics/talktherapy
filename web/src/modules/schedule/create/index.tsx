@@ -1,5 +1,5 @@
-import PageTitle from '~/components/Page/PageTitle'
 import ScheduleForm from '../ScheduleForm'
+import PageTitle from '~/components/Page/PageTitle'
 
 export default function index() {
   return (

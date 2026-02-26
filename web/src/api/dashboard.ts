@@ -1,4 +1,4 @@
-import { useMutation, queryOptions } from '@tanstack/react-query'
+import { queryOptions } from '@tanstack/react-query'
 import { api } from '~/api/axios'
 
 // query options

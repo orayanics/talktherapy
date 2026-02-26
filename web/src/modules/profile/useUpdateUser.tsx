@@ -1,15 +1,17 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { isAxiosError } from 'axios'
+import type React from 'react'
 
-import { UpdateUserPayload } from '~/models/user/credentials'
+import type { UpdateUserPayload } from '~/models/user/credentials'
 
+import type { ParsedError } from '~/utils/errors'
 import { useEditProfile } from '~/api/auth'
-import { ParsedError, parseError } from '~/utils/errors'
+import { parseError } from '~/utils/errors'
 
-export default function useUpdateUser({ name }: { name: string }) {
+export default function useUpdateUser({ user_name }: { user_name: string }) {
   const [errors, setErrors] = useState<ParsedError | null>(null)
   const [form, setForm] = useState<UpdateUserPayload>({
-    name: name,
+    name: user_name,
   })
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

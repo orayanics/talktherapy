@@ -27,7 +27,7 @@ export interface AvailabilityRuleWithSlots {
   ends_at: string
   is_active: boolean
   recurrence_rule: string
-  slots: SlotDto[]
+  slots: Array<SlotDto>
 }
 
 export interface AvailableSlotClinician {
@@ -49,7 +49,7 @@ export interface AvailableSlot {
 export interface ScheduleRecurrenceProps {
   recurrenceInfo: {
     freq: Freq | null
-    byday: string[] | null
+    byday: Array<string> | null
   }
   date: string
   lastSlot: SlotDto
@@ -67,6 +67,6 @@ export interface CreateSchedulePayload {
   start_time: string
   end_time: string
   freq: Freq
-  selected_days: string[]
+  selected_days: Array<string>
   horizon_days: number
 }

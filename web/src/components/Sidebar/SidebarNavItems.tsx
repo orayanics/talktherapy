@@ -7,7 +7,7 @@ interface NavItem {
 }
 
 interface SidebarNavItemsProps {
-  items: NavItem[]
+  items: Array<NavItem>
 }
 export default function SidebarNavItems(props: SidebarNavItemsProps) {
   const { items } = props

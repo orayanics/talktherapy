@@ -1,6 +1,6 @@
 // ~/lib/auth-guards.ts
 import { redirect } from '@tanstack/react-router'
-import { UserResponse } from '~/models/system'
+import type { UserResponse } from '~/models/system'
 
 export type AccountRole = UserResponse['account_role']
 
@@ -9,7 +9,7 @@ export type AccountRole = UserResponse['account_role']
  */
 export function hasRole(
   user: UserResponse,
-  ...allowedRoles: AccountRole[]
+  ...allowedRoles: Array<AccountRole>
 ): boolean {
   if (user.account_role === 'sudo') return true
   return allowedRoles.includes(user.account_role)
@@ -22,7 +22,7 @@ export function hasPermission(user: UserResponse, permission: string): boolean {
 
 export function hasAllPermissions(
   user: UserResponse,
-  permissions: string[],
+  permissions: Array<string>,
 ): boolean {
   if (user.account_role === 'sudo') return true
   return permissions.every((p) => user.account_permissions?.includes(p))
@@ -30,7 +30,7 @@ export function hasAllPermissions(
 
 export function hasAnyPermission(
   user: UserResponse,
-  permissions: string[],
+  permissions: Array<string>,
 ): boolean {
   if (user.account_role === 'sudo') return true
   return permissions.some((p) => user.account_permissions?.includes(p))
@@ -42,7 +42,7 @@ export function hasAnyPermission(
  */
 export function requireRole(
   user: UserResponse,
-  ...allowedRoles: AccountRole[]
+  ...allowedRoles: Array<AccountRole>
 ): UserResponse {
   if (!hasRole(user, ...allowedRoles)) {
     throw redirect({ to: '/unauthorized' })
@@ -62,7 +62,7 @@ export function requirePermission(
 
 export function requireAllPermissions(
   user: UserResponse,
-  permissions: string[],
+  permissions: Array<string>,
 ): UserResponse {
   if (!hasAllPermissions(user, permissions)) {
     throw redirect({ to: '/unauthorized' })
@@ -72,7 +72,7 @@ export function requireAllPermissions(
 
 export function requireAnyPermission(
   user: UserResponse,
-  permissions: string[],
+  permissions: Array<string>,
 ): UserResponse {
   if (!hasAnyPermission(user, permissions)) {
     throw redirect({ to: '/unauthorized' })

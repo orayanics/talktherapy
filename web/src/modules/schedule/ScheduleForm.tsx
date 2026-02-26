@@ -1,7 +1,7 @@
-import { Freq } from '~/models/schedule'
-import { DAYS } from '~/utils/rrule'
 import { FaSpinner } from 'react-icons/fa'
 import useSchedule from './useSchedule'
+import type { Freq } from '~/models/schedule'
+import { DAYS } from '~/utils/rrule'
 import { fieldError, hasOnlyMessage } from '~/utils/errors'
 
 export default function ScheduleForm() {
@@ -99,7 +99,7 @@ export default function ScheduleForm() {
         <h2 className="font-mono text-sm text-primary uppercase">Recurrence</h2>
 
         <div className="flex gap-2 flex-wrap">
-          {(['none', 'DAILY', 'WEEKLY', 'MONTHLY'] as Freq[]).map((f) => (
+          {(['none', 'DAILY', 'WEEKLY', 'MONTHLY'] as Array<Freq>).map((f) => (
             <label key={f} className="cursor-pointer">
               <input
                 type="radio"

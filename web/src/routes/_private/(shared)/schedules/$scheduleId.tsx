@@ -1,5 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 
+import { useQuery } from '@tanstack/react-query'
 import PageTitle from '~/components/Page/PageTitle'
 import Grid from '~/components/Page/Grid'
 import GridItem from '~/components/Page/GridItem'
@@ -11,7 +12,6 @@ import SkeletonNull from '~/components/Skeleton/SkeletonNull'
 import ScheduleDetailsId from '~/modules/schedule/id/ScheduleInfo'
 import ScheduleSlot from '~/modules/schedule/id/ScheduleSlot'
 import { availabilityByIdQuery } from '~/api/scheduling'
-import { useQuery } from '@tanstack/react-query'
 
 export const Route = createFileRoute(
   '/_private/(shared)/schedules/$scheduleId',

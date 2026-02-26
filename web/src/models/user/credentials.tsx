@@ -18,7 +18,7 @@ export interface ClinicianRegisterPayload {
 
 export interface AdminRegisterPayload {
   email: string
-  abilities: string[]
+  abilities: Array<string>
 }
 
 export interface UpdateUserPayload {

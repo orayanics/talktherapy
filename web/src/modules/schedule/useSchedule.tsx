@@ -1,12 +1,13 @@
-import React, { useState } from 'react'
-import { CreateSchedulePayload } from '~/models/schedule'
+import { useState } from 'react'
+import { addMonths, differenceInDays } from 'date-fns'
+import { isAxiosError } from 'axios'
+import type React from 'react';
+import type { ParsedError} from '~/utils/errors';
+import type { CreateAvailabilityPayload, CreateSchedulePayload  } from '~/models/schedule'
 import { useCreateSchedule } from '~/api/scheduling'
-import { CreateAvailabilityPayload } from '~/models/schedule'
 import { toISODateTime } from '~/utils/date'
 import { buildRRule } from '~/utils/rrule'
-import { differenceInDays, addMonths } from 'date-fns'
-import { isAxiosError } from 'axios'
-import { ParsedError, parseError } from '~/utils/errors'
+import { parseError } from '~/utils/errors'
 
 export default function useSchedule() {
   const [errors, setErrors] = useState<ParsedError | null>(null)

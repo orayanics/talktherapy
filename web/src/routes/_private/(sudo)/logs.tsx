@@ -13,6 +13,7 @@ import InputMultiselect from '~/components/Input/InputMultiselect'
 import InputDropdown from '~/components/Input/InputDropdown'
 import LoaderTable from '~/components/Loader/LoaderTable'
 import TablePagination from '~/components/Table/TablePagination'
+
 export const Route = createFileRoute('/_private/(sudo)/logs')({
   component: RouteComponent,
 })

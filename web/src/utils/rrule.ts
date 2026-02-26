@@ -1,4 +1,4 @@
-import { Freq } from '~/models/schedule'
+import type { Freq } from '~/models/schedule'
 
 export const DAYS = [
   { label: 'Mon', value: 'MO' },
@@ -12,7 +12,7 @@ export const DAYS = [
 
 export function buildRRule(
   freq: Freq,
-  selectedDays: string[],
+  selectedDays: Array<string>,
 ): string | undefined {
   if (freq === 'none') return undefined
   if (freq === 'WEEKLY' && selectedDays.length > 0) {
@@ -23,7 +23,7 @@ export function buildRRule(
 
 export function parseRRule(rrule?: string | null): {
   freq: Freq | null
-  byday: string[]
+  byday: Array<string>
 } {
   if (!rrule || typeof rrule !== 'string') {
     return { freq: null, byday: [] }

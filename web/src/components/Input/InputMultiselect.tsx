@@ -5,9 +5,9 @@ interface Option {
 
 interface InputMultiSelectProps {
   placeholder?: string
-  options: Option[]
-  value?: string[]
-  onChange?: (value: string[]) => void
+  options: Array<Option>
+  value?: Array<string>
+  onChange?: (value: Array<string>) => void
   className?: string
 }
 

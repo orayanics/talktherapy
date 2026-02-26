@@ -1,16 +1,16 @@
 import React from 'react'
 
-type ColumnForKey<T, K extends keyof T> = {
+type ColumnForKey<T, TKey extends keyof T> = {
   header: string
-  accessor: K
-  render?: (value: T[K], row: T) => React.ReactNode
+  accessor: TKey
+  render?: (value: T[TKey], row: T) => React.ReactNode
 }
 
 export type Column<T> = { [K in keyof T]: ColumnForKey<T, K> }[keyof T]
 
 export type TableContentProps<T> = {
-  columns: Column<T>[]
-  data: T[]
+  columns: Array<Column<T>>
+  data: Array<T>
   renderers?: Partial<Record<keyof T, (value: any, row: T) => React.ReactNode>>
 }
 

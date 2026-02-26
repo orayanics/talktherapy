@@ -1,5 +1,5 @@
+import type { ScheduleRecurrenceProps } from '~/models/schedule'
 import { formatToLocalDate } from '~/utils/date'
-import { ScheduleRecurrenceProps } from '~/models/schedule'
 
 export default function ScheduleRecurrence(props: ScheduleRecurrenceProps) {
   const { recurrenceInfo, date, lastSlot } = props

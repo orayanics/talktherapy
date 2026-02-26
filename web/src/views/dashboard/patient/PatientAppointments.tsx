@@ -1,6 +1,7 @@
-import { AppointmentStatus } from '~/models/content'
+import type { AppointmentStatus } from '~/models/content'
 
 import AppointmentStatusBadge from '~/components/Badge/AppointmentStatusBadge'
+
 export default function PatientAppointments() {
   const SAMPLE_APPOINTMENTS = [
     {

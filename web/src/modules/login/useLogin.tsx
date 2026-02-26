@@ -1,8 +1,11 @@
-import React, { useState } from 'react'
-import { LoginPayload } from '~/models/user/credentials'
-import { useLogin as useLoginApi } from '~/api/auth'
+import { useState } from 'react'
 import { isAxiosError } from 'axios'
-import { ParsedError, parseError } from '~/utils/errors'
+
+import type { LoginPayload } from '~/models/user/credentials'
+import type { ParsedError } from '~/utils/errors'
+
+import { useLogin as useLoginApi } from '~/api/auth'
+import { parseError } from '~/utils/errors'
 
 export default function useLogin() {
   const [errors, setErrors] = useState<ParsedError | null>(null)

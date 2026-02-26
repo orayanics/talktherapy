@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { Link } from '@tanstack/react-router'
+import { DayPicker } from 'react-day-picker'
 import PageTitle from '~/components/Page/PageTitle'
 import Grid from '~/components/Page/Grid'
 import GridItem from '~/components/Page/GridItem'
-import { DayPicker } from 'react-day-picker'
 
 export default function ScheduleOverview() {
   return (

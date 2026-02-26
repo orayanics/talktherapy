@@ -4,6 +4,7 @@ import AdminOverview from '~/views/schedules/admin/ScheduleOverview'
 import ClinicianOverview from '~/views/schedules/clinician/ScheduleOverview'
 
 import { useAuthGuard } from '~/hooks/useAuthGuard'
+
 export const Route = createFileRoute('/_private/(shared)/schedules/')({
   ssr: false,
   validateSearch: (search: Record<string, unknown>) => {

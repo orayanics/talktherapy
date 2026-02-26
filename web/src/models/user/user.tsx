@@ -48,7 +48,7 @@ export interface UserSuperAdmin extends UserBase {
 
 // Extended user model for admin view:
 export interface UserAdmin extends UserBase {
-  permissions: Permission[]
+  permissions: Array<Permission>
 }
 
 // Use UserBase as base
@@ -59,11 +59,11 @@ export interface UserPatient extends UserBase {
 
   diagnosisId: string // links to diagnosis table
   consent: boolean
-  bookmarkedContent?: string[]
+  bookmarkedContent?: Array<string>
 }
 
 // Extended user model for clinician view:
 export interface UserClinician extends UserBase {
   specialtyId: string // links to specialty table
-  assignedPatients?: string[] // Array of patient user IDs
+  assignedPatients?: Array<string> // Array of patient user IDs
 }

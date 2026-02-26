@@ -3,6 +3,7 @@ import { Link, createFileRoute } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import debounce from 'debounce'
 
+import type { UsersTableProps } from '~/models/system'
 import Grid from '~/components/Page/Grid'
 import GridItem from '~/components/Page/GridItem'
 import TableContent from '~/components/Table/TableContent'
@@ -16,7 +17,6 @@ import InputMultiselect from '~/components/Input/InputMultiselect'
 import LoaderTable from '~/components/Loader/LoaderTable'
 import UserAddClinician from '~/modules/users/UserAddClinician'
 
-import { UsersTableProps } from '~/models/system'
 import { formatToLocalDateTime } from '~/utils/date'
 import { normalizeSearchArray } from '~/utils/query'
 
@@ -33,8 +33,8 @@ export const Route = createFileRoute('/_private/(adm-shared)/users/')({
       typeof search.search === 'string' ? search.search : undefined
 
     return {
-      ...(status?.length ? { status } : {}),
-      ...(role?.length ? { role } : {}),
+      ...(status.length ? { status } : {}),
+      ...(role.length ? { role } : {}),
       ...(page !== 1 ? { page } : {}),
       ...(perPage !== 10 ? { perPage } : {}),
       ...(searchTerm ? { search: searchTerm } : {}),
@@ -98,7 +98,7 @@ function RouteComponent() {
             role={role}
             search={searchInput}
             isLoading={isPending}
-            onPageChange={(page) => navigate({ search: { ...search, page } })}
+            onPageChange={() => navigate({ search: { ...search, page } })}
             onPerPageChange={(perPage) =>
               navigate({ search: { ...search, perPage, page: 1 } })
             }
@@ -282,7 +282,7 @@ function Table(props: UsersTableProps) {
       <TablePagination
         page={page}
         perPage={perPage}
-        total={total ?? usersData.length}
+        total={total || usersData.length}
         lastPage={last_page}
         from={from}
         to={to}

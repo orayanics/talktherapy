@@ -1,6 +1,6 @@
 import { format } from 'date-fns'
+import type { AvailabilityRuleWithSlots } from '~/models/schedule'
 import { parseRRule } from '~/utils/rrule'
-import { AvailabilityRuleWithSlots } from '~/models/schedule'
 
 interface ScheduleDetailsIdProps {
   data: AvailabilityRuleWithSlots
@@ -13,9 +13,8 @@ export default function ScheduleDetailsId(props: ScheduleDetailsIdProps) {
   const start = format(new Date(starts_at), 'pp')
   const end = format(new Date(ends_at), 'pp')
   const lastSlot = slots[slots.length - 1]
-  const lastSlotEnd = lastSlot
-    ? format(new Date(lastSlot.ends_at), 'PPpp')
-    : 'N/A'
+  const lastSlotEnd = format(new Date(lastSlot.ends_at), 'PPpp')
+
   const recurrenceInfo = parseRRule(recurrence_rule)
 
   return (
@@ -25,7 +24,7 @@ export default function ScheduleDetailsId(props: ScheduleDetailsIdProps) {
         <div className="[&>div]:py-4 [&>div]:border-y [&>div]:border-gray-100 [&>div]:border-dashed">
           <div className="flex flex-row justify-between gap-2">
             <p className="font-bold">Schedule Frequency</p>
-            <p>{recurrenceInfo?.freq ? recurrenceInfo.freq : 'ONE-TIME'}</p>
+            <p>{recurrenceInfo.freq ? recurrenceInfo.freq : 'ONE-TIME'}</p>
           </div>
           <div className="flex flex-row justify-between gap-2">
             <p className="font-bold">Schedule Start</p>

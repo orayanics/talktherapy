@@ -3,6 +3,7 @@ import Grid from '~/components/Page/Grid'
 import GridItem from '~/components/Page/GridItem'
 import PageTitle from '~/components/Page/PageTitle'
 import ProfilePassword from '~/modules/profile/ProfilePassword'
+
 export const Route = createFileRoute('/_private/profile/password')({
   component: RouteComponent,
 })

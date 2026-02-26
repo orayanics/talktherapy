@@ -1,4 +1,4 @@
-import { UserResponse } from '~/models/system'
+import type { UserResponse } from '~/models/system'
 
 export default function ProfileUserInfo(props: UserResponse) {
   const { name, email } = props

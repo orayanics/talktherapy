@@ -9,7 +9,7 @@ export interface LogsClient {
 export interface NotificationClient {
   id: string
   showTo: {
-    users?: string[] // Array of user IDs
+    users?: Array<string> // Array of user IDs
   }
   title: string
   message: string
@@ -21,17 +21,17 @@ export interface NotificationClient {
 
 // Laravel API Response
 export interface ResponseData {
-  data: string[]
+  data: Array<string>
 }
 
 export interface ErrorResponse {
   message?: string | { code: number; response: string }
-  errors?: Record<string, string[]>
+  errors?: Record<string, Array<string>>
 }
 
 export interface TableResponse<T = unknown> {
   current_page?: number
-  data: T[]
+  data: Array<T>
   total?: number
   last_page?: number
   from?: number | null
@@ -41,8 +41,8 @@ export interface TableResponse<T = unknown> {
 
 export type UsersParams = {
   search?: string
-  account_status?: string[]
-  account_role?: string[]
+  account_status?: Array<string>
+  account_role?: Array<string>
   page?: number
   perPage?: number
 }
@@ -51,14 +51,14 @@ export type UsersTableProps = {
   data: TableResponse<UserResponse> | null
   page: number
   perPage: number
-  status: string[]
-  role: string[]
+  status: Array<string>
+  role: Array<string>
   search: string
   isLoading: boolean
   onPageChange: (page: number) => void
   onPerPageChange: (perPage: number) => void
-  onStatusChange: (status: string[]) => void
-  onRoleChange: (role: string[]) => void
+  onStatusChange: (status: Array<string>) => void
+  onRoleChange: (role: Array<string>) => void
   onSearchChange: (search: string) => void
   onClearFilters: () => void
 }
@@ -72,7 +72,7 @@ export interface UserResponse {
   updated_at: string
   account_status: 'active' | 'inactive' | 'pending' | 'suspended'
   account_role: 'sudo' | 'admin' | 'clinician' | 'patient'
-  account_permissions: string[] | null
+  account_permissions: Array<string> | null
   account_icon: string | null
   created_by: string
   updated_by: string | null

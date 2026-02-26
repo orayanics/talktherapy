@@ -1,4 +1,5 @@
 import { FaBookmark } from 'react-icons/fa'
+
 const MEDIA_ITEMS = [
   {
     id: '1',

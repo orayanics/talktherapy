@@ -1,10 +1,12 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { isAxiosError } from 'axios'
+import type React from 'react';
 
-import { UpdatePasswordPayload } from '~/models/user/credentials'
+import type { UpdatePasswordPayload } from '~/models/user/credentials'
 
+import type { ParsedError} from '~/utils/errors';
 import { useEditPassword } from '~/api/auth'
-import { ParsedError, parseError } from '~/utils/errors'
+import { parseError } from '~/utils/errors'
 
 export default function useUpdatePassword() {
   const [errors, setErrors] = useState<ParsedError | null>(null)

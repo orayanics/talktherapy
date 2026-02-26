@@ -21,12 +21,12 @@ export const Route = createFileRoute('/_private/(patient)/appointments/')({
   validateSearch: (search: Record<string, unknown>) => {
     const page = Number(search.page ?? 1)
     const perPage = Number(search.perPage ?? 10)
-    const diagnosis = normalizeSearchArray(search.diagnosis) || undefined
+    const diagnosis = normalizeSearchArray(search.diagnosis)
     const date =
       typeof search.date === 'string' ? new Date(search.date) : undefined
 
     return {
-      ...(diagnosis ? { diagnosis } : {}),
+      ...(diagnosis.length ? { diagnosis } : {}),
       ...(page !== 1 ? { page } : {}),
       ...(perPage !== 10 ? { perPage } : {}),
       ...(date ? { date } : {}),
@@ -107,13 +107,13 @@ function AppointmentList({ date, search }: { date?: Date; search: any }) {
         page={page}
         perPage={perPage}
         total={data.meta.page_size}
-        onPageChange={(page) =>
+        onPageChange={() =>
           navigate({
             to: '.',
             search: { ...search, page },
           })
         }
-        onPerPageChange={(perPage) =>
+        onPerPageChange={() =>
           navigate({
             to: '.',
             search: { ...search, perPage },

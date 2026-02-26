@@ -1,4 +1,5 @@
-import { AppointmentStatus, AppointmentStatusValues } from '~/models/content'
+import type { AppointmentStatus } from '~/models/content'
+import { AppointmentStatusValues } from '~/models/content'
 
 interface AppointmentStatusBadgeProps {
   status: AppointmentStatus
@@ -26,7 +27,7 @@ export default function AppointmentStatusBadge(
 ) {
   const { status } = props
   const style =
-    APPOINTMENT_STATUS_BADGE_STYLES[status] ??
+    APPOINTMENT_STATUS_BADGE_STYLES[status] ||
     APPOINTMENT_STATUS_BADGE_STYLES.pending
   return <div className={style}>{AppointmentStatusValues[status]}</div>
 }

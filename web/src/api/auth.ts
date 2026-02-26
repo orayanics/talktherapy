@@ -1,11 +1,20 @@
 import {
-  useMutation,
   queryOptions,
+  useMutation,
   useQueryClient,
 } from '@tanstack/react-query'
 import { useNavigate, useRouter } from '@tanstack/react-router'
 import { isAxiosError } from 'axios'
+
+import type {
+  LoginPayload,
+  PatientRegisterPayload,
+  UpdatePasswordPayload,
+  UpdateUserPayload,
+} from '~/models/user/credentials'
+
 import { api } from '~/api/axios'
+
 import {
   LOGIN,
   LOGOUT,
@@ -14,14 +23,7 @@ import {
   REGISTRATION_PATIENT,
   SESSION,
 } from '~/config/message'
-import { useAlert, showAlertGlobal } from '~/context/AlertContext'
-
-import {
-  LoginPayload,
-  PatientRegisterPayload,
-  UpdatePasswordPayload,
-  UpdateUserPayload,
-} from '~/models/user/credentials'
+import { showAlertGlobal, useAlert } from '~/context/AlertContext'
 
 // query options
 export const sessionQueryOptions = queryOptions({
@@ -78,7 +80,7 @@ export const useLogout = () => {
     mutationFn: async () => {
       await api.post('/auth/logout')
     },
-    onSuccess: async () => {
+    onSuccess: () => {
       localStorage.removeItem('talktherapy_session')
       queryClient.removeQueries({ queryKey: ['session'] })
       showAlert(LOGOUT.success, 'success')
@@ -107,7 +109,7 @@ export const useRegisterPatient = () => {
         password: payload.password,
       })
     },
-    onSuccess: async () => {
+    onSuccess: () => {
       queryClient.removeQueries({ queryKey: ['session'] })
       showAlert(REGISTRATION_PATIENT.success, 'success')
       router.navigate({ to: '/dashboard' })
@@ -132,9 +134,10 @@ export const useEditProfile = () => {
       return data
     },
     onSuccess: async () => {
+      queryClient.removeQueries({ queryKey: ['session'] })
       await queryClient.invalidateQueries({ queryKey: ['session'] })
       showAlert(PROFILE_UPDATE.success, 'success')
-      navigate({ to: '/profile' })
+      navigate({ to: '/profile', replace: true })
     },
     onError: (error) => {
       if (isAxiosError(error)) {
@@ -158,7 +161,7 @@ export const useEditPassword = () => {
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['session'] })
       showAlert(PASSWORD_UPDATE.success, 'success')
-      navigate({ to: '/profile' })
+      navigate({ to: '/profile', replace: true })
     },
     onError: (error) => {
       if (isAxiosError(error)) {

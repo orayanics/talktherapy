@@ -1,6 +1,6 @@
 export interface ParsedError {
   message: string
-  errors?: Record<string, string[]>
+  errors?: Record<string, Array<string>>
 }
 
 /**
@@ -28,7 +28,7 @@ export function parseError(raw: unknown): ParsedError | null {
 
   const errors =
     err.errors && typeof err.errors === 'object' && !Array.isArray(err.errors)
-      ? (err.errors as Record<string, string[]>)
+      ? (err.errors as Record<string, Array<string>>)
       : undefined
 
   return { message, errors }
@@ -44,5 +44,5 @@ export function fieldError(
 
 /** True when there is a top-level message but no per-field errors. */
 export function hasOnlyMessage(parsed: ParsedError | null): boolean {
-  return !!parsed?.message && !parsed?.errors
+  return !!parsed?.message && !parsed.errors
 }

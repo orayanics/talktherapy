@@ -40,7 +40,7 @@ export default function ConsentsPatient(props: ConsentsPatientProps) {
           type="button"
           className="btn btn-primary"
           onClick={handleConsent}
-          disabled={false || !isBottom}
+          disabled={!isBottom}
         >
           Agree
         </button>

@@ -1,6 +1,7 @@
 import { useNavigate } from '@tanstack/react-router'
 import useUpdatePassword from './useUpdatePassword'
 import { fieldError, hasOnlyMessage } from '~/utils/errors'
+
 export default function ProfilePassword() {
   const navigate = useNavigate()
   const { form, errors, handleChange, handleSubmit, isLoading } =

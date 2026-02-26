@@ -1,7 +1,7 @@
+import type { UserResponse } from '~/models/system'
 import RoleBadge from '~/components/Badge/RoleBadge'
 import AccountStatusBadge from '~/components/Badge/AccountStatusBadge'
 
-import { UserResponse } from '~/models/system'
 import { formatToLocalDateTime } from '~/utils/date'
 
 export default function ProfileAccInfo(props: UserResponse) {

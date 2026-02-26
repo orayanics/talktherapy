@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { Link } from '@tanstack/react-router'
 
-import ConsentsPatient from '~/components/Consents/ConsentsPatient'
 import usePatient from './usePatient'
-import { ResponseData } from '~/models/system'
+import type { ResponseData } from '~/models/system'
+import ConsentsPatient from '~/components/Consents/ConsentsPatient'
 import { fieldError } from '~/utils/errors'
 
 export default function RegisterPatient(props: ResponseData) {
@@ -49,21 +49,19 @@ export default function RegisterPatient(props: ResponseData) {
               )}
             </div>
             <div>
-              {data && (
-                <select
-                  className="select w-full"
-                  name="diagnosis_id"
-                  value={form.diagnosis_id}
-                  onChange={handleChange}
-                >
-                  <option value="">Select Diagnosis</option>
-                  {data.map((diagnosis: any) => (
-                    <option key={diagnosis.id} value={diagnosis.id}>
-                      {diagnosis.label}
-                    </option>
-                  ))}
-                </select>
-              )}
+              <select
+                className="select w-full"
+                name="diagnosis_id"
+                value={form.diagnosis_id}
+                onChange={handleChange}
+              >
+                <option value="">Select Diagnosis</option>
+                {data.map((diagnosis: any) => (
+                  <option key={diagnosis.id} value={diagnosis.id}>
+                    {diagnosis.label}
+                  </option>
+                ))}
+              </select>
               {fieldError(errors, 'diagnosis_id') && (
                 <span className="mt-2 text-sm text-error">
                   {fieldError(errors, 'diagnosis_id')}

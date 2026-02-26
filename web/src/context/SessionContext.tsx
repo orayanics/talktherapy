@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react'
-import { UserResponse } from '~/models/system'
+import type { UserResponse } from '~/models/system'
 
 interface SessionContextValue extends UserResponse {}
 

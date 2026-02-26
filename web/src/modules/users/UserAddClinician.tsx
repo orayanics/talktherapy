@@ -1,6 +1,6 @@
+import { useRegisterClinician } from './useUserAdd'
 import ModalHeader from '~/components/Modal/ModalHeader'
 import ModalBody from '~/components/Modal/ModalBody'
-import { useRegisterClinician } from './useUserAdd'
 import { fieldError, hasOnlyMessage } from '~/utils/errors'
 
 interface UserAddClinicianProps {

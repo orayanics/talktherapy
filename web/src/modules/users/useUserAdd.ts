@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import { isAxiosError } from 'axios'
-import { useAddClinician, useAddAdmin } from '~/api/users'
 
-import { PermissionKey } from '~/models/user/permissions'
-import { ParsedError, parseError } from '~/utils/errors'
+import type { PermissionKey } from '~/models/user/permissions'
+import type { ParsedError} from '~/utils/errors';
+import { useAddAdmin, useAddClinician } from '~/api/users'
+import { parseError } from '~/utils/errors'
 
 export function useRegisterClinician() {
   const [errors, setErrors] = useState<ParsedError | null>(null)
@@ -53,7 +54,7 @@ export function useRegisterAdmin() {
   const [errors, setErrors] = useState<ParsedError | null>(null)
   const initialForm = {
     email: '',
-    abilities: [] as PermissionKey[],
+    abilities: [] as Array<PermissionKey>,
   }
   const [form, setForm] = useState(initialForm)
 

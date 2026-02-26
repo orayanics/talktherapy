@@ -1,4 +1,4 @@
-import { createFileRoute, Outlet } from '@tanstack/react-router'
+import { Outlet, createFileRoute } from '@tanstack/react-router'
 import type { UserType } from '~/models/user/user'
 import { sessionQueryOptions } from '~/api/auth'
 

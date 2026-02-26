@@ -7,7 +7,7 @@ export interface MediaContentClient {
   createdAt: string
   updatedAt: string
   category: string
-  tags?: string[]
+  tags?: Array<string>
 }
 
 export interface SoapContentClient {

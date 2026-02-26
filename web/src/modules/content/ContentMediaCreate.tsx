@@ -1,4 +1,3 @@
-import { MediaContentClient } from '~/models/content'
 import MDEditor from '@uiw/react-md-editor'
 
 interface ContentMedaiInfoEditProps {

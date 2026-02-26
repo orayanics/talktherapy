@@ -1,4 +1,4 @@
-import { AvailabilityRuleWithSlots, SlotDto } from '~/models/schedule'
+import type { AvailabilityRuleWithSlots, SlotDto } from '~/models/schedule'
 
 interface ScheduleSlotProps {
   data: AvailabilityRuleWithSlots
@@ -6,7 +6,7 @@ interface ScheduleSlotProps {
 
 export default function ScheduleSlot(props: ScheduleSlotProps) {
   const { data } = props
-  const slots: SlotDto[] = data?.slots ?? []
+  const slots: Array<SlotDto> = data.slots
 
   return (
     <>

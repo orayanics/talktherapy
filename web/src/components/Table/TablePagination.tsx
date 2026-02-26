@@ -10,10 +10,10 @@ type TablePaginationProps = {
   to?: number | null
   onPageChange: (page: number) => void
   onPerPageChange: (perPage: number) => void
-  perPageOptions?: {
+  perPageOptions?: Array<{
     value: number
     label: string
-  }[]
+  }>
   className?: string
 }
 

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Link, useBlocker } from '@tanstack/react-router'
 import ModalBlockNavigation from '~/components/Modal/ModalBlockNavigation'
 
@@ -81,11 +81,7 @@ function ClinicianForm() {
   return (
     <div className="mx-auto w-full">
       {status === 'blocked' && (
-        <ModalBlockNavigation
-          isOpen={status === 'blocked'}
-          onProceed={proceed}
-          onReset={reset}
-        >
+        <ModalBlockNavigation isOpen={true} onProceed={proceed} onReset={reset}>
           <p className="text-gray-700 mb-6">
             You have unsaved changes. Exiting will require you to have another
             activation code. Are you sure you want to leave this page?

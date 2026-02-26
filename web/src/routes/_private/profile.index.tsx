@@ -1,5 +1,6 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 
+import { useState } from 'react'
 import Grid from '~/components/Page/Grid'
 import GridItem from '~/components/Page/GridItem'
 import PageTitle from '~/components/Page/PageTitle'
@@ -8,7 +9,6 @@ import ProfileAccInfo from '~/modules/profile/ProfileAccInfo'
 import ProfileUserInfo from '~/modules/profile/ProfileUserInfo'
 
 import { sessionQueryOptions } from '~/api/auth'
-import { useState } from 'react'
 
 export const Route = createFileRoute('/_private/profile/')({
   ssr: false,

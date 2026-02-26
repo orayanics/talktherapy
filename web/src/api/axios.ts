@@ -1,5 +1,6 @@
-import axios, { type AxiosRequestConfig } from 'axios'
+import axios from 'axios'
 import qs from 'qs'
+import type { AxiosRequestConfig } from 'axios'
 import { AXIOS, SESSION } from '~/config/message'
 import { showAlertGlobal } from '~/context/AlertContext'
 
@@ -37,7 +38,7 @@ instance.interceptors.response.use(
     const shouldSkip = SKIP_REFRESH_URLS.some((url) => original.url === url)
     const alreadyRetried = original._retry
 
-    if (!original || !is401 || shouldSkip || alreadyRetried) {
+    if (!is401 || shouldSkip || alreadyRetried) {
       if (is401) {
         showAlertGlobal(SESSION.expired, 'error')
       } else {
