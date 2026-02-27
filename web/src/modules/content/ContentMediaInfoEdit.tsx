@@ -8,10 +8,10 @@ interface ContentMedaiInfoEditProps extends MediaContentClient {
 
 export default function ContentMediaInfoEdit(props: ContentMedaiInfoEditProps) {
   const {
-    id,
+    // id,
     title,
     description,
-    body,
+    // body,
     authorId,
     createdAt,
     updatedAt,

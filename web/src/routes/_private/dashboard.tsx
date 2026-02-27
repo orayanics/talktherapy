@@ -15,8 +15,6 @@ import AdminSharedDashboard from '~/views/dashboard/adm-shared/'
 import ClinicianDashboard from '~/views/dashboard/clinician'
 import { useAuthGuard } from '~/hooks/useAuthGuard'
 
-import { useAlert } from '~/context/AlertContext'
-
 export const Route = createFileRoute('/_private/dashboard')({
   ssr: false,
   loader: async ({ context: { queryClient } }) => {
@@ -39,8 +37,6 @@ function RouteComponent() {
     if (is('clinician')) return <ClinicianDashboard />
     if (is('patient')) return <PatientDashboard />
   }
-
-  const { showAlert, hideAlert } = useAlert()
 
   return (
     <>

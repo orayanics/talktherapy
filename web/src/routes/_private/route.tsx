@@ -14,7 +14,8 @@ export const Route = createFileRoute('/_private')({
       if (!session) throw Route.redirect({ to: '/login' })
 
       return session
-    } catch (err) {
+    } catch (error: unknown) {
+      console.error('Error loading session data:', error)
       throw Route.redirect({
         to: '/login',
       })

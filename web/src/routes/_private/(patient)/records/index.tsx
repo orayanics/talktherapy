@@ -1,10 +1,9 @@
-import { Link, createFileRoute } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
 import Markdown from 'react-markdown'
 import rehypeRaw from 'rehype-raw'
 import PageTitle from '~/components/Page/PageTitle'
 import Grid from '~/components/Page/Grid'
 import GridItem from '~/components/Page/GridItem'
-
 
 export const Route = createFileRoute('/_private/(patient)/records/')({
   component: RouteComponent,

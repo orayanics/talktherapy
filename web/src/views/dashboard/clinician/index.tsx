@@ -1,5 +1,5 @@
-import Grid from '~/components/Page/Grid'
-import GridItem from '~/components/Page/GridItem'
+// import Grid from '~/components/Page/Grid'
+// import GridItem from '~/components/Page/GridItem'
 
 export default function Index() {
   return (

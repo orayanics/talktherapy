@@ -1,4 +1,3 @@
-import { createFileRoute } from '@tanstack/react-router'
 import Markdown from 'react-markdown'
 import rehypeRaw from 'rehype-raw'
 

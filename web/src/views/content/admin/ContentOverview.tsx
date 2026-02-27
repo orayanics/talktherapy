@@ -128,7 +128,7 @@ function Table() {
       <div className="bg-white rounded-lg">
         <Grid cols={12} gap={2}>
           {MEDIA_ITEMS.map((item) => {
-            const { id, title, description, authorId, category, tags } = item
+            const { id, title, description, authorId } = item
             return (
               <GridItem key={id} colSpan={12} className="lg:col-span-3">
                 <div className="grid grid-cols-12 gap-2 rounded-lg bg-base-100 shadow-sm">

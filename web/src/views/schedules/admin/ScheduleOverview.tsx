@@ -55,6 +55,7 @@ const TABLE_LIST = [
 
 function TableClinician() {
   const handleScrollToSchedule = (e: React.UIEvent<HTMLDivElement>) => {
+    e.preventDefault()
     const scheduleElement = document.getElementById('table-schedule')
     if (scheduleElement) {
       scheduleElement.scrollIntoView({ behavior: 'smooth' })
