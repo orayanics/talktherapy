@@ -1,5 +1,6 @@
 import ModalCancelAppointment from './ModalCancelAppointment'
 import useAppointmentActions from './useAppointmentActions'
+import AppointmentEventHistory from './AppointmentEventHistory'
 import type {
   ServerAppointmentStatus,
   SlotAppointmentDto,
@@ -42,8 +43,16 @@ function InfoRow({ label, value }: { label: string; value: React.ReactNode }) {
 
 export default function AppointmentDetail(props: AppointmentDetailProps) {
   const { appointment } = props
-  const { id, status, booked_at, patient_id, room_id, slot, encounter } =
-    appointment
+  const {
+    id,
+    status,
+    booked_at,
+    patient_id,
+    room_id,
+    slot,
+    encounter,
+    events,
+  } = appointment
 
   const {
     confirmOpen,
@@ -135,6 +144,14 @@ export default function AppointmentDetail(props: AppointmentDetailProps) {
               No intake information provided.
             </p>
           )}
+        </div>
+
+        {/* Event History */}
+        <div>
+          <p className="font-mono text-primary text-xs uppercase mb-3">
+            Event History
+          </p>
+          <AppointmentEventHistory events={events} variant="clinician" />
         </div>
 
         {/* Actions */}

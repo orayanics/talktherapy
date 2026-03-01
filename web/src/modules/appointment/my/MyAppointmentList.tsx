@@ -1,6 +1,7 @@
 import type {
   PatientMyAppointmentDto,
   ServerAppointmentStatus,
+  SlotAppointmentEvent,
 } from '~/models/schedule'
 import type { Column } from '~/components/Table/TableContent'
 import TableContent from '~/components/Table/TableContent'
@@ -14,6 +15,20 @@ const STATUS_BADGE: Record<ServerAppointmentStatus, string> = {
   NO_SHOW: 'badge badge-outline bg-gray-50 text-gray-800 border-gray-200',
 }
 
+/**
+ * Returns the reason from the most recent patient-visible event.
+ * Patients see reasons only for CANCELLED and RESCHEDULED events.
+ */
+function getPatientVisibleReason(
+  events: Array<SlotAppointmentEvent>,
+): string | null {
+  const found = events.find(
+    (e) =>
+      (e.type === 'CANCELLED' || e.type === 'RESCHEDULED') && e.reason != null,
+  )
+  return found?.reason ?? null
+}
+
 type Row = {
   id: string
   status: ServerAppointmentStatus
@@ -23,6 +38,7 @@ type Row = {
   specialty: string
   chief_complaint: string
   room_id: string | null
+  reason: string | null
 }
 
 interface MyAppointmentListProps {
@@ -41,6 +57,7 @@ export default function MyAppointmentList(props: MyAppointmentListProps) {
     specialty: appt.slot.clinician.diagnosis?.label ?? '—',
     chief_complaint: appt.encounter?.chief_complaint ?? '—',
     room_id: appt.room_id,
+    reason: getPatientVisibleReason(appt.events),
   }))
 
   const columns: Array<Column<Row>> = [
@@ -62,6 +79,16 @@ export default function MyAppointmentList(props: MyAppointmentListProps) {
       render: (value: string | null) =>
         value ? (
           <code className="text-xs font-mono">{value}</code>
+        ) : (
+          <span className="text-gray-400 text-xs">—</span>
+        ),
+    },
+    {
+      header: 'Reason',
+      accessor: 'reason',
+      render: (value: string | null) =>
+        value ? (
+          <span className="text-sm text-gray-700">{value}</span>
         ) : (
           <span className="text-gray-400 text-xs">—</span>
         ),

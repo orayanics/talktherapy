@@ -413,6 +413,9 @@ export abstract class AppointmentService {
               referral_source: true,
             },
           },
+          events: {
+            orderBy: { created_at: "desc" },
+          },
         },
         orderBy: { booked_at: "desc" },
         skip,

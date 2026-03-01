@@ -116,6 +116,7 @@ export interface PatientMyAppointmentDto {
     diagnosis: string | null
     referral_source: string | null
   } | null
+  events: Array<SlotAppointmentEvent>
 }
 
 export interface SlotAppointmentEncounter {
