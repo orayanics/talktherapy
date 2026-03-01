@@ -91,7 +91,7 @@ export const useCreateSchedule = () => {
   })
 }
 
-export const useDeleteSchedule = (ruleId: string) => {
+export const useDeleteScheduleId = (ruleId: string) => {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const { showAlert } = useAlert()
@@ -108,6 +108,28 @@ export const useDeleteSchedule = (ruleId: string) => {
     onError: (error) => {
       if (isAxiosError(error)) {
         console.error('Failed to delete:', error.response?.data)
+      }
+      showAlert(SCHEDULE.delete.error, 'error')
+    },
+  })
+}
+
+export const useDeleteSlotId = (slotId: string, ruleId: string) => {
+  const queryClient = useQueryClient()
+  const { showAlert } = useAlert()
+
+  return useMutation({
+    mutationFn: async () => {
+      await api.delete(`/scheduling/slots/${slotId}`)
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['availability', 'list'] })
+      queryClient.invalidateQueries({ queryKey: ['availability', ruleId] })
+      showAlert(SCHEDULE.delete.success, 'success')
+    },
+    onError: (error) => {
+      if (isAxiosError(error)) {
+        console.error('Failed to delete slot:', error.response?.data)
       }
       showAlert(SCHEDULE.delete.error, 'error')
     },

@@ -70,5 +70,20 @@ export const slotController = new Elysia({
           params: SlotModel.slotParams,
           detail: { summary: "Unblock a blocked slot" },
         },
+      )
+
+      // ── DELETE /slots/:slot_id ──────────────────────────────────
+      .delete(
+        "/:slot_id",
+        async ({ auth, params }) => {
+          const clinician_id = await AvailabilityService.resolveClinicianId(
+            auth!.userId,
+          );
+          return SlotService.deleteSlot(clinician_id, params.slot_id);
+        },
+        {
+          params: SlotModel.slotParams,
+          detail: { summary: "Delete a slot" },
+        },
       ),
   );

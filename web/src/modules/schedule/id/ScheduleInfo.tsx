@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { format } from 'date-fns'
-import useScheduleId from './useScheduleId'
+import useDeleteSchedule from './useDeleteSchedule'
 import type { AvailabilityRuleWithSlots } from '~/models/schedule'
 import { parseRRule } from '~/utils/rrule'
 import ModalConfirm from '~/components/Modal/ModalConfirm'
@@ -12,14 +12,14 @@ interface ScheduleDetailsIdProps {
 export default function ScheduleDetailsId(props: ScheduleDetailsIdProps) {
   const { data } = props
   const { id, starts_at, ends_at, is_active, recurrence_rule, slots } = data
-
+  useDeleteSchedule
   const start = format(new Date(starts_at), 'pp')
   const end = format(new Date(ends_at), 'pp')
   const lastSlot = slots[slots.length - 1]
   const lastSlotEnd = format(new Date(lastSlot.ends_at), 'PPpp')
   const recurrenceInfo = parseRRule(recurrence_rule)
 
-  const { handleSubmit, isLoading, errors } = useScheduleId({ ruleId: id })
+  const { handleSubmit, isLoading, errors } = useDeleteSchedule({ ruleId: id })
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const handleDelete = () => {
     setShowDeleteModal(true)

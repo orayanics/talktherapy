@@ -128,6 +128,19 @@ export abstract class SlotService {
       },
     };
   }
+
+  static async deleteSlot(clinician_id: string, slot_id: string) {
+    const slot = await prisma.slot.findFirst({
+      where: { id: slot_id, clinician_id },
+    });
+
+    if (!slot) throw status(404, "Slot not found");
+    if (slot.status === "BOOKED") {
+      throw status(409, "Cannot delete a booked slot");
+    }
+
+    await prisma.slot.delete({ where: { id: slot_id } });
+  }
 }
 
 const SLOT_SELECT = {
