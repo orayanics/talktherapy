@@ -90,3 +90,26 @@ export const useCreateSchedule = () => {
     },
   })
 }
+
+export const useDeleteSchedule = (ruleId: string) => {
+  const navigate = useNavigate()
+  const queryClient = useQueryClient()
+  const { showAlert } = useAlert()
+
+  return useMutation({
+    mutationFn: async () => {
+      await api.delete(`/scheduling/availability/${ruleId}`)
+    },
+    onSuccess: () => {
+      navigate({ to: '/schedules' })
+      queryClient.invalidateQueries({ queryKey: ['availability', 'list'] })
+      showAlert(SCHEDULE.delete.success, 'success')
+    },
+    onError: (error) => {
+      if (isAxiosError(error)) {
+        console.error('Failed to delete:', error.response?.data)
+      }
+      showAlert(SCHEDULE.delete.error, 'error')
+    },
+  })
+}
