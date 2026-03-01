@@ -70,3 +70,11 @@ export interface CreateSchedulePayload {
   selected_days: Array<string>
   horizon_days: number
 }
+
+export interface UpdateAvailabilityPayload {
+  starts_at?: string
+  ends_at?: string
+  recurrence_rule?: string
+  is_active?: boolean
+  horizon_days?: number
+}

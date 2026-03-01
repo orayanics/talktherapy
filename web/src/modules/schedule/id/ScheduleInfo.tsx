@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { format } from 'date-fns'
+import { useNavigate } from '@tanstack/react-router'
 import useDeleteSchedule from './useDeleteSchedule'
 import type { AvailabilityRuleWithSlots } from '~/models/schedule'
 import { parseRRule } from '~/utils/rrule'
@@ -12,7 +13,7 @@ interface ScheduleDetailsIdProps {
 export default function ScheduleDetailsId(props: ScheduleDetailsIdProps) {
   const { data } = props
   const { id, starts_at, ends_at, is_active, recurrence_rule, slots } = data
-  useDeleteSchedule
+
   const start = format(new Date(starts_at), 'pp')
   const end = format(new Date(ends_at), 'pp')
   const lastSlot = slots[slots.length - 1]
@@ -20,6 +21,7 @@ export default function ScheduleDetailsId(props: ScheduleDetailsIdProps) {
   const recurrenceInfo = parseRRule(recurrence_rule)
 
   const { handleSubmit, isLoading, errors } = useDeleteSchedule({ ruleId: id })
+  const navigate = useNavigate()
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const handleDelete = () => {
     setShowDeleteModal(true)
@@ -57,7 +59,17 @@ export default function ScheduleDetailsId(props: ScheduleDetailsIdProps) {
           </div>
 
           <div className="flex flex-col gap-2">
-            <button className="btn btn-primary">Edit Schedule</button>
+            <button
+              className="btn btn-primary"
+              onClick={() =>
+                navigate({
+                  to: '/schedules/$scheduleId/edit',
+                  params: { scheduleId: id },
+                })
+              }
+            >
+              Edit Schedule
+            </button>
             <button className="btn btn-soft btn-error" onClick={handleDelete}>
               Delete Schedule
             </button>

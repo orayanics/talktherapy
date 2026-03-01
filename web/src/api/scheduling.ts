@@ -11,6 +11,7 @@ import type {
   AvailabilityRulesParams,
   CreateAvailabilityPayload,
   PatientAppointmentsQueryParams,
+  UpdateAvailabilityPayload,
 } from '~/models/schedule'
 
 import { api } from '~/api/axios'
@@ -87,6 +88,34 @@ export const useCreateSchedule = () => {
         console.error('Failed to create:', error.response?.data)
       }
       showAlert(SCHEDULE.create.error, 'error')
+    },
+  })
+}
+
+export const useUpdateScheduleId = (ruleId: string) => {
+  const navigate = useNavigate()
+  const queryClient = useQueryClient()
+  const { showAlert } = useAlert()
+
+  return useMutation({
+    mutationFn: async (payload: UpdateAvailabilityPayload) => {
+      const { data } = await api.patch(
+        `/scheduling/availability/${ruleId}`,
+        payload,
+      )
+      return data
+    },
+    onSuccess: () => {
+      navigate({ to: '/schedules/$scheduleId', params: { scheduleId: ruleId } })
+      queryClient.invalidateQueries({ queryKey: ['availability', 'list'] })
+      queryClient.invalidateQueries({ queryKey: ['availability', ruleId] })
+      showAlert(SCHEDULE.update.success, 'success')
+    },
+    onError: (error) => {
+      if (isAxiosError(error)) {
+        console.error('Failed to update:', error.response?.data)
+      }
+      showAlert(SCHEDULE.update.error, 'error')
     },
   })
 }
