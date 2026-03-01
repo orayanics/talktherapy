@@ -6,7 +6,6 @@ import type { AvailabilityRuleWithSlots } from '~/models/schedule'
 import { parseRRule } from '~/utils/rrule'
 import { formatToLocalDate, getDay, getTime } from '~/utils/date'
 
-
 interface ScheduleCardProps {
   data: Array<AvailabilityRuleWithSlots>
 }
@@ -100,9 +99,9 @@ export default function ScheduleCard(props: ScheduleCardProps) {
                             </p>
                           </div>
                           <span
-                            className={`font-mono badge badge-ghost ${slot.is_booked ? 'badge-error' : 'badge-success'}`}
+                            className={`font-mono badge badge-ghost ${slot.status ? 'badge-error' : 'badge-success'}`}
                           >
-                            {slot.is_booked ? 'Booked' : 'Available'}
+                            {slot.status}
                           </span>
                         </div>
                       )

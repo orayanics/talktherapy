@@ -206,7 +206,7 @@ export type SlotWhereInput = {
   status?: Prisma.EnumSlotStatusFilter<"Slot"> | $Enums.SlotStatus
   created_at?: Prisma.DateTimeFilter<"Slot"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"Slot"> | Date | string
-  appointment?: Prisma.XOR<Prisma.AppointmentsNullableScalarRelationFilter, Prisma.AppointmentsWhereInput> | null
+  appointments?: Prisma.AppointmentsListRelationFilter
   clinician?: Prisma.XOR<Prisma.ClinicianScalarRelationFilter, Prisma.ClinicianWhereInput>
   availability_rule?: Prisma.XOR<Prisma.AvailabilityRuleScalarRelationFilter, Prisma.AvailabilityRuleWhereInput>
 }
@@ -220,7 +220,7 @@ export type SlotOrderByWithRelationInput = {
   status?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
-  appointment?: Prisma.AppointmentsOrderByWithRelationInput
+  appointments?: Prisma.AppointmentsOrderByRelationAggregateInput
   clinician?: Prisma.ClinicianOrderByWithRelationInput
   availability_rule?: Prisma.AvailabilityRuleOrderByWithRelationInput
 }
@@ -237,7 +237,7 @@ export type SlotWhereUniqueInput = Prisma.AtLeast<{
   status?: Prisma.EnumSlotStatusFilter<"Slot"> | $Enums.SlotStatus
   created_at?: Prisma.DateTimeFilter<"Slot"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"Slot"> | Date | string
-  appointment?: Prisma.XOR<Prisma.AppointmentsNullableScalarRelationFilter, Prisma.AppointmentsWhereInput> | null
+  appointments?: Prisma.AppointmentsListRelationFilter
   clinician?: Prisma.XOR<Prisma.ClinicianScalarRelationFilter, Prisma.ClinicianWhereInput>
   availability_rule?: Prisma.XOR<Prisma.AvailabilityRuleScalarRelationFilter, Prisma.AvailabilityRuleWhereInput>
 }, "id">
@@ -277,7 +277,7 @@ export type SlotCreateInput = {
   status?: $Enums.SlotStatus
   created_at?: Date | string
   updated_at?: Date | string
-  appointment?: Prisma.AppointmentsCreateNestedOneWithoutSlotInput
+  appointments?: Prisma.AppointmentsCreateNestedManyWithoutSlotInput
   clinician: Prisma.ClinicianCreateNestedOneWithoutSlotsInput
   availability_rule: Prisma.AvailabilityRuleCreateNestedOneWithoutSlotsInput
 }
@@ -291,7 +291,7 @@ export type SlotUncheckedCreateInput = {
   status?: $Enums.SlotStatus
   created_at?: Date | string
   updated_at?: Date | string
-  appointment?: Prisma.AppointmentsUncheckedCreateNestedOneWithoutSlotInput
+  appointments?: Prisma.AppointmentsUncheckedCreateNestedManyWithoutSlotInput
 }
 
 export type SlotUpdateInput = {
@@ -301,7 +301,7 @@ export type SlotUpdateInput = {
   status?: Prisma.EnumSlotStatusFieldUpdateOperationsInput | $Enums.SlotStatus
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  appointment?: Prisma.AppointmentsUpdateOneWithoutSlotNestedInput
+  appointments?: Prisma.AppointmentsUpdateManyWithoutSlotNestedInput
   clinician?: Prisma.ClinicianUpdateOneRequiredWithoutSlotsNestedInput
   availability_rule?: Prisma.AvailabilityRuleUpdateOneRequiredWithoutSlotsNestedInput
 }
@@ -315,7 +315,7 @@ export type SlotUncheckedUpdateInput = {
   status?: Prisma.EnumSlotStatusFieldUpdateOperationsInput | $Enums.SlotStatus
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  appointment?: Prisma.AppointmentsUncheckedUpdateOneWithoutSlotNestedInput
+  appointments?: Prisma.AppointmentsUncheckedUpdateManyWithoutSlotNestedInput
 }
 
 export type SlotCreateManyInput = {
@@ -481,18 +481,18 @@ export type SlotUncheckedUpdateManyWithoutAvailability_ruleNestedInput = {
   deleteMany?: Prisma.SlotScalarWhereInput | Prisma.SlotScalarWhereInput[]
 }
 
-export type SlotCreateNestedOneWithoutAppointmentInput = {
-  create?: Prisma.XOR<Prisma.SlotCreateWithoutAppointmentInput, Prisma.SlotUncheckedCreateWithoutAppointmentInput>
-  connectOrCreate?: Prisma.SlotCreateOrConnectWithoutAppointmentInput
+export type SlotCreateNestedOneWithoutAppointmentsInput = {
+  create?: Prisma.XOR<Prisma.SlotCreateWithoutAppointmentsInput, Prisma.SlotUncheckedCreateWithoutAppointmentsInput>
+  connectOrCreate?: Prisma.SlotCreateOrConnectWithoutAppointmentsInput
   connect?: Prisma.SlotWhereUniqueInput
 }
 
-export type SlotUpdateOneRequiredWithoutAppointmentNestedInput = {
-  create?: Prisma.XOR<Prisma.SlotCreateWithoutAppointmentInput, Prisma.SlotUncheckedCreateWithoutAppointmentInput>
-  connectOrCreate?: Prisma.SlotCreateOrConnectWithoutAppointmentInput
-  upsert?: Prisma.SlotUpsertWithoutAppointmentInput
+export type SlotUpdateOneRequiredWithoutAppointmentsNestedInput = {
+  create?: Prisma.XOR<Prisma.SlotCreateWithoutAppointmentsInput, Prisma.SlotUncheckedCreateWithoutAppointmentsInput>
+  connectOrCreate?: Prisma.SlotCreateOrConnectWithoutAppointmentsInput
+  upsert?: Prisma.SlotUpsertWithoutAppointmentsInput
   connect?: Prisma.SlotWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.SlotUpdateToOneWithWhereWithoutAppointmentInput, Prisma.SlotUpdateWithoutAppointmentInput>, Prisma.SlotUncheckedUpdateWithoutAppointmentInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.SlotUpdateToOneWithWhereWithoutAppointmentsInput, Prisma.SlotUpdateWithoutAppointmentsInput>, Prisma.SlotUncheckedUpdateWithoutAppointmentsInput>
 }
 
 export type EnumSlotStatusFieldUpdateOperationsInput = {
@@ -506,7 +506,7 @@ export type SlotCreateWithoutClinicianInput = {
   status?: $Enums.SlotStatus
   created_at?: Date | string
   updated_at?: Date | string
-  appointment?: Prisma.AppointmentsCreateNestedOneWithoutSlotInput
+  appointments?: Prisma.AppointmentsCreateNestedManyWithoutSlotInput
   availability_rule: Prisma.AvailabilityRuleCreateNestedOneWithoutSlotsInput
 }
 
@@ -518,7 +518,7 @@ export type SlotUncheckedCreateWithoutClinicianInput = {
   status?: $Enums.SlotStatus
   created_at?: Date | string
   updated_at?: Date | string
-  appointment?: Prisma.AppointmentsUncheckedCreateNestedOneWithoutSlotInput
+  appointments?: Prisma.AppointmentsUncheckedCreateNestedManyWithoutSlotInput
 }
 
 export type SlotCreateOrConnectWithoutClinicianInput = {
@@ -567,7 +567,7 @@ export type SlotCreateWithoutAvailability_ruleInput = {
   status?: $Enums.SlotStatus
   created_at?: Date | string
   updated_at?: Date | string
-  appointment?: Prisma.AppointmentsCreateNestedOneWithoutSlotInput
+  appointments?: Prisma.AppointmentsCreateNestedManyWithoutSlotInput
   clinician: Prisma.ClinicianCreateNestedOneWithoutSlotsInput
 }
 
@@ -579,7 +579,7 @@ export type SlotUncheckedCreateWithoutAvailability_ruleInput = {
   status?: $Enums.SlotStatus
   created_at?: Date | string
   updated_at?: Date | string
-  appointment?: Prisma.AppointmentsUncheckedCreateNestedOneWithoutSlotInput
+  appointments?: Prisma.AppointmentsUncheckedCreateNestedManyWithoutSlotInput
 }
 
 export type SlotCreateOrConnectWithoutAvailability_ruleInput = {
@@ -607,7 +607,7 @@ export type SlotUpdateManyWithWhereWithoutAvailability_ruleInput = {
   data: Prisma.XOR<Prisma.SlotUpdateManyMutationInput, Prisma.SlotUncheckedUpdateManyWithoutAvailability_ruleInput>
 }
 
-export type SlotCreateWithoutAppointmentInput = {
+export type SlotCreateWithoutAppointmentsInput = {
   id?: string
   starts_at: Date | string
   ends_at: Date | string
@@ -618,7 +618,7 @@ export type SlotCreateWithoutAppointmentInput = {
   availability_rule: Prisma.AvailabilityRuleCreateNestedOneWithoutSlotsInput
 }
 
-export type SlotUncheckedCreateWithoutAppointmentInput = {
+export type SlotUncheckedCreateWithoutAppointmentsInput = {
   id?: string
   availability_rule_id: string
   clinician_id: string
@@ -629,23 +629,23 @@ export type SlotUncheckedCreateWithoutAppointmentInput = {
   updated_at?: Date | string
 }
 
-export type SlotCreateOrConnectWithoutAppointmentInput = {
+export type SlotCreateOrConnectWithoutAppointmentsInput = {
   where: Prisma.SlotWhereUniqueInput
-  create: Prisma.XOR<Prisma.SlotCreateWithoutAppointmentInput, Prisma.SlotUncheckedCreateWithoutAppointmentInput>
+  create: Prisma.XOR<Prisma.SlotCreateWithoutAppointmentsInput, Prisma.SlotUncheckedCreateWithoutAppointmentsInput>
 }
 
-export type SlotUpsertWithoutAppointmentInput = {
-  update: Prisma.XOR<Prisma.SlotUpdateWithoutAppointmentInput, Prisma.SlotUncheckedUpdateWithoutAppointmentInput>
-  create: Prisma.XOR<Prisma.SlotCreateWithoutAppointmentInput, Prisma.SlotUncheckedCreateWithoutAppointmentInput>
+export type SlotUpsertWithoutAppointmentsInput = {
+  update: Prisma.XOR<Prisma.SlotUpdateWithoutAppointmentsInput, Prisma.SlotUncheckedUpdateWithoutAppointmentsInput>
+  create: Prisma.XOR<Prisma.SlotCreateWithoutAppointmentsInput, Prisma.SlotUncheckedCreateWithoutAppointmentsInput>
   where?: Prisma.SlotWhereInput
 }
 
-export type SlotUpdateToOneWithWhereWithoutAppointmentInput = {
+export type SlotUpdateToOneWithWhereWithoutAppointmentsInput = {
   where?: Prisma.SlotWhereInput
-  data: Prisma.XOR<Prisma.SlotUpdateWithoutAppointmentInput, Prisma.SlotUncheckedUpdateWithoutAppointmentInput>
+  data: Prisma.XOR<Prisma.SlotUpdateWithoutAppointmentsInput, Prisma.SlotUncheckedUpdateWithoutAppointmentsInput>
 }
 
-export type SlotUpdateWithoutAppointmentInput = {
+export type SlotUpdateWithoutAppointmentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   starts_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   ends_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -656,7 +656,7 @@ export type SlotUpdateWithoutAppointmentInput = {
   availability_rule?: Prisma.AvailabilityRuleUpdateOneRequiredWithoutSlotsNestedInput
 }
 
-export type SlotUncheckedUpdateWithoutAppointmentInput = {
+export type SlotUncheckedUpdateWithoutAppointmentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   availability_rule_id?: Prisma.StringFieldUpdateOperationsInput | string
   clinician_id?: Prisma.StringFieldUpdateOperationsInput | string
@@ -684,7 +684,7 @@ export type SlotUpdateWithoutClinicianInput = {
   status?: Prisma.EnumSlotStatusFieldUpdateOperationsInput | $Enums.SlotStatus
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  appointment?: Prisma.AppointmentsUpdateOneWithoutSlotNestedInput
+  appointments?: Prisma.AppointmentsUpdateManyWithoutSlotNestedInput
   availability_rule?: Prisma.AvailabilityRuleUpdateOneRequiredWithoutSlotsNestedInput
 }
 
@@ -696,7 +696,7 @@ export type SlotUncheckedUpdateWithoutClinicianInput = {
   status?: Prisma.EnumSlotStatusFieldUpdateOperationsInput | $Enums.SlotStatus
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  appointment?: Prisma.AppointmentsUncheckedUpdateOneWithoutSlotNestedInput
+  appointments?: Prisma.AppointmentsUncheckedUpdateManyWithoutSlotNestedInput
 }
 
 export type SlotUncheckedUpdateManyWithoutClinicianInput = {
@@ -726,7 +726,7 @@ export type SlotUpdateWithoutAvailability_ruleInput = {
   status?: Prisma.EnumSlotStatusFieldUpdateOperationsInput | $Enums.SlotStatus
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  appointment?: Prisma.AppointmentsUpdateOneWithoutSlotNestedInput
+  appointments?: Prisma.AppointmentsUpdateManyWithoutSlotNestedInput
   clinician?: Prisma.ClinicianUpdateOneRequiredWithoutSlotsNestedInput
 }
 
@@ -738,7 +738,7 @@ export type SlotUncheckedUpdateWithoutAvailability_ruleInput = {
   status?: Prisma.EnumSlotStatusFieldUpdateOperationsInput | $Enums.SlotStatus
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  appointment?: Prisma.AppointmentsUncheckedUpdateOneWithoutSlotNestedInput
+  appointments?: Prisma.AppointmentsUncheckedUpdateManyWithoutSlotNestedInput
 }
 
 export type SlotUncheckedUpdateManyWithoutAvailability_ruleInput = {
@@ -752,6 +752,35 @@ export type SlotUncheckedUpdateManyWithoutAvailability_ruleInput = {
 }
 
 
+/**
+ * Count Type SlotCountOutputType
+ */
+
+export type SlotCountOutputType = {
+  appointments: number
+}
+
+export type SlotCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  appointments?: boolean | SlotCountOutputTypeCountAppointmentsArgs
+}
+
+/**
+ * SlotCountOutputType without action
+ */
+export type SlotCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the SlotCountOutputType
+   */
+  select?: Prisma.SlotCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * SlotCountOutputType without action
+ */
+export type SlotCountOutputTypeCountAppointmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AppointmentsWhereInput
+}
+
 
 export type SlotSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -762,9 +791,10 @@ export type SlotSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   status?: boolean
   created_at?: boolean
   updated_at?: boolean
-  appointment?: boolean | Prisma.Slot$appointmentArgs<ExtArgs>
+  appointments?: boolean | Prisma.Slot$appointmentsArgs<ExtArgs>
   clinician?: boolean | Prisma.ClinicianDefaultArgs<ExtArgs>
   availability_rule?: boolean | Prisma.AvailabilityRuleDefaultArgs<ExtArgs>
+  _count?: boolean | Prisma.SlotCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["slot"]>
 
 export type SlotSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -806,9 +836,10 @@ export type SlotSelectScalar = {
 
 export type SlotOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "availability_rule_id" | "clinician_id" | "starts_at" | "ends_at" | "status" | "created_at" | "updated_at", ExtArgs["result"]["slot"]>
 export type SlotInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  appointment?: boolean | Prisma.Slot$appointmentArgs<ExtArgs>
+  appointments?: boolean | Prisma.Slot$appointmentsArgs<ExtArgs>
   clinician?: boolean | Prisma.ClinicianDefaultArgs<ExtArgs>
   availability_rule?: boolean | Prisma.AvailabilityRuleDefaultArgs<ExtArgs>
+  _count?: boolean | Prisma.SlotCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type SlotIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   clinician?: boolean | Prisma.ClinicianDefaultArgs<ExtArgs>
@@ -822,7 +853,7 @@ export type SlotIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
 export type $SlotPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Slot"
   objects: {
-    appointment: Prisma.$AppointmentsPayload<ExtArgs> | null
+    appointments: Prisma.$AppointmentsPayload<ExtArgs>[]
     clinician: Prisma.$ClinicianPayload<ExtArgs>
     availability_rule: Prisma.$AvailabilityRulePayload<ExtArgs>
   }
@@ -1229,7 +1260,7 @@ readonly fields: SlotFieldRefs;
  */
 export interface Prisma__SlotClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  appointment<T extends Prisma.Slot$appointmentArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Slot$appointmentArgs<ExtArgs>>): Prisma.Prisma__AppointmentsClient<runtime.Types.Result.GetResult<Prisma.$AppointmentsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  appointments<T extends Prisma.Slot$appointmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Slot$appointmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AppointmentsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   clinician<T extends Prisma.ClinicianDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ClinicianDefaultArgs<ExtArgs>>): Prisma.Prisma__ClinicianClient<runtime.Types.Result.GetResult<Prisma.$ClinicianPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   availability_rule<T extends Prisma.AvailabilityRuleDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AvailabilityRuleDefaultArgs<ExtArgs>>): Prisma.Prisma__AvailabilityRuleClient<runtime.Types.Result.GetResult<Prisma.$AvailabilityRulePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
@@ -1663,9 +1694,9 @@ export type SlotDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Internal
 }
 
 /**
- * Slot.appointment
+ * Slot.appointments
  */
-export type Slot$appointmentArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type Slot$appointmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
    * Select specific fields to fetch from the Appointments
    */
@@ -1679,6 +1710,11 @@ export type Slot$appointmentArgs<ExtArgs extends runtime.Types.Extensions.Intern
    */
   include?: Prisma.AppointmentsInclude<ExtArgs> | null
   where?: Prisma.AppointmentsWhereInput
+  orderBy?: Prisma.AppointmentsOrderByWithRelationInput | Prisma.AppointmentsOrderByWithRelationInput[]
+  cursor?: Prisma.AppointmentsWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AppointmentsScalarFieldEnum | Prisma.AppointmentsScalarFieldEnum[]
 }
 
 /**

@@ -78,3 +78,89 @@ export interface UpdateAvailabilityPayload {
   is_active?: boolean
   horizon_days?: number
 }
+
+export interface BookAppointmentPayload {
+  medical_diagnosis?: string
+  source_referral?: string
+  chief_complaint?: string
+  referral_url?: string
+}
+
+export interface MyAppointmentsParams {
+  status?: ServerAppointmentStatus
+  page?: number
+  perPage?: number
+}
+
+export interface PatientMyAppointmentDto {
+  id: string
+  status: ServerAppointmentStatus
+  room_id: string | null
+  booked_at: string
+  confirmed_at: string | null
+  cancelled_at: string | null
+  slot: {
+    id: string
+    starts_at: string
+    ends_at: string
+    status: string
+    clinician: {
+      id: string
+      user: { name: string | null }
+      diagnosis: { label: string } | null
+    }
+  }
+  encounter: {
+    id: string
+    chief_complaint: string | null
+    diagnosis: string | null
+    referral_source: string | null
+  } | null
+}
+
+export interface SlotAppointmentEncounter {
+  id: string
+  appointment_id: string
+  diagnosis: string | null
+  chief_complaint: string | null
+  referral_source: string | null
+  referral_url: string | null
+  notes: string | null
+}
+
+export interface SlotAppointmentEvent {
+  id: string
+  type: string
+  actor_type: string
+  actor_id: string
+  reason: string | null
+  created_at: string
+}
+
+export type ServerAppointmentStatus =
+  | 'PENDING'
+  | 'CONFIRMED'
+  | 'CANCELLED'
+  | 'COMPLETED'
+  | 'NO_SHOW'
+
+export interface SlotAppointmentDto {
+  id: string
+  slot_id: string
+  patient_id: string
+  status: ServerAppointmentStatus
+  room_id: string | null
+  booked_at: string
+  confirmed_at: string | null
+  cancelled_at: string | null
+  completed_at: string | null
+  rescheduled_at: string | null
+  slot: {
+    id: string
+    starts_at: string
+    ends_at: string
+    status: string
+  }
+  encounter: SlotAppointmentEncounter | null
+  events: Array<SlotAppointmentEvent>
+}

@@ -27,4 +27,8 @@ export const customMessages: Record<string, string> = {
     "New password must contain uppercase, lowercase, number, and special character",
   new_password_confirmation:
     "Confirmation must contain uppercase, lowercase, number, and special character",
+  chief_complaint: "Chief complaint is required.",
+  medical_diagnosis: "Medical diagnosis is required.",
+  source_referral: "Source referral is required.",
+  referral_url: "Referral document is required.",
 };

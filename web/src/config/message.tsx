@@ -48,6 +48,29 @@ export const USER = {
   },
 }
 
+export const APPOINTMENT = {
+  book: {
+    success: 'Appointment booked successfully!',
+    error: 'Failed to book appointment. Please try again.',
+  },
+  confirm: {
+    success: 'Appointment confirmed successfully!',
+    error: 'Failed to confirm appointment. Please try again.',
+  },
+  cancel: {
+    success: 'Appointment cancelled successfully!',
+    error: 'Failed to cancel appointment. Please try again.',
+  },
+  complete: {
+    success: 'Appointment marked as completed!',
+    error: 'Failed to complete appointment. Please try again.',
+  },
+  unblock: {
+    success: 'Slot unblocked successfully!',
+    error: 'Failed to unblock slot. Please try again.',
+  },
+}
+
 export const SCHEDULE = {
   create: {
     success: 'Schedule created successfully!',

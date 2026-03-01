@@ -130,6 +130,7 @@ CREATE TABLE "Slot" (
     "status" TEXT NOT NULL DEFAULT 'AVAILABLE',
     "created_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" DATETIME NOT NULL,
+    CONSTRAINT "Slot_clinician_id_fkey" FOREIGN KEY ("clinician_id") REFERENCES "Clinician" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT "Slot_availability_rule_id_fkey" FOREIGN KEY ("availability_rule_id") REFERENCES "AvailabilityRule" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
@@ -141,7 +142,6 @@ CREATE TABLE "AppointmentEvent" (
     "actor_type" TEXT NOT NULL,
     "actor_id" TEXT NOT NULL,
     "reason" TEXT,
-    "metadata" JSONB,
     "created_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT "AppointmentEvent_appointment_id_fkey" FOREIGN KEY ("appointment_id") REFERENCES "Appointments" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
@@ -150,11 +150,10 @@ CREATE TABLE "AppointmentEvent" (
 CREATE TABLE "Encounter" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "appointment_id" TEXT NOT NULL,
-    "diagnosis" TEXT,
-    "chief_complaint" TEXT,
-    "referral_source" TEXT,
-    "referral_url" TEXT,
-    "notes" TEXT,
+    "diagnosis" TEXT NOT NULL,
+    "chief_complaint" TEXT NOT NULL,
+    "referral_source" TEXT NOT NULL,
+    "referral_url" TEXT NOT NULL,
     "created_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" DATETIME NOT NULL,
     CONSTRAINT "Encounter_appointment_id_fkey" FOREIGN KEY ("appointment_id") REFERENCES "Appointments" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
@@ -186,9 +185,6 @@ CREATE UNIQUE INDEX "Clinician_user_id_key" ON "Clinician"("user_id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "RefreshToken_token_hash_key" ON "RefreshToken"("token_hash");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Appointments_slot_id_key" ON "Appointments"("slot_id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Encounter_appointment_id_key" ON "Encounter"("appointment_id");

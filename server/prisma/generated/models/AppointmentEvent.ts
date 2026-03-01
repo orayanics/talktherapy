@@ -51,7 +51,6 @@ export type AppointmentEventCountAggregateOutputType = {
   actor_type: number
   actor_id: number
   reason: number
-  metadata: number
   created_at: number
   _all: number
 }
@@ -84,7 +83,6 @@ export type AppointmentEventCountAggregateInputType = {
   actor_type?: true
   actor_id?: true
   reason?: true
-  metadata?: true
   created_at?: true
   _all?: true
 }
@@ -168,7 +166,6 @@ export type AppointmentEventGroupByOutputType = {
   actor_type: $Enums.ActorType
   actor_id: string
   reason: string | null
-  metadata: runtime.JsonValue | null
   created_at: Date
   _count: AppointmentEventCountAggregateOutputType | null
   _min: AppointmentEventMinAggregateOutputType | null
@@ -200,7 +197,6 @@ export type AppointmentEventWhereInput = {
   actor_type?: Prisma.EnumActorTypeFilter<"AppointmentEvent"> | $Enums.ActorType
   actor_id?: Prisma.StringFilter<"AppointmentEvent"> | string
   reason?: Prisma.StringNullableFilter<"AppointmentEvent"> | string | null
-  metadata?: Prisma.JsonNullableFilter<"AppointmentEvent">
   created_at?: Prisma.DateTimeFilter<"AppointmentEvent"> | Date | string
   appointment?: Prisma.XOR<Prisma.AppointmentsScalarRelationFilter, Prisma.AppointmentsWhereInput>
 }
@@ -212,7 +208,6 @@ export type AppointmentEventOrderByWithRelationInput = {
   actor_type?: Prisma.SortOrder
   actor_id?: Prisma.SortOrder
   reason?: Prisma.SortOrderInput | Prisma.SortOrder
-  metadata?: Prisma.SortOrderInput | Prisma.SortOrder
   created_at?: Prisma.SortOrder
   appointment?: Prisma.AppointmentsOrderByWithRelationInput
 }
@@ -227,7 +222,6 @@ export type AppointmentEventWhereUniqueInput = Prisma.AtLeast<{
   actor_type?: Prisma.EnumActorTypeFilter<"AppointmentEvent"> | $Enums.ActorType
   actor_id?: Prisma.StringFilter<"AppointmentEvent"> | string
   reason?: Prisma.StringNullableFilter<"AppointmentEvent"> | string | null
-  metadata?: Prisma.JsonNullableFilter<"AppointmentEvent">
   created_at?: Prisma.DateTimeFilter<"AppointmentEvent"> | Date | string
   appointment?: Prisma.XOR<Prisma.AppointmentsScalarRelationFilter, Prisma.AppointmentsWhereInput>
 }, "id">
@@ -239,7 +233,6 @@ export type AppointmentEventOrderByWithAggregationInput = {
   actor_type?: Prisma.SortOrder
   actor_id?: Prisma.SortOrder
   reason?: Prisma.SortOrderInput | Prisma.SortOrder
-  metadata?: Prisma.SortOrderInput | Prisma.SortOrder
   created_at?: Prisma.SortOrder
   _count?: Prisma.AppointmentEventCountOrderByAggregateInput
   _max?: Prisma.AppointmentEventMaxOrderByAggregateInput
@@ -256,7 +249,6 @@ export type AppointmentEventScalarWhereWithAggregatesInput = {
   actor_type?: Prisma.EnumActorTypeWithAggregatesFilter<"AppointmentEvent"> | $Enums.ActorType
   actor_id?: Prisma.StringWithAggregatesFilter<"AppointmentEvent"> | string
   reason?: Prisma.StringNullableWithAggregatesFilter<"AppointmentEvent"> | string | null
-  metadata?: Prisma.JsonNullableWithAggregatesFilter<"AppointmentEvent">
   created_at?: Prisma.DateTimeWithAggregatesFilter<"AppointmentEvent"> | Date | string
 }
 
@@ -266,7 +258,6 @@ export type AppointmentEventCreateInput = {
   actor_type: $Enums.ActorType
   actor_id: string
   reason?: string | null
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   created_at?: Date | string
   appointment: Prisma.AppointmentsCreateNestedOneWithoutEventsInput
 }
@@ -278,7 +269,6 @@ export type AppointmentEventUncheckedCreateInput = {
   actor_type: $Enums.ActorType
   actor_id: string
   reason?: string | null
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   created_at?: Date | string
 }
 
@@ -288,7 +278,6 @@ export type AppointmentEventUpdateInput = {
   actor_type?: Prisma.EnumActorTypeFieldUpdateOperationsInput | $Enums.ActorType
   actor_id?: Prisma.StringFieldUpdateOperationsInput | string
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   appointment?: Prisma.AppointmentsUpdateOneRequiredWithoutEventsNestedInput
 }
@@ -300,7 +289,6 @@ export type AppointmentEventUncheckedUpdateInput = {
   actor_type?: Prisma.EnumActorTypeFieldUpdateOperationsInput | $Enums.ActorType
   actor_id?: Prisma.StringFieldUpdateOperationsInput | string
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -311,7 +299,6 @@ export type AppointmentEventCreateManyInput = {
   actor_type: $Enums.ActorType
   actor_id: string
   reason?: string | null
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   created_at?: Date | string
 }
 
@@ -321,7 +308,6 @@ export type AppointmentEventUpdateManyMutationInput = {
   actor_type?: Prisma.EnumActorTypeFieldUpdateOperationsInput | $Enums.ActorType
   actor_id?: Prisma.StringFieldUpdateOperationsInput | string
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -332,7 +318,6 @@ export type AppointmentEventUncheckedUpdateManyInput = {
   actor_type?: Prisma.EnumActorTypeFieldUpdateOperationsInput | $Enums.ActorType
   actor_id?: Prisma.StringFieldUpdateOperationsInput | string
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -353,7 +338,6 @@ export type AppointmentEventCountOrderByAggregateInput = {
   actor_type?: Prisma.SortOrder
   actor_id?: Prisma.SortOrder
   reason?: Prisma.SortOrder
-  metadata?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
 }
 
@@ -433,7 +417,6 @@ export type AppointmentEventCreateWithoutAppointmentInput = {
   actor_type: $Enums.ActorType
   actor_id: string
   reason?: string | null
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   created_at?: Date | string
 }
 
@@ -443,7 +426,6 @@ export type AppointmentEventUncheckedCreateWithoutAppointmentInput = {
   actor_type: $Enums.ActorType
   actor_id: string
   reason?: string | null
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   created_at?: Date | string
 }
 
@@ -482,7 +464,6 @@ export type AppointmentEventScalarWhereInput = {
   actor_type?: Prisma.EnumActorTypeFilter<"AppointmentEvent"> | $Enums.ActorType
   actor_id?: Prisma.StringFilter<"AppointmentEvent"> | string
   reason?: Prisma.StringNullableFilter<"AppointmentEvent"> | string | null
-  metadata?: Prisma.JsonNullableFilter<"AppointmentEvent">
   created_at?: Prisma.DateTimeFilter<"AppointmentEvent"> | Date | string
 }
 
@@ -492,7 +473,6 @@ export type AppointmentEventCreateManyAppointmentInput = {
   actor_type: $Enums.ActorType
   actor_id: string
   reason?: string | null
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   created_at?: Date | string
 }
 
@@ -502,7 +482,6 @@ export type AppointmentEventUpdateWithoutAppointmentInput = {
   actor_type?: Prisma.EnumActorTypeFieldUpdateOperationsInput | $Enums.ActorType
   actor_id?: Prisma.StringFieldUpdateOperationsInput | string
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -512,7 +491,6 @@ export type AppointmentEventUncheckedUpdateWithoutAppointmentInput = {
   actor_type?: Prisma.EnumActorTypeFieldUpdateOperationsInput | $Enums.ActorType
   actor_id?: Prisma.StringFieldUpdateOperationsInput | string
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -522,7 +500,6 @@ export type AppointmentEventUncheckedUpdateManyWithoutAppointmentInput = {
   actor_type?: Prisma.EnumActorTypeFieldUpdateOperationsInput | $Enums.ActorType
   actor_id?: Prisma.StringFieldUpdateOperationsInput | string
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -535,7 +512,6 @@ export type AppointmentEventSelect<ExtArgs extends runtime.Types.Extensions.Inte
   actor_type?: boolean
   actor_id?: boolean
   reason?: boolean
-  metadata?: boolean
   created_at?: boolean
   appointment?: boolean | Prisma.AppointmentsDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["appointmentEvent"]>
@@ -547,7 +523,6 @@ export type AppointmentEventSelectCreateManyAndReturn<ExtArgs extends runtime.Ty
   actor_type?: boolean
   actor_id?: boolean
   reason?: boolean
-  metadata?: boolean
   created_at?: boolean
   appointment?: boolean | Prisma.AppointmentsDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["appointmentEvent"]>
@@ -559,7 +534,6 @@ export type AppointmentEventSelectUpdateManyAndReturn<ExtArgs extends runtime.Ty
   actor_type?: boolean
   actor_id?: boolean
   reason?: boolean
-  metadata?: boolean
   created_at?: boolean
   appointment?: boolean | Prisma.AppointmentsDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["appointmentEvent"]>
@@ -571,11 +545,10 @@ export type AppointmentEventSelectScalar = {
   actor_type?: boolean
   actor_id?: boolean
   reason?: boolean
-  metadata?: boolean
   created_at?: boolean
 }
 
-export type AppointmentEventOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "appointment_id" | "type" | "actor_type" | "actor_id" | "reason" | "metadata" | "created_at", ExtArgs["result"]["appointmentEvent"]>
+export type AppointmentEventOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "appointment_id" | "type" | "actor_type" | "actor_id" | "reason" | "created_at", ExtArgs["result"]["appointmentEvent"]>
 export type AppointmentEventInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   appointment?: boolean | Prisma.AppointmentsDefaultArgs<ExtArgs>
 }
@@ -598,7 +571,6 @@ export type $AppointmentEventPayload<ExtArgs extends runtime.Types.Extensions.In
     actor_type: $Enums.ActorType
     actor_id: string
     reason: string | null
-    metadata: runtime.JsonValue | null
     created_at: Date
   }, ExtArgs["result"]["appointmentEvent"]>
   composites: {}
@@ -1030,7 +1002,6 @@ export interface AppointmentEventFieldRefs {
   readonly actor_type: Prisma.FieldRef<"AppointmentEvent", 'ActorType'>
   readonly actor_id: Prisma.FieldRef<"AppointmentEvent", 'String'>
   readonly reason: Prisma.FieldRef<"AppointmentEvent", 'String'>
-  readonly metadata: Prisma.FieldRef<"AppointmentEvent", 'Json'>
   readonly created_at: Prisma.FieldRef<"AppointmentEvent", 'DateTime'>
 }
     

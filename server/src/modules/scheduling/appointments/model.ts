@@ -14,7 +14,7 @@ export namespace AppointmentModel {
         t.Literal("CANCELLED"),
         t.Literal("COMPLETED"),
         t.Literal("NO_SHOW"),
-      ])
+      ]),
     ),
     from: t.Optional(t.String({ format: "date-time" })),
     to: t.Optional(t.String({ format: "date-time" })),
@@ -22,7 +22,8 @@ export namespace AppointmentModel {
   export type listQuery = typeof listQuery.static;
 
   export const cancelBody = t.Object({
-    reason: t.Optional(t.String()),
+    reason: t.String({ minLength: 1 }),
+    keep_blocked: t.Optional(t.Boolean()),
   });
   export type cancelBody = typeof cancelBody.static;
 
@@ -32,7 +33,32 @@ export namespace AppointmentModel {
   export type rescheduleBody = typeof rescheduleBody.static;
 
   export const noShowBody = t.Object({
-    reason: t.Optional(t.String()),
+    reason: t.String({ minLength: 1 }),
   });
   export type noShowBody = typeof noShowBody.static;
+
+  export const bookBody = t.Object({
+    medical_diagnosis: t.String({ minLength: 1 }),
+    source_referral: t.String({ minLength: 1 }),
+    chief_complaint: t.String({ minLength: 1 }),
+    referral_url: t.String({ minLength: 1 }), // TODO: implement file upload
+  });
+  export type bookBody = typeof bookBody.static;
+
+  export const patientListQuery = t.Object({
+    status: t.Optional(
+      t.Union([
+        t.Literal("PENDING"),
+        t.Literal("CONFIRMED"),
+        t.Literal("CANCELLED"),
+        t.Literal("COMPLETED"),
+        t.Literal("NO_SHOW"),
+      ]),
+    ),
+    from: t.Optional(t.String({ format: "date-time" })),
+    to: t.Optional(t.String({ format: "date-time" })),
+    page: t.Optional(t.Number({ minimum: 1, default: 1 })),
+    per_page: t.Optional(t.Number({ minimum: 1, maximum: 100, default: 10 })),
+  });
+  export type patientListQuery = typeof patientListQuery.static;
 }

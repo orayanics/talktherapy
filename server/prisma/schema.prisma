@@ -131,7 +131,7 @@ model AvailabilityRule {
 model Appointments {
   id String  @id @default(uuid())
 
-  slot_id String @unique
+  slot_id String
   patient_id String
 
   status AppointmentStatus @default(PENDING)
@@ -157,6 +157,7 @@ enum SlotStatus {
   BOOKED
   BLOCKED
   CANCELLED
+  COMPLETED
 }
 
 model Slot {
@@ -169,7 +170,7 @@ model Slot {
 
   status SlotStatus @default(AVAILABLE)
 
-  appointment Appointments?
+  appointments Appointments[]
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
@@ -211,7 +212,6 @@ model AppointmentEvent {
   actor_id String
 
   reason String?
-  metadata Json?
 
   created_at DateTime @default(now())
 
@@ -222,12 +222,11 @@ model Encounter {
   id             String   @id @default(uuid())
   appointment_id String   @unique
 
-  diagnosis      String?
-  chief_complaint String?
-  referral_source String?
-  referral_url    String?
+  diagnosis      String
+  chief_complaint String
+  referral_source String
+  referral_url    String
 
-  notes          String?
   created_at     DateTime @default(now())
   updated_at     DateTime @updatedAt
 

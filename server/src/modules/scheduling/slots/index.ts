@@ -3,6 +3,8 @@ import { jwtPlugin } from "@/plugins/jwt";
 import { SlotService } from "./service";
 import { SlotModel } from "./model";
 import { AvailabilityService } from "../availability/service";
+import { AppointmentService } from "../appointments/service";
+import { AppointmentModel } from "../appointments/model";
 
 export const slotController = new Elysia({
   prefix: "/slots",
@@ -11,7 +13,7 @@ export const slotController = new Elysia({
   .use(jwtPlugin)
   .guard({ isAuth: true, hasRole: ["patient"] }, (app) =>
     app
-      // ── GET /slots ──────────────────────────────────────────────
+      // ── GET /slots/available ────────────────────────────────────
       .get(
         "/available",
         async ({ query }) => {
@@ -20,8 +22,25 @@ export const slotController = new Elysia({
         {
           query: SlotModel.listQuery,
           detail: {
-            summary: "List all slots with optional filters (admin only)",
+            summary: "List all available slots with optional filters",
           },
+        },
+      )
+
+      // ── POST /slots/:slot_id/book ───────────────────────────────
+      .post(
+        "/:slot_id/book",
+        async ({ auth, params, body }) => {
+          return AppointmentService.bookAppointment(
+            auth!.userId,
+            params.slot_id,
+            body,
+          );
+        },
+        {
+          params: SlotModel.slotParams,
+          body: AppointmentModel.bookBody,
+          detail: { summary: "Book an available slot as a patient" },
         },
       ),
   )
@@ -39,6 +58,21 @@ export const slotController = new Elysia({
         {
           query: SlotModel.listQuery,
           detail: { summary: "List own slots with optional filters" },
+        },
+      )
+
+      // ── GET /slots/:slot_id/appointment ─────────────────────────
+      .get(
+        "/:slot_id/appointment",
+        async ({ auth, params }) => {
+          const clinician_id = await AvailabilityService.resolveClinicianId(
+            auth!.userId,
+          );
+          return SlotService.getSlotAppointment(clinician_id, params.slot_id);
+        },
+        {
+          params: SlotModel.slotParams,
+          detail: { summary: "Get appointment details for a clinician's slot" },
         },
       )
 

@@ -63,7 +63,7 @@ export const AlertToast = ({
     <div
       role="alert"
       aria-live="assertive"
-      className="toast"
+      className="toast z-999"
       style={{
         transition: 'all 0.3s ease',
         opacity: visible ? 1 : 0,

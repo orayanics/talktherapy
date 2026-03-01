@@ -105,6 +105,11 @@ export const PATIENT_NAV_ITEMS = [
     icon: <FaUser size={16} />,
   },
   {
+    label: 'My Appointments',
+    to: '/my-appointments',
+    icon: <FaCalendar size={16} />,
+  },
+  {
     label: 'Records',
     to: '/records',
     icon: <FaMedkit size={16} />,

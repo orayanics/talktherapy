@@ -9,6 +9,25 @@ export const appointmentController = new Elysia({
   detail: { tags: ["Clinician / Appointments"] },
 })
   .use(jwtPlugin)
+  .guard({ isAuth: true, hasRole: ["patient"] }, (app) =>
+    app
+      // ── GET /appointments/my ────────────────────────────────────────
+      .get(
+        "/my",
+        async ({ auth, query }) => {
+          return AppointmentService.listPatientAppointments(
+            auth!.userId,
+            query,
+          );
+        },
+        {
+          query: AppointmentModel.patientListQuery,
+          detail: {
+            summary: "List the authenticated patient's own appointments",
+          },
+        },
+      ),
+  )
   .guard({ isAuth: true, hasRole: ["clinician"] }, (app) =>
     app
       // ── GET /appointments ───────────────────────────────────────

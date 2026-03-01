@@ -81,9 +81,7 @@ export const Route = createRootRouteWithContext<{
 function RootComponent() {
   return (
     <RootDocument>
-      <AlertProvider>
-        <Outlet />
-      </AlertProvider>
+      <Outlet />
     </RootDocument>
   )
 }
@@ -95,7 +93,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body>
-        {children}
+        <AlertProvider>{children}</AlertProvider>
         <Scripts />
       </body>
     </html>

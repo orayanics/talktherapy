@@ -20,12 +20,10 @@ export abstract class SlotService {
         availability_rule: {
           select: { id: true, recurrence_rule: true },
         },
-        appointment: {
-          select: {
-            id: true,
-            patient_id: true,
-            status: true,
-          },
+        appointments: {
+          where: { status: { not: "CANCELLED" } },
+          select: { id: true, patient_id: true, status: true },
+          take: 1,
         },
       },
       orderBy: { starts_at: "asc" },
@@ -94,7 +92,7 @@ export abstract class SlotService {
         : null;
 
     const where = {
-      ...(slotStatus && { status: slotStatus }),
+      status: slotStatus ?? "AVAILABLE",
       ...(fromDate && { starts_at: { gte: fromDate, lte: toDate! } }),
       ...(diagnosis && {
         clinician: {
@@ -141,6 +139,33 @@ export abstract class SlotService {
 
     await prisma.slot.delete({ where: { id: slot_id } });
   }
+
+  /**
+   * Returns the appointment (with encounter, patient and events) for a slot
+   * that belongs to the given clinician.
+   */
+  static async getSlotAppointment(clinician_id: string, slot_id: string) {
+    const slot = await prisma.slot.findFirst({
+      where: { id: slot_id, clinician_id },
+    });
+
+    if (!slot) throw status(404, "Slot not found");
+
+    const appointment = await prisma.appointments.findFirst({
+      where: { slot_id },
+      orderBy: { booked_at: "desc" },
+      include: {
+        slot: {
+          select: { id: true, starts_at: true, ends_at: true, status: true },
+        },
+        encounter: true,
+        events: { orderBy: { created_at: "desc" } },
+      },
+    });
+
+    if (!appointment) throw status(404, "No appointment found for this slot");
+    return appointment;
+  }
 }
 
 const SLOT_SELECT = {
@@ -151,8 +176,10 @@ const SLOT_SELECT = {
     availability_rule_id: true,
   },
   include: {
-    appointment: {
+    appointments: {
+      where: { status: { not: "CANCELLED" } },
       select: { id: true, patient_id: true, status: true },
+      take: 1,
     },
     clinician: {
       select: {

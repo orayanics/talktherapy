@@ -237,7 +237,6 @@ export const AppointmentEventScalarFieldEnum = {
   actor_type: 'actor_type',
   actor_id: 'actor_id',
   reason: 'reason',
-  metadata: 'metadata',
   created_at: 'created_at'
 } as const
 
@@ -251,7 +250,6 @@ export const EncounterScalarFieldEnum = {
   chief_complaint: 'chief_complaint',
   referral_source: 'referral_source',
   referral_url: 'referral_url',
-  notes: 'notes',
   created_at: 'created_at',
   updated_at: 'updated_at'
 } as const
@@ -267,35 +265,10 @@ export const SortOrder = {
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
-export const NullableJsonNullValueInput = {
-  DbNull: DbNull,
-  JsonNull: JsonNull
-} as const
-
-export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
-
-
 export const NullsOrder = {
   first: 'first',
   last: 'last'
 } as const
 
 export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
-
-
-export const JsonNullValueFilter = {
-  DbNull: DbNull,
-  JsonNull: JsonNull,
-  AnyNull: AnyNull
-} as const
-
-export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
-
-
-export const QueryMode = {
-  default: 'default',
-  insensitive: 'insensitive'
-} as const
-
-export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
 

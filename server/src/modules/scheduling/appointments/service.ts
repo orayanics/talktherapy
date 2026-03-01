@@ -88,6 +88,7 @@ export abstract class AppointmentService {
         data: {
           status: "CONFIRMED",
           confirmed_at: new Date(),
+          room_id: crypto.randomUUID(),
         },
       });
 
@@ -125,12 +126,13 @@ export abstract class AppointmentService {
       );
     }
 
+    // keep_blocked defaults to true when not provided
+    const shouldBlock = body.keep_blocked !== false;
+
     return prisma.$transaction(async (tx) => {
-      // Release the slot back — but mark as BLOCKED per domain decision
-      // (double-booking prevention; clinician can manually unblock)
       await tx.slot.update({
         where: { id: appointment.slot_id },
-        data: { status: "AVAILABLE" },
+        data: { status: shouldBlock ? "BLOCKED" : "AVAILABLE" },
       });
 
       const updated = await tx.appointments.update({
@@ -138,6 +140,7 @@ export abstract class AppointmentService {
         data: {
           status: "CANCELLED",
           cancelled_at: new Date(),
+          room_id: null,
         },
       });
 
@@ -176,6 +179,17 @@ export abstract class AppointmentService {
     }
 
     return prisma.$transaction(async (tx) => {
+      const slot = await tx.slot.update({
+        where: { id: appointment.slot_id },
+        data: { status: "COMPLETED" },
+        select: { availability_rule_id: true },
+      });
+
+      await tx.availabilityRule.update({
+        where: { id: slot.availability_rule_id },
+        data: { is_active: false },
+      });
+
       const updated = await tx.appointments.update({
         where: { id: appointment_id },
         data: {
@@ -340,11 +354,146 @@ export abstract class AppointmentService {
           type: "RESCHEDULED",
           actor_type,
           actor_id,
-          metadata: { old_slot_id, new_slot_id },
         },
       });
 
       return updated;
+    });
+  }
+
+  /**
+   * Returns all appointments for a patient (their own), paginated.
+   * Resolves the patient profile from user_id.
+   */
+  static async listPatientAppointments(
+    user_id: string,
+    query: AppointmentModel.patientListQuery,
+  ) {
+    const patient = await prisma.patient.findUnique({
+      where: { user_id },
+      select: { id: true },
+    });
+
+    if (!patient) throw status(404, "Patient profile not found");
+
+    const { status: apptStatus, from, to, page = 1, per_page = 10 } = query;
+    const skip = (page - 1) * per_page;
+
+    const where = {
+      patient_id: patient.id,
+      ...(apptStatus && { status: apptStatus }),
+      ...(from && { slot: { starts_at: { gte: new Date(from) } } }),
+      ...(to && { slot: { ends_at: { lte: new Date(to) } } }),
+    };
+
+    const [data, total] = await prisma.$transaction([
+      prisma.appointments.findMany({
+        where,
+        include: {
+          slot: {
+            select: {
+              id: true,
+              starts_at: true,
+              ends_at: true,
+              status: true,
+              clinician: {
+                select: {
+                  id: true,
+                  user: { select: { name: true } },
+                  diagnosis: { select: { label: true } },
+                },
+              },
+            },
+          },
+          encounter: {
+            select: {
+              id: true,
+              chief_complaint: true,
+              diagnosis: true,
+              referral_source: true,
+            },
+          },
+        },
+        orderBy: { booked_at: "desc" },
+        skip,
+        take: per_page,
+      }),
+      prisma.appointments.count({ where }),
+    ]);
+
+    return {
+      data,
+      meta: {
+        total,
+        page,
+        page_size: per_page,
+        page_count: Math.ceil(total / per_page),
+        from: skip + 1,
+        to: skip + data.length,
+      },
+    };
+  }
+
+  /**
+   * Books a slot for a patient. Creates a PENDING appointment.
+   * Verifies the slot is AVAILABLE and resolves the patient profile.
+   */
+  static async bookAppointment(
+    user_id: string,
+    slot_id: string,
+    body: AppointmentModel.bookBody,
+  ) {
+    const patient = await prisma.patient.findUnique({
+      where: { user_id },
+      select: { id: true },
+    });
+
+    if (!patient) throw status(404, "Patient profile not found");
+
+    return prisma.$transaction(async (tx) => {
+      const slot = await tx.slot.findUnique({
+        where: { id: slot_id },
+      });
+
+      if (!slot) throw status(404, "Slot not found");
+      if (slot.status !== "AVAILABLE") {
+        throw status(409, `Slot is not available for booking: ${slot.status}`);
+      }
+
+      await tx.slot.update({
+        where: { id: slot_id },
+        data: { status: "BOOKED" },
+      });
+
+      const appointment = await tx.appointments.create({
+        data: {
+          slot_id,
+          patient_id: patient.id,
+          status: "PENDING",
+          booked_at: new Date(),
+        },
+      });
+
+      await tx.appointmentEvent.create({
+        data: {
+          appointment_id: appointment.id,
+          type: "BOOKED",
+          actor_type: "PATIENT",
+          actor_id: user_id,
+        },
+      });
+
+      await tx.encounter.create({
+        data: {
+          appointment_id: appointment.id,
+          diagnosis: body.medical_diagnosis,
+          referral_source: body.source_referral,
+          chief_complaint: body.chief_complaint,
+          referral_url: body.referral_url,
+        },
+      });
+
+      return appointment;
     });
   }
 

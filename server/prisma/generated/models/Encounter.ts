@@ -31,7 +31,6 @@ export type EncounterMinAggregateOutputType = {
   chief_complaint: string | null
   referral_source: string | null
   referral_url: string | null
-  notes: string | null
   created_at: Date | null
   updated_at: Date | null
 }
@@ -43,7 +42,6 @@ export type EncounterMaxAggregateOutputType = {
   chief_complaint: string | null
   referral_source: string | null
   referral_url: string | null
-  notes: string | null
   created_at: Date | null
   updated_at: Date | null
 }
@@ -55,7 +53,6 @@ export type EncounterCountAggregateOutputType = {
   chief_complaint: number
   referral_source: number
   referral_url: number
-  notes: number
   created_at: number
   updated_at: number
   _all: number
@@ -69,7 +66,6 @@ export type EncounterMinAggregateInputType = {
   chief_complaint?: true
   referral_source?: true
   referral_url?: true
-  notes?: true
   created_at?: true
   updated_at?: true
 }
@@ -81,7 +77,6 @@ export type EncounterMaxAggregateInputType = {
   chief_complaint?: true
   referral_source?: true
   referral_url?: true
-  notes?: true
   created_at?: true
   updated_at?: true
 }
@@ -93,7 +88,6 @@ export type EncounterCountAggregateInputType = {
   chief_complaint?: true
   referral_source?: true
   referral_url?: true
-  notes?: true
   created_at?: true
   updated_at?: true
   _all?: true
@@ -174,11 +168,10 @@ export type EncounterGroupByArgs<ExtArgs extends runtime.Types.Extensions.Intern
 export type EncounterGroupByOutputType = {
   id: string
   appointment_id: string
-  diagnosis: string | null
-  chief_complaint: string | null
-  referral_source: string | null
-  referral_url: string | null
-  notes: string | null
+  diagnosis: string
+  chief_complaint: string
+  referral_source: string
+  referral_url: string
   created_at: Date
   updated_at: Date
   _count: EncounterCountAggregateOutputType | null
@@ -207,11 +200,10 @@ export type EncounterWhereInput = {
   NOT?: Prisma.EncounterWhereInput | Prisma.EncounterWhereInput[]
   id?: Prisma.StringFilter<"Encounter"> | string
   appointment_id?: Prisma.StringFilter<"Encounter"> | string
-  diagnosis?: Prisma.StringNullableFilter<"Encounter"> | string | null
-  chief_complaint?: Prisma.StringNullableFilter<"Encounter"> | string | null
-  referral_source?: Prisma.StringNullableFilter<"Encounter"> | string | null
-  referral_url?: Prisma.StringNullableFilter<"Encounter"> | string | null
-  notes?: Prisma.StringNullableFilter<"Encounter"> | string | null
+  diagnosis?: Prisma.StringFilter<"Encounter"> | string
+  chief_complaint?: Prisma.StringFilter<"Encounter"> | string
+  referral_source?: Prisma.StringFilter<"Encounter"> | string
+  referral_url?: Prisma.StringFilter<"Encounter"> | string
   created_at?: Prisma.DateTimeFilter<"Encounter"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"Encounter"> | Date | string
   appointment?: Prisma.XOR<Prisma.AppointmentsScalarRelationFilter, Prisma.AppointmentsWhereInput>
@@ -220,11 +212,10 @@ export type EncounterWhereInput = {
 export type EncounterOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   appointment_id?: Prisma.SortOrder
-  diagnosis?: Prisma.SortOrderInput | Prisma.SortOrder
-  chief_complaint?: Prisma.SortOrderInput | Prisma.SortOrder
-  referral_source?: Prisma.SortOrderInput | Prisma.SortOrder
-  referral_url?: Prisma.SortOrderInput | Prisma.SortOrder
-  notes?: Prisma.SortOrderInput | Prisma.SortOrder
+  diagnosis?: Prisma.SortOrder
+  chief_complaint?: Prisma.SortOrder
+  referral_source?: Prisma.SortOrder
+  referral_url?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
   appointment?: Prisma.AppointmentsOrderByWithRelationInput
@@ -236,11 +227,10 @@ export type EncounterWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.EncounterWhereInput | Prisma.EncounterWhereInput[]
   OR?: Prisma.EncounterWhereInput[]
   NOT?: Prisma.EncounterWhereInput | Prisma.EncounterWhereInput[]
-  diagnosis?: Prisma.StringNullableFilter<"Encounter"> | string | null
-  chief_complaint?: Prisma.StringNullableFilter<"Encounter"> | string | null
-  referral_source?: Prisma.StringNullableFilter<"Encounter"> | string | null
-  referral_url?: Prisma.StringNullableFilter<"Encounter"> | string | null
-  notes?: Prisma.StringNullableFilter<"Encounter"> | string | null
+  diagnosis?: Prisma.StringFilter<"Encounter"> | string
+  chief_complaint?: Prisma.StringFilter<"Encounter"> | string
+  referral_source?: Prisma.StringFilter<"Encounter"> | string
+  referral_url?: Prisma.StringFilter<"Encounter"> | string
   created_at?: Prisma.DateTimeFilter<"Encounter"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"Encounter"> | Date | string
   appointment?: Prisma.XOR<Prisma.AppointmentsScalarRelationFilter, Prisma.AppointmentsWhereInput>
@@ -249,11 +239,10 @@ export type EncounterWhereUniqueInput = Prisma.AtLeast<{
 export type EncounterOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   appointment_id?: Prisma.SortOrder
-  diagnosis?: Prisma.SortOrderInput | Prisma.SortOrder
-  chief_complaint?: Prisma.SortOrderInput | Prisma.SortOrder
-  referral_source?: Prisma.SortOrderInput | Prisma.SortOrder
-  referral_url?: Prisma.SortOrderInput | Prisma.SortOrder
-  notes?: Prisma.SortOrderInput | Prisma.SortOrder
+  diagnosis?: Prisma.SortOrder
+  chief_complaint?: Prisma.SortOrder
+  referral_source?: Prisma.SortOrder
+  referral_url?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
   _count?: Prisma.EncounterCountOrderByAggregateInput
@@ -267,22 +256,20 @@ export type EncounterScalarWhereWithAggregatesInput = {
   NOT?: Prisma.EncounterScalarWhereWithAggregatesInput | Prisma.EncounterScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"Encounter"> | string
   appointment_id?: Prisma.StringWithAggregatesFilter<"Encounter"> | string
-  diagnosis?: Prisma.StringNullableWithAggregatesFilter<"Encounter"> | string | null
-  chief_complaint?: Prisma.StringNullableWithAggregatesFilter<"Encounter"> | string | null
-  referral_source?: Prisma.StringNullableWithAggregatesFilter<"Encounter"> | string | null
-  referral_url?: Prisma.StringNullableWithAggregatesFilter<"Encounter"> | string | null
-  notes?: Prisma.StringNullableWithAggregatesFilter<"Encounter"> | string | null
+  diagnosis?: Prisma.StringWithAggregatesFilter<"Encounter"> | string
+  chief_complaint?: Prisma.StringWithAggregatesFilter<"Encounter"> | string
+  referral_source?: Prisma.StringWithAggregatesFilter<"Encounter"> | string
+  referral_url?: Prisma.StringWithAggregatesFilter<"Encounter"> | string
   created_at?: Prisma.DateTimeWithAggregatesFilter<"Encounter"> | Date | string
   updated_at?: Prisma.DateTimeWithAggregatesFilter<"Encounter"> | Date | string
 }
 
 export type EncounterCreateInput = {
   id?: string
-  diagnosis?: string | null
-  chief_complaint?: string | null
-  referral_source?: string | null
-  referral_url?: string | null
-  notes?: string | null
+  diagnosis: string
+  chief_complaint: string
+  referral_source: string
+  referral_url: string
   created_at?: Date | string
   updated_at?: Date | string
   appointment: Prisma.AppointmentsCreateNestedOneWithoutEncounterInput
@@ -291,22 +278,20 @@ export type EncounterCreateInput = {
 export type EncounterUncheckedCreateInput = {
   id?: string
   appointment_id: string
-  diagnosis?: string | null
-  chief_complaint?: string | null
-  referral_source?: string | null
-  referral_url?: string | null
-  notes?: string | null
+  diagnosis: string
+  chief_complaint: string
+  referral_source: string
+  referral_url: string
   created_at?: Date | string
   updated_at?: Date | string
 }
 
 export type EncounterUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  diagnosis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chief_complaint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  referral_source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  referral_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  diagnosis?: Prisma.StringFieldUpdateOperationsInput | string
+  chief_complaint?: Prisma.StringFieldUpdateOperationsInput | string
+  referral_source?: Prisma.StringFieldUpdateOperationsInput | string
+  referral_url?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   appointment?: Prisma.AppointmentsUpdateOneRequiredWithoutEncounterNestedInput
@@ -315,11 +300,10 @@ export type EncounterUpdateInput = {
 export type EncounterUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   appointment_id?: Prisma.StringFieldUpdateOperationsInput | string
-  diagnosis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chief_complaint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  referral_source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  referral_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  diagnosis?: Prisma.StringFieldUpdateOperationsInput | string
+  chief_complaint?: Prisma.StringFieldUpdateOperationsInput | string
+  referral_source?: Prisma.StringFieldUpdateOperationsInput | string
+  referral_url?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -327,22 +311,20 @@ export type EncounterUncheckedUpdateInput = {
 export type EncounterCreateManyInput = {
   id?: string
   appointment_id: string
-  diagnosis?: string | null
-  chief_complaint?: string | null
-  referral_source?: string | null
-  referral_url?: string | null
-  notes?: string | null
+  diagnosis: string
+  chief_complaint: string
+  referral_source: string
+  referral_url: string
   created_at?: Date | string
   updated_at?: Date | string
 }
 
 export type EncounterUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  diagnosis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chief_complaint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  referral_source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  referral_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  diagnosis?: Prisma.StringFieldUpdateOperationsInput | string
+  chief_complaint?: Prisma.StringFieldUpdateOperationsInput | string
+  referral_source?: Prisma.StringFieldUpdateOperationsInput | string
+  referral_url?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -350,11 +332,10 @@ export type EncounterUpdateManyMutationInput = {
 export type EncounterUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   appointment_id?: Prisma.StringFieldUpdateOperationsInput | string
-  diagnosis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chief_complaint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  referral_source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  referral_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  diagnosis?: Prisma.StringFieldUpdateOperationsInput | string
+  chief_complaint?: Prisma.StringFieldUpdateOperationsInput | string
+  referral_source?: Prisma.StringFieldUpdateOperationsInput | string
+  referral_url?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -371,7 +352,6 @@ export type EncounterCountOrderByAggregateInput = {
   chief_complaint?: Prisma.SortOrder
   referral_source?: Prisma.SortOrder
   referral_url?: Prisma.SortOrder
-  notes?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
 }
@@ -383,7 +363,6 @@ export type EncounterMaxOrderByAggregateInput = {
   chief_complaint?: Prisma.SortOrder
   referral_source?: Prisma.SortOrder
   referral_url?: Prisma.SortOrder
-  notes?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
 }
@@ -395,7 +374,6 @@ export type EncounterMinOrderByAggregateInput = {
   chief_complaint?: Prisma.SortOrder
   referral_source?: Prisma.SortOrder
   referral_url?: Prisma.SortOrder
-  notes?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
 }
@@ -434,22 +412,20 @@ export type EncounterUncheckedUpdateOneWithoutAppointmentNestedInput = {
 
 export type EncounterCreateWithoutAppointmentInput = {
   id?: string
-  diagnosis?: string | null
-  chief_complaint?: string | null
-  referral_source?: string | null
-  referral_url?: string | null
-  notes?: string | null
+  diagnosis: string
+  chief_complaint: string
+  referral_source: string
+  referral_url: string
   created_at?: Date | string
   updated_at?: Date | string
 }
 
 export type EncounterUncheckedCreateWithoutAppointmentInput = {
   id?: string
-  diagnosis?: string | null
-  chief_complaint?: string | null
-  referral_source?: string | null
-  referral_url?: string | null
-  notes?: string | null
+  diagnosis: string
+  chief_complaint: string
+  referral_source: string
+  referral_url: string
   created_at?: Date | string
   updated_at?: Date | string
 }
@@ -472,22 +448,20 @@ export type EncounterUpdateToOneWithWhereWithoutAppointmentInput = {
 
 export type EncounterUpdateWithoutAppointmentInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  diagnosis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chief_complaint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  referral_source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  referral_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  diagnosis?: Prisma.StringFieldUpdateOperationsInput | string
+  chief_complaint?: Prisma.StringFieldUpdateOperationsInput | string
+  referral_source?: Prisma.StringFieldUpdateOperationsInput | string
+  referral_url?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type EncounterUncheckedUpdateWithoutAppointmentInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  diagnosis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  chief_complaint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  referral_source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  referral_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  diagnosis?: Prisma.StringFieldUpdateOperationsInput | string
+  chief_complaint?: Prisma.StringFieldUpdateOperationsInput | string
+  referral_source?: Prisma.StringFieldUpdateOperationsInput | string
+  referral_url?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -501,7 +475,6 @@ export type EncounterSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   chief_complaint?: boolean
   referral_source?: boolean
   referral_url?: boolean
-  notes?: boolean
   created_at?: boolean
   updated_at?: boolean
   appointment?: boolean | Prisma.AppointmentsDefaultArgs<ExtArgs>
@@ -514,7 +487,6 @@ export type EncounterSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
   chief_complaint?: boolean
   referral_source?: boolean
   referral_url?: boolean
-  notes?: boolean
   created_at?: boolean
   updated_at?: boolean
   appointment?: boolean | Prisma.AppointmentsDefaultArgs<ExtArgs>
@@ -527,7 +499,6 @@ export type EncounterSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
   chief_complaint?: boolean
   referral_source?: boolean
   referral_url?: boolean
-  notes?: boolean
   created_at?: boolean
   updated_at?: boolean
   appointment?: boolean | Prisma.AppointmentsDefaultArgs<ExtArgs>
@@ -540,12 +511,11 @@ export type EncounterSelectScalar = {
   chief_complaint?: boolean
   referral_source?: boolean
   referral_url?: boolean
-  notes?: boolean
   created_at?: boolean
   updated_at?: boolean
 }
 
-export type EncounterOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "appointment_id" | "diagnosis" | "chief_complaint" | "referral_source" | "referral_url" | "notes" | "created_at" | "updated_at", ExtArgs["result"]["encounter"]>
+export type EncounterOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "appointment_id" | "diagnosis" | "chief_complaint" | "referral_source" | "referral_url" | "created_at" | "updated_at", ExtArgs["result"]["encounter"]>
 export type EncounterInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   appointment?: boolean | Prisma.AppointmentsDefaultArgs<ExtArgs>
 }
@@ -564,11 +534,10 @@ export type $EncounterPayload<ExtArgs extends runtime.Types.Extensions.InternalA
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     appointment_id: string
-    diagnosis: string | null
-    chief_complaint: string | null
-    referral_source: string | null
-    referral_url: string | null
-    notes: string | null
+    diagnosis: string
+    chief_complaint: string
+    referral_source: string
+    referral_url: string
     created_at: Date
     updated_at: Date
   }, ExtArgs["result"]["encounter"]>
@@ -1001,7 +970,6 @@ export interface EncounterFieldRefs {
   readonly chief_complaint: Prisma.FieldRef<"Encounter", 'String'>
   readonly referral_source: Prisma.FieldRef<"Encounter", 'String'>
   readonly referral_url: Prisma.FieldRef<"Encounter", 'String'>
-  readonly notes: Prisma.FieldRef<"Encounter", 'String'>
   readonly created_at: Prisma.FieldRef<"Encounter", 'DateTime'>
   readonly updated_at: Prisma.FieldRef<"Encounter", 'DateTime'>
 }

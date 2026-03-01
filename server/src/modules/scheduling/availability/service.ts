@@ -45,6 +45,7 @@ export abstract class AvailabilityService {
       clinician_id,
       ...(slotStatus && { status: slotStatus }),
       ...(hasFilter && { slots: { some: slotFilter } }),
+      is_active: true,
     };
 
     const [total, rules] = await prisma.$transaction([

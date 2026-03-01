@@ -58,22 +58,24 @@ export default function ScheduleDetailsId(props: ScheduleDetailsIdProps) {
             <p>{is_active ? 'Active' : 'Inactive'}</p>
           </div>
 
-          <div className="flex flex-col gap-2">
-            <button
-              className="btn btn-primary"
-              onClick={() =>
-                navigate({
-                  to: '/schedules/$scheduleId/edit',
-                  params: { scheduleId: id },
-                })
-              }
-            >
-              Edit Schedule
-            </button>
-            <button className="btn btn-soft btn-error" onClick={handleDelete}>
-              Delete Schedule
-            </button>
-          </div>
+          {is_active && (
+            <div className="flex flex-col gap-2">
+              <button
+                className="btn btn-primary"
+                onClick={() =>
+                  navigate({
+                    to: '/schedules/$scheduleId/edit',
+                    params: { scheduleId: id },
+                  })
+                }
+              >
+                Edit Schedule
+              </button>
+              <button className="btn btn-soft btn-error" onClick={handleDelete}>
+                Delete Schedule
+              </button>
+            </div>
+          )}
         </div>
       </div>
       {showDeleteModal && (

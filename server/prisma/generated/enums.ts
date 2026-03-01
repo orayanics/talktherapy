@@ -13,7 +13,8 @@ export const SlotStatus = {
   AVAILABLE: 'AVAILABLE',
   BOOKED: 'BOOKED',
   BLOCKED: 'BLOCKED',
-  CANCELLED: 'CANCELLED'
+  CANCELLED: 'CANCELLED',
+  COMPLETED: 'COMPLETED'
 } as const
 
 export type SlotStatus = (typeof SlotStatus)[keyof typeof SlotStatus]

@@ -263,10 +263,10 @@ export type AppointmentsOrderByWithRelationInput = {
 
 export type AppointmentsWhereUniqueInput = Prisma.AtLeast<{
   id?: string
-  slot_id?: string
   AND?: Prisma.AppointmentsWhereInput | Prisma.AppointmentsWhereInput[]
   OR?: Prisma.AppointmentsWhereInput[]
   NOT?: Prisma.AppointmentsWhereInput | Prisma.AppointmentsWhereInput[]
+  slot_id?: Prisma.StringFilter<"Appointments"> | string
   patient_id?: Prisma.StringFilter<"Appointments"> | string
   status?: Prisma.EnumAppointmentStatusFilter<"Appointments"> | $Enums.AppointmentStatus
   booked_at?: Prisma.DateTimeFilter<"Appointments"> | Date | string
@@ -280,7 +280,7 @@ export type AppointmentsWhereUniqueInput = Prisma.AtLeast<{
   slot?: Prisma.XOR<Prisma.SlotScalarRelationFilter, Prisma.SlotWhereInput>
   events?: Prisma.AppointmentEventListRelationFilter
   encounter?: Prisma.XOR<Prisma.EncounterNullableScalarRelationFilter, Prisma.EncounterWhereInput> | null
-}, "id" | "slot_id">
+}, "id">
 
 export type AppointmentsOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -330,7 +330,7 @@ export type AppointmentsCreateInput = {
   room_id?: string | null
   created_at?: Date | string
   updated_at?: Date | string
-  slot: Prisma.SlotCreateNestedOneWithoutAppointmentInput
+  slot: Prisma.SlotCreateNestedOneWithoutAppointmentsInput
   events?: Prisma.AppointmentEventCreateNestedManyWithoutAppointmentInput
   encounter?: Prisma.EncounterCreateNestedOneWithoutAppointmentInput
 }
@@ -364,7 +364,7 @@ export type AppointmentsUpdateInput = {
   room_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  slot?: Prisma.SlotUpdateOneRequiredWithoutAppointmentNestedInput
+  slot?: Prisma.SlotUpdateOneRequiredWithoutAppointmentsNestedInput
   events?: Prisma.AppointmentEventUpdateManyWithoutAppointmentNestedInput
   encounter?: Prisma.EncounterUpdateOneWithoutAppointmentNestedInput
 }
@@ -475,9 +475,14 @@ export type AppointmentsMinOrderByAggregateInput = {
   updated_at?: Prisma.SortOrder
 }
 
-export type AppointmentsNullableScalarRelationFilter = {
-  is?: Prisma.AppointmentsWhereInput | null
-  isNot?: Prisma.AppointmentsWhereInput | null
+export type AppointmentsListRelationFilter = {
+  every?: Prisma.AppointmentsWhereInput
+  some?: Prisma.AppointmentsWhereInput
+  none?: Prisma.AppointmentsWhereInput
+}
+
+export type AppointmentsOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
 }
 
 export type AppointmentsScalarRelationFilter = {
@@ -489,36 +494,46 @@ export type EnumAppointmentStatusFieldUpdateOperationsInput = {
   set?: $Enums.AppointmentStatus
 }
 
-export type AppointmentsCreateNestedOneWithoutSlotInput = {
-  create?: Prisma.XOR<Prisma.AppointmentsCreateWithoutSlotInput, Prisma.AppointmentsUncheckedCreateWithoutSlotInput>
-  connectOrCreate?: Prisma.AppointmentsCreateOrConnectWithoutSlotInput
-  connect?: Prisma.AppointmentsWhereUniqueInput
+export type AppointmentsCreateNestedManyWithoutSlotInput = {
+  create?: Prisma.XOR<Prisma.AppointmentsCreateWithoutSlotInput, Prisma.AppointmentsUncheckedCreateWithoutSlotInput> | Prisma.AppointmentsCreateWithoutSlotInput[] | Prisma.AppointmentsUncheckedCreateWithoutSlotInput[]
+  connectOrCreate?: Prisma.AppointmentsCreateOrConnectWithoutSlotInput | Prisma.AppointmentsCreateOrConnectWithoutSlotInput[]
+  createMany?: Prisma.AppointmentsCreateManySlotInputEnvelope
+  connect?: Prisma.AppointmentsWhereUniqueInput | Prisma.AppointmentsWhereUniqueInput[]
 }
 
-export type AppointmentsUncheckedCreateNestedOneWithoutSlotInput = {
-  create?: Prisma.XOR<Prisma.AppointmentsCreateWithoutSlotInput, Prisma.AppointmentsUncheckedCreateWithoutSlotInput>
-  connectOrCreate?: Prisma.AppointmentsCreateOrConnectWithoutSlotInput
-  connect?: Prisma.AppointmentsWhereUniqueInput
+export type AppointmentsUncheckedCreateNestedManyWithoutSlotInput = {
+  create?: Prisma.XOR<Prisma.AppointmentsCreateWithoutSlotInput, Prisma.AppointmentsUncheckedCreateWithoutSlotInput> | Prisma.AppointmentsCreateWithoutSlotInput[] | Prisma.AppointmentsUncheckedCreateWithoutSlotInput[]
+  connectOrCreate?: Prisma.AppointmentsCreateOrConnectWithoutSlotInput | Prisma.AppointmentsCreateOrConnectWithoutSlotInput[]
+  createMany?: Prisma.AppointmentsCreateManySlotInputEnvelope
+  connect?: Prisma.AppointmentsWhereUniqueInput | Prisma.AppointmentsWhereUniqueInput[]
 }
 
-export type AppointmentsUpdateOneWithoutSlotNestedInput = {
-  create?: Prisma.XOR<Prisma.AppointmentsCreateWithoutSlotInput, Prisma.AppointmentsUncheckedCreateWithoutSlotInput>
-  connectOrCreate?: Prisma.AppointmentsCreateOrConnectWithoutSlotInput
-  upsert?: Prisma.AppointmentsUpsertWithoutSlotInput
-  disconnect?: Prisma.AppointmentsWhereInput | boolean
-  delete?: Prisma.AppointmentsWhereInput | boolean
-  connect?: Prisma.AppointmentsWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.AppointmentsUpdateToOneWithWhereWithoutSlotInput, Prisma.AppointmentsUpdateWithoutSlotInput>, Prisma.AppointmentsUncheckedUpdateWithoutSlotInput>
+export type AppointmentsUpdateManyWithoutSlotNestedInput = {
+  create?: Prisma.XOR<Prisma.AppointmentsCreateWithoutSlotInput, Prisma.AppointmentsUncheckedCreateWithoutSlotInput> | Prisma.AppointmentsCreateWithoutSlotInput[] | Prisma.AppointmentsUncheckedCreateWithoutSlotInput[]
+  connectOrCreate?: Prisma.AppointmentsCreateOrConnectWithoutSlotInput | Prisma.AppointmentsCreateOrConnectWithoutSlotInput[]
+  upsert?: Prisma.AppointmentsUpsertWithWhereUniqueWithoutSlotInput | Prisma.AppointmentsUpsertWithWhereUniqueWithoutSlotInput[]
+  createMany?: Prisma.AppointmentsCreateManySlotInputEnvelope
+  set?: Prisma.AppointmentsWhereUniqueInput | Prisma.AppointmentsWhereUniqueInput[]
+  disconnect?: Prisma.AppointmentsWhereUniqueInput | Prisma.AppointmentsWhereUniqueInput[]
+  delete?: Prisma.AppointmentsWhereUniqueInput | Prisma.AppointmentsWhereUniqueInput[]
+  connect?: Prisma.AppointmentsWhereUniqueInput | Prisma.AppointmentsWhereUniqueInput[]
+  update?: Prisma.AppointmentsUpdateWithWhereUniqueWithoutSlotInput | Prisma.AppointmentsUpdateWithWhereUniqueWithoutSlotInput[]
+  updateMany?: Prisma.AppointmentsUpdateManyWithWhereWithoutSlotInput | Prisma.AppointmentsUpdateManyWithWhereWithoutSlotInput[]
+  deleteMany?: Prisma.AppointmentsScalarWhereInput | Prisma.AppointmentsScalarWhereInput[]
 }
 
-export type AppointmentsUncheckedUpdateOneWithoutSlotNestedInput = {
-  create?: Prisma.XOR<Prisma.AppointmentsCreateWithoutSlotInput, Prisma.AppointmentsUncheckedCreateWithoutSlotInput>
-  connectOrCreate?: Prisma.AppointmentsCreateOrConnectWithoutSlotInput
-  upsert?: Prisma.AppointmentsUpsertWithoutSlotInput
-  disconnect?: Prisma.AppointmentsWhereInput | boolean
-  delete?: Prisma.AppointmentsWhereInput | boolean
-  connect?: Prisma.AppointmentsWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.AppointmentsUpdateToOneWithWhereWithoutSlotInput, Prisma.AppointmentsUpdateWithoutSlotInput>, Prisma.AppointmentsUncheckedUpdateWithoutSlotInput>
+export type AppointmentsUncheckedUpdateManyWithoutSlotNestedInput = {
+  create?: Prisma.XOR<Prisma.AppointmentsCreateWithoutSlotInput, Prisma.AppointmentsUncheckedCreateWithoutSlotInput> | Prisma.AppointmentsCreateWithoutSlotInput[] | Prisma.AppointmentsUncheckedCreateWithoutSlotInput[]
+  connectOrCreate?: Prisma.AppointmentsCreateOrConnectWithoutSlotInput | Prisma.AppointmentsCreateOrConnectWithoutSlotInput[]
+  upsert?: Prisma.AppointmentsUpsertWithWhereUniqueWithoutSlotInput | Prisma.AppointmentsUpsertWithWhereUniqueWithoutSlotInput[]
+  createMany?: Prisma.AppointmentsCreateManySlotInputEnvelope
+  set?: Prisma.AppointmentsWhereUniqueInput | Prisma.AppointmentsWhereUniqueInput[]
+  disconnect?: Prisma.AppointmentsWhereUniqueInput | Prisma.AppointmentsWhereUniqueInput[]
+  delete?: Prisma.AppointmentsWhereUniqueInput | Prisma.AppointmentsWhereUniqueInput[]
+  connect?: Prisma.AppointmentsWhereUniqueInput | Prisma.AppointmentsWhereUniqueInput[]
+  update?: Prisma.AppointmentsUpdateWithWhereUniqueWithoutSlotInput | Prisma.AppointmentsUpdateWithWhereUniqueWithoutSlotInput[]
+  updateMany?: Prisma.AppointmentsUpdateManyWithWhereWithoutSlotInput | Prisma.AppointmentsUpdateManyWithWhereWithoutSlotInput[]
+  deleteMany?: Prisma.AppointmentsScalarWhereInput | Prisma.AppointmentsScalarWhereInput[]
 }
 
 export type AppointmentsCreateNestedOneWithoutEventsInput = {
@@ -586,47 +601,42 @@ export type AppointmentsCreateOrConnectWithoutSlotInput = {
   create: Prisma.XOR<Prisma.AppointmentsCreateWithoutSlotInput, Prisma.AppointmentsUncheckedCreateWithoutSlotInput>
 }
 
-export type AppointmentsUpsertWithoutSlotInput = {
-  update: Prisma.XOR<Prisma.AppointmentsUpdateWithoutSlotInput, Prisma.AppointmentsUncheckedUpdateWithoutSlotInput>
-  create: Prisma.XOR<Prisma.AppointmentsCreateWithoutSlotInput, Prisma.AppointmentsUncheckedCreateWithoutSlotInput>
-  where?: Prisma.AppointmentsWhereInput
+export type AppointmentsCreateManySlotInputEnvelope = {
+  data: Prisma.AppointmentsCreateManySlotInput | Prisma.AppointmentsCreateManySlotInput[]
 }
 
-export type AppointmentsUpdateToOneWithWhereWithoutSlotInput = {
-  where?: Prisma.AppointmentsWhereInput
+export type AppointmentsUpsertWithWhereUniqueWithoutSlotInput = {
+  where: Prisma.AppointmentsWhereUniqueInput
+  update: Prisma.XOR<Prisma.AppointmentsUpdateWithoutSlotInput, Prisma.AppointmentsUncheckedUpdateWithoutSlotInput>
+  create: Prisma.XOR<Prisma.AppointmentsCreateWithoutSlotInput, Prisma.AppointmentsUncheckedCreateWithoutSlotInput>
+}
+
+export type AppointmentsUpdateWithWhereUniqueWithoutSlotInput = {
+  where: Prisma.AppointmentsWhereUniqueInput
   data: Prisma.XOR<Prisma.AppointmentsUpdateWithoutSlotInput, Prisma.AppointmentsUncheckedUpdateWithoutSlotInput>
 }
 
-export type AppointmentsUpdateWithoutSlotInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  patient_id?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.EnumAppointmentStatusFieldUpdateOperationsInput | $Enums.AppointmentStatus
-  booked_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  confirmed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  cancelled_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  completed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  rescheduled_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  room_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  events?: Prisma.AppointmentEventUpdateManyWithoutAppointmentNestedInput
-  encounter?: Prisma.EncounterUpdateOneWithoutAppointmentNestedInput
+export type AppointmentsUpdateManyWithWhereWithoutSlotInput = {
+  where: Prisma.AppointmentsScalarWhereInput
+  data: Prisma.XOR<Prisma.AppointmentsUpdateManyMutationInput, Prisma.AppointmentsUncheckedUpdateManyWithoutSlotInput>
 }
 
-export type AppointmentsUncheckedUpdateWithoutSlotInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  patient_id?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.EnumAppointmentStatusFieldUpdateOperationsInput | $Enums.AppointmentStatus
-  booked_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  confirmed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  cancelled_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  completed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  rescheduled_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  room_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  events?: Prisma.AppointmentEventUncheckedUpdateManyWithoutAppointmentNestedInput
-  encounter?: Prisma.EncounterUncheckedUpdateOneWithoutAppointmentNestedInput
+export type AppointmentsScalarWhereInput = {
+  AND?: Prisma.AppointmentsScalarWhereInput | Prisma.AppointmentsScalarWhereInput[]
+  OR?: Prisma.AppointmentsScalarWhereInput[]
+  NOT?: Prisma.AppointmentsScalarWhereInput | Prisma.AppointmentsScalarWhereInput[]
+  id?: Prisma.StringFilter<"Appointments"> | string
+  slot_id?: Prisma.StringFilter<"Appointments"> | string
+  patient_id?: Prisma.StringFilter<"Appointments"> | string
+  status?: Prisma.EnumAppointmentStatusFilter<"Appointments"> | $Enums.AppointmentStatus
+  booked_at?: Prisma.DateTimeFilter<"Appointments"> | Date | string
+  confirmed_at?: Prisma.DateTimeNullableFilter<"Appointments"> | Date | string | null
+  cancelled_at?: Prisma.DateTimeNullableFilter<"Appointments"> | Date | string | null
+  completed_at?: Prisma.DateTimeNullableFilter<"Appointments"> | Date | string | null
+  rescheduled_at?: Prisma.DateTimeNullableFilter<"Appointments"> | Date | string | null
+  room_id?: Prisma.StringNullableFilter<"Appointments"> | string | null
+  created_at?: Prisma.DateTimeFilter<"Appointments"> | Date | string
+  updated_at?: Prisma.DateTimeFilter<"Appointments"> | Date | string
 }
 
 export type AppointmentsCreateWithoutEventsInput = {
@@ -641,7 +651,7 @@ export type AppointmentsCreateWithoutEventsInput = {
   room_id?: string | null
   created_at?: Date | string
   updated_at?: Date | string
-  slot: Prisma.SlotCreateNestedOneWithoutAppointmentInput
+  slot: Prisma.SlotCreateNestedOneWithoutAppointmentsInput
   encounter?: Prisma.EncounterCreateNestedOneWithoutAppointmentInput
 }
 
@@ -689,7 +699,7 @@ export type AppointmentsUpdateWithoutEventsInput = {
   room_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  slot?: Prisma.SlotUpdateOneRequiredWithoutAppointmentNestedInput
+  slot?: Prisma.SlotUpdateOneRequiredWithoutAppointmentsNestedInput
   encounter?: Prisma.EncounterUpdateOneWithoutAppointmentNestedInput
 }
 
@@ -721,7 +731,7 @@ export type AppointmentsCreateWithoutEncounterInput = {
   room_id?: string | null
   created_at?: Date | string
   updated_at?: Date | string
-  slot: Prisma.SlotCreateNestedOneWithoutAppointmentInput
+  slot: Prisma.SlotCreateNestedOneWithoutAppointmentsInput
   events?: Prisma.AppointmentEventCreateNestedManyWithoutAppointmentInput
 }
 
@@ -769,7 +779,7 @@ export type AppointmentsUpdateWithoutEncounterInput = {
   room_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  slot?: Prisma.SlotUpdateOneRequiredWithoutAppointmentNestedInput
+  slot?: Prisma.SlotUpdateOneRequiredWithoutAppointmentsNestedInput
   events?: Prisma.AppointmentEventUpdateManyWithoutAppointmentNestedInput
 }
 
@@ -787,6 +797,66 @@ export type AppointmentsUncheckedUpdateWithoutEncounterInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   events?: Prisma.AppointmentEventUncheckedUpdateManyWithoutAppointmentNestedInput
+}
+
+export type AppointmentsCreateManySlotInput = {
+  id?: string
+  patient_id: string
+  status?: $Enums.AppointmentStatus
+  booked_at?: Date | string
+  confirmed_at?: Date | string | null
+  cancelled_at?: Date | string | null
+  completed_at?: Date | string | null
+  rescheduled_at?: Date | string | null
+  room_id?: string | null
+  created_at?: Date | string
+  updated_at?: Date | string
+}
+
+export type AppointmentsUpdateWithoutSlotInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  patient_id?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumAppointmentStatusFieldUpdateOperationsInput | $Enums.AppointmentStatus
+  booked_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  confirmed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelled_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  rescheduled_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  room_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  events?: Prisma.AppointmentEventUpdateManyWithoutAppointmentNestedInput
+  encounter?: Prisma.EncounterUpdateOneWithoutAppointmentNestedInput
+}
+
+export type AppointmentsUncheckedUpdateWithoutSlotInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  patient_id?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumAppointmentStatusFieldUpdateOperationsInput | $Enums.AppointmentStatus
+  booked_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  confirmed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelled_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  rescheduled_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  room_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  events?: Prisma.AppointmentEventUncheckedUpdateManyWithoutAppointmentNestedInput
+  encounter?: Prisma.EncounterUncheckedUpdateOneWithoutAppointmentNestedInput
+}
+
+export type AppointmentsUncheckedUpdateManyWithoutSlotInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  patient_id?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumAppointmentStatusFieldUpdateOperationsInput | $Enums.AppointmentStatus
+  booked_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  confirmed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelled_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  rescheduled_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  room_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 

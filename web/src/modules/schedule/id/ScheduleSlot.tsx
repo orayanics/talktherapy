@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from '@tanstack/react-router'
 import useDeleteSlot from './useDeleteSlot'
 import type { AvailabilityRuleWithSlots, SlotDto } from '~/models/schedule'
 import ModalConfirm from '~/components/Modal/ModalConfirm'
@@ -7,7 +8,13 @@ interface ScheduleSlotProps {
   data: AvailabilityRuleWithSlots
 }
 
-function ScheduleSlotItem({ slot, ruleId }: { slot: SlotDto; ruleId: string }) {
+interface ScheduleSlotItemProps {
+  is_active: boolean
+  slot: SlotDto
+  ruleId: string
+}
+
+function ScheduleSlotItem({ is_active, slot, ruleId }: ScheduleSlotItemProps) {
   const { id, starts_at, ends_at, status } = slot
   const { handleSubmit, isLoading, errors } = useDeleteSlot({
     slotId: id,
@@ -18,19 +25,25 @@ function ScheduleSlotItem({ slot, ruleId }: { slot: SlotDto; ruleId: string }) {
   return (
     <>
       <div className="flex flex-row justify-between gap-2">
-        <div className="flex flex-row gap-4">
+        <Link
+          to={'/slots/$slotId'}
+          params={{ slotId: id }}
+          className="flex flex-row gap-4"
+        >
           <p>
             {new Date(starts_at).toLocaleTimeString()} -{' '}
             {new Date(ends_at).toLocaleTimeString()}
           </p>
           <p className="badge badge-soft">{status}</p>
-        </div>
-        <button
-          className="btn btn-soft btn-error"
-          onClick={() => setShowDeleteModal(true)}
-        >
-          Delete
-        </button>
+        </Link>
+        {is_active && (
+          <button
+            className="btn btn-soft btn-error"
+            onClick={() => setShowDeleteModal(true)}
+          >
+            Delete
+          </button>
+        )}
       </div>
       {showDeleteModal && (
         <ModalConfirm
@@ -52,14 +65,21 @@ function ScheduleSlotItem({ slot, ruleId }: { slot: SlotDto; ruleId: string }) {
 
 export default function ScheduleSlot(props: ScheduleSlotProps) {
   const { data } = props
+  const { is_active } = data
   const slots: Array<SlotDto> = data.slots
+
+  const slotProps = {
+    is_active,
+    slots,
+    ruleId: data.id,
+  }
 
   return (
     <div>
       <p className="font-mono uppercase text-primary">Schedule Slots</p>
       <div className="[&>div]:py-4 [&>div]:border-y [&>div]:border-gray-100 [&>div]:border-dashed">
         {slots.map((slot) => (
-          <ScheduleSlotItem key={slot.id} slot={slot} ruleId={data.id} />
+          <ScheduleSlotItem {...slotProps} slot={slot} />
         ))}
       </div>
     </div>
