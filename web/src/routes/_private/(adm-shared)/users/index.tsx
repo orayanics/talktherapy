@@ -69,7 +69,7 @@ function RouteComponent() {
   }
 
   useEffect(() => {
-    if (debouncedSearch === search.search || !debouncedSearch) return
+    if (debouncedSearch === search.search) return
     navigate({ search: { ...search, search: debouncedSearch, page: 1 } })
   }, [debouncedSearch])
 

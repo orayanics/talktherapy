@@ -1,36 +1,72 @@
 import MDEditor from '@uiw/react-md-editor'
+import { useQuery } from '@tanstack/react-query'
+import { useGetPublicDiagnoses } from '~/api/public'
 
-interface ContentMedaiInfoEditProps {
+export interface ContentFormState {
+  title: string
+  description: string
   bodyValue: string
-  onBodyChange: (value: string) => void
+  diagnosisId: string
+  tags: string
 }
 
-export default function ContentMediaCreate(props: ContentMedaiInfoEditProps) {
-  const { bodyValue, onBodyChange } = props
+interface ContentMediaCreateProps {
+  form: ContentFormState
+  onTitleChange: (v: string) => void
+  onDescriptionChange: (v: string) => void
+  onBodyChange: (v: string) => void
+  onDiagnosisIdChange: (v: string) => void
+  onTagsChange: (v: string) => void
+}
+
+export default function ContentMediaCreate(props: ContentMediaCreateProps) {
+  const {
+    form,
+    onTitleChange,
+    onDescriptionChange,
+    onBodyChange,
+    onDiagnosisIdChange,
+    onTagsChange,
+  } = props
+
+  const { data: diagnoses = [] } = useQuery(useGetPublicDiagnoses)
 
   return (
     <>
       <p className="font-bold uppercase text-primary">Content Information</p>
       <div className="[&>div]:py-4 [&>div]:border-y [&>div]:border-gray-100 [&>div]:border-dashed">
         <div className="flex flex-row justify-between gap-2">
-          <p className="font-bold">Title</p>
-          <input className="input" defaultValue={''} />
+          <p className="font-bold">
+            Title <span className="text-error">*</span>
+          </p>
+          <input
+            className="input"
+            value={form.title}
+            onChange={(e) => onTitleChange(e.target.value)}
+            placeholder="Enter title"
+            required
+          />
         </div>
 
         <div className="flex flex-row justify-between gap-2">
-          <p className="font-bold">Author</p>
-          <input className="input" defaultValue={''} />
-        </div>
-
-        <div className="flex flex-row justify-between gap-2">
-          <p className="font-bold">Description</p>
-          <textarea className="textarea">{''}</textarea>
+          <p className="font-bold">
+            Description <span className="text-error">*</span>
+          </p>
+          <textarea
+            className="textarea"
+            value={form.description}
+            onChange={(e) => onDescriptionChange(e.target.value)}
+            placeholder="Enter description"
+            required
+          />
         </div>
 
         <div className="flex flex-col justify-start gap-2">
-          <p className="font-bold">Body</p>
+          <p className="font-bold">
+            Body <span className="text-error">*</span>
+          </p>
           <MDEditor
-            value={bodyValue}
+            value={form.bodyValue}
             onChange={(val) => onBodyChange(val || '')}
             height={400}
             preview="edit"
@@ -41,36 +77,33 @@ export default function ContentMediaCreate(props: ContentMedaiInfoEditProps) {
         </div>
 
         <div className="flex flex-row justify-between gap-2">
-          <p className="font-bold">Category</p>
-          <p>{''}</p>
+          <p className="font-bold">
+            Category <span className="text-error">*</span>
+          </p>
+          <select
+            className="select"
+            value={form.diagnosisId}
+            onChange={(e) => onDiagnosisIdChange(e.target.value)}
+            required
+          >
+            <option value="">Select a category</option>
+            {diagnoses.map((d: { id: string; label: string }) => (
+              <option key={d.id} value={d.id}>
+                {d.label}
+              </option>
+            ))}
+          </select>
         </div>
 
-        <div className="flex flex-row justify-between gap-2">
+        <div className="flex flex-col gap-2">
           <p className="font-bold">Tags</p>
-
-          <div className="flex gap-1">
-            {/* {tags && (
-              <>
-                {tags?.map((tag) => {
-                  return (
-                    <span key={tag} className="badge">
-                      {tag}
-                    </span>
-                  );
-                })}
-              </>
-            )} */}
-          </div>
-        </div>
-
-        <div className="flex flex-row justify-between gap-2">
-          <p className="font-bold">Created At</p>
-          <input className="input" type="date" value={''} />
-        </div>
-
-        <div className="flex flex-row justify-between gap-2">
-          <p className="font-bold">Update At</p>
-          <input className="input" type="date" value={''} />
+          <input
+            className="input"
+            value={form.tags}
+            onChange={(e) => onTagsChange(e.target.value)}
+            placeholder="e.g. articulation, fluency, language"
+          />
+          <p className="text-xs text-gray-400">Separate tags with commas</p>
         </div>
       </div>
     </>

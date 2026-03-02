@@ -64,7 +64,10 @@ export const ModelName = {
   Appointments: 'Appointments',
   Slot: 'Slot',
   AppointmentEvent: 'AppointmentEvent',
-  Encounter: 'Encounter'
+  Encounter: 'Encounter',
+  Tag: 'Tag',
+  ContentTag: 'ContentTag',
+  Content: 'Content'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -255,6 +258,37 @@ export const EncounterScalarFieldEnum = {
 } as const
 
 export type EncounterScalarFieldEnum = (typeof EncounterScalarFieldEnum)[keyof typeof EncounterScalarFieldEnum]
+
+
+export const TagScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  slug: 'slug'
+} as const
+
+export type TagScalarFieldEnum = (typeof TagScalarFieldEnum)[keyof typeof TagScalarFieldEnum]
+
+
+export const ContentTagScalarFieldEnum = {
+  content_id: 'content_id',
+  tag_id: 'tag_id'
+} as const
+
+export type ContentTagScalarFieldEnum = (typeof ContentTagScalarFieldEnum)[keyof typeof ContentTagScalarFieldEnum]
+
+
+export const ContentScalarFieldEnum = {
+  id: 'id',
+  author_id: 'author_id',
+  diagnosis_id: 'diagnosis_id',
+  title: 'title',
+  description: 'description',
+  body: 'body',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+} as const
+
+export type ContentScalarFieldEnum = (typeof ContentScalarFieldEnum)[keyof typeof ContentScalarFieldEnum]
 
 
 export const SortOrder = {

@@ -75,6 +75,21 @@ export const APPOINTMENT = {
   },
 }
 
+export const CONTENT = {
+  create: {
+    success: 'Content created successfully!',
+    error: 'Failed to create content. Please try again.',
+  },
+  update: {
+    success: 'Content updated successfully!',
+    error: 'Failed to update content. Please try again.',
+  },
+  delete: {
+    success: 'Content deleted successfully!',
+    error: 'Failed to delete content. Please try again.',
+  },
+}
+
 export const SCHEDULE = {
   create: {
     success: 'Schedule created successfully!',

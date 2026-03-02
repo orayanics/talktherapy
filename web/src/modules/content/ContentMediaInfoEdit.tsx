@@ -1,90 +1,153 @@
 import MDEditor from '@uiw/react-md-editor'
-import type { MediaContentClient } from '~/models/content'
+import Markdown from 'react-markdown'
+import rehypeRaw from 'rehype-raw'
+import { useQuery } from '@tanstack/react-query'
+import useUpdateContent from './useEditContent'
+import { useGetPublicDiagnoses } from '~/api/public'
+import Grid from '~/components/Page/Grid'
+import GridItem from '~/components/Page/GridItem'
 
-interface ContentMedaiInfoEditProps extends MediaContentClient {
-  bodyValue: string
-  onBodyChange: (value: string) => void
+interface ContentMediaInfoEditProps {
+  data: {
+    title: string
+    description: string
+    body: string
+    diagnosis_id: string
+    tags: Array<{ tag: { name: string } }>
+  }
+  id: string
 }
 
-export default function ContentMediaInfoEdit(props: ContentMedaiInfoEditProps) {
+export default function ContentMediaInfoEdit({
+  data,
+  id,
+}: ContentMediaInfoEditProps) {
+  const { data: diagnoses = [] } = useQuery(useGetPublicDiagnoses)
   const {
-    // id,
-    title,
-    description,
-    // body,
-    authorId,
-    createdAt,
-    updatedAt,
-    category,
-    tags,
-    bodyValue,
-    onBodyChange,
-  } = props
+    form,
+    errors,
+    handleChange,
+    handleBodyChange,
+    handleSave,
+    handleCancel,
+    isPending,
+  } = useUpdateContent({ content: data, id })
+  const { title, description, bodyValue, diagnosisId, tags } = form
+
   return (
-    <>
-      <p className="font-bold uppercase text-primary">Content Information</p>
-      <div className="[&>div]:py-4 [&>div]:border-y [&>div]:border-gray-100 [&>div]:border-dashed">
-        <div className="flex flex-row justify-between gap-2">
-          <p className="font-bold">Title</p>
-          <input className="input" defaultValue={title} />
-        </div>
-
-        <div className="flex flex-row justify-between gap-2">
-          <p className="font-bold">Author</p>
-          <input className="input" defaultValue={authorId} />
-        </div>
-
-        <div className="flex flex-row justify-between gap-2">
-          <p className="font-bold">Description</p>
-          <textarea className="textarea">{description}</textarea>
-        </div>
-
-        <div className="flex flex-col justify-start gap-2">
-          <p className="font-bold">Body</p>
-          <MDEditor
-            value={bodyValue}
-            onChange={(val) => onBodyChange(val || '')}
-            height={400}
-            preview="edit"
-            commandsFilter={(cmd) =>
-              !['preview', 'live'].includes(cmd.name as string) && cmd
-            }
-          />
-        </div>
-
-        <div className="flex flex-row justify-between gap-2">
-          <p className="font-bold">Category</p>
-          <p>{category}</p>
-        </div>
-
-        <div className="flex flex-row justify-between gap-2">
-          <p className="font-bold">Tags</p>
-
-          <div className="flex gap-1">
-            {tags && (
-              <>
-                {tags.map((tag) => {
-                  return (
-                    <span key={tag} className="badge">
-                      {tag}
-                    </span>
-                  )
-                })}
-              </>
-            )}
+    <Grid cols={12} gap={6}>
+      <GridItem colSpan={12} className="flex flex-col gap-4 lg:col-span-6">
+        <p className="font-bold uppercase text-primary">Content Information</p>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault()
+            handleSave()
+          }}
+          className="[&>div]:py-4 [&>div]:border-y [&>div]:border-gray-100 [&>div]:border-dashed"
+        >
+          <div className="flex flex-row justify-between gap-2">
+            <p className="font-bold">
+              Title <span className="text-error">*</span>
+            </p>
+            <input
+              className="input"
+              value={title}
+              name="title"
+              onChange={handleChange}
+              placeholder="Enter title"
+              required
+            />
           </div>
-        </div>
 
-        <div className="flex flex-row justify-between gap-2">
-          <p className="font-bold">Created At</p>
-          <input className="input" type="date" value={createdAt} />
-        </div>
+          <div className="flex flex-row justify-between gap-2">
+            <p className="font-bold">
+              Description <span className="text-error">*</span>
+            </p>
+            <textarea
+              className="textarea"
+              value={description}
+              onChange={handleChange}
+              name="description"
+              placeholder="Enter description"
+              required
+            />
+          </div>
 
-        <div className="flex flex-row justify-between gap-2">
-          <p className="font-bold">Update At</p>
-          <input className="input" type="date" value={updatedAt} />
-        </div>
-      </div>
-    </>
+          <div className="flex flex-col justify-start gap-2">
+            <p className="font-bold">
+              Body <span className="text-error">*</span>
+            </p>
+            <MDEditor
+              value={bodyValue}
+              onChange={handleBodyChange}
+              height={400}
+              preview="edit"
+              commandsFilter={(cmd) =>
+                !['preview', 'live'].includes(cmd.name as string) && cmd
+              }
+            />
+          </div>
+
+          <div className="flex flex-row justify-between gap-2">
+            <p className="font-bold">
+              Category <span className="text-error">*</span>
+            </p>
+            <select
+              className="select"
+              value={diagnosisId}
+              name="diagnosisId"
+              onChange={handleChange}
+              required
+            >
+              <option value="">Select a category</option>
+              {diagnoses.map((d: { id: string; label: string }) => (
+                <option key={d.id} value={d.id}>
+                  {d.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <p className="font-bold">Tags</p>
+            <input
+              className="input"
+              value={tags}
+              onChange={handleChange}
+              name="tags"
+              placeholder="e.g. articulation, fluency, language"
+            />
+            <p className="text-xs text-gray-400">Separate tags with commas</p>
+          </div>
+
+          {errors && <p className="text-error text-sm">{errors.message}</p>}
+
+          <div className="flex flex-col gap-2">
+            <button
+              type="submit"
+              className="btn btn-soft btn-primary"
+              disabled={isPending}
+            >
+              {isPending ? 'Saving...' : 'Save Changes'}
+            </button>
+            <button
+              type="button"
+              className="btn btn-soft btn-error"
+              onClick={handleCancel}
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </GridItem>
+
+      <GridItem
+        colSpan={12}
+        className="flex flex-col gap-4 lg:col-span-6 lg:max-h-screen lg:overflow-y-auto"
+      >
+        <p className="font-bold">Live Preview of Media Body</p>
+        <Markdown rehypePlugins={[rehypeRaw]}>{bodyValue}</Markdown>
+      </GridItem>
+    </Grid>
   )
 }

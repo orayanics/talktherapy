@@ -6,6 +6,7 @@ import { auth } from "@/modules/auth";
 import { publicModule } from "@/modules/public";
 import { users } from "@/modules/users";
 import { schedulingModule } from "./modules/scheduling";
+import { contentModule } from "./modules/content";
 
 import { customMessages } from "./utils/errors";
 
@@ -80,7 +81,8 @@ export const app = new Elysia()
       .use(auth)
       .use(publicModule)
       .use(users)
-      .use(schedulingModule),
+      .use(schedulingModule)
+      .use(contentModule),
   )
 
   .listen(8000);

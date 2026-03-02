@@ -87,3 +87,18 @@ export type AppointmentEvent = Prisma.AppointmentEventModel
  * 
  */
 export type Encounter = Prisma.EncounterModel
+/**
+ * Model Tag
+ * 
+ */
+export type Tag = Prisma.TagModel
+/**
+ * Model ContentTag
+ * 
+ */
+export type ContentTag = Prisma.ContentTagModel
+/**
+ * Model Content
+ * 
+ */
+export type Content = Prisma.ContentModel

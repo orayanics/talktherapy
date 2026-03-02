@@ -176,6 +176,7 @@ export type DiagnosisWhereInput = {
   created_at?: Prisma.DateTimeFilter<"Diagnosis"> | Date | string
   patient?: Prisma.PatientListRelationFilter
   clinician?: Prisma.ClinicianListRelationFilter
+  content?: Prisma.ContentListRelationFilter
 }
 
 export type DiagnosisOrderByWithRelationInput = {
@@ -185,6 +186,7 @@ export type DiagnosisOrderByWithRelationInput = {
   created_at?: Prisma.SortOrder
   patient?: Prisma.PatientOrderByRelationAggregateInput
   clinician?: Prisma.ClinicianOrderByRelationAggregateInput
+  content?: Prisma.ContentOrderByRelationAggregateInput
 }
 
 export type DiagnosisWhereUniqueInput = Prisma.AtLeast<{
@@ -197,6 +199,7 @@ export type DiagnosisWhereUniqueInput = Prisma.AtLeast<{
   created_at?: Prisma.DateTimeFilter<"Diagnosis"> | Date | string
   patient?: Prisma.PatientListRelationFilter
   clinician?: Prisma.ClinicianListRelationFilter
+  content?: Prisma.ContentListRelationFilter
 }, "id" | "value" | "label">
 
 export type DiagnosisOrderByWithAggregationInput = {
@@ -226,6 +229,7 @@ export type DiagnosisCreateInput = {
   created_at?: Date | string
   patient?: Prisma.PatientCreateNestedManyWithoutDiagnosisInput
   clinician?: Prisma.ClinicianCreateNestedManyWithoutDiagnosisInput
+  content?: Prisma.ContentCreateNestedManyWithoutDiagnosisInput
 }
 
 export type DiagnosisUncheckedCreateInput = {
@@ -235,6 +239,7 @@ export type DiagnosisUncheckedCreateInput = {
   created_at?: Date | string
   patient?: Prisma.PatientUncheckedCreateNestedManyWithoutDiagnosisInput
   clinician?: Prisma.ClinicianUncheckedCreateNestedManyWithoutDiagnosisInput
+  content?: Prisma.ContentUncheckedCreateNestedManyWithoutDiagnosisInput
 }
 
 export type DiagnosisUpdateInput = {
@@ -244,6 +249,7 @@ export type DiagnosisUpdateInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   patient?: Prisma.PatientUpdateManyWithoutDiagnosisNestedInput
   clinician?: Prisma.ClinicianUpdateManyWithoutDiagnosisNestedInput
+  content?: Prisma.ContentUpdateManyWithoutDiagnosisNestedInput
 }
 
 export type DiagnosisUncheckedUpdateInput = {
@@ -253,6 +259,7 @@ export type DiagnosisUncheckedUpdateInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   patient?: Prisma.PatientUncheckedUpdateManyWithoutDiagnosisNestedInput
   clinician?: Prisma.ClinicianUncheckedUpdateManyWithoutDiagnosisNestedInput
+  content?: Prisma.ContentUncheckedUpdateManyWithoutDiagnosisNestedInput
 }
 
 export type DiagnosisCreateManyInput = {
@@ -302,6 +309,11 @@ export type DiagnosisNullableScalarRelationFilter = {
   isNot?: Prisma.DiagnosisWhereInput | null
 }
 
+export type DiagnosisScalarRelationFilter = {
+  is?: Prisma.DiagnosisWhereInput
+  isNot?: Prisma.DiagnosisWhereInput
+}
+
 export type DiagnosisCreateNestedOneWithoutPatientInput = {
   create?: Prisma.XOR<Prisma.DiagnosisCreateWithoutPatientInput, Prisma.DiagnosisUncheckedCreateWithoutPatientInput>
   connectOrCreate?: Prisma.DiagnosisCreateOrConnectWithoutPatientInput
@@ -334,12 +346,27 @@ export type DiagnosisUpdateOneWithoutClinicianNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.DiagnosisUpdateToOneWithWhereWithoutClinicianInput, Prisma.DiagnosisUpdateWithoutClinicianInput>, Prisma.DiagnosisUncheckedUpdateWithoutClinicianInput>
 }
 
+export type DiagnosisCreateNestedOneWithoutContentInput = {
+  create?: Prisma.XOR<Prisma.DiagnosisCreateWithoutContentInput, Prisma.DiagnosisUncheckedCreateWithoutContentInput>
+  connectOrCreate?: Prisma.DiagnosisCreateOrConnectWithoutContentInput
+  connect?: Prisma.DiagnosisWhereUniqueInput
+}
+
+export type DiagnosisUpdateOneRequiredWithoutContentNestedInput = {
+  create?: Prisma.XOR<Prisma.DiagnosisCreateWithoutContentInput, Prisma.DiagnosisUncheckedCreateWithoutContentInput>
+  connectOrCreate?: Prisma.DiagnosisCreateOrConnectWithoutContentInput
+  upsert?: Prisma.DiagnosisUpsertWithoutContentInput
+  connect?: Prisma.DiagnosisWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.DiagnosisUpdateToOneWithWhereWithoutContentInput, Prisma.DiagnosisUpdateWithoutContentInput>, Prisma.DiagnosisUncheckedUpdateWithoutContentInput>
+}
+
 export type DiagnosisCreateWithoutPatientInput = {
   id?: string
   value: string
   label: string
   created_at?: Date | string
   clinician?: Prisma.ClinicianCreateNestedManyWithoutDiagnosisInput
+  content?: Prisma.ContentCreateNestedManyWithoutDiagnosisInput
 }
 
 export type DiagnosisUncheckedCreateWithoutPatientInput = {
@@ -348,6 +375,7 @@ export type DiagnosisUncheckedCreateWithoutPatientInput = {
   label: string
   created_at?: Date | string
   clinician?: Prisma.ClinicianUncheckedCreateNestedManyWithoutDiagnosisInput
+  content?: Prisma.ContentUncheckedCreateNestedManyWithoutDiagnosisInput
 }
 
 export type DiagnosisCreateOrConnectWithoutPatientInput = {
@@ -372,6 +400,7 @@ export type DiagnosisUpdateWithoutPatientInput = {
   label?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   clinician?: Prisma.ClinicianUpdateManyWithoutDiagnosisNestedInput
+  content?: Prisma.ContentUpdateManyWithoutDiagnosisNestedInput
 }
 
 export type DiagnosisUncheckedUpdateWithoutPatientInput = {
@@ -380,6 +409,7 @@ export type DiagnosisUncheckedUpdateWithoutPatientInput = {
   label?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   clinician?: Prisma.ClinicianUncheckedUpdateManyWithoutDiagnosisNestedInput
+  content?: Prisma.ContentUncheckedUpdateManyWithoutDiagnosisNestedInput
 }
 
 export type DiagnosisCreateWithoutClinicianInput = {
@@ -388,6 +418,7 @@ export type DiagnosisCreateWithoutClinicianInput = {
   label: string
   created_at?: Date | string
   patient?: Prisma.PatientCreateNestedManyWithoutDiagnosisInput
+  content?: Prisma.ContentCreateNestedManyWithoutDiagnosisInput
 }
 
 export type DiagnosisUncheckedCreateWithoutClinicianInput = {
@@ -396,6 +427,7 @@ export type DiagnosisUncheckedCreateWithoutClinicianInput = {
   label: string
   created_at?: Date | string
   patient?: Prisma.PatientUncheckedCreateNestedManyWithoutDiagnosisInput
+  content?: Prisma.ContentUncheckedCreateNestedManyWithoutDiagnosisInput
 }
 
 export type DiagnosisCreateOrConnectWithoutClinicianInput = {
@@ -420,6 +452,7 @@ export type DiagnosisUpdateWithoutClinicianInput = {
   label?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   patient?: Prisma.PatientUpdateManyWithoutDiagnosisNestedInput
+  content?: Prisma.ContentUpdateManyWithoutDiagnosisNestedInput
 }
 
 export type DiagnosisUncheckedUpdateWithoutClinicianInput = {
@@ -428,6 +461,59 @@ export type DiagnosisUncheckedUpdateWithoutClinicianInput = {
   label?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   patient?: Prisma.PatientUncheckedUpdateManyWithoutDiagnosisNestedInput
+  content?: Prisma.ContentUncheckedUpdateManyWithoutDiagnosisNestedInput
+}
+
+export type DiagnosisCreateWithoutContentInput = {
+  id?: string
+  value: string
+  label: string
+  created_at?: Date | string
+  patient?: Prisma.PatientCreateNestedManyWithoutDiagnosisInput
+  clinician?: Prisma.ClinicianCreateNestedManyWithoutDiagnosisInput
+}
+
+export type DiagnosisUncheckedCreateWithoutContentInput = {
+  id?: string
+  value: string
+  label: string
+  created_at?: Date | string
+  patient?: Prisma.PatientUncheckedCreateNestedManyWithoutDiagnosisInput
+  clinician?: Prisma.ClinicianUncheckedCreateNestedManyWithoutDiagnosisInput
+}
+
+export type DiagnosisCreateOrConnectWithoutContentInput = {
+  where: Prisma.DiagnosisWhereUniqueInput
+  create: Prisma.XOR<Prisma.DiagnosisCreateWithoutContentInput, Prisma.DiagnosisUncheckedCreateWithoutContentInput>
+}
+
+export type DiagnosisUpsertWithoutContentInput = {
+  update: Prisma.XOR<Prisma.DiagnosisUpdateWithoutContentInput, Prisma.DiagnosisUncheckedUpdateWithoutContentInput>
+  create: Prisma.XOR<Prisma.DiagnosisCreateWithoutContentInput, Prisma.DiagnosisUncheckedCreateWithoutContentInput>
+  where?: Prisma.DiagnosisWhereInput
+}
+
+export type DiagnosisUpdateToOneWithWhereWithoutContentInput = {
+  where?: Prisma.DiagnosisWhereInput
+  data: Prisma.XOR<Prisma.DiagnosisUpdateWithoutContentInput, Prisma.DiagnosisUncheckedUpdateWithoutContentInput>
+}
+
+export type DiagnosisUpdateWithoutContentInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  value?: Prisma.StringFieldUpdateOperationsInput | string
+  label?: Prisma.StringFieldUpdateOperationsInput | string
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  patient?: Prisma.PatientUpdateManyWithoutDiagnosisNestedInput
+  clinician?: Prisma.ClinicianUpdateManyWithoutDiagnosisNestedInput
+}
+
+export type DiagnosisUncheckedUpdateWithoutContentInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  value?: Prisma.StringFieldUpdateOperationsInput | string
+  label?: Prisma.StringFieldUpdateOperationsInput | string
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  patient?: Prisma.PatientUncheckedUpdateManyWithoutDiagnosisNestedInput
+  clinician?: Prisma.ClinicianUncheckedUpdateManyWithoutDiagnosisNestedInput
 }
 
 
@@ -438,11 +524,13 @@ export type DiagnosisUncheckedUpdateWithoutClinicianInput = {
 export type DiagnosisCountOutputType = {
   patient: number
   clinician: number
+  content: number
 }
 
 export type DiagnosisCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   patient?: boolean | DiagnosisCountOutputTypeCountPatientArgs
   clinician?: boolean | DiagnosisCountOutputTypeCountClinicianArgs
+  content?: boolean | DiagnosisCountOutputTypeCountContentArgs
 }
 
 /**
@@ -469,6 +557,13 @@ export type DiagnosisCountOutputTypeCountClinicianArgs<ExtArgs extends runtime.T
   where?: Prisma.ClinicianWhereInput
 }
 
+/**
+ * DiagnosisCountOutputType without action
+ */
+export type DiagnosisCountOutputTypeCountContentArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ContentWhereInput
+}
+
 
 export type DiagnosisSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -477,6 +572,7 @@ export type DiagnosisSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   created_at?: boolean
   patient?: boolean | Prisma.Diagnosis$patientArgs<ExtArgs>
   clinician?: boolean | Prisma.Diagnosis$clinicianArgs<ExtArgs>
+  content?: boolean | Prisma.Diagnosis$contentArgs<ExtArgs>
   _count?: boolean | Prisma.DiagnosisCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["diagnosis"]>
 
@@ -505,6 +601,7 @@ export type DiagnosisOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs 
 export type DiagnosisInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   patient?: boolean | Prisma.Diagnosis$patientArgs<ExtArgs>
   clinician?: boolean | Prisma.Diagnosis$clinicianArgs<ExtArgs>
+  content?: boolean | Prisma.Diagnosis$contentArgs<ExtArgs>
   _count?: boolean | Prisma.DiagnosisCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type DiagnosisIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -515,6 +612,7 @@ export type $DiagnosisPayload<ExtArgs extends runtime.Types.Extensions.InternalA
   objects: {
     patient: Prisma.$PatientPayload<ExtArgs>[]
     clinician: Prisma.$ClinicianPayload<ExtArgs>[]
+    content: Prisma.$ContentPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -917,6 +1015,7 @@ export interface Prisma__DiagnosisClient<T, Null = never, ExtArgs extends runtim
   readonly [Symbol.toStringTag]: "PrismaPromise"
   patient<T extends Prisma.Diagnosis$patientArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Diagnosis$patientArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PatientPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   clinician<T extends Prisma.Diagnosis$clinicianArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Diagnosis$clinicianArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ClinicianPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  content<T extends Prisma.Diagnosis$contentArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Diagnosis$contentArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ContentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1381,6 +1480,30 @@ export type Diagnosis$clinicianArgs<ExtArgs extends runtime.Types.Extensions.Int
   take?: number
   skip?: number
   distinct?: Prisma.ClinicianScalarFieldEnum | Prisma.ClinicianScalarFieldEnum[]
+}
+
+/**
+ * Diagnosis.content
+ */
+export type Diagnosis$contentArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Content
+   */
+  select?: Prisma.ContentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Content
+   */
+  omit?: Prisma.ContentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ContentInclude<ExtArgs> | null
+  where?: Prisma.ContentWhereInput
+  orderBy?: Prisma.ContentOrderByWithRelationInput | Prisma.ContentOrderByWithRelationInput[]
+  cursor?: Prisma.ContentWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ContentScalarFieldEnum | Prisma.ContentScalarFieldEnum[]
 }
 
 /**

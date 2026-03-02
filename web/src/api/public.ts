@@ -7,4 +7,5 @@ export const useGetPublicDiagnoses = queryOptions({
     const { data } = await api.get('/public/diagnoses')
     return data
   },
+  staleTime: 1000 * 60 * 60,
 })

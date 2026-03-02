@@ -1,11 +1,86 @@
-import { Link } from '@tanstack/react-router'
+import { Link, useNavigate } from '@tanstack/react-router'
+import { useEffect, useMemo, useState } from 'react'
+import debounce from 'debounce'
+
+import type { ContentItem } from '~/modules/content/ContentTable'
 
 import PageTitle from '~/components/Page/PageTitle'
 import Grid from '~/components/Page/Grid'
 import GridItem from '~/components/Page/GridItem'
 import TablePagination from '~/components/Table/TablePagination'
+import ContentTable from '~/modules/content/ContentTable'
 
-export default function ContentOverview() {
+import LoaderTable from '~/components/Loader/LoaderTable'
+import SkeletonError from '~/components/Skeleton/SkeletonError'
+import SkeletonNull from '~/components/Skeleton/SkeletonNull'
+import InputMultiselect from '~/components/Input/InputMultiselect'
+
+interface ScheduleOverviewProps {
+  search: {
+    page?: number
+    perPage?: number
+    search?: string
+    diagnosis?: Array<string>
+  }
+  isLoading: boolean
+  isError: boolean
+  data:
+    | {
+        diagnoses: Array<{ value: string; label: string }>
+        content: {
+          data: Array<ContentItem>
+          meta: {
+            page: number
+            per_page: number
+            total: number
+          }
+        }
+      }
+    | undefined
+}
+
+export default function ContentOverview({
+  search,
+  isLoading,
+  isError,
+  data,
+}: ScheduleOverviewProps) {
+  const { content, diagnoses } = data || {}
+  const navigate = useNavigate({ from: '/content/' })
+  const [searchInput, setSearchInput] = useState(search.search ?? '')
+  const [debouncedSearch, setDebouncedSearch] = useState(search.search ?? '')
+  const diagnosisSearch = search.diagnosis ?? []
+
+  const updateDebouncedSearch = useMemo(
+    () =>
+      debounce((value: string) => {
+        setDebouncedSearch(value)
+      }, 200),
+    [],
+  )
+
+  const handleSearchChange = (value: string) => {
+    setSearchInput(value)
+    updateDebouncedSearch(value)
+  }
+
+  useEffect(() => {
+    if (debouncedSearch === search.search) return
+    navigate({
+      search: (prev) => ({ ...prev, search: debouncedSearch, page: 1 }),
+    })
+  }, [debouncedSearch])
+
+  useEffect(() => {
+    return () => updateDebouncedSearch.clear()
+  }, [updateDebouncedSearch])
+
+  const handleClear = () => {
+    navigate({
+      search: (prev) => ({ ...prev, diagnosis: [], search: '', page: 1 }),
+    })
+  }
+
   return (
     <>
       <PageTitle
@@ -14,153 +89,75 @@ export default function ContentOverview() {
       />
       <Grid cols={12} gap={6}>
         <GridItem colSpan={12} className="flex flex-col gap-4">
-          <Table />
+          <div className="flex flex-col lg:flex-row justify-between gap-2">
+            <div className="flex flex-col lg:flex-row gap-2">
+              <input
+                type="text"
+                placeholder="Search"
+                value={searchInput}
+                onChange={(e) => handleSearchChange(e.target.value)}
+                className="input"
+              />
+
+              <InputMultiselect
+                placeholder="Diagnosis"
+                options={
+                  diagnoses?.map((d) => ({
+                    value: d.value,
+                    label: d.label,
+                  })) || []
+                }
+                value={diagnosisSearch}
+                onChange={(values) => {
+                  navigate({
+                    search: (prev) => ({ ...prev, diagnosis: values, page: 1 }),
+                  })
+                }}
+              />
+
+              <button className="btn btn-primary" onClick={handleClear}>
+                Clear Filters
+              </button>
+            </div>
+
+            <Link to="/content/create" className="btn btn-primary">
+              Add Content
+            </Link>
+          </div>
+
+          <Table isLoading={isLoading} isError={isError} data={data} />
+
+          <TablePagination
+            page={content?.meta.page ?? 1}
+            perPage={content?.meta.per_page ?? 10}
+            total={content?.meta.total ?? 0}
+            onPageChange={(v) =>
+              navigate({ search: (prev) => ({ ...prev, page: v }) })
+            }
+            onPerPageChange={(v) => {
+              navigate({
+                search: (prev) => ({ ...prev, perPage: v, page: 1 }),
+              })
+            }}
+          />
         </GridItem>
       </Grid>
     </>
   )
 }
 
-export const MEDIA_ITEMS = [
-  {
-    id: '1',
-    title: 'Getting Started with TypeScript',
-    description: 'An introduction to TypeScript and its core features.',
-    body: '## TypeScript Basics\n\nTypeScript is a typed superset of JavaScript...',
-    authorId: 'author-001',
-    createdAt: '2025-01-18T11:10:00Z',
-    updatedAt: '2025-01-18T11:10:00Z',
-    category: 'Programming',
-    tags: ['typescript', 'javascript', 'basics', 'node'],
-  },
-  {
-    id: '2',
-    title: 'Understanding React Hooks',
-    description:
-      'A deep dive into React Hooks and how to use them effectively.',
-    body: '## React Hooks\n\nHooks let you use state and other React features...',
-    authorId: 'author-002',
-    createdAt: '2025-01-18T11:10:00Z',
-    updatedAt: '2025-01-18T11:10:00Z',
-    category: 'Frontend',
-    tags: ['react', 'hooks'],
-  },
-  {
-    id: '3',
-    title: 'Markdown Tips & Tricks',
-    description: 'Improve your writing with advanced Markdown techniques.',
-    body: '## Markdown Tips\n\nYou can use **bold**, _italic_, and `code`...',
-    authorId: 'author-001',
-    createdAt: '2025-01-18T11:10:00Z',
-    updatedAt: '2025-01-18T11:10:00Z',
-    category: 'Writing',
-    tags: ['markdown', 'documentation'],
-  },
-  {
-    id: '4',
-    title: 'Node.js Performance Optimization',
-    description: 'Learn how to optimize Node.js applications for performance.',
-    body: '## Performance\n\nUse clustering, caching, and async patterns...',
-    authorId: 'author-003',
-    createdAt: '2025-01-18T11:10:00Z',
-    updatedAt: '2025-01-18T11:10:00Z',
-    category: 'Backend',
-    tags: ['nodejs', 'performance'],
-  },
-  {
-    id: '5',
-    title: 'Design Systems 101',
-    description: 'An overview of building and maintaining design systems.',
-    body: '## Design Systems\n\nA design system is a collection of reusable components...',
-    authorId: 'author-004',
-    createdAt: '2025-01-18T11:10:00Z',
-    updatedAt: '2025-01-18T11:10:00Z',
-    category: 'Design',
-    tags: ['design', 'ui', 'ux'],
-  },
-  {
-    id: '6',
-    title: 'SEO Basics for Developers',
-    description: 'Essential SEO concepts every developer should know.',
-    body: '## SEO Basics\n\nSearch Engine Optimization helps your content get discovered...',
-    authorId: 'author-002',
-    createdAt: '2025-01-18T11:10:00Z',
-    updatedAt: '2025-01-18T11:10:00Z',
-    category: 'Marketing',
-    tags: ['seo', 'web'],
-  },
-]
+function Table({
+  isLoading,
+  isError,
+  data,
+}: {
+  isLoading: boolean
+  isError: boolean
+  data: ScheduleOverviewProps['data']
+}) {
+  if (isLoading) return <LoaderTable />
+  if (isError) return <SkeletonError />
+  if (!data || data.content.data.length === 0) return <SkeletonNull />
 
-function Table() {
-  return (
-    <>
-      <div className="flex justify-between gap-2">
-        {/* table headings */}
-        {/* search */}
-        <label className="input">
-          <svg
-            className="h-[1em] opacity-50"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-          >
-            <g
-              strokeLinejoin="round"
-              strokeLinecap="round"
-              strokeWidth="2.5"
-              fill="none"
-              stroke="currentColor"
-            >
-              <circle cx="11" cy="11" r="8"></circle>
-              <path d="m21 21-4.3-4.3"></path>
-            </g>
-          </svg>
-          <input type="search" required placeholder="Search" />
-        </label>
-
-        {/* filters */}
-      </div>
-
-      <div className="bg-white rounded-lg">
-        <Grid cols={12} gap={2}>
-          {MEDIA_ITEMS.map((item) => {
-            const { id, title, description, authorId } = item
-            return (
-              <GridItem key={id} colSpan={12} className="lg:col-span-3">
-                <Link
-                  to="/content/$contentId"
-                  params={{
-                    contentId: id,
-                  }}
-                  className="grid grid-cols-12 gap-2 rounded-lg bg-base-100 shadow-sm"
-                >
-                  <figure className="col-span-4 lg:col-span-12">
-                    <img
-                      src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp"
-                      alt="Shoes"
-                      className="h-full object-cover rounded-s-lg lg:rounded-b-none lg:rounded-t-lg"
-                    />
-                  </figure>
-                  <div className="col-span-8 lg:col-span-12 p-4">
-                    <h1 className="card-title truncate">{title}</h1>
-                    <p className="text-gray-600 truncate">{description}</p>
-                    <p>{authorId}</p>
-                  </div>
-                </Link>
-              </GridItem>
-            )
-          })}
-        </Grid>
-      </div>
-
-      <div>
-        <TablePagination
-          page={1}
-          perPage={10}
-          total={MEDIA_ITEMS.length}
-          onPageChange={() => {}}
-          onPerPageChange={() => {}}
-        />
-      </div>
-    </>
-  )
+  return <ContentTable items={data.content.data} />
 }

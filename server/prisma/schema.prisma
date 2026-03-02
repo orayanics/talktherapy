@@ -26,6 +26,7 @@ model Diagnosis {
 
   patient Patient[]
   clinician Clinician[]
+  content Content[]
 }
 
 model User {
@@ -48,6 +49,7 @@ model User {
   patient   Patient?
   clinician Clinician?
   refresh_tokens RefreshToken[]
+  content Content[]
 }
 
 model Sudo {
@@ -231,4 +233,40 @@ model Encounter {
   updated_at     DateTime @updatedAt
 
   appointment    Appointments @relation(fields: [appointment_id], references: [id])
+}
+
+// Content Models
+model Tag {
+  id       String       @id @default(uuid())
+  name     String       @unique
+  slug     String       @unique
+
+  contents ContentTag[]
+}
+
+model ContentTag {
+  content_id String
+  tag_id     String
+
+  content Content @relation(fields: [content_id], references: [id], onDelete: Cascade)
+  tag     Tag     @relation(fields: [tag_id], references: [id], onDelete: Cascade)
+
+  @@id([content_id, tag_id])
+}
+
+model Content {
+  id          String   @id @default(uuid())
+  author_id   String
+  diagnosis_id String
+
+  title       String
+  description String
+  body        String   // @db.Text for postgres/mysql
+
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  author   User        @relation(fields: [author_id], references: [id], onDelete: Cascade)
+  diagnosis Diagnosis   @relation(fields: [diagnosis_id], references: [id], onDelete: Restrict)
+  tags     ContentTag[]
 }

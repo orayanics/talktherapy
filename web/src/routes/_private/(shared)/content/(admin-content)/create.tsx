@@ -1,14 +1,16 @@
 import { useState } from 'react'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 
 import Markdown from 'react-markdown'
 import rehypeRaw from 'rehype-raw'
+import type { ContentFormState } from '~/modules/content/ContentMediaCreate'
 
 import Grid from '~/components/Page/Grid'
 import GridItem from '~/components/Page/GridItem'
 import PageTitle from '~/components/Page/PageTitle'
 
 import ContentMediaCreate from '~/modules/content/ContentMediaCreate'
+import { useCreateContent } from '~/api/content'
 
 export const Route = createFileRoute(
   '/_private/(shared)/content/(admin-content)/create',
@@ -17,7 +19,36 @@ export const Route = createFileRoute(
 })
 
 function RouteComponent() {
-  const [bodyContent, setBodyContent] = useState('')
+  const navigate = useNavigate()
+  const createContent = useCreateContent()
+
+  const [form, setForm] = useState<ContentFormState>({
+    title: '',
+    description: '',
+    bodyValue: '',
+    diagnosisId: '',
+    tags: '',
+  })
+
+  function handleSubmit() {
+    if (
+      !form.title ||
+      !form.description ||
+      !form.bodyValue ||
+      !form.diagnosisId
+    )
+      return
+    createContent.mutate({
+      title: form.title,
+      description: form.description,
+      body: form.bodyValue,
+      diagnosis_id: form.diagnosisId,
+      tag_names: form.tags
+        .split(',')
+        .map((t) => t.trim())
+        .filter(Boolean),
+    })
+  }
 
   return (
     <>
@@ -32,13 +63,32 @@ function RouteComponent() {
           className="flex flex-col gap-4 order-1 lg:col-span-6"
         >
           <ContentMediaCreate
-            bodyValue={bodyContent}
-            onBodyChange={setBodyContent}
+            form={form}
+            onTitleChange={(v) => setForm((f) => ({ ...f, title: v }))}
+            onDescriptionChange={(v) =>
+              setForm((f) => ({ ...f, description: v }))
+            }
+            onBodyChange={(v) => setForm((f) => ({ ...f, bodyValue: v }))}
+            onDiagnosisIdChange={(v) =>
+              setForm((f) => ({ ...f, diagnosisId: v }))
+            }
+            onTagsChange={(v) => setForm((f) => ({ ...f, tags: v }))}
           />
 
           <div className="flex flex-col gap-2 col-span-12">
-            <button className="btn btn-soft btn-primary">Submit</button>
-            <button className="btn btn-soft btn-error">Cancel</button>
+            <button
+              className="btn btn-soft btn-primary"
+              disabled={createContent.isPending}
+              onClick={handleSubmit}
+            >
+              {createContent.isPending ? 'Creating...' : 'Submit'}
+            </button>
+            <button
+              className="btn btn-soft btn-error"
+              onClick={() => navigate({ to: '/content' })}
+            >
+              Cancel
+            </button>
           </div>
         </GridItem>
 
@@ -47,7 +97,7 @@ function RouteComponent() {
           className="flex flex-col gap-4 order-1 lg:col-span-6"
         >
           <p className="font-bold">Live Preview of Media Body</p>
-          <Markdown rehypePlugins={[rehypeRaw]}>{bodyContent}</Markdown>
+          <Markdown rehypePlugins={[rehypeRaw]}>{form.bodyValue}</Markdown>
         </GridItem>
       </Grid>
     </>
