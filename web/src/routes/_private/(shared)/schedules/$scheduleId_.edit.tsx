@@ -18,9 +18,11 @@ function RouteComponent() {
   const { scheduleId } = Route.useParams()
   const { data, isLoading, error } = useQuery(availabilityByIdQuery(scheduleId))
 
+  {
+    !isLoading && !error && !data && <SkeletonNull />
+  }
   if (isLoading) return <LoaderTable />
   if (error) return <SkeletonError />
-  if (!data) return <SkeletonNull />
 
   return <ScheduleEdit data={data} />
 }

@@ -35,13 +35,15 @@ export function expandRRule(
   const maxHorizon = getMaxHorizon(rrule);
   const cappedHorizon = Math.min(horizonDays ?? maxHorizon, maxHorizon);
 
-  const horizon = new Date();
+  // Horizon is measured from starts_at so that schedules starting in the
+  // future still generate the requested number of slots.
+  const horizon = new Date(starts_at);
   horizon.setDate(horizon.getDate() + cappedHorizon);
 
   const durationMs = ends_at.getTime() - starts_at.getTime();
 
   if (!rrule) {
-    if (starts_at > horizon) return [];
+    if (starts_at < new Date()) return [];
     return [{ starts_at, ends_at }];
   }
 
@@ -52,7 +54,7 @@ export function expandRRule(
     throw new Error(`Invalid RRULE string: ${rrule}`);
   }
 
-  const occurrences = rule.between(new Date(), horizon, true);
+  const occurrences = rule.between(starts_at, horizon, true);
   return occurrences.map((occ) => ({
     starts_at: occ,
     ends_at: new Date(occ.getTime() + durationMs),

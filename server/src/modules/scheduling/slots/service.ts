@@ -80,6 +80,7 @@ export abstract class SlotService {
       to,
       status: slotStatus,
       diagnosis,
+      clinician_id,
       page = 1,
       per_page = 20,
     } = query;
@@ -94,6 +95,7 @@ export abstract class SlotService {
     const where = {
       status: slotStatus ?? "AVAILABLE",
       ...(fromDate && { starts_at: { gte: fromDate, lte: toDate! } }),
+      ...(clinician_id && { clinician_id }),
       ...(diagnosis && {
         clinician: {
           diagnosis: { value: { in: diagnosis } },
@@ -163,8 +165,7 @@ export abstract class SlotService {
       },
     });
 
-    if (!appointment) throw status(404, "No appointment found for this slot");
-    return appointment;
+    return appointment ?? null;
   }
 }
 

@@ -27,9 +27,11 @@ function RouteComponent() {
     error,
   } = useQuery(availabilityByIdQuery(scheduleId))
 
+  {
+    !isLoading && !error && !data && <SkeletonNull />
+  }
   if (isLoading) return <LoaderTable />
   if (error) return <SkeletonError />
-  if (!data) return <SkeletonNull />
 
   return (
     <>

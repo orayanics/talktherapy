@@ -65,6 +65,10 @@ export const APPOINTMENT = {
     success: 'Appointment marked as completed!',
     error: 'Failed to complete appointment. Please try again.',
   },
+  reschedule: {
+    success: 'Appointment rescheduled successfully!',
+    error: 'Failed to reschedule appointment. Please try again.',
+  },
   unblock: {
     success: 'Slot unblocked successfully!',
     error: 'Failed to unblock slot. Please try again.',

@@ -26,6 +26,62 @@ export const appointmentController = new Elysia({
             summary: "List the authenticated patient's own appointments",
           },
         },
+      )
+
+      // ── GET /appointments/my/:appointment_id ────────────────────────
+      .get(
+        "/my/:appointment_id",
+        async ({ auth, params }) => {
+          return AppointmentService.getPatientAppointment(
+            auth!.userId,
+            params.appointment_id,
+          );
+        },
+        {
+          params: AppointmentModel.appointmentParams,
+          detail: {
+            summary: "Get a single patient appointment with full details",
+          },
+        },
+      )
+
+      // ── PATCH /appointments/my/:appointment_id/cancel ───────────────
+      .patch(
+        "/my/:appointment_id/cancel",
+        async ({ auth, params, body }) => {
+          return AppointmentService.cancelAppointmentAsPatient(
+            auth!.userId,
+            params.appointment_id,
+            body,
+          );
+        },
+        {
+          params: AppointmentModel.appointmentParams,
+          body: AppointmentModel.patientCancelBody,
+          detail: {
+            summary: "Cancel a pending or confirmed appointment as patient",
+          },
+        },
+      )
+
+      // ── PATCH /appointments/my/:appointment_id/reschedule ───────────
+      .patch(
+        "/my/:appointment_id/reschedule",
+        async ({ auth, params, body }) => {
+          return AppointmentService.rescheduleAppointmentAsPatient(
+            auth!.userId,
+            params.appointment_id,
+            body,
+          );
+        },
+        {
+          params: AppointmentModel.appointmentParams,
+          body: AppointmentModel.patientRescheduleBody,
+          detail: {
+            summary:
+              "Reschedule a patient appointment to a new slot (same clinician, >3 days away)",
+          },
+        },
       ),
   )
   .guard({ isAuth: true, hasRole: ["clinician"] }, (app) =>

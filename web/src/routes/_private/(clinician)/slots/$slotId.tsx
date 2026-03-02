@@ -38,13 +38,10 @@ function RouteComponent() {
       />
 
       <Grid cols={12} gap={6}>
-        <GridItem
-          colSpan={12}
-          className="flex flex-col gap-4 lg:col-span-8 lg:col-start-3"
-        >
+        <GridItem colSpan={12} className="flex flex-col gap-4">
           {isLoading && <LoaderTable />}
-          {error && <SkeletonError />}
           {!isLoading && !error && !data && <SkeletonNull />}
+          {error && <SkeletonError />}
           {data && <AppointmentDetail appointment={data} />}
           {showUnblock && (
             <div className="flex flex-row justify-end pt-2 border-t border-dashed border-gray-200">

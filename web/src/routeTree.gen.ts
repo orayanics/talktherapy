@@ -37,6 +37,7 @@ import { Route as PrivateadmSharedUsersIndexRouteImport } from './routes/_privat
 import { Route as PrivatesharedSchedulesCreateRouteImport } from './routes/_private/(shared)/schedules/create'
 import { Route as PrivatesharedSchedulesScheduleIdRouteImport } from './routes/_private/(shared)/schedules/$scheduleId'
 import { Route as PrivatesharedContentContentIdRouteImport } from './routes/_private/(shared)/content/$contentId'
+import { Route as PrivatepatientMyAppointmentsAppointmentIdRouteImport } from './routes/_private/(patient)/my-appointments/$appointmentId'
 import { Route as PrivatepatientAppointmentsAppointmentIdRouteImport } from './routes/_private/(patient)/appointments/$appointmentId'
 import { Route as PrivateclinicianSlotsSlotIdRouteImport } from './routes/_private/(clinician)/slots/$slotId'
 import { Route as PrivateclinicianPatientsPatientIdRouteImport } from './routes/_private/(clinician)/patients/$patientId'
@@ -188,6 +189,12 @@ const PrivatesharedContentContentIdRoute =
     path: '/content/$contentId',
     getParentRoute: () => PrivatesharedRouteRoute,
   } as any)
+const PrivatepatientMyAppointmentsAppointmentIdRoute =
+  PrivatepatientMyAppointmentsAppointmentIdRouteImport.update({
+    id: '/my-appointments/$appointmentId',
+    path: '/my-appointments/$appointmentId',
+    getParentRoute: () => PrivatepatientRouteRoute,
+  } as any)
 const PrivatepatientAppointmentsAppointmentIdRoute =
   PrivatepatientAppointmentsAppointmentIdRouteImport.update({
     id: '/appointments/$appointmentId',
@@ -258,6 +265,7 @@ export interface FileRoutesByFullPath {
   '/patients/$patientId': typeof PrivateclinicianPatientsPatientIdRoute
   '/slots/$slotId': typeof PrivateclinicianSlotsSlotIdRoute
   '/appointments/$appointmentId': typeof PrivatepatientAppointmentsAppointmentIdRoute
+  '/my-appointments/$appointmentId': typeof PrivatepatientMyAppointmentsAppointmentIdRoute
   '/content/$contentId': typeof PrivatesharedContentContentIdRoute
   '/schedules/$scheduleId': typeof PrivatesharedSchedulesScheduleIdRoute
   '/schedules/create': typeof PrivatesharedSchedulesCreateRoute
@@ -288,6 +296,7 @@ export interface FileRoutesByTo {
   '/patients/$patientId': typeof PrivateclinicianPatientsPatientIdRoute
   '/slots/$slotId': typeof PrivateclinicianSlotsSlotIdRoute
   '/appointments/$appointmentId': typeof PrivatepatientAppointmentsAppointmentIdRoute
+  '/my-appointments/$appointmentId': typeof PrivatepatientMyAppointmentsAppointmentIdRoute
   '/content/$contentId': typeof PrivatesharedContentContentIdRoute
   '/schedules/$scheduleId': typeof PrivatesharedSchedulesScheduleIdRoute
   '/schedules/create': typeof PrivatesharedSchedulesCreateRoute
@@ -327,6 +336,7 @@ export interface FileRoutesById {
   '/_private/(clinician)/patients/$patientId': typeof PrivateclinicianPatientsPatientIdRoute
   '/_private/(clinician)/slots/$slotId': typeof PrivateclinicianSlotsSlotIdRoute
   '/_private/(patient)/appointments/$appointmentId': typeof PrivatepatientAppointmentsAppointmentIdRoute
+  '/_private/(patient)/my-appointments/$appointmentId': typeof PrivatepatientMyAppointmentsAppointmentIdRoute
   '/_private/(shared)/content/$contentId': typeof PrivatesharedContentContentIdRoute
   '/_private/(shared)/schedules/$scheduleId': typeof PrivatesharedSchedulesScheduleIdRoute
   '/_private/(shared)/schedules/create': typeof PrivatesharedSchedulesCreateRoute
@@ -359,6 +369,7 @@ export interface FileRouteTypes {
     | '/patients/$patientId'
     | '/slots/$slotId'
     | '/appointments/$appointmentId'
+    | '/my-appointments/$appointmentId'
     | '/content/$contentId'
     | '/schedules/$scheduleId'
     | '/schedules/create'
@@ -389,6 +400,7 @@ export interface FileRouteTypes {
     | '/patients/$patientId'
     | '/slots/$slotId'
     | '/appointments/$appointmentId'
+    | '/my-appointments/$appointmentId'
     | '/content/$contentId'
     | '/schedules/$scheduleId'
     | '/schedules/create'
@@ -427,6 +439,7 @@ export interface FileRouteTypes {
     | '/_private/(clinician)/patients/$patientId'
     | '/_private/(clinician)/slots/$slotId'
     | '/_private/(patient)/appointments/$appointmentId'
+    | '/_private/(patient)/my-appointments/$appointmentId'
     | '/_private/(shared)/content/$contentId'
     | '/_private/(shared)/schedules/$scheduleId'
     | '/_private/(shared)/schedules/create'
@@ -647,6 +660,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivatesharedContentContentIdRouteImport
       parentRoute: typeof PrivatesharedRouteRoute
     }
+    '/_private/(patient)/my-appointments/$appointmentId': {
+      id: '/_private/(patient)/my-appointments/$appointmentId'
+      path: '/my-appointments/$appointmentId'
+      fullPath: '/my-appointments/$appointmentId'
+      preLoaderRoute: typeof PrivatepatientMyAppointmentsAppointmentIdRouteImport
+      parentRoute: typeof PrivatepatientRouteRoute
+    }
     '/_private/(patient)/appointments/$appointmentId': {
       id: '/_private/(patient)/appointments/$appointmentId'
       path: '/appointments/$appointmentId'
@@ -763,6 +783,7 @@ const PrivateclinicianRouteRouteWithChildren =
 
 interface PrivatepatientRouteRouteChildren {
   PrivatepatientAppointmentsAppointmentIdRoute: typeof PrivatepatientAppointmentsAppointmentIdRoute
+  PrivatepatientMyAppointmentsAppointmentIdRoute: typeof PrivatepatientMyAppointmentsAppointmentIdRoute
   PrivatepatientAppointmentsIndexRoute: typeof PrivatepatientAppointmentsIndexRoute
   PrivatepatientMyAppointmentsIndexRoute: typeof PrivatepatientMyAppointmentsIndexRoute
   PrivatepatientRecordsIndexRoute: typeof PrivatepatientRecordsIndexRoute
@@ -771,6 +792,8 @@ interface PrivatepatientRouteRouteChildren {
 const PrivatepatientRouteRouteChildren: PrivatepatientRouteRouteChildren = {
   PrivatepatientAppointmentsAppointmentIdRoute:
     PrivatepatientAppointmentsAppointmentIdRoute,
+  PrivatepatientMyAppointmentsAppointmentIdRoute:
+    PrivatepatientMyAppointmentsAppointmentIdRoute,
   PrivatepatientAppointmentsIndexRoute: PrivatepatientAppointmentsIndexRoute,
   PrivatepatientMyAppointmentsIndexRoute:
     PrivatepatientMyAppointmentsIndexRoute,

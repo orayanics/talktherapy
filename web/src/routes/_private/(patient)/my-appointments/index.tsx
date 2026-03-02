@@ -71,7 +71,7 @@ function RouteComponent() {
                   to: '.',
                   search: {
                     ...search,
-                    status: ((value as string) || undefined) as
+                    status: (value || undefined) as
                       | ServerAppointmentStatus
                       | undefined,
                     page: 1,
@@ -84,9 +84,7 @@ function RouteComponent() {
 
           {isLoading && <LoaderTable />}
           {error && <SkeletonError />}
-          {!isLoading && !error && (!data || data.data.length === 0) && (
-            <SkeletonNull />
-          )}
+          {!isLoading && !error && !data && <SkeletonNull />}
           {data && data.data.length > 0 && (
             <>
               <MyAppointmentList data={data.data} />

@@ -1,3 +1,4 @@
+import { Link } from '@tanstack/react-router'
 import type {
   PatientMyAppointmentDto,
   ServerAppointmentStatus,
@@ -39,6 +40,7 @@ type Row = {
   chief_complaint: string
   room_id: string | null
   reason: string | null
+  view: string
 }
 
 interface MyAppointmentListProps {
@@ -58,6 +60,7 @@ export default function MyAppointmentList(props: MyAppointmentListProps) {
     chief_complaint: appt.encounter?.chief_complaint ?? '—',
     room_id: appt.room_id,
     reason: getPatientVisibleReason(appt.events),
+    view: appt.id,
   }))
 
   const columns: Array<Column<Row>> = [
@@ -92,6 +95,19 @@ export default function MyAppointmentList(props: MyAppointmentListProps) {
         ) : (
           <span className="text-gray-400 text-xs">—</span>
         ),
+    },
+    {
+      header: '',
+      accessor: 'view',
+      render: (value: string) => (
+        <Link
+          to="/my-appointments/$appointmentId"
+          params={{ appointmentId: value }}
+          className="btn btn-ghost btn-xs"
+        >
+          View
+        </Link>
+      ),
     },
   ]
 

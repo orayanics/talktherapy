@@ -56,8 +56,7 @@ export default function ModalCancelAppointment(
           <p className="text-sm">{description}</p>
           <div className="flex flex-col gap-1">
             <label className="text-sm font-medium">
-              Reason{' '}
-              <span className="text-gray-400 font-normal">(optional)</span>
+              Reason <span className="text-error">*</span>
             </label>
             <textarea
               className="textarea textarea-bordered textarea-sm w-full resize-none"
@@ -65,6 +64,7 @@ export default function ModalCancelAppointment(
               placeholder="Provide a reason for cancellation..."
               value={reason}
               onChange={(e) => onReasonChange(e.target.value)}
+              required
             />
           </div>
           {showKeepBlocked && (

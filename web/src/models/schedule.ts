@@ -165,3 +165,29 @@ export interface SlotAppointmentDto {
   encounter: SlotAppointmentEncounter | null
   events: Array<SlotAppointmentEvent>
 }
+
+export interface PatientMyAppointmentDetailDto {
+  id: string
+  slot_id: string
+  patient_id: string
+  status: ServerAppointmentStatus
+  room_id: string | null
+  booked_at: string
+  confirmed_at: string | null
+  cancelled_at: string | null
+  completed_at: string | null
+  rescheduled_at: string | null
+  slot: {
+    id: string
+    starts_at: string
+    ends_at: string
+    status: string
+    clinician: {
+      id: string
+      user: { name: string | null }
+      diagnosis: { label: string; value: string } | null
+    }
+  }
+  encounter: SlotAppointmentEncounter | null
+  events: Array<SlotAppointmentEvent>
+}

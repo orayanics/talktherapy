@@ -67,6 +67,23 @@ export const appointmentsQuery = (params: PatientAppointmentsQueryParams) =>
     retry: false,
   })
 
+/**
+ * Fetches available slots for a specific clinician. Used by the patient
+ * reschedule flow to show only slots belonging to the same clinician.
+ */
+export const clinicianAvailableSlotsQuery = (clinicianId: string) =>
+  queryOptions({
+    queryKey: ['appointments', 'available', 'clinician', clinicianId],
+    queryFn: async () => {
+      const { data } = await api.get(`/scheduling/slots/available`, {
+        params: { clinician_id: clinicianId, per_page: 50 },
+      })
+      return data
+    },
+    staleTime: 1000 * 60 * 2,
+    retry: false,
+  })
+
 // mutations
 export const useCreateSchedule = () => {
   const navigate = useNavigate()

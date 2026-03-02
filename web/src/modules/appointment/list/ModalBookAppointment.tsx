@@ -65,6 +65,17 @@ export default function ModalBookAppointment(props: ModalBookAppointmentProps) {
         <div className="flex flex-col gap-4">
           <ModalHeader>Book Appointment</ModalHeader>
 
+          <div className="alert alert-soft border-gray-400">
+            <p className="text-sm">
+              Booking this appointment,{' '}
+              <span className="font-semibold">
+                you will not be able to cancel or reschedule within 3 days of
+                the booking date
+              </span>
+              . Please ensure that you are available for this appointment.
+            </p>
+          </div>
+
           {/* Appointment summary */}
           <div className="[&>div]:py-2 [&>div]:border-b [&>div]:border-gray-100 [&>div]:border-dashed text-sm">
             <div className="flex flex-row justify-between gap-2">

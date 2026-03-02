@@ -12,7 +12,6 @@ import type {
 import { api } from '~/api/axios'
 import { APPOINTMENT } from '~/config/message'
 import { useAlert } from '~/context/AlertContext'
-
 // ── Patient: book a slot ─────────────────────────────────────────────────────
 
 export const useBookAppointmentSlot = (slotId: string) => {
@@ -169,6 +168,77 @@ export const useUnblockSlot = (slotId: string) => {
         console.error('Failed to unblock slot:', error.response?.data)
       }
       showAlert(APPOINTMENT.unblock.error, 'error')
+    },
+  })
+}
+// ── Patient: detail query ─────────────────────────────────────────────────────
+
+export const patientMyAppointmentDetailQuery = (appointmentId: string) =>
+  queryOptions({
+    queryKey: ['patient', 'my-appointments', appointmentId],
+    queryFn: async () => {
+      const { data } = await api.get(
+        `/scheduling/appointments/my/${appointmentId}`,
+      )
+      return data
+    },
+    retry: false,
+  })
+
+// ── Patient: cancel own appointment ──────────────────────────────────────────
+
+export const usePatientCancelAppointment = (appointmentId: string) => {
+  const queryClient = useQueryClient()
+  const { showAlert } = useAlert()
+
+  return useMutation({
+    mutationFn: async (payload: { reason?: string }) => {
+      const { data } = await api.patch(
+        `/scheduling/appointments/my/${appointmentId}/cancel`,
+        payload,
+      )
+      return data
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['patient', 'my-appointments'],
+      })
+      showAlert(APPOINTMENT.cancel.success, 'success')
+    },
+    onError: (error) => {
+      if (isAxiosError(error)) {
+        console.error('Failed to cancel appointment:', error.response?.data)
+      }
+      showAlert(APPOINTMENT.cancel.error, 'error')
+    },
+  })
+}
+
+// ── Patient: reschedule own appointment ──────────────────────────────────────
+
+export const usePatientRescheduleAppointment = (appointmentId: string) => {
+  const queryClient = useQueryClient()
+  const { showAlert } = useAlert()
+
+  return useMutation({
+    mutationFn: async (payload: { new_slot_id: string }) => {
+      const { data } = await api.patch(
+        `/scheduling/appointments/my/${appointmentId}/reschedule`,
+        payload,
+      )
+      return data
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['patient', 'my-appointments'],
+      })
+      showAlert(APPOINTMENT.reschedule.success, 'success')
+    },
+    onError: (error) => {
+      if (isAxiosError(error)) {
+        console.error('Failed to reschedule appointment:', error.response?.data)
+      }
+      showAlert(APPOINTMENT.reschedule.error, 'error')
     },
   })
 }

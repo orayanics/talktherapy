@@ -18,6 +18,7 @@ export namespace SlotModel {
       ]),
     ),
     diagnosis: t.Optional(t.Array(t.String())),
+    clinician_id: t.Optional(t.String()),
     page: t.Optional(t.Number({ minimum: 1, default: 1 })),
     per_page: t.Optional(t.Number({ minimum: 1, maximum: 100, default: 10 })),
   });

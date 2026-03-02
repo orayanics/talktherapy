@@ -61,4 +61,14 @@ export namespace AppointmentModel {
     per_page: t.Optional(t.Number({ minimum: 1, maximum: 100, default: 10 })),
   });
   export type patientListQuery = typeof patientListQuery.static;
+
+  export const patientCancelBody = t.Object({
+    reason: t.String({ minLength: 1 }),
+  });
+  export type patientCancelBody = typeof patientCancelBody.static;
+
+  export const patientRescheduleBody = t.Object({
+    new_slot_id: t.String(),
+  });
+  export type patientRescheduleBody = typeof patientRescheduleBody.static;
 }

@@ -126,8 +126,14 @@ export abstract class AppointmentService {
       );
     }
 
-    // keep_blocked defaults to true when not provided
-    const shouldBlock = body.keep_blocked !== false;
+    await AppointmentService.assertRescheduleCutoff(appointment.slot.starts_at);
+
+    // For rescheduled appointments the current slot was patient-chosen, so
+    // default to AVAILABLE on cancel. For original bookings default to BLOCKED.
+    // An explicit keep_blocked in the body always takes precedence.
+    const defaultBlock = appointment.rescheduled_at == null;
+    const shouldBlock =
+      body.keep_blocked !== undefined ? body.keep_blocked : defaultBlock;
 
     return prisma.$transaction(async (tx) => {
       await tx.slot.update({
@@ -283,8 +289,6 @@ export abstract class AppointmentService {
       );
     }
 
-    await AppointmentService.assertRescheduleCutoff(appointment.slot.starts_at);
-
     const newSlot = await prisma.slot.findFirst({
       where: {
         id: body.new_slot_id,
@@ -328,10 +332,10 @@ export abstract class AppointmentService {
       opts;
 
     return prisma.$transaction(async (tx) => {
-      // Block the old slot to prevent immediate re-booking
+      // Free the old slot — it's no longer held by this appointment
       await tx.slot.update({
         where: { id: old_slot_id },
-        data: { status: "BLOCKED" },
+        data: { status: "AVAILABLE" },
       });
 
       // Mark new slot as booked
@@ -438,6 +442,148 @@ export abstract class AppointmentService {
   }
 
   /**
+   * Returns a single appointment that belongs to the given patient (by user_id).
+   * Throws 404 if not found or the appointment does not belong to this patient.
+   */
+  static async getPatientAppointment(user_id: string, appointment_id: string) {
+    const patient = await prisma.patient.findUnique({
+      where: { user_id },
+      select: { id: true },
+    });
+
+    if (!patient) throw status(404, "Patient profile not found");
+
+    const appointment = await prisma.appointments.findFirst({
+      where: { id: appointment_id, patient_id: patient.id },
+      include: {
+        slot: {
+          select: {
+            id: true,
+            starts_at: true,
+            ends_at: true,
+            status: true,
+            clinician: {
+              select: {
+                id: true,
+                user: { select: { name: true } },
+                diagnosis: { select: { label: true, value: true } },
+              },
+            },
+          },
+        },
+        encounter: true,
+        events: { orderBy: { created_at: "desc" } },
+      },
+    });
+
+    if (!appointment) throw status(404, "Appointment not found");
+    return appointment;
+  }
+
+  /**
+   * Cancels a patient's own PENDING or CONFIRMED appointment.
+   * Slot is returned to AVAILABLE (voluntary patient withdrawal).
+   */
+  static async cancelAppointmentAsPatient(
+    user_id: string,
+    appointment_id: string,
+    body: AppointmentModel.patientCancelBody,
+  ) {
+    const appointment = await AppointmentService.getPatientAppointment(
+      user_id,
+      appointment_id,
+    );
+
+    if (!["PENDING", "CONFIRMED"].includes(appointment.status)) {
+      throw status(
+        409,
+        `Cannot cancel appointment with status: ${appointment.status}`,
+      );
+    }
+
+    await AppointmentService.assertRescheduleCutoff(appointment.slot.starts_at);
+
+    return prisma.$transaction(async (tx) => {
+      await tx.slot.update({
+        where: { id: appointment.slot_id },
+        data: { status: "AVAILABLE" },
+      });
+
+      const updated = await tx.appointments.update({
+        where: { id: appointment_id },
+        data: {
+          status: "CANCELLED",
+          cancelled_at: new Date(),
+          room_id: null,
+        },
+      });
+
+      await tx.appointmentEvent.create({
+        data: {
+          appointment_id,
+          type: "CANCELLED",
+          actor_type: "PATIENT",
+          actor_id: user_id,
+          reason: body.reason,
+        },
+      });
+
+      return updated;
+    });
+  }
+
+  /**
+   * Reschedules a patient's own PENDING or CONFIRMED appointment.
+   *
+   * Rules:
+   * - Appointment must be >= RESCHEDULE_CUTOFF_DAYS away
+   * - New slot must be AVAILABLE and belong to the SAME clinician
+   * - Old slot is BLOCKED; new slot is BOOKED
+   */
+  static async rescheduleAppointmentAsPatient(
+    user_id: string,
+    appointment_id: string,
+    body: AppointmentModel.patientRescheduleBody,
+  ) {
+    const appointment = await AppointmentService.getPatientAppointment(
+      user_id,
+      appointment_id,
+    );
+
+    if (!["PENDING", "CONFIRMED"].includes(appointment.status)) {
+      throw status(
+        409,
+        `Cannot reschedule appointment with status: ${appointment.status}`,
+      );
+    }
+
+    const newSlot = await prisma.slot.findFirst({
+      where: {
+        id: body.new_slot_id,
+        clinician_id: appointment.slot.clinician.id,
+        status: "AVAILABLE",
+      },
+    });
+
+    if (!newSlot) {
+      throw status(
+        404,
+        "New slot not found, not available, or belongs to a different clinician",
+      );
+    }
+
+    await AppointmentService.assertRescheduleCutoff(newSlot.starts_at);
+
+    return AppointmentService.performReschedule({
+      appointment_id,
+      old_slot_id: appointment.slot_id,
+      new_slot_id: body.new_slot_id,
+      actor_id: user_id,
+      actor_type: "PATIENT",
+    });
+  }
+
+  /**
    * Books a slot for a patient. Creates a PENDING appointment.
    * Verifies the slot is AVAILABLE and resolves the patient profile.
    */
@@ -502,12 +648,21 @@ export abstract class AppointmentService {
 
   /**
    * Throws 409 if the appointment slot is less than RESCHEDULE_CUTOFF_DAYS away.
+   * Comparison is UTC date-only (time stripped) so that an appointment on exactly
+   * today + N days is always allowed regardless of the time of day or server timezone.
    */
   static assertRescheduleCutoff(slotStartsAt: Date) {
-    const cutoff = new Date();
-    cutoff.setDate(cutoff.getDate() + RESCHEDULE_CUTOFF_DAYS);
+    console.log(slotStartsAt);
+    const todayUTC = new Date();
+    todayUTC.setUTCHours(0, 0, 0, 0);
 
-    if (slotStartsAt < cutoff) {
+    const slotDayUTC = new Date(slotStartsAt);
+    slotDayUTC.setUTCHours(0, 0, 0, 0);
+
+    const cutoff = new Date(todayUTC);
+    cutoff.setUTCDate(todayUTC.getUTCDate() + RESCHEDULE_CUTOFF_DAYS);
+
+    if (slotDayUTC < cutoff) {
       throw status(
         409,
         `Rescheduling is not allowed within ${RESCHEDULE_CUTOFF_DAYS} days of the appointment`,
