@@ -1,8 +1,4 @@
-interface PageTitleProps {
-  heading: string
-  subheading?: string
-  brow?: string
-}
+import type { PageTitleProps } from '~/models/components'
 
 export default function PageTitle(props: PageTitleProps) {
   const { heading, subheading, brow } = props

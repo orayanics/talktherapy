@@ -1,16 +1,11 @@
 import { Link } from '@tanstack/react-router'
+import type { ContentItem } from '~/models/content'
+
 import Grid from '~/components/Page/Grid'
 import GridItem from '~/components/Page/GridItem'
 import { useAuthGuard } from '~/hooks/useAuthGuard'
 
-export interface ContentItem {
-  id: string
-  title: string
-  description: string
-  author: { name: string | null; email: string }
-  diagnosis: { label: string }
-  tags: Array<{ tag: { name: string } }>
-}
+export type { ContentItem }
 
 export default function ContentTable(props: { items: Array<ContentItem> }) {
   const { items } = props

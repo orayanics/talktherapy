@@ -1,5 +1,6 @@
 // import Grid from '~/components/Page/Grid'
 // import GridItem from '~/components/Page/GridItem'
+import type { AppointmentStatsCardProps } from '~/models/components'
 
 export default function Index() {
   return (
@@ -8,10 +9,6 @@ export default function Index() {
       <AppointmentStatsCard />
     </>
   )
-}
-
-interface AppointmentStatsCardProps {
-  appointments?: number
 }
 
 function AppointmentStatsCard({ appointments }: AppointmentStatsCardProps) {

@@ -1,12 +1,9 @@
 import { FaSpinner } from 'react-icons/fa'
 import useUpdateSchedule from './id/useUpdateSchedule'
-import type { AvailabilityRuleWithSlots, Freq } from '~/models/schedule'
+import type { Freq } from '~/models/schedule'
+import type { ScheduleEditFormProps } from '~/models/components'
 import { DAYS } from '~/utils/rrule'
 import { fieldError, hasOnlyMessage } from '~/utils/errors'
-
-interface ScheduleEditFormProps {
-  data: AvailabilityRuleWithSlots
-}
 
 export default function ScheduleEditForm({ data }: ScheduleEditFormProps) {
   const { form, errors, isLoading, handleChange, handleSubmit, toggleDay } =

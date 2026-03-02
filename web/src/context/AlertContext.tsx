@@ -5,21 +5,8 @@ import {
   useEffect,
   useState,
 } from 'react'
+import type { AlertContextValue, AlertState, AlertType } from '~/models/alert'
 import { AlertToast } from '~/components/Alert/AlertToast'
-
-type AlertType = 'success' | 'error' | 'info'
-
-interface AlertContextValue {
-  showAlert: (message: string, type: AlertType) => void
-  hideAlert: () => void
-}
-
-interface AlertState {
-  message: string
-  type: AlertType
-  visible: boolean
-  id: number // increment to retrigger animation on repeat calls
-}
 
 export const AlertContext = createContext<AlertContextValue | null>(null)
 

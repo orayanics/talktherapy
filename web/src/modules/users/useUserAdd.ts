@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { isAxiosError } from 'axios'
 
 import type { PermissionKey } from '~/models/user/permissions'
-import type { ParsedError} from '~/utils/errors';
+import type { ParsedError } from '~/models/system';
 import { useAddAdmin, useAddClinician } from '~/api/users'
 import { parseError } from '~/utils/errors'
 

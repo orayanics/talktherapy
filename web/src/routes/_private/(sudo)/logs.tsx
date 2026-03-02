@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 
+import type { LogsTableProps } from '~/models/components'
 import Grid from '~/components/Page/Grid'
 import GridItem from '~/components/Page/GridItem'
 
@@ -72,16 +73,7 @@ const SAMPLE_LOGS = [
   },
 ]
 
-interface TableProps {
-  onPageChange: (page: number) => void
-  onPerPageChange: (perPage: number) => void
-  isLoading?: boolean
-  data: typeof SAMPLE_LOGS
-  page: number
-  perPage: number
-}
-
-function Table(props: TableProps) {
+function Table(props: LogsTableProps) {
   const { data, isLoading, page, perPage, onPageChange, onPerPageChange } =
     props
   return (

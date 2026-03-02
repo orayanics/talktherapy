@@ -1,15 +1,4 @@
-interface Option {
-  value: unknown
-  label: string
-}
-
-interface FilterDropdownProps<T> {
-  placeholder?: string
-  options: Array<Option>
-  value: T
-  onChange: (value: T) => void
-  className?: string
-}
+import type { FilterDropdownProps } from '~/models/components'
 
 export default function FilterDropdown<T>(props: FilterDropdownProps<T>) {
   const { placeholder, options, value, onChange, className } = props

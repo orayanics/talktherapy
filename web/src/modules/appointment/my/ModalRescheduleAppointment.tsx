@@ -1,25 +1,13 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 
-import type { ParsedError } from '~/utils/errors'
 import type { AvailableSlot } from '~/models/schedule'
+import type { ModalRescheduleAppointmentProps } from '~/models/components'
 import ModalBody from '~/components/Modal/ModalBody'
 import ModalHeader from '~/components/Modal/ModalHeader'
 import { hasOnlyMessage } from '~/utils/errors'
 import { clinicianAvailableSlotsQuery } from '~/api/scheduling'
 import { formatToLocalDate, getTime } from '~/utils/date'
-
-interface ModalRescheduleAppointmentProps {
-  clinicianId: string
-  /** Slot that is currently booked — excluded from the options list */
-  currentSlotId: string
-  onConfirm: (newSlotId: string) => void
-  onCancel: () => void
-  states: {
-    isLoading: boolean
-    errors: ParsedError | null
-  }
-}
 
 export default function ModalRescheduleAppointment({
   clinicianId,

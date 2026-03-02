@@ -1,19 +1,13 @@
 import { useState } from 'react'
 import { Link } from '@tanstack/react-router'
 import useDeleteSlot from './useDeleteSlot'
-import type { AvailabilityRuleWithSlots, SlotDto } from '~/models/schedule'
+import type { SlotDto } from '~/models/schedule'
+import type {
+  ScheduleSlotItemProps,
+  ScheduleSlotProps,
+} from '~/models/components'
 import ModalConfirm from '~/components/Modal/ModalConfirm'
 import { useAuthGuard } from '~/hooks/useAuthGuard'
-
-interface ScheduleSlotProps {
-  data: AvailabilityRuleWithSlots
-}
-
-interface ScheduleSlotItemProps {
-  is_active: boolean
-  slot: SlotDto
-  ruleId: string
-}
 
 function ScheduleSlotItem({ is_active, slot, ruleId }: ScheduleSlotItemProps) {
   const { id, starts_at, ends_at, status } = slot

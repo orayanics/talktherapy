@@ -1,14 +1,10 @@
 import { useRegisterAdmin } from './useUserAdd'
-import type { PermissionKey} from '~/models/user/permissions';
+import type { PermissionKey } from '~/models/user/permissions'
+import type { UserAddAdminProps } from '~/models/components'
 import ModalHeader from '~/components/Modal/ModalHeader'
 import ModalBody from '~/components/Modal/ModalBody'
 import { PermissionLabels } from '~/models/user/permissions'
 import { fieldError, hasOnlyMessage } from '~/utils/errors'
-
-interface UserAddAdminProps {
-  isOpen: boolean
-  onClose: () => void
-}
 
 export default function UserAddAdmin(props: UserAddAdminProps) {
   const { isOpen, onClose } = props

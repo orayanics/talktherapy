@@ -1,6 +1,4 @@
-interface RoleBadgeProps {
-  role: string
-}
+import type { RoleBadgeProps } from '~/models/components'
 
 const ROLE_BADGE_STYLES: Record<string, string> = {
   sudo: 'rounded-lg badge bg-red-200 text-red-800 truncate',

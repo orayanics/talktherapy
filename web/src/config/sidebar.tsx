@@ -7,12 +7,9 @@ import {
   FaUser,
 } from 'react-icons/fa'
 import type { UserType } from '~/models/user/user'
+import type { NavItem } from '~/models/components'
 
-export interface NavItem {
-  label: string
-  to: string
-  icon: React.ReactNode
-}
+export type { NavItem }
 
 export const SUDO_NAV_ITEMS = [
   {

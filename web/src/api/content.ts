@@ -10,28 +10,11 @@ import { api } from '~/api/axios'
 import { CONTENT } from '~/config/message'
 import { useAlert } from '~/context/AlertContext'
 
-export interface ContentListParams {
-  page?: number
-  perPage?: number
-  search?: string
-  diagnosis?: Array<string>
-}
-
-export interface CreateContentPayload {
-  title: string
-  description: string
-  body: string
-  diagnosis_id: string
-  tag_names?: Array<string>
-}
-
-export interface UpdateContentPayload {
-  title?: string
-  description?: string
-  body?: string
-  diagnosis_id?: string
-  tag_names?: Array<string>
-}
+export type {
+  ContentListParams,
+  CreateContentPayload,
+  UpdateContentPayload,
+} from '~/models/content'
 
 export const contentListQueryOptions = (params: ContentListParams) =>
   queryOptions({

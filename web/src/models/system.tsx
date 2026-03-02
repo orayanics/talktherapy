@@ -75,3 +75,18 @@ export interface UserResponse {
   deleted_at: string | null
   last_login: string | null
 }
+
+// ─── Error Types ─────────────────────────────────────────────────────────────
+
+export interface ParsedError {
+  message: string
+  errors?: Record<string, Array<string>>
+}
+
+// ─── Auth Types ───────────────────────────────────────────────────────────────
+
+export type AccountRole = UserResponse['account_role']
+
+// ─── Context Types ────────────────────────────────────────────────────────────
+
+export interface SessionContextValue extends UserResponse {}

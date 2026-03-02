@@ -1,14 +1,6 @@
 import React from 'react'
 import cx from 'classnames'
-
-interface GridItemProps {
-  children: React.ReactNode
-  colSpan?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12
-  rowSpan?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12
-  colStart?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12
-  rowStart?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12
-  className?: string
-}
+import type { GridItemProps } from '~/models/components'
 
 const colSpanMap = {
   1: 'col-span-1',

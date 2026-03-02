@@ -90,3 +90,55 @@ export interface AppointmentContentClient {
   createdAt: Date
   updatedAt: Date
 }
+
+// ─── API Payload Types ────────────────────────────────────────────────────────
+
+export interface ContentListParams {
+  page?: number
+  perPage?: number
+  search?: string
+  diagnosis?: Array<string>
+}
+
+export interface CreateContentPayload {
+  title: string
+  description: string
+  body: string
+  diagnosis_id: string
+  tag_names?: Array<string>
+}
+
+export interface UpdateContentPayload {
+  title?: string
+  description?: string
+  body?: string
+  diagnosis_id?: string
+  tag_names?: Array<string>
+}
+
+// ─── Module Types ─────────────────────────────────────────────────────────────
+
+export interface ContentFormState {
+  title: string
+  description: string
+  bodyValue: string
+  diagnosisId: string
+  tags: string
+}
+
+export interface ContentItem {
+  id: string
+  title: string
+  description: string
+  author: { name: string | null; email: string }
+  diagnosis: { label: string }
+  tags: Array<{ tag: { name: string } }>
+}
+
+export interface RawContent {
+  title: string
+  description: string
+  body: string
+  diagnosis_id: string
+  tags: Array<{ tag: { name: string } }>
+}

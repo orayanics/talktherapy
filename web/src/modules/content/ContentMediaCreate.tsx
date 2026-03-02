@@ -1,23 +1,7 @@
 import MDEditor from '@uiw/react-md-editor'
 import { useQuery } from '@tanstack/react-query'
+import type { ContentMediaCreateProps } from '~/models/components'
 import { useGetPublicDiagnoses } from '~/api/public'
-
-export interface ContentFormState {
-  title: string
-  description: string
-  bodyValue: string
-  diagnosisId: string
-  tags: string
-}
-
-interface ContentMediaCreateProps {
-  form: ContentFormState
-  onTitleChange: (v: string) => void
-  onDescriptionChange: (v: string) => void
-  onBodyChange: (v: string) => void
-  onDiagnosisIdChange: (v: string) => void
-  onTagsChange: (v: string) => void
-}
 
 export default function ContentMediaCreate(props: ContentMediaCreateProps) {
   const {

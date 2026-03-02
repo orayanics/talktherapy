@@ -1,14 +1,6 @@
 import { Link } from '@tanstack/react-router'
+import type { SidebarNavItemsProps } from '~/models/components'
 
-interface NavItem {
-  label: string
-  to: string
-  icon: React.ReactNode
-}
-
-interface SidebarNavItemsProps {
-  items: Array<NavItem>
-}
 export default function SidebarNavItems(props: SidebarNavItemsProps) {
   const { items } = props
 

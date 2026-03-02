@@ -1,13 +1,6 @@
+import type { DashboardData } from '~/models/components'
 import Grid from '~/components/Page/Grid'
 import GridItem from '~/components/Page/GridItem'
-
-interface DashboardData {
-  total: number
-  patients: number
-  clinicians: number
-  admins: number
-  appointments: number
-}
 
 export default function Index(props: { data: DashboardData }) {
   const { data } = props

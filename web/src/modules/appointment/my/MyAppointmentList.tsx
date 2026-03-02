@@ -1,10 +1,13 @@
 import { Link } from '@tanstack/react-router'
 import type {
-  PatientMyAppointmentDto,
   ServerAppointmentStatus,
   SlotAppointmentEvent,
 } from '~/models/schedule'
-import type { Column } from '~/components/Table/TableContent'
+import type {
+  Column,
+  MyAppointmentListProps,
+  MyAppointmentRow,
+} from '~/models/components'
 import TableContent from '~/components/Table/TableContent'
 import { formatToLocalDate, getTime } from '~/utils/date'
 
@@ -30,27 +33,10 @@ function getPatientVisibleReason(
   return found?.reason ?? null
 }
 
-type Row = {
-  id: string
-  status: ServerAppointmentStatus
-  date: string
-  time: string
-  clinician: string
-  specialty: string
-  chief_complaint: string
-  room_id: string | null
-  reason: string | null
-  view: string
-}
-
-interface MyAppointmentListProps {
-  data: Array<PatientMyAppointmentDto>
-}
-
 export default function MyAppointmentList(props: MyAppointmentListProps) {
   const { data } = props
 
-  const rows: Array<Row> = data.map((appt) => ({
+  const rows: Array<MyAppointmentRow> = data.map((appt) => ({
     id: appt.id,
     status: appt.status,
     date: formatToLocalDate(appt.slot.starts_at),
@@ -63,7 +49,7 @@ export default function MyAppointmentList(props: MyAppointmentListProps) {
     view: appt.id,
   }))
 
-  const columns: Array<Column<Row>> = [
+  const columns: Array<Column<MyAppointmentRow>> = [
     {
       header: 'Status',
       accessor: 'status',

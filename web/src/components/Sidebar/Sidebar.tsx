@@ -1,16 +1,11 @@
 import React from 'react'
 import { FaBars } from 'react-icons/fa'
 import SidebarNavItems from './SidebarNavItems'
-import type { UserType } from '~/models/user/user'
+import type { SidebarProps } from '~/models/components'
 import { NAV_BY_ROLE } from '~/config/sidebar'
 
 import LogoText from '~/components/Logo/LogoText'
 import { useLogout } from '~/api/auth'
-
-interface SidebarProps {
-  children: React.ReactNode
-  role: UserType
-}
 
 export default function Sidebar(props: SidebarProps) {
   const { children, role } = props

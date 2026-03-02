@@ -1,5 +1,6 @@
 export type Freq = 'none' | 'DAILY' | 'WEEKLY' | 'MONTHLY'
 export type SlotStatus = 'AVAILABLE' | 'BOOKED' | 'BLOCKED' | 'CANCELLED'
+export type ReferralMode = 'link' | 'file'
 
 export interface AvailabilityRulesParams {
   date?: Date

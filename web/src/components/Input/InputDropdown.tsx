@@ -1,13 +1,5 @@
 import { useEffect, useRef } from 'react'
-
-interface InputDropdownProps {
-  label?: string
-  onClick?: () => void
-  children?: React.ReactNode
-  className?: string
-  btnClassName?: string
-  position?: string
-}
+import type { InputDropdownProps } from '~/models/components'
 
 export default function InputDropdown(props: InputDropdownProps) {
   const { label, onClick, children, className, btnClassName, position } = props

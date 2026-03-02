@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { useNavigate } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 
+import type { ScheduleOverviewProps } from '~/models/components'
+
 import PageTitle from '~/components/Page/PageTitle'
 import Grid from '~/components/Page/Grid'
 import GridItem from '~/components/Page/GridItem'
@@ -15,10 +17,6 @@ import ScheduleCard from '~/modules/schedule/list/ScheduleCard'
 
 import { availabilityRulesQuery } from '~/api/scheduling'
 import TablePagination from '~/components/Table/TablePagination'
-
-interface ScheduleOverviewProps {
-  search: Record<string, unknown>
-}
 
 export default function ScheduleOverview({ search }: ScheduleOverviewProps) {
   const [selected, setSelected] = useState<Date | undefined>(new Date())

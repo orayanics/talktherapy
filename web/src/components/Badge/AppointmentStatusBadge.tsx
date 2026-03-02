@@ -1,9 +1,6 @@
 import type { AppointmentStatus } from '~/models/content'
+import type { AppointmentStatusBadgeProps } from '~/models/components'
 import { AppointmentStatusValues } from '~/models/content'
-
-interface AppointmentStatusBadgeProps {
-  status: AppointmentStatus
-}
 
 const APPOINTMENT_STATUS_BADGE_STYLES: Record<AppointmentStatus, string> = {
   pending:

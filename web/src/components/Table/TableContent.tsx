@@ -1,18 +1,11 @@
 import React from 'react'
+import type {
+  Column,
+  ColumnForKey,
+  TableContentProps,
+} from '~/models/components'
 
-type ColumnForKey<T, TKey extends keyof T> = {
-  header: string
-  accessor: TKey
-  render?: (value: T[TKey], row: T) => React.ReactNode
-}
-
-export type Column<T> = { [K in keyof T]: ColumnForKey<T, K> }[keyof T]
-
-export type TableContentProps<T> = {
-  columns: Array<Column<T>>
-  data: Array<T>
-  renderers?: Partial<Record<keyof T, (value: any, row: T) => React.ReactNode>>
-}
+export type { Column, ColumnForKey, TableContentProps }
 
 function getRowId<T extends { id?: React.Key }>(
   row: T,

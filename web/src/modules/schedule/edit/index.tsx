@@ -1,10 +1,6 @@
 import ScheduleEditForm from '../ScheduleEditForm'
-import type { AvailabilityRuleWithSlots } from '~/models/schedule'
+import type { ScheduleEditProps } from '~/models/components'
 import PageTitle from '~/components/Page/PageTitle'
-
-interface ScheduleEditProps {
-  data: AvailabilityRuleWithSlots
-}
 
 export default function ScheduleEdit({ data }: ScheduleEditProps) {
   return (

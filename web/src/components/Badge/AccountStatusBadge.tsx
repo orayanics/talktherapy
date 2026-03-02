@@ -1,6 +1,4 @@
-interface AccountStatusBadgeProps {
-  status: string
-}
+import type { AccountStatusBadgeProps } from '~/models/components'
 
 const ACCOUNT_STATUS_BADGE_STYLES: Record<string, string> = {
   active:

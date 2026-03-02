@@ -1,10 +1,5 @@
 import React from 'react'
-
-interface TableHeaderProps {
-  heading?: string
-  children?: React.ReactNode
-  className?: string
-}
+import type { TableHeaderProps } from '~/models/components'
 
 export default function TableHeader(props: TableHeaderProps) {
   const { heading, children, className } = props

@@ -4,6 +4,7 @@ import { Link } from '@tanstack/react-router'
 import Markdown from 'react-markdown'
 import rehypeRaw from 'rehype-raw'
 
+import type { AdminContentProps, ContentViewProps } from '~/models/components'
 import { contentDetailQueryOptions } from '~/api/content'
 
 import Grid from '~/components/Page/Grid'
@@ -17,10 +18,6 @@ import LoaderTable from '~/components/Loader/LoaderTable'
 import { useAuthGuard } from '~/hooks/useAuthGuard'
 import ModalConfirm from '~/components/Modal/ModalConfirm'
 import useDeleteContent from '~/modules/content/useDeleteContent'
-
-interface ContentViewProps {
-  contentId: string
-}
 
 export default function ContentView({ contentId }: ContentViewProps) {
   const { data, isLoading, isError } = useQuery(
@@ -91,16 +88,6 @@ export default function ContentView({ contentId }: ContentViewProps) {
       </Grid>
     </>
   )
-}
-
-interface AdminContentProps {
-  title: string
-  name: string
-  description: string
-  label: string
-  tags: Array<{ tag: { name: string } }>
-  updated_at: string
-  contentId: string
 }
 
 const AdminContent = (props: AdminContentProps) => {

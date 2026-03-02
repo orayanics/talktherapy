@@ -1,8 +1,6 @@
 // ~/lib/auth-guards.ts
 import { redirect } from '@tanstack/react-router'
-import type { UserResponse } from '~/models/system'
-
-export type AccountRole = UserResponse['account_role']
+import type { AccountRole, UserResponse } from '~/models/system'
 
 /**
  * sudo bypasses all role checks.

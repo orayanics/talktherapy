@@ -1,10 +1,6 @@
 import { DayPicker } from 'react-day-picker'
 import { format } from 'date-fns'
-
-interface CalenderSingleProps {
-  date: Date | undefined
-  onSelect: (date: Date | undefined) => void
-}
+import type { CalenderSingleProps } from '~/models/components'
 
 export default function CalenderSingle(props: CalenderSingleProps) {
   const { date, onSelect } = props

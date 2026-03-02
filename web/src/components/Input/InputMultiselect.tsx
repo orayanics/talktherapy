@@ -1,15 +1,4 @@
-interface Option {
-  value: unknown
-  label: string
-}
-
-interface InputMultiSelectProps {
-  placeholder?: string
-  options: Array<Option>
-  value?: Array<string>
-  onChange?: (value: Array<string>) => void
-  className?: string
-}
+import type { InputMultiSelectProps } from '~/models/components'
 
 export default function InputMultiselect(props: InputMultiSelectProps) {
   const { placeholder, options, value = [], onChange, className } = props

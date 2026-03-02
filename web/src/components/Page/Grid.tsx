@@ -1,14 +1,6 @@
 import React from 'react'
 import cx from 'classnames'
-
-interface GridProps {
-  children: React.ReactNode
-  cols?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12
-  rows?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12
-  gap?: 0 | 1 | 2 | 4 | 6 | 8
-  autoFit?: boolean
-  className?: string
-}
+import type { GridProps } from '~/models/components'
 
 const colsMap = {
   1: 'grid-cols-1',

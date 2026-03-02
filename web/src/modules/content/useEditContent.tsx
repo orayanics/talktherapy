@@ -3,19 +3,10 @@ import { isAxiosError } from 'axios'
 import { useNavigate } from '@tanstack/react-router'
 import type React from 'react'
 
-import type { ContentFormState } from '~/modules/content/ContentMediaCreate'
-
-import type { ParsedError } from '~/utils/errors'
+import type { ContentFormState, RawContent } from '~/models/content'
+import type { ParsedError } from '~/models/system'
 import { useUpdateContentId } from '~/api/content'
 import { parseError } from '~/utils/errors'
-
-interface RawContent {
-  title: string
-  description: string
-  body: string
-  diagnosis_id: string
-  tags: Array<{ tag: { name: string } }>
-}
 
 function mapToFormState(content: RawContent): ContentFormState {
   return {

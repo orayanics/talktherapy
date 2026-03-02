@@ -1,15 +1,6 @@
 import { useEffect } from 'react'
 import { FaCheck, FaExclamation } from 'react-icons/fa'
-
-type AlertType = 'success' | 'error' | 'info' | 'warning'
-
-interface AlertToastProps {
-  message: string
-  type: AlertType
-  visible: boolean
-  onClose: () => void
-  duration?: number
-}
+import type { AlertToastProps, AlertType } from '~/models/alert'
 
 const STYLES: Record<
   AlertType,

@@ -1,9 +1,6 @@
 import React, { useState } from 'react'
 import { FaFilter } from 'react-icons/fa'
-
-type FilterDrawerProps = {
-  children: React.ReactNode
-}
+import type { FilterDrawerProps } from '~/models/components'
 
 export default function FilterDrawer({ children }: FilterDrawerProps) {
   const [open, setOpen] = useState(false)

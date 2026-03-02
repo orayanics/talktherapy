@@ -2,14 +2,10 @@ import { useState } from 'react'
 import { format } from 'date-fns'
 import { useNavigate } from '@tanstack/react-router'
 import useDeleteSchedule from './useDeleteSchedule'
-import type { AvailabilityRuleWithSlots } from '~/models/schedule'
+import type { ScheduleDetailsIdProps } from '~/models/components'
 import { parseRRule } from '~/utils/rrule'
 import ModalConfirm from '~/components/Modal/ModalConfirm'
 import { useAuthGuard } from '~/hooks/useAuthGuard'
-
-interface ScheduleDetailsIdProps {
-  data: AvailabilityRuleWithSlots
-}
 
 export default function ScheduleDetailsId(props: ScheduleDetailsIdProps) {
   const { data } = props

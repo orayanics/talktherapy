@@ -2,7 +2,7 @@ import { Link, useNavigate } from '@tanstack/react-router'
 import { useEffect, useMemo, useState } from 'react'
 import debounce from 'debounce'
 
-import type { ContentItem } from '~/modules/content/ContentTable'
+import type { ContentOverviewProps } from '~/models/components'
 
 import PageTitle from '~/components/Page/PageTitle'
 import Grid from '~/components/Page/Grid'
@@ -15,36 +15,12 @@ import SkeletonError from '~/components/Skeleton/SkeletonError'
 import SkeletonNull from '~/components/Skeleton/SkeletonNull'
 import InputMultiselect from '~/components/Input/InputMultiselect'
 
-interface ScheduleOverviewProps {
-  search: {
-    page?: number
-    perPage?: number
-    search?: string
-    diagnosis?: Array<string>
-  }
-  isLoading: boolean
-  isError: boolean
-  data:
-    | {
-        diagnoses: Array<{ value: string; label: string }>
-        content: {
-          data: Array<ContentItem>
-          meta: {
-            page: number
-            per_page: number
-            total: number
-          }
-        }
-      }
-    | undefined
-}
-
 export default function ContentOverview({
   search,
   isLoading,
   isError,
   data,
-}: ScheduleOverviewProps) {
+}: ContentOverviewProps) {
   const { content, diagnoses } = data || {}
   const navigate = useNavigate({ from: '/content/' })
   const [searchInput, setSearchInput] = useState(search.search ?? '')
@@ -153,7 +129,7 @@ function Table({
 }: {
   isLoading: boolean
   isError: boolean
-  data: ScheduleOverviewProps['data']
+  data: ContentOverviewProps['data']
 }) {
   if (isLoading) return <LoaderTable />
   if (isError) return <SkeletonError />

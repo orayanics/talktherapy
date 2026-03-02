@@ -1,9 +1,7 @@
 import ModalRescheduleAppointment from './ModalRescheduleAppointment'
 import useMyAppointmentActions from './useMyAppointmentActions'
-import type {
-  PatientMyAppointmentDetailDto,
-  ServerAppointmentStatus,
-} from '~/models/schedule'
+import type { ServerAppointmentStatus } from '~/models/schedule'
+import type { MyAppointmentDetailProps } from '~/models/components'
 import ModalCancelAppointment from '~/modules/appointment/detail/ModalCancelAppointment'
 import AppointmentEventHistory from '~/modules/appointment/detail/AppointmentEventHistory'
 import { formatToLocalDate, getTime } from '~/utils/date'
@@ -26,10 +24,6 @@ const STATUS_LABEL: Record<ServerAppointmentStatus, string> = {
 
 const CAN_CANCEL: Array<ServerAppointmentStatus> = ['PENDING', 'CONFIRMED']
 const CAN_RESCHEDULE: Array<ServerAppointmentStatus> = ['PENDING', 'CONFIRMED']
-
-interface MyAppointmentDetailProps {
-  appointment: PatientMyAppointmentDetailDto
-}
 
 function InfoRow({ label, value }: { label: string; value: React.ReactNode }) {
   return (

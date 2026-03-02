@@ -1,20 +1,7 @@
 import ModalBody from './ModalBody'
 import ModalHeader from './ModalHeader'
-import type { ParsedError } from '~/utils/errors'
+import type { ModalConfirmProps } from '~/models/components'
 import { hasOnlyMessage } from '~/utils/errors'
-
-interface ModalConfirmProps {
-  title: string
-  description: string
-  confirmText: string
-  cancelText: string
-  onConfirm: () => void
-  onCancel: () => void
-  states: {
-    isLoading: boolean
-    errors: ParsedError | null
-  }
-}
 
 export default function ModalConfirm(props: ModalConfirmProps) {
   const {

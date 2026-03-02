@@ -1,7 +1,4 @@
-interface LoaderTableProps {
-  className?: string
-  children?: React.ReactNode
-}
+import type { LoaderTableProps } from '~/models/components'
 
 export default function LoaderTable(props: LoaderTableProps) {
   const { className, children } = props

@@ -1,21 +1,6 @@
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa'
+import type { TablePaginationProps } from '~/models/components'
 import FilterDropdown from '~/components/Input/InputSelect'
-
-type TablePaginationProps = {
-  page: number
-  perPage: number
-  total: number
-  lastPage?: number
-  from?: number | null
-  to?: number | null
-  onPageChange: (page: number) => void
-  onPerPageChange: (perPage: number) => void
-  perPageOptions?: Array<{
-    value: number
-    label: string
-  }>
-  className?: string
-}
 
 export default function TablePagination({
   page,

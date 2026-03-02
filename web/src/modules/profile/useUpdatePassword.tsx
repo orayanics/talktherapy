@@ -4,7 +4,7 @@ import type React from 'react';
 
 import type { UpdatePasswordPayload } from '~/models/user/credentials'
 
-import type { ParsedError} from '~/utils/errors';
+import type { ParsedError } from '~/models/system';
 import { useEditPassword } from '~/api/auth'
 import { parseError } from '~/utils/errors'
 

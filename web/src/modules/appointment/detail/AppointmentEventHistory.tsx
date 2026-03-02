@@ -1,4 +1,4 @@
-import type { SlotAppointmentEvent } from '~/models/schedule'
+import type { AppointmentEventHistoryProps } from '~/models/components'
 import { formatToLocalDate, getTime } from '~/utils/date'
 
 /**
@@ -31,15 +31,6 @@ const ACTOR_TYPE_LABEL: Record<string, string> = {
   CLINICIAN: 'Clinician',
   SYSTEM: 'System',
   ADMIN: 'Admin',
-}
-
-interface AppointmentEventHistoryProps {
-  events: Array<SlotAppointmentEvent>
-  /**
-   * 'clinician' – all reasons shown for every event
-   * 'patient'   – reason shown only for CANCELLED and RESCHEDULED events
-   */
-  variant: 'clinician' | 'patient'
 }
 
 export default function AppointmentEventHistory({

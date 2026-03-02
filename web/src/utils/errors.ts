@@ -1,7 +1,4 @@
-export interface ParsedError {
-  message: string
-  errors?: Record<string, Array<string>>
-}
+import type { ParsedError } from '~/models/system'
 
 /**
  * Normalizes API error responses into a consistent ParsedError shape.

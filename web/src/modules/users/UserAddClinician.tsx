@@ -1,12 +1,8 @@
 import { useRegisterClinician } from './useUserAdd'
+import type { UserAddClinicianProps } from '~/models/components'
 import ModalHeader from '~/components/Modal/ModalHeader'
 import ModalBody from '~/components/Modal/ModalBody'
 import { fieldError, hasOnlyMessage } from '~/utils/errors'
-
-interface UserAddClinicianProps {
-  isOpen: boolean
-  onClose: () => void
-}
 
 export default function UserAddClinician(props: UserAddClinicianProps) {
   const { isOpen, onClose } = props

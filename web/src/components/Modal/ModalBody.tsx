@@ -1,11 +1,5 @@
 import { useEffect } from 'react'
-
-interface ModalBodyProps {
-  children: React.ReactNode
-  className?: string
-  isOpen: boolean
-  onClose: () => void
-}
+import type { ModalBodyProps } from '~/models/components'
 
 export default function ModalBody(props: ModalBodyProps) {
   const { children, onClose, className, isOpen } = props

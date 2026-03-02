@@ -2,11 +2,8 @@ import { useState } from 'react'
 import useBookAppointment from './useBookAppointment'
 import ModalBookAppointment from './ModalBookAppointment'
 import type { AvailableSlot } from '~/models/schedule'
+import type { AppointmentCardProps } from '~/models/components'
 import { getTime } from '~/utils/date'
-
-interface AppointmentCardProps {
-  data: Array<AvailableSlot>
-}
 
 export default function AppointmentCard(props: AppointmentCardProps) {
   const { data } = props

@@ -3,7 +3,7 @@ import { addMonths, differenceInDays, format } from 'date-fns'
 import { isAxiosError } from 'axios'
 import type React from 'react'
 
-import type { ParsedError } from '~/utils/errors'
+import type { ParsedError } from '~/models/system'
 import type {
   AvailabilityRuleWithSlots,
   CreateSchedulePayload,

@@ -1,14 +1,9 @@
+import type { ConsentsPatientProps } from '~/models/components'
 import { useScrollToBottom } from '~/utils/scroll'
 
 import ModalHeader from '~/components/Modal/ModalHeader'
 import ModalBody from '~/components/Modal/ModalBody'
 import ModalFooter from '~/components/Modal/ModalFooter'
-
-interface ConsentsPatientProps {
-  isOpen: boolean
-  onClose: () => void
-  onAgree: (agreed: boolean) => void
-}
 
 export default function ConsentsPatient(props: ConsentsPatientProps) {
   const { isOpen = false, onClose, onAgree } = props

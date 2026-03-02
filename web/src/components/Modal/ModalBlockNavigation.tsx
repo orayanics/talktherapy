@@ -1,13 +1,7 @@
+import type { ModalBlockNavigationProps } from '~/models/components'
 import ModalHeader from '~/components/Modal/ModalHeader'
 import ModalBody from '~/components/Modal/ModalBody'
 import ModalFooter from '~/components/Modal/ModalFooter'
-
-interface ModalBlockNavigationProps {
-  isOpen: boolean
-  onReset: () => void
-  onProceed: () => void
-  children?: React.ReactNode
-}
 
 export default function ModalBlockNavigation(props: ModalBlockNavigationProps) {
   const { isOpen, onReset, onProceed, children } = props

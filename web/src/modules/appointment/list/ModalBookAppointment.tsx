@@ -1,25 +1,11 @@
 import { useState } from 'react'
 
-import type { AvailableSlot, BookAppointmentPayload } from '~/models/schedule'
-import type { ParsedError } from '~/utils/errors'
+import type { ReferralMode } from '~/models/schedule'
+import type { ModalBookAppointmentProps } from '~/models/components'
 import ModalBody from '~/components/Modal/ModalBody'
 import ModalHeader from '~/components/Modal/ModalHeader'
 import { fieldError, hasOnlyMessage } from '~/utils/errors'
 import { formatToLocalDate, getTime } from '~/utils/date'
-
-type ReferralMode = 'link' | 'file'
-
-interface ModalBookAppointmentProps {
-  slot: AvailableSlot
-  form: BookAppointmentPayload
-  onFormChange: (field: keyof BookAppointmentPayload, value: string) => void
-  onConfirm: () => void
-  onCancel: () => void
-  states: {
-    isLoading: boolean
-    errors: ParsedError | null
-  }
-}
 
 export default function ModalBookAppointment(props: ModalBookAppointmentProps) {
   const { slot, form, onFormChange, onConfirm, onCancel, states } = props

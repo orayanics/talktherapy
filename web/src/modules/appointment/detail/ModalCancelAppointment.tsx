@@ -1,24 +1,7 @@
-import type { ParsedError } from '~/utils/errors'
+import type { ModalCancelAppointmentProps } from '~/models/components'
 import ModalBody from '~/components/Modal/ModalBody'
 import ModalHeader from '~/components/Modal/ModalHeader'
 import { hasOnlyMessage } from '~/utils/errors'
-
-interface ModalCancelAppointmentProps {
-  title?: string
-  description?: string
-  confirmText?: string
-  reason: string
-  onReasonChange: (value: string) => void
-  showKeepBlocked?: boolean
-  keepBlocked?: boolean
-  onKeepBlockedChange?: (value: boolean) => void
-  onConfirm: () => void
-  onCancel: () => void
-  states: {
-    isLoading: boolean
-    errors: ParsedError | null
-  }
-}
 
 export default function ModalCancelAppointment(
   props: ModalCancelAppointmentProps,

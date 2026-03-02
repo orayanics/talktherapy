@@ -1,10 +1,8 @@
 import ModalCancelAppointment from './ModalCancelAppointment'
 import useAppointmentActions from './useAppointmentActions'
 import AppointmentEventHistory from './AppointmentEventHistory'
-import type {
-  ServerAppointmentStatus,
-  SlotAppointmentDto,
-} from '~/models/schedule'
+import type { ServerAppointmentStatus } from '~/models/schedule'
+import type { AppointmentDetailProps } from '~/models/components'
 import ModalConfirm from '~/components/Modal/ModalConfirm'
 import { formatToLocalDate, getTime } from '~/utils/date'
 import { useAuthGuard } from '~/hooks/useAuthGuard'
@@ -28,10 +26,6 @@ const STATUS_LABEL: Record<ServerAppointmentStatus, string> = {
 const CAN_CONFIRM: Array<ServerAppointmentStatus> = ['PENDING']
 const CAN_COMPLETE: Array<ServerAppointmentStatus> = ['CONFIRMED']
 const CAN_CANCEL: Array<ServerAppointmentStatus> = ['PENDING', 'CONFIRMED']
-
-interface AppointmentDetailProps {
-  appointment: SlotAppointmentDto
-}
 
 function InfoRow({ label, value }: { label: string; value: React.ReactNode }) {
   return (

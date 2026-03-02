@@ -1,7 +1,5 @@
 import { createContext, useContext } from 'react'
-import type { UserResponse } from '~/models/system'
-
-interface SessionContextValue extends UserResponse {}
+import type { SessionContextValue } from '~/models/system'
 
 export const SessionContext = createContext<SessionContextValue | null>(null)
 

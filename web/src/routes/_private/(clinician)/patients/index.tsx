@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { Link, createFileRoute } from '@tanstack/react-router'
+import type { PatientsTableProps } from '~/models/components'
+
 import Grid from '~/components/Page/Grid'
 import GridItem from '~/components/Page/GridItem'
 import PageTitle from '~/components/Page/PageTitle'
@@ -104,16 +106,7 @@ const PATIENT_LIST = [
   },
 ]
 
-interface TableProps {
-  onPageChange: (page: number) => void
-  onPerPageChange: (perPage: number) => void
-  isLoading?: boolean
-  data: typeof PATIENT_LIST
-  page: number
-  perPage: number
-}
-
-function Table(props: TableProps) {
+function Table(props: PatientsTableProps) {
   const {
     isLoading = false,
     page,
@@ -151,7 +144,6 @@ function Table(props: TableProps) {
             { header: 'Diagnosis', accessor: 'diagnosis' },
           ]}
           data={PATIENT_LIST}
-          rowsPerPage={10}
         />
       )}
 

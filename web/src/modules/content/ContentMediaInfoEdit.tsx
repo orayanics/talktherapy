@@ -1,22 +1,14 @@
+import { useQuery } from '@tanstack/react-query'
 import MDEditor from '@uiw/react-md-editor'
 import Markdown from 'react-markdown'
 import rehypeRaw from 'rehype-raw'
-import { useQuery } from '@tanstack/react-query'
+
 import useUpdateContent from './useEditContent'
+import type { ContentMediaInfoEditProps } from '~/models/components'
 import { useGetPublicDiagnoses } from '~/api/public'
+
 import Grid from '~/components/Page/Grid'
 import GridItem from '~/components/Page/GridItem'
-
-interface ContentMediaInfoEditProps {
-  data: {
-    title: string
-    description: string
-    body: string
-    diagnosis_id: string
-    tags: Array<{ tag: { name: string } }>
-  }
-  id: string
-}
 
 export default function ContentMediaInfoEdit({
   data,

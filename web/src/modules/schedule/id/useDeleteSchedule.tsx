@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { isAxiosError } from 'axios'
 
-import type { ParsedError } from '~/utils/errors'
+import type { ParsedError } from '~/models/system'
 import { useDeleteScheduleId } from '~/api/scheduling'
 import { parseError } from '~/utils/errors'
 
