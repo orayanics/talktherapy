@@ -8,10 +8,6 @@
 # testing
 /coverage
 
-# next.js
-/.next/
-/out/
-
 # production
 /build
 
@@ -43,4 +39,6 @@ package-lock.json
 
 *.sqlite
 *.db
-/src/generated/prisma
+
+# prisma/generated  ← remove this if you want generated types in source control
+prisma/generated
