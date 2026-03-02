@@ -13,7 +13,6 @@ interface ScheduleCardProps {
 export default function ScheduleCard(props: ScheduleCardProps) {
   const { data } = props
   const [current, setCurrent] = useState<string>(data[0]?.id || '')
-
   return (
     <div
       id="table-schedule"

@@ -35,7 +35,7 @@ function RouteComponent() {
   const searchProps = Route.useSearch()
 
   return isAdmin ? (
-    <AdminOverview />
+    <AdminOverview search={searchProps} />
   ) : (
     <ClinicianOverview search={searchProps} />
   )

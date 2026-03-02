@@ -53,6 +53,10 @@ function RouteComponent() {
     patientMyAppointmentsQuery({ page, perPage, status }),
   )
 
+  if (isLoading) return <LoaderTable />
+  if (error) return <SkeletonError />
+  if (!data.data || data.data.length === 0) return <SkeletonNull />
+
   return (
     <>
       <PageTitle
@@ -82,31 +86,24 @@ function RouteComponent() {
             />
           </div>
 
-          {isLoading && <LoaderTable />}
-          {error && <SkeletonError />}
-          {!isLoading && !error && !data && <SkeletonNull />}
-          {data && data.data.length > 0 && (
-            <>
-              <MyAppointmentList data={data.data} />
-              <TablePagination
-                page={page}
-                perPage={perPage}
-                total={data.meta.total}
-                lastPage={data.meta.page_count}
-                from={data.meta.from}
-                to={data.meta.to}
-                onPageChange={(p) =>
-                  navigate({ to: '.', search: { ...search, page: p } })
-                }
-                onPerPageChange={(pp) =>
-                  navigate({
-                    to: '.',
-                    search: { ...search, perPage: pp, page: 1 },
-                  })
-                }
-              />
-            </>
-          )}
+          <MyAppointmentList data={data.data} />
+          <TablePagination
+            page={page}
+            perPage={perPage}
+            total={data.meta.total}
+            lastPage={data.meta.page_count}
+            from={data.meta.from}
+            to={data.meta.to}
+            onPageChange={(p) =>
+              navigate({ to: '.', search: { ...search, page: p } })
+            }
+            onPerPageChange={(pp) =>
+              navigate({
+                to: '.',
+                search: { ...search, perPage: pp, page: 1 },
+              })
+            }
+          />
         </GridItem>
       </Grid>
     </>

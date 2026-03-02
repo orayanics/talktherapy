@@ -7,6 +7,7 @@ import type {
 } from '~/models/schedule'
 import ModalConfirm from '~/components/Modal/ModalConfirm'
 import { formatToLocalDate, getTime } from '~/utils/date'
+import { useAuthGuard } from '~/hooks/useAuthGuard'
 
 const STATUS_BADGE: Record<ServerAppointmentStatus, string> = {
   PENDING: 'badge badge-outline bg-yellow-50 text-yellow-800 border-yellow-200',
@@ -84,6 +85,9 @@ export default function AppointmentDetail(props: AppointmentDetailProps) {
   const endTime = getTime(slot.ends_at)
   const bookedDate = formatToLocalDate(booked_at)
 
+  const { is } = useAuthGuard()
+  const isClinician = is('clinician')
+
   return (
     <>
       <div className="flex flex-col gap-6">
@@ -157,37 +161,38 @@ export default function AppointmentDetail(props: AppointmentDetailProps) {
         {/* Actions */}
         {(CAN_CONFIRM.includes(status) ||
           CAN_COMPLETE.includes(status) ||
-          CAN_CANCEL.includes(status)) && (
-          <div className="flex flex-row gap-2 justify-end">
-            {CAN_CANCEL.includes(status) && (
-              <button
-                type="button"
-                className="btn btn-error btn-outline"
-                onClick={openCancel}
-              >
-                {status === 'PENDING' ? 'Reject' : 'Cancel Appointment'}
-              </button>
-            )}
-            {CAN_COMPLETE.includes(status) && (
-              <button
-                type="button"
-                className="btn btn-success"
-                onClick={openComplete}
-              >
-                Mark as Completed
-              </button>
-            )}
-            {CAN_CONFIRM.includes(status) && (
-              <button
-                type="button"
-                className="btn btn-primary"
-                onClick={openConfirm}
-              >
-                Accept
-              </button>
-            )}
-          </div>
-        )}
+          CAN_CANCEL.includes(status)) &&
+          isClinician && (
+            <div className="flex flex-row gap-2 justify-end">
+              {CAN_CANCEL.includes(status) && (
+                <button
+                  type="button"
+                  className="btn btn-error btn-outline"
+                  onClick={openCancel}
+                >
+                  {status === 'PENDING' ? 'Reject' : 'Cancel Appointment'}
+                </button>
+              )}
+              {CAN_COMPLETE.includes(status) && (
+                <button
+                  type="button"
+                  className="btn btn-success"
+                  onClick={openComplete}
+                >
+                  Mark as Completed
+                </button>
+              )}
+              {CAN_CONFIRM.includes(status) && (
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={openConfirm}
+                >
+                  Accept
+                </button>
+              )}
+            </div>
+          )}
       </div>
 
       {/* Confirm modal */}

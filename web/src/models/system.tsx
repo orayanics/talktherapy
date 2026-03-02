@@ -45,13 +45,12 @@ export type UsersParams = {
 }
 
 export type UsersTableProps = {
-  data: TableResponse<UserResponse> | null
   page: number
   perPage: number
   status: Array<string>
   role: Array<string>
   search: string
-  isLoading: boolean
+  debouncedSearch: string
   onPageChange: (page: number) => void
   onPerPageChange: (perPage: number) => void
   onStatusChange: (status: Array<string>) => void

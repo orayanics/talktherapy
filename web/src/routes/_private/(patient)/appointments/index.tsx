@@ -95,11 +95,9 @@ function AppointmentList({ date, search }: { date?: Date; search: any }) {
 
   const navigate = useNavigate()
 
-  {
-    !isLoading && !error && !data && <SkeletonNull />
-  }
   if (isLoading) return <LoaderTable />
   if (error) return <SkeletonError />
+  if (!data.data || data.data.length === 0) return <SkeletonNull />
 
   return (
     <>

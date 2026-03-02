@@ -3,6 +3,7 @@ import { Link } from '@tanstack/react-router'
 import useDeleteSlot from './useDeleteSlot'
 import type { AvailabilityRuleWithSlots, SlotDto } from '~/models/schedule'
 import ModalConfirm from '~/components/Modal/ModalConfirm'
+import { useAuthGuard } from '~/hooks/useAuthGuard'
 
 interface ScheduleSlotProps {
   data: AvailabilityRuleWithSlots
@@ -21,6 +22,8 @@ function ScheduleSlotItem({ is_active, slot, ruleId }: ScheduleSlotItemProps) {
     ruleId,
   })
   const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const { is } = useAuthGuard()
+  const isClinician = is('clinician')
 
   return (
     <>
@@ -36,7 +39,7 @@ function ScheduleSlotItem({ is_active, slot, ruleId }: ScheduleSlotItemProps) {
           </p>
           <p className="badge badge-soft">{status}</p>
         </Link>
-        {is_active && (
+        {is_active && isClinician && (
           <button
             className="btn btn-soft btn-error"
             onClick={() => setShowDeleteModal(true)}

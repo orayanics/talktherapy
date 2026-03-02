@@ -5,6 +5,7 @@ import useDeleteSchedule from './useDeleteSchedule'
 import type { AvailabilityRuleWithSlots } from '~/models/schedule'
 import { parseRRule } from '~/utils/rrule'
 import ModalConfirm from '~/components/Modal/ModalConfirm'
+import { useAuthGuard } from '~/hooks/useAuthGuard'
 
 interface ScheduleDetailsIdProps {
   data: AvailabilityRuleWithSlots
@@ -13,6 +14,8 @@ interface ScheduleDetailsIdProps {
 export default function ScheduleDetailsId(props: ScheduleDetailsIdProps) {
   const { data } = props
   const { id, starts_at, ends_at, is_active, recurrence_rule, slots } = data
+  const { is } = useAuthGuard()
+  const isClinician = is('clinician')
 
   const start = format(new Date(starts_at), 'pp')
   const end = format(new Date(ends_at), 'pp')
@@ -58,7 +61,7 @@ export default function ScheduleDetailsId(props: ScheduleDetailsIdProps) {
             <p>{is_active ? 'Active' : 'Inactive'}</p>
           </div>
 
-          {is_active && (
+          {is_active && isClinician && (
             <div className="flex flex-col gap-2">
               <button
                 className="btn btn-primary"

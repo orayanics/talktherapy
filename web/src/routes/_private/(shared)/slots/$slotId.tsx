@@ -14,7 +14,7 @@ import {
 } from '~/api/appointments'
 import AppointmentDetail from '~/modules/appointment/detail/AppointmentDetail'
 
-export const Route = createFileRoute('/_private/(clinician)/slots/$slotId')({
+export const Route = createFileRoute('/_private/(shared)/slots/$slotId')({
   component: RouteComponent,
 })
 
@@ -30,6 +30,10 @@ function RouteComponent() {
   const showUnblock =
     data?.status === 'CANCELLED' && data?.slot?.status === 'BLOCKED'
 
+  if (isLoading) return <LoaderTable />
+  if (error) return <SkeletonError />
+  if (!data) return <SkeletonNull />
+
   return (
     <>
       <PageTitle
@@ -39,10 +43,7 @@ function RouteComponent() {
 
       <Grid cols={12} gap={6}>
         <GridItem colSpan={12} className="flex flex-col gap-4">
-          {isLoading && <LoaderTable />}
-          {!isLoading && !error && !data && <SkeletonNull />}
-          {error && <SkeletonError />}
-          {data && <AppointmentDetail appointment={data} />}
+          <AppointmentDetail appointment={data} />
           {showUnblock && (
             <div className="flex flex-row justify-end pt-2 border-t border-dashed border-gray-200">
               <button

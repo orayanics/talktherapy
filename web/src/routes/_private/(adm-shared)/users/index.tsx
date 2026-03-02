@@ -22,6 +22,8 @@ import { normalizeSearchArray } from '~/utils/query'
 
 import { usersQueryOptions } from '~/api/users'
 import { useAuthGuard } from '~/hooks/useAuthGuard'
+import SkeletonNull from '~/components/Skeleton/SkeletonNull'
+import SkeletonError from '~/components/Skeleton/SkeletonError'
 
 export const Route = createFileRoute('/_private/(adm-shared)/users/')({
   validateSearch: (search: Record<string, unknown>) => {
@@ -75,29 +77,18 @@ function RouteComponent() {
     return () => updateDebouncedSearch.clear()
   }, [updateDebouncedSearch])
 
-  const { data, isPending } = useQuery(
-    usersQueryOptions({
-      page,
-      perPage,
-      search: debouncedSearch,
-      account_status: status,
-      account_role: role,
-    }),
-  )
-
   return (
     <>
       <PageTitle heading="Users" subheading="View all users" />
       <Grid cols={12} gap={6}>
         <GridItem colSpan={12} className="flex flex-col gap-4">
           <Table
-            data={data}
             page={page}
             perPage={perPage}
             status={status}
             role={role}
             search={searchInput}
-            isLoading={isPending}
+            debouncedSearch={debouncedSearch}
             onPageChange={(newPage) =>
               navigate({ search: { ...search, page: newPage } })
             }
@@ -121,10 +112,9 @@ function RouteComponent() {
 
 function Table(props: UsersTableProps) {
   const {
-    isLoading = false,
     page,
     perPage,
-    data,
+    debouncedSearch,
     role = [],
     status = [],
     search = '',
@@ -138,11 +128,25 @@ function Table(props: UsersTableProps) {
   const [isClinicianModalOpen, setClinicianModalOpen] = useState(false)
   const [isAdminModalOpen, setAdminModalOpen] = useState(false)
 
-  const { data: usersData = [], meta } = data || {}
-  const { total, last_page, from, to } = meta ?? {}
-
   const { is } = useAuthGuard()
   const isSudo = is('sudo')
+
+  const { data, isLoading, error } = useQuery(
+    usersQueryOptions({
+      page,
+      perPage,
+      search: debouncedSearch,
+      account_status: status,
+      account_role: role,
+    }),
+  )
+
+  if (isLoading) return <LoaderTable />
+  if (error) return <SkeletonError />
+  if (!data?.data || data.data.length === 0) return <SkeletonNull />
+
+  const { data: usersData, meta } = data
+  const { total, last_page, from, to } = meta ?? {}
 
   return (
     <>
@@ -218,69 +222,65 @@ function Table(props: UsersTableProps) {
         )}
       </div>
 
-      {isLoading ? (
-        <LoaderTable className="h-120 max-h-120 " />
-      ) : (
-        <TableContent
-          columns={[
-            { header: 'Account Status', accessor: 'account_status' },
-            {
-              header: 'Name',
-              accessor: 'name',
-              render: (value, row) => (
+      <TableContent
+        columns={[
+          { header: 'Account Status', accessor: 'account_status' },
+          {
+            header: 'Name',
+            accessor: 'name',
+            render: (value, row) => (
+              <Link
+                to="/users/$userId"
+                params={{ userId: row.id }}
+                className="link link-hover hover:text-primary"
+              >
+                {value}
+              </Link>
+            ),
+          },
+          { header: 'Email', accessor: 'email' },
+          { header: 'User Type', accessor: 'account_role' },
+          {
+            header: 'Created At',
+            accessor: 'created_at',
+            render: (value) => formatToLocalDateTime(value),
+          },
+          { header: 'Last Login', accessor: 'last_login' },
+          {
+            header: 'Actions',
+            accessor: 'id',
+            render: (_value, row) => (
+              <InputDropdown
+                label="Actions"
+                className="flex flex-col gap-2"
+                btnClassName="btn-primary"
+                position="dropdown-center dropdown-left"
+              >
                 <Link
-                  to="/users/$userId"
+                  to={'/users/$userId/edit'}
                   params={{ userId: row.id }}
-                  className="link link-hover hover:text-primary"
+                  className="btn btn-soft btn-primary"
                 >
-                  {value}
+                  Edit
                 </Link>
-              ),
-            },
-            { header: 'Email', accessor: 'email' },
-            { header: 'User Type', accessor: 'account_role' },
-            {
-              header: 'Created At',
-              accessor: 'created_at',
-              render: (value) => formatToLocalDateTime(value),
-            },
-            { header: 'Last Login', accessor: 'last_login' },
-            {
-              header: 'Actions',
-              accessor: 'id',
-              render: (_value, row) => (
-                <InputDropdown
-                  label="Actions"
-                  className="flex flex-col gap-2"
-                  btnClassName="btn-primary"
-                  position="dropdown-center dropdown-left"
+                <Link
+                  // TODO: Add deactivate user functionality
+                  to={'/users/$userId'}
+                  params={{ userId: row.id }}
+                  className="btn btn-soft btn-error"
                 >
-                  <Link
-                    to={'/users/$userId/edit'}
-                    params={{ userId: row.id }}
-                    className="btn btn-soft btn-primary"
-                  >
-                    Edit
-                  </Link>
-                  <Link
-                    // TODO: Add deactivate user functionality
-                    to={'/users/$userId'}
-                    params={{ userId: row.id }}
-                    className="btn btn-soft btn-error"
-                  >
-                    Deactivate
-                  </Link>
-                </InputDropdown>
-              ),
-            },
-          ]}
-          data={usersData}
-          renderers={{
-            account_role: (value) => <RoleBadge role={value} />,
-            account_status: (value) => <AccountStatusBadge status={value} />,
-          }}
-        />
-      )}
+                  Deactivate
+                </Link>
+              </InputDropdown>
+            ),
+          },
+        ]}
+        data={usersData}
+        renderers={{
+          account_role: (value) => <RoleBadge role={value} />,
+          account_status: (value) => <AccountStatusBadge status={value} />,
+        }}
+      />
 
       <TablePagination
         page={page}

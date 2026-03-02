@@ -167,6 +167,24 @@ export abstract class SlotService {
 
     return appointment ?? null;
   }
+
+  // Returns the appointment(with encounter, patient and events) for a slot
+  // used by admin/sudo users to view any slot's appointment details
+  static async getAnySlotAppointment(slot_id: string) {
+    const appointment = await prisma.appointments.findFirst({
+      where: { slot_id },
+      orderBy: { booked_at: "desc" },
+      include: {
+        slot: {
+          select: { id: true, starts_at: true, ends_at: true, status: true },
+        },
+        encounter: true,
+        events: { orderBy: { created_at: "desc" } },
+      },
+    });
+
+    return appointment ?? null;
+  }
 }
 
 const SLOT_SELECT = {

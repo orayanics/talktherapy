@@ -11,6 +11,27 @@ export const slotController = new Elysia({
   detail: { tags: ["Clinician / Slots"] },
 })
   .use(jwtPlugin)
+  .guard({ isAuth: true, hasRole: ["clinician", "admin"] }, (app) =>
+    app
+      // ── GET /slots/:slot_id/appointment ─────────────────────────
+      .get(
+        "/:slot_id/appointment",
+        async ({ auth, params }) => {
+          if (auth!.role !== "clinician") {
+            return SlotService.getAnySlotAppointment(params.slot_id);
+          }
+
+          const clinician_id = await AvailabilityService.resolveClinicianId(
+            auth!.userId,
+          );
+          return SlotService.getSlotAppointment(clinician_id, params.slot_id);
+        },
+        {
+          params: SlotModel.slotParams,
+          detail: { summary: "Get appointment details for a clinician's slot" },
+        },
+      ),
+  )
   .guard({ isAuth: true, hasRole: ["patient"] }, (app) =>
     app
       // ── GET /slots/available ────────────────────────────────────
@@ -58,21 +79,6 @@ export const slotController = new Elysia({
         {
           query: SlotModel.listQuery,
           detail: { summary: "List own slots with optional filters" },
-        },
-      )
-
-      // ── GET /slots/:slot_id/appointment ─────────────────────────
-      .get(
-        "/:slot_id/appointment",
-        async ({ auth, params }) => {
-          const clinician_id = await AvailabilityService.resolveClinicianId(
-            auth!.userId,
-          );
-          return SlotService.getSlotAppointment(clinician_id, params.slot_id);
-        },
-        {
-          params: SlotModel.slotParams,
-          detail: { summary: "Get appointment details for a clinician's slot" },
         },
       )
 

@@ -18,6 +18,60 @@ export abstract class AvailabilityService {
     return clinician.id;
   }
 
+  // REturns all availability rules for admin
+  static async listAllRules(query: AvailabilityModel.listQuery) {
+    const { from, status: slotStatus } = query;
+    const PAGE_SIZE = 10;
+    const page = query.page || 1;
+    const perPage = query.per_page || PAGE_SIZE;
+    const skip = (page - 1) * perPage;
+
+    const slotFilter = from
+      ? {
+          starts_at: {
+            gte: new Date(`${from}T00:00:00+08:00`),
+            lte: new Date(`${from}T23:59:59.999+08:00`),
+          },
+        }
+      : {};
+
+    const hasFilter = Object.keys(slotFilter).length > 0;
+    const where = {
+      ...(slotStatus && { status: slotStatus }),
+      ...(hasFilter && { slots: { some: slotFilter } }),
+      is_active: true,
+    };
+
+    const [total, rules] = await prisma.$transaction([
+      prisma.availabilityRule.count({ where }),
+      prisma.availabilityRule.findMany({
+        where,
+        include: {
+          slots: {
+            where: hasFilter ? slotFilter : undefined,
+            select: { id: true, starts_at: true, ends_at: true, status: true },
+            orderBy: { starts_at: "asc" },
+          },
+        },
+        orderBy: { created_at: "desc" },
+        skip,
+        take: perPage,
+      }),
+    ]);
+
+    return {
+      data: rules,
+      meta: {
+        total,
+        page,
+        page_size: perPage,
+        page_count: Math.ceil(total / perPage),
+        to: skip + rules.length,
+        from: skip + 1,
+      },
+    };
+  }
+
   /**
    * Returns all availability rules belonging to the clinician.
    */
@@ -83,6 +137,21 @@ export abstract class AvailabilityService {
   static async getRule(clinician_id: string, rule_id: string) {
     const rule = await prisma.availabilityRule.findFirst({
       where: { id: rule_id, clinician_id },
+      include: {
+        slots: {
+          select: { id: true, starts_at: true, ends_at: true, status: true },
+          orderBy: { starts_at: "asc" },
+        },
+      },
+    });
+
+    if (!rule) throw status(404, "Availability rule not found");
+    return rule;
+  }
+
+  static async getRuleById(rule_id: string) {
+    const rule = await prisma.availabilityRule.findUnique({
+      where: { id: rule_id },
       include: {
         slots: {
           select: { id: true, starts_at: true, ends_at: true, status: true },

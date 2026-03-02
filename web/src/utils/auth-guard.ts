@@ -40,6 +40,8 @@ export function hasAnyPermission(
  * Call inside a route loader. Throws a redirect to /unauthorized if the check fails.
  * Returns the user for convenience (avoids re-fetching).
  */
+// Example: requireRole(session, 'admin') - only allows admins
+// Example: requireRole(session, 'admin', 'clinician') - allows admins and clinicians
 export function requireRole(
   user: UserResponse,
   ...allowedRoles: Array<AccountRole>
