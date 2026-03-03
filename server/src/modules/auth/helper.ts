@@ -1,4 +1,33 @@
 import { prisma } from "prisma/db";
+import { JWT_CONFIG } from "@/utils/jwt";
+
+// consistent refresh time from jwt config
+function parseExpiryMs(expiry: string): number {
+  const match = expiry.match(/^(\d+)([smhd])$/);
+  if (!match) return 7 * 24 * 60 * 60 * 1000;
+  const value = parseInt(match[1], 10);
+  const unit = match[2];
+  const multipliers: Record<string, number> = {
+    s: 1_000,
+    m: 60_000,
+    h: 3_600_000,
+    d: 86_400_000,
+  };
+  return value * multipliers[unit];
+}
+
+const REFRESH_TOKEN_TTL_MS = parseExpiryMs(JWT_CONFIG.refreshExpiry as string);
+
+export async function createRefreshToken(userId: string, rawToken: string) {
+  const token_hash = await Bun.password.hash(rawToken);
+  await prisma.refreshToken.create({
+    data: {
+      user_id: userId,
+      token_hash,
+      expires_at: new Date(Date.now() + REFRESH_TOKEN_TTL_MS),
+    },
+  });
+}
 
 export async function findAndMatchRefreshToken(
   userId: string,
@@ -50,7 +79,7 @@ export async function rotateRefreshToken(
       data: {
         user_id: userId,
         token_hash,
-        expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        expires_at: new Date(Date.now() + REFRESH_TOKEN_TTL_MS),
       },
     }),
   ]);

@@ -2,7 +2,7 @@ import { Elysia } from "elysia";
 import { cors } from "@elysiajs/cors";
 import { jwtPlugin } from "@/plugins/jwt";
 
-import { auth } from "@/modules/auth";
+import { authModule } from "@/modules/auth";
 import { publicModule } from "@/modules/public";
 import { users } from "@/modules/users";
 import { schedulingModule } from "./modules/scheduling";
@@ -78,7 +78,7 @@ export const app = new Elysia()
   .group("/api/v1", (app) =>
     app
       .use(jwtPlugin)
-      .use(auth)
+      .use(authModule)
       .use(publicModule)
       .use(users)
       .use(schedulingModule)

@@ -3,21 +3,19 @@ import { Elysia, status } from "elysia";
 import { Auth } from "./service";
 import { AuthModel } from "./model";
 import { jwtPlugin } from "@/plugins/jwt";
-import { prisma } from "prisma/db";
 import {
+  createRefreshToken,
   findAndMatchRefreshToken,
   revokeExpiredTokensForUser,
   revokeRefreshToken,
   rotateRefreshToken,
 } from "./helper";
-import { type JwtSignPayload } from "@/utils/jwt";
-import { getCookieOptions } from "@/utils/jwt";
+import { type JwtSignPayload, getCookieOptions } from "@/utils/jwt";
 
-export const auth = new Elysia({ prefix: "/auth" })
+export const authModule = new Elysia({ prefix: "/auth" })
   .use(jwtPlugin)
-  .decorate({
-    isProd: process.env.NODE_ENV === "production",
-  })
+  .decorate("isProd", process.env.NODE_ENV === "production")
+  // POST: /auth/login
   .post(
     "/login",
     async ({ body, cookie: { session, refresh }, jwt, jwtRefresh, isProd }) => {
@@ -28,32 +26,18 @@ export const auth = new Elysia({ prefix: "/auth" })
         role: response.payload.role,
       };
 
-      const accessToken = await jwt.sign(signPayload);
-      const refreshToken = await jwtRefresh.sign(signPayload);
+      const [accessToken, refreshToken] = await Promise.all([
+        jwt.sign(signPayload),
+        jwtRefresh.sign(signPayload),
+      ]);
 
-      session.set({
-        ...getCookieOptions(isProd),
-        value: accessToken,
-      });
+      const cookieOpts = getCookieOptions(isProd);
+      session.set({ ...cookieOpts, value: accessToken });
+      refresh.set({ ...cookieOpts, value: refreshToken });
 
-      refresh.set({
-        ...getCookieOptions(isProd),
-        value: refreshToken,
-      });
+      await createRefreshToken(response.payload.userId, refreshToken);
 
-      const tokenHash = await Bun.password.hash(refreshToken);
-      await prisma.refreshToken.create({
-        data: {
-          user_id: response.payload.userId,
-          token_hash: tokenHash,
-          expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-        },
-      });
-
-      return {
-        email: response.email,
-        token: accessToken,
-      };
+      return { email: response.email, token: accessToken };
     },
     {
       body: AuthModel.signInBody,
@@ -63,6 +47,7 @@ export const auth = new Elysia({ prefix: "/auth" })
       },
     },
   )
+  // POST: /auth/logout
   .post("/logout", async ({ jwtRefresh, cookie: { session, refresh } }) => {
     const rawToken = typeof refresh?.value === "string" ? refresh.value : null;
 
@@ -86,6 +71,7 @@ export const auth = new Elysia({ prefix: "/auth" })
 
     return { message: "Logged out successfully" };
   })
+  // POST: /auth/refresh
   .post(
     "/refresh",
     async ({ jwt, jwtRefresh, cookie: { session, refresh }, isProd }) => {
@@ -95,7 +81,7 @@ export const auth = new Elysia({ prefix: "/auth" })
 
       const payload = await jwtRefresh.verify(rawToken);
       if (!payload || typeof payload !== "object") {
-        // token expired or invalid —> clear cookies so frontend knows to redirect
+        // token expired or invalid — clear cookies so frontend redirects
         session.remove();
         refresh.remove();
         return status(401, "Unauthorized");
@@ -106,6 +92,7 @@ export const auth = new Elysia({ prefix: "/auth" })
         email?: string;
         role?: string;
       };
+
       if (
         typeof data.userId !== "string" ||
         typeof data.email !== "string" ||
@@ -114,7 +101,8 @@ export const auth = new Elysia({ prefix: "/auth" })
         return status(401, "Unauthorized");
       }
 
-      await revokeExpiredTokensForUser(data.userId);
+      // remove stale tokens without blocking the response
+      revokeExpiredTokensForUser(data.userId);
 
       const matched = await findAndMatchRefreshToken(data.userId, rawToken);
       if (!matched) {
@@ -123,112 +111,91 @@ export const auth = new Elysia({ prefix: "/auth" })
         return status(401, "Unauthorized");
       }
 
-      const nextPayload = {
+      const nextPayload: JwtSignPayload = {
         userId: data.userId,
         email: data.email,
         role: data.role,
       };
-      const accessToken = await jwt.sign(nextPayload as any);
-      const nextRefreshToken = await jwtRefresh.sign(nextPayload as any);
+
+      const [accessToken, nextRefreshToken] = await Promise.all([
+        jwt.sign(nextPayload),
+        jwtRefresh.sign(nextPayload),
+      ]);
 
       await rotateRefreshToken(matched.id, data.userId, nextRefreshToken);
 
-      session.set({
-        ...getCookieOptions(isProd),
-        value: accessToken,
-      });
-
-      refresh.set({
-        ...getCookieOptions(isProd),
-        value: nextRefreshToken,
-      });
+      const cookieOpts = getCookieOptions(isProd);
+      session.set({ ...cookieOpts, value: accessToken });
+      refresh.set({ ...cookieOpts, value: nextRefreshToken });
 
       return { token: accessToken };
     },
   )
-  .post(
-    "/signup/patient",
-    async ({ body }) => {
-      const response = await Auth.signUpPatient(body);
-      return response;
+  // POST: /auth/signup/patient
+  .post("/signup/patient", async ({ body }) => Auth.signUpPatient(body), {
+    body: AuthModel.signUpPatientBody,
+    response: {
+      200: AuthModel.MessageResponse,
+      400: AuthModel.InvalidInput,
     },
-    {
-      body: AuthModel.signUpPatientBody,
-      response: {
-        200: AuthModel.signUpPatientResponse,
-        400: AuthModel.signUpPatientInvalid,
+  })
+  // PROCTED ROUTES: admin & sudo only
+  .guard({ isAuth: true, hasRole: ["admin", "sudo"] }, (app) =>
+    // POST: /auth/signup/clinician
+    app.post(
+      "/signup/clinician",
+      async ({ body, auth }) => Auth.signUpClinician(body, auth!.userId),
+      {
+        body: AuthModel.signUpClinicianBody,
+        response: {
+          200: AuthModel.MessageResponse,
+          400: AuthModel.InvalidInput,
+        },
       },
-    },
+    ),
   )
-  .post(
-    "/signup/clinician",
-    async ({ body, auth }) => {
-      const response = await Auth.signUpClinician(body, auth?.userId);
-      return response;
-    },
-    {
-      body: AuthModel.signUpClinicianBody,
-      response: {
-        200: AuthModel.signUpClinicianResponse,
-        400: AuthModel.signUpClinicianInvalid,
+  // PROTECTED ROUTES: sudo only
+  .guard({ isAuth: true, hasRole: ["sudo"] }, (app) =>
+    // POST: /auth/signup/admin
+    app.post(
+      "/signup/admin",
+      async ({ body, auth }) => Auth.signUpAdmin(body, auth!.userId),
+      {
+        body: AuthModel.signUpAdminBody,
+        response: {
+          200: AuthModel.MessageResponse,
+          400: AuthModel.InvalidInput,
+        },
       },
-      isAuth: true,
-      hasRole: ["admin", "sudo"],
-    },
+    ),
   )
-  .post(
-    "/signup/admin",
-    async ({ body, auth }) => {
-      const response = await Auth.signUpAdmin(body, auth?.userId);
-      return response;
-    },
-    {
-      body: AuthModel.signUpAdminBody,
-      response: {
-        200: AuthModel.signUpAdminResponse,
-        400: AuthModel.signUpAdminInvalid,
-      },
-      isAuth: true,
-      hasRole: ["sudo"],
-    },
-  )
-  .get(
-    "/session",
-    async ({ auth }) => {
-      const response = await Auth.getSession(auth!);
-      return response;
-    },
-    {
-      isAuth: true,
-    },
-  )
-  .put(
-    "/profile/update",
-    async ({ body, auth }) => {
-      const response = await Auth.updateUserInfo({ ...body, id: auth?.userId });
-      return response;
-    },
-    {
-      body: AuthModel.updateProfileBody,
-      response: {
-        200: AuthModel.updateProfileResponse,
-        400: AuthModel.updateProfileInvalid,
-      },
-      isAuth: true,
-    },
-  )
-  .put(
-    "/profile/password",
-    async ({ body, auth }) => {
-      const response = await Auth.changePassword({ ...body, id: auth?.userId });
-      return response;
-    },
-    {
-      body: AuthModel.changePasswordBody,
-      response: {
-        200: AuthModel.changePasswordResponse,
-        400: AuthModel.changePasswordInvalid,
-      },
-      isAuth: true,
-    },
+  // PROTECTED ROUTES: any auth user
+  .guard({ isAuth: true }, (app) =>
+    app
+      // GET: /auth/session
+      .get("/session", async ({ auth }) => Auth.getSession(auth!))
+      // PUT: /auth/profile/update
+      .put(
+        "/profile/update",
+        async ({ body, auth }) => Auth.updateUserInfo(auth!.userId, body),
+        {
+          body: AuthModel.updateProfileBody,
+          response: {
+            200: AuthModel.MessageResponse,
+            400: AuthModel.InvalidInput,
+          },
+        },
+      )
+      // PUT: /auth/profile/password
+      .put(
+        "/profile/password",
+        async ({ body, auth }) => Auth.changePassword(auth!.userId, body),
+        {
+          body: AuthModel.changePasswordBody,
+          response: {
+            200: AuthModel.MessageResponse,
+            400: AuthModel.InvalidInput,
+          },
+        },
+      ),
   );

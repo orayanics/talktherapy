@@ -1,11 +1,8 @@
-// Service handle business logic, decoupled from Elysia controller
 import { status } from "elysia";
 import type { AuthModel } from "./model";
 import type { JwtPayload } from "@/utils/jwt";
 import { prisma } from "prisma/db";
 
-// If the class doesn't need to store a property,
-// you may use `abstract class` to avoid class allocation
 export abstract class Auth {
   static async signIn({ email, password }: AuthModel.signInBody) {
     const user = await prisma.user.findUnique({
@@ -57,17 +54,11 @@ export abstract class Auth {
     ]);
 
     if (existingUser) {
-      throw status(
-        400,
-        "Invalid input data" satisfies AuthModel.signUpPatientInvalid,
-      );
+      throw status(400, "Invalid input data" satisfies AuthModel.InvalidInput);
     }
 
     if (!diagnosis) {
-      throw status(
-        400,
-        "Invalid input data" satisfies AuthModel.signUpPatientInvalid,
-      );
+      throw status(400, "Invalid input data" satisfies AuthModel.InvalidInput);
     }
 
     await prisma.$transaction(async (tx) => {
@@ -95,15 +86,15 @@ export abstract class Auth {
     };
   }
 
-  static async signUpClinician(data: AuthModel.signUpClinicianBody, auth?: string) {
+  static async signUpClinician(
+    data: AuthModel.signUpClinicianBody,
+    createdBy?: string,
+  ) {
     const existingUser = await prisma.user.findUnique({
       where: { email: data.email },
     });
     if (existingUser) {
-      throw status(
-        400,
-        "Invalid input data" satisfies AuthModel.signUpClinicianInvalid,
-      );
+      throw status(400, "Invalid input data" satisfies AuthModel.InvalidInput);
     }
 
     if (data.diagnosis_id) {
@@ -115,7 +106,7 @@ export abstract class Auth {
       if (!diagnosis) {
         throw status(
           400,
-          "Invalid input data" satisfies AuthModel.signUpClinicianInvalid,
+          "Invalid input data" satisfies AuthModel.InvalidInput,
         );
       }
     }
@@ -127,7 +118,7 @@ export abstract class Auth {
           account_status: "active",
           account_role: "clinician",
           account_permissions: "content:read",
-          created_by: auth,
+          created_by: createdBy,
         },
       });
 
@@ -144,15 +135,15 @@ export abstract class Auth {
     };
   }
 
-  static async signUpAdmin(data: AuthModel.signUpAdminBody, auth?: string) {
+  static async signUpAdmin(
+    data: AuthModel.signUpAdminBody,
+    createdBy?: string,
+  ) {
     const existingUser = await prisma.user.findUnique({
       where: { email: data.email },
     });
     if (existingUser) {
-      throw status(
-        400,
-        "Invalid input data" satisfies AuthModel.signUpAdminInvalid,
-      );
+      throw status(400, "Invalid input data" satisfies AuthModel.InvalidInput);
     }
 
     await prisma.$transaction(async (tx) => {
@@ -161,10 +152,8 @@ export abstract class Auth {
           email: data.email,
           account_status: "active",
           account_role: "admin",
-          account_permissions: data.account_permissions
-            ? data.account_permissions
-            : "content:read",
-          created_by: auth,
+          account_permissions: data.account_permissions ?? "content:read",
+          created_by: createdBy,
         },
       });
 
@@ -199,36 +188,25 @@ export abstract class Auth {
     };
   }
 
-  static async updateUserInfo(data: AuthModel.updateProfileBody) {
-    const user = await prisma.user.update({
-      where: {
-        id: data.id,
-      },
-      data: {
-        name: data.name,
-      },
-      omit: {
-        password: true,
-      },
+  static async updateUserInfo(
+    userId: string,
+    data: AuthModel.updateProfileBody,
+  ) {
+    await prisma.user.update({
+      where: { id: userId },
+      data: { name: data.name },
     });
 
-    if (!user) {
-      throw status(404, "User not found");
-    }
-
-    return {
-      message: "Profile updated successfully",
-    };
+    return { message: "Profile updated successfully" };
   }
 
-  static async changePassword(data: AuthModel.changePasswordBody) {
+  static async changePassword(
+    userId: string,
+    data: AuthModel.changePasswordBody,
+  ) {
     const user = await prisma.user.findUnique({
-      where: {
-        id: data.id,
-      },
-      select: {
-        password: true,
-      },
+      where: { id: userId },
+      select: { password: true },
     });
 
     if (!user) {
@@ -263,16 +241,10 @@ export abstract class Auth {
     const hashedPassword = await Bun.password.hash(data.new_password);
 
     await prisma.user.update({
-      where: {
-        id: data.id,
-      },
-      data: {
-        password: hashedPassword,
-      },
+      where: { id: userId },
+      data: { password: hashedPassword },
     });
 
-    return {
-      message: "Password changed successfully",
-    };
+    return { message: "Password changed successfully" };
   }
 }
