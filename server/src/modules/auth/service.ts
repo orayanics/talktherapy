@@ -2,30 +2,37 @@ import { status } from "elysia";
 import type { AuthModel } from "./model";
 import type { JwtPayload } from "@/utils/jwt";
 import { prisma } from "prisma/db";
+import { createActivationOtp, verifyActivationOtp } from "./helper";
+import { sendActivationEmail } from "@/utils/email";
 
 export abstract class Auth {
   static async signIn({ email, password }: AuthModel.signInBody) {
     const user = await prisma.user.findUnique({
-      where: {
-        email: email,
-      },
+      where: { email },
       select: {
         id: true,
         email: true,
         password: true,
         account_role: true,
+        account_status: true,
       },
     });
 
-    const isValid =
-      user &&
-      user.account_role &&
-      (await Bun.password.verify(password, user.password ?? ""));
-
-    if (!isValid) {
+    if (
+      !user ||
+      !user.account_role ||
+      !(await Bun.password.verify(password, user.password ?? ""))
+    ) {
       throw status(
         400,
         "Invalid email or password" satisfies AuthModel.signInInvalid,
+      );
+    }
+
+    if (user.account_status !== "active") {
+      throw status(
+        403,
+        "Account is not active" satisfies AuthModel.accountInactive,
       );
     }
 
@@ -111,11 +118,11 @@ export abstract class Auth {
       }
     }
 
-    await prisma.$transaction(async (tx) => {
+    const newUser = await prisma.$transaction(async (tx) => {
       const user = await tx.user.create({
         data: {
           email: data.email,
-          account_status: "active",
+          account_status: "inactive",
           account_role: "clinician",
           account_permissions: "content:read",
           created_by: createdBy,
@@ -128,10 +135,16 @@ export abstract class Auth {
           diagnosis_id: data.diagnosis_id ?? null,
         },
       });
+
+      return user;
     });
 
+    const otpCode = await createActivationOtp(newUser.id);
+    await sendActivationEmail(newUser.email, otpCode);
+
     return {
-      message: "Clinician account created successfully.",
+      message:
+        "Clinician account created. An activation OTP has been sent to the provided email.",
     };
   }
 
@@ -146,11 +159,11 @@ export abstract class Auth {
       throw status(400, "Invalid input data" satisfies AuthModel.InvalidInput);
     }
 
-    await prisma.$transaction(async (tx) => {
+    const newUser = await prisma.$transaction(async (tx) => {
       const user = await tx.user.create({
         data: {
           email: data.email,
-          account_status: "active",
+          account_status: "inactive",
           account_role: "admin",
           account_permissions: data.account_permissions ?? "content:read",
           created_by: createdBy,
@@ -162,11 +175,59 @@ export abstract class Auth {
           user_id: user.id,
         },
       });
+
+      return user;
     });
 
+    const otpCode = await createActivationOtp(newUser.id);
+    await sendActivationEmail(newUser.email, otpCode);
+
     return {
-      message: "Admin account created successfully.",
+      message:
+        "Admin account created. An activation OTP has been sent to the provided email.",
     };
+  }
+
+  static async activateAccount(data: AuthModel.activateBody) {
+    if (data.password !== data.password_confirmation) {
+      throw status(
+        400,
+        "Passwords do not match" satisfies AuthModel.activateInvalid,
+      );
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { email: data.email },
+      select: { id: true, account_status: true, account_role: true },
+    });
+
+    if (
+      !user ||
+      user.account_status !== "inactive" ||
+      !(user.account_role === "admin" || user.account_role === "clinician")
+    ) {
+      throw status(400, "Invalid request" satisfies AuthModel.activateInvalid);
+    }
+
+    const valid = await verifyActivationOtp(user.id, data.otp_code);
+    if (!valid) {
+      throw status(
+        400,
+        "Invalid or expired OTP" satisfies AuthModel.activateInvalid,
+      );
+    }
+
+    const hashedPassword = await Bun.password.hash(data.password);
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        password: hashedPassword,
+        account_status: "active",
+      },
+    });
+
+    return { message: "Account activated successfully." };
   }
 
   static async getSession(payload: JwtPayload) {

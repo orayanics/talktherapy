@@ -83,4 +83,28 @@ export namespace AuthModel {
     ),
   });
   export type changePasswordBody = typeof changePasswordBody.static;
+
+  export const activateBody = t.Object({
+    email: EmailField,
+    otp_code: t.String({
+      minLength: 6,
+      maxLength: 6,
+      error: "OTP must be 6 digits",
+    }),
+    password: StrongPassword(),
+    password_confirmation: StrongPassword(
+      "Confirmation must meet password requirements",
+    ),
+  });
+  export type activateBody = typeof activateBody.static;
+
+  export const activateInvalid = t.Union([
+    t.Literal("Invalid request"),
+    t.Literal("Invalid or expired OTP"),
+    t.Literal("Passwords do not match"),
+  ]);
+  export type activateInvalid = typeof activateInvalid.static;
+
+  export const accountInactive = t.Literal("Account is not active");
+  export type accountInactive = typeof accountInactive.static;
 }

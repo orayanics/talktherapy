@@ -69,3 +69,63 @@ export async function rotateRefreshToken(
     }),
   ]);
 }
+
+// ─── OTP helpers ─────────────────────────────────────────────────────────────
+
+const OTP_TTL_MS = 10 * 60 * 1000; // 10 minutes
+const OTP_PURPOSE_ACTIVATION = "account_activation";
+
+function generateOtpCode(): string {
+  return Math.floor(100_000 + Math.random() * 900_000).toString();
+}
+
+export async function createActivationOtp(userId: string): Promise<string> {
+  // Clear any stale activation OTPs before issuing a new one
+  await prisma.otps.deleteMany({
+    where: { user_id: userId, purpose: OTP_PURPOSE_ACTIVATION },
+  });
+
+  const plainCode = generateOtpCode();
+  const otp_code = await Bun.password.hash(plainCode);
+
+  await prisma.otps.create({
+    data: {
+      user_id: userId,
+      otp_code,
+      purpose: OTP_PURPOSE_ACTIVATION,
+      expires_at: new Date(Date.now() + OTP_TTL_MS),
+    },
+  });
+
+  return plainCode;
+}
+
+export async function verifyActivationOtp(
+  userId: string,
+  code: string,
+): Promise<boolean> {
+  const otps = await prisma.otps.findMany({
+    where: {
+      user_id: userId,
+      purpose: OTP_PURPOSE_ACTIVATION,
+      expires_at: { gt: new Date() },
+    },
+  });
+
+  const verified = await Promise.any(
+    otps.map(async (otp) => {
+      const valid = await Bun.password.verify(code, otp.otp_code);
+      if (!valid) throw new Error();
+      return true;
+    }),
+  ).catch(() => false);
+
+  if (verified) {
+    // Consume — delete all activation OTPs for this user
+    await prisma.otps.deleteMany({
+      where: { user_id: userId, purpose: OTP_PURPOSE_ACTIVATION },
+    });
+  }
+
+  return verified;
+}

@@ -44,6 +44,7 @@ export const authModule = new Elysia({ prefix: "/auth" })
       response: {
         200: AuthModel.signInResponse,
         400: AuthModel.signInInvalid,
+        403: AuthModel.accountInactive,
       },
     },
   )
@@ -137,6 +138,14 @@ export const authModule = new Elysia({ prefix: "/auth" })
     response: {
       200: AuthModel.MessageResponse,
       400: AuthModel.InvalidInput,
+    },
+  })
+  // POST: /auth/activate
+  .post("/activate", ({ body }) => Auth.activateAccount(body), {
+    body: AuthModel.activateBody,
+    response: {
+      200: AuthModel.MessageResponse,
+      400: AuthModel.activateInvalid,
     },
   })
   // PROCTED ROUTES: admin & sudo only
