@@ -27,6 +27,8 @@ import { Route as PublicAuthLoginRouteImport } from './routes/_public/_auth/logi
 import { Route as PrivateProfilePasswordRouteImport } from './routes/_private/profile.password'
 import { Route as PrivateProfileEditRouteImport } from './routes/_private/profile.edit'
 import { Route as PrivatesudoLogsRouteImport } from './routes/_private/(sudo)/logs'
+import { Route as PrivatesharedSlotsRouteRouteImport } from './routes/_private/(shared)/slots/route'
+import { Route as PrivatesharedSchedulesRouteRouteImport } from './routes/_private/(shared)/schedules/route'
 import { Route as PrivatesharedSchedulesIndexRouteImport } from './routes/_private/(shared)/schedules/index'
 import { Route as PrivatesharedContentIndexRouteImport } from './routes/_private/(shared)/content/index'
 import { Route as PrivatepatientRecordsIndexRouteImport } from './routes/_private/(patient)/records/index'
@@ -129,11 +131,22 @@ const PrivatesudoLogsRoute = PrivatesudoLogsRouteImport.update({
   path: '/logs',
   getParentRoute: () => PrivatesudoRouteRoute,
 } as any)
+const PrivatesharedSlotsRouteRoute = PrivatesharedSlotsRouteRouteImport.update({
+  id: '/slots',
+  path: '/slots',
+  getParentRoute: () => PrivatesharedRouteRoute,
+} as any)
+const PrivatesharedSchedulesRouteRoute =
+  PrivatesharedSchedulesRouteRouteImport.update({
+    id: '/schedules',
+    path: '/schedules',
+    getParentRoute: () => PrivatesharedRouteRoute,
+  } as any)
 const PrivatesharedSchedulesIndexRoute =
   PrivatesharedSchedulesIndexRouteImport.update({
-    id: '/schedules/',
-    path: '/schedules/',
-    getParentRoute: () => PrivatesharedRouteRoute,
+    id: '/',
+    path: '/',
+    getParentRoute: () => PrivatesharedSchedulesRouteRoute,
   } as any)
 const PrivatesharedContentIndexRoute =
   PrivatesharedContentIndexRouteImport.update({
@@ -173,21 +186,21 @@ const PrivateadmSharedUsersIndexRoute =
   } as any)
 const PrivatesharedSlotsSlotIdRoute =
   PrivatesharedSlotsSlotIdRouteImport.update({
-    id: '/slots/$slotId',
-    path: '/slots/$slotId',
-    getParentRoute: () => PrivatesharedRouteRoute,
+    id: '/$slotId',
+    path: '/$slotId',
+    getParentRoute: () => PrivatesharedSlotsRouteRoute,
   } as any)
 const PrivatesharedSchedulesCreateRoute =
   PrivatesharedSchedulesCreateRouteImport.update({
-    id: '/schedules/create',
-    path: '/schedules/create',
-    getParentRoute: () => PrivatesharedRouteRoute,
+    id: '/create',
+    path: '/create',
+    getParentRoute: () => PrivatesharedSchedulesRouteRoute,
   } as any)
 const PrivatesharedSchedulesScheduleIdRoute =
   PrivatesharedSchedulesScheduleIdRouteImport.update({
-    id: '/schedules/$scheduleId',
-    path: '/schedules/$scheduleId',
-    getParentRoute: () => PrivatesharedRouteRoute,
+    id: '/$scheduleId',
+    path: '/$scheduleId',
+    getParentRoute: () => PrivatesharedSchedulesRouteRoute,
   } as any)
 const PrivatesharedContentContentIdRoute =
   PrivatesharedContentContentIdRouteImport.update({
@@ -227,9 +240,9 @@ const PrivatesharedContentadminContentRouteRoute =
   } as any)
 const PrivatesharedSchedulesScheduleIdEditRoute =
   PrivatesharedSchedulesScheduleIdEditRouteImport.update({
-    id: '/schedules/$scheduleId_/edit',
-    path: '/schedules/$scheduleId/edit',
-    getParentRoute: () => PrivatesharedRouteRoute,
+    id: '/$scheduleId_/edit',
+    path: '/$scheduleId/edit',
+    getParentRoute: () => PrivatesharedSchedulesRouteRoute,
   } as any)
 const PrivatesharedContentadminContentCreateRoute =
   PrivatesharedContentadminContentCreateRouteImport.update({
@@ -254,6 +267,8 @@ export interface FileRoutesByFullPath {
   '/': typeof PublicIndexRoute
   '/unauthorized': typeof UnauthorizedRoute
   '/dashboard': typeof PrivateDashboardRoute
+  '/schedules': typeof PrivatesharedSchedulesRouteRouteWithChildren
+  '/slots': typeof PrivatesharedSlotsRouteRouteWithChildren
   '/logs': typeof PrivatesudoLogsRoute
   '/profile/edit': typeof PrivateProfileEditRoute
   '/profile/password': typeof PrivateProfilePasswordRoute
@@ -285,6 +300,7 @@ export interface FileRoutesByTo {
   '/': typeof PublicIndexRoute
   '/unauthorized': typeof UnauthorizedRoute
   '/dashboard': typeof PrivateDashboardRoute
+  '/slots': typeof PrivatesharedSlotsRouteRouteWithChildren
   '/logs': typeof PrivatesudoLogsRoute
   '/profile/edit': typeof PrivateProfileEditRoute
   '/profile/password': typeof PrivateProfilePasswordRoute
@@ -325,6 +341,8 @@ export interface FileRoutesById {
   '/_public/_auth': typeof PublicAuthRouteRouteWithChildren
   '/_private/dashboard': typeof PrivateDashboardRoute
   '/_public/': typeof PublicIndexRoute
+  '/_private/(shared)/schedules': typeof PrivatesharedSchedulesRouteRouteWithChildren
+  '/_private/(shared)/slots': typeof PrivatesharedSlotsRouteRouteWithChildren
   '/_private/(sudo)/logs': typeof PrivatesudoLogsRoute
   '/_private/profile/edit': typeof PrivateProfileEditRoute
   '/_private/profile/password': typeof PrivateProfilePasswordRoute
@@ -358,6 +376,8 @@ export interface FileRouteTypes {
     | '/'
     | '/unauthorized'
     | '/dashboard'
+    | '/schedules'
+    | '/slots'
     | '/logs'
     | '/profile/edit'
     | '/profile/password'
@@ -389,6 +409,7 @@ export interface FileRouteTypes {
     | '/'
     | '/unauthorized'
     | '/dashboard'
+    | '/slots'
     | '/logs'
     | '/profile/edit'
     | '/profile/password'
@@ -428,6 +449,8 @@ export interface FileRouteTypes {
     | '/_public/_auth'
     | '/_private/dashboard'
     | '/_public/'
+    | '/_private/(shared)/schedules'
+    | '/_private/(shared)/slots'
     | '/_private/(sudo)/logs'
     | '/_private/profile/edit'
     | '/_private/profile/password'
@@ -590,12 +613,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivatesudoLogsRouteImport
       parentRoute: typeof PrivatesudoRouteRoute
     }
+    '/_private/(shared)/slots': {
+      id: '/_private/(shared)/slots'
+      path: '/slots'
+      fullPath: '/slots'
+      preLoaderRoute: typeof PrivatesharedSlotsRouteRouteImport
+      parentRoute: typeof PrivatesharedRouteRoute
+    }
+    '/_private/(shared)/schedules': {
+      id: '/_private/(shared)/schedules'
+      path: '/schedules'
+      fullPath: '/schedules'
+      preLoaderRoute: typeof PrivatesharedSchedulesRouteRouteImport
+      parentRoute: typeof PrivatesharedRouteRoute
+    }
     '/_private/(shared)/schedules/': {
       id: '/_private/(shared)/schedules/'
-      path: '/schedules'
+      path: '/'
       fullPath: '/schedules/'
       preLoaderRoute: typeof PrivatesharedSchedulesIndexRouteImport
-      parentRoute: typeof PrivatesharedRouteRoute
+      parentRoute: typeof PrivatesharedSchedulesRouteRoute
     }
     '/_private/(shared)/content/': {
       id: '/_private/(shared)/content/'
@@ -641,24 +678,24 @@ declare module '@tanstack/react-router' {
     }
     '/_private/(shared)/slots/$slotId': {
       id: '/_private/(shared)/slots/$slotId'
-      path: '/slots/$slotId'
+      path: '/$slotId'
       fullPath: '/slots/$slotId'
       preLoaderRoute: typeof PrivatesharedSlotsSlotIdRouteImport
-      parentRoute: typeof PrivatesharedRouteRoute
+      parentRoute: typeof PrivatesharedSlotsRouteRoute
     }
     '/_private/(shared)/schedules/create': {
       id: '/_private/(shared)/schedules/create'
-      path: '/schedules/create'
+      path: '/create'
       fullPath: '/schedules/create'
       preLoaderRoute: typeof PrivatesharedSchedulesCreateRouteImport
-      parentRoute: typeof PrivatesharedRouteRoute
+      parentRoute: typeof PrivatesharedSchedulesRouteRoute
     }
     '/_private/(shared)/schedules/$scheduleId': {
       id: '/_private/(shared)/schedules/$scheduleId'
-      path: '/schedules/$scheduleId'
+      path: '/$scheduleId'
       fullPath: '/schedules/$scheduleId'
       preLoaderRoute: typeof PrivatesharedSchedulesScheduleIdRouteImport
-      parentRoute: typeof PrivatesharedRouteRoute
+      parentRoute: typeof PrivatesharedSchedulesRouteRoute
     }
     '/_private/(shared)/content/$contentId': {
       id: '/_private/(shared)/content/$contentId'
@@ -704,10 +741,10 @@ declare module '@tanstack/react-router' {
     }
     '/_private/(shared)/schedules/$scheduleId_/edit': {
       id: '/_private/(shared)/schedules/$scheduleId_/edit'
-      path: '/schedules/$scheduleId/edit'
+      path: '/$scheduleId/edit'
       fullPath: '/schedules/$scheduleId/edit'
       preLoaderRoute: typeof PrivatesharedSchedulesScheduleIdEditRouteImport
-      parentRoute: typeof PrivatesharedRouteRoute
+      parentRoute: typeof PrivatesharedSchedulesRouteRoute
     }
     '/_private/(shared)/content/(admin-content)/create': {
       id: '/_private/(shared)/content/(admin-content)/create'
@@ -801,6 +838,42 @@ const PrivatepatientRouteRouteChildren: PrivatepatientRouteRouteChildren = {
 const PrivatepatientRouteRouteWithChildren =
   PrivatepatientRouteRoute._addFileChildren(PrivatepatientRouteRouteChildren)
 
+interface PrivatesharedSchedulesRouteRouteChildren {
+  PrivatesharedSchedulesScheduleIdRoute: typeof PrivatesharedSchedulesScheduleIdRoute
+  PrivatesharedSchedulesCreateRoute: typeof PrivatesharedSchedulesCreateRoute
+  PrivatesharedSchedulesIndexRoute: typeof PrivatesharedSchedulesIndexRoute
+  PrivatesharedSchedulesScheduleIdEditRoute: typeof PrivatesharedSchedulesScheduleIdEditRoute
+}
+
+const PrivatesharedSchedulesRouteRouteChildren: PrivatesharedSchedulesRouteRouteChildren =
+  {
+    PrivatesharedSchedulesScheduleIdRoute:
+      PrivatesharedSchedulesScheduleIdRoute,
+    PrivatesharedSchedulesCreateRoute: PrivatesharedSchedulesCreateRoute,
+    PrivatesharedSchedulesIndexRoute: PrivatesharedSchedulesIndexRoute,
+    PrivatesharedSchedulesScheduleIdEditRoute:
+      PrivatesharedSchedulesScheduleIdEditRoute,
+  }
+
+const PrivatesharedSchedulesRouteRouteWithChildren =
+  PrivatesharedSchedulesRouteRoute._addFileChildren(
+    PrivatesharedSchedulesRouteRouteChildren,
+  )
+
+interface PrivatesharedSlotsRouteRouteChildren {
+  PrivatesharedSlotsSlotIdRoute: typeof PrivatesharedSlotsSlotIdRoute
+}
+
+const PrivatesharedSlotsRouteRouteChildren: PrivatesharedSlotsRouteRouteChildren =
+  {
+    PrivatesharedSlotsSlotIdRoute: PrivatesharedSlotsSlotIdRoute,
+  }
+
+const PrivatesharedSlotsRouteRouteWithChildren =
+  PrivatesharedSlotsRouteRoute._addFileChildren(
+    PrivatesharedSlotsRouteRouteChildren,
+  )
+
 interface PrivatesharedContentadminContentRouteRouteChildren {
   PrivatesharedContentadminContentCreateRoute: typeof PrivatesharedContentadminContentCreateRoute
   PrivatesharedContentadminContentContentIdEditRoute: typeof PrivatesharedContentadminContentContentIdEditRoute
@@ -820,27 +893,21 @@ const PrivatesharedContentadminContentRouteRouteWithChildren =
   )
 
 interface PrivatesharedRouteRouteChildren {
+  PrivatesharedSchedulesRouteRoute: typeof PrivatesharedSchedulesRouteRouteWithChildren
+  PrivatesharedSlotsRouteRoute: typeof PrivatesharedSlotsRouteRouteWithChildren
   PrivatesharedContentadminContentRouteRoute: typeof PrivatesharedContentadminContentRouteRouteWithChildren
   PrivatesharedContentContentIdRoute: typeof PrivatesharedContentContentIdRoute
-  PrivatesharedSchedulesScheduleIdRoute: typeof PrivatesharedSchedulesScheduleIdRoute
-  PrivatesharedSchedulesCreateRoute: typeof PrivatesharedSchedulesCreateRoute
-  PrivatesharedSlotsSlotIdRoute: typeof PrivatesharedSlotsSlotIdRoute
   PrivatesharedContentIndexRoute: typeof PrivatesharedContentIndexRoute
-  PrivatesharedSchedulesIndexRoute: typeof PrivatesharedSchedulesIndexRoute
-  PrivatesharedSchedulesScheduleIdEditRoute: typeof PrivatesharedSchedulesScheduleIdEditRoute
 }
 
 const PrivatesharedRouteRouteChildren: PrivatesharedRouteRouteChildren = {
+  PrivatesharedSchedulesRouteRoute:
+    PrivatesharedSchedulesRouteRouteWithChildren,
+  PrivatesharedSlotsRouteRoute: PrivatesharedSlotsRouteRouteWithChildren,
   PrivatesharedContentadminContentRouteRoute:
     PrivatesharedContentadminContentRouteRouteWithChildren,
   PrivatesharedContentContentIdRoute: PrivatesharedContentContentIdRoute,
-  PrivatesharedSchedulesScheduleIdRoute: PrivatesharedSchedulesScheduleIdRoute,
-  PrivatesharedSchedulesCreateRoute: PrivatesharedSchedulesCreateRoute,
-  PrivatesharedSlotsSlotIdRoute: PrivatesharedSlotsSlotIdRoute,
   PrivatesharedContentIndexRoute: PrivatesharedContentIndexRoute,
-  PrivatesharedSchedulesIndexRoute: PrivatesharedSchedulesIndexRoute,
-  PrivatesharedSchedulesScheduleIdEditRoute:
-    PrivatesharedSchedulesScheduleIdEditRoute,
 }
 
 const PrivatesharedRouteRouteWithChildren =

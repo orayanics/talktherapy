@@ -1,4 +1,4 @@
-import { Outlet, createFileRoute } from '@tanstack/react-router'
+import { Outlet, createFileRoute, redirect } from '@tanstack/react-router'
 import { useAuthGuard } from '~/hooks/useAuthGuard'
 
 export const Route = createFileRoute(
@@ -9,8 +9,9 @@ export const Route = createFileRoute(
     const isAdmin = is('admin')
 
     if (!isAdmin) {
-      throw new Error('Unauthorized')
+      throw redirect({ to: '/unauthorized' })
     }
+
     return <Outlet />
   },
 })
