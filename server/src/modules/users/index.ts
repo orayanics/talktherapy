@@ -3,13 +3,13 @@ import { Users } from "./service";
 import { UserModel } from "./model";
 import { jwtPlugin } from "@/plugins/jwt";
 
-export const usersModule = new Elysia({ prefix: "/auth" })
+export const usersModule = new Elysia({ prefix: "/users" })
   .use(jwtPlugin)
   .guard({ isAuth: true, hasRole: ["admin", "sudo"] }, (app) =>
     app
-      // ── GET /auth/users ───────────────────────────────────────────
+      // GET: /users
       .get(
-        "/users",
+        "/",
         async ({ auth, query }) =>
           Users.getAllUsers(auth!.role, {
             search: query.search,
@@ -26,15 +26,15 @@ export const usersModule = new Elysia({ prefix: "/auth" })
           },
         },
       )
-      // ── GET /auth/users/count — must precede /:id ─────────────────
-      .get("/users/count", () => Users.getUserCounts(), {
+      // GET: /users/count
+      .get("/count", () => Users.getUserCounts(), {
         response: {
           200: UserModel.userCounts,
           400: UserModel.userCountsInvalid,
         },
       })
-      // ── GET /auth/users/:id ───────────────────────────────────────
-      .get("/users/:id", ({ params }) => Users.getUserById(params.id), {
+      // GET: /users/:id
+      .get("/:id", ({ params }) => Users.getUserById(params.id), {
         response: {
           200: UserModel.user,
           404: UserModel.userNotFound,

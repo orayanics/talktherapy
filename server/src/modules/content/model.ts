@@ -1,42 +1,37 @@
 import { t } from "elysia";
 
-const _tagShape = t.Object({
-  id: t.String(),
-  name: t.String(),
-  slug: t.String(),
-});
-
-const _diagnosisShape = t.Object({
-  id: t.String(),
-  value: t.String(),
-  label: t.String(),
-});
-
-const _authorShape = t.Object({
-  id: t.String(),
-  name: t.Nullable(t.String()),
-  email: t.String(),
-});
-
-const _contentShape = t.Object({
-  id: t.String(),
-  author_id: t.String(),
-  diagnosis_id: t.String(),
-  title: t.String(),
-  description: t.String(),
-  body: t.String(),
-  created_at: t.String(),
-  updated_at: t.String(),
-  author: _authorShape,
-  diagnosis: _diagnosisShape,
-  tags: t.Array(
-    t.Object({
-      tag: _tagShape,
-    }),
-  ),
-});
-
 export namespace ContentModel {
+  const _tagShape = t.Object({
+    id: t.String(),
+    name: t.String(),
+    slug: t.String(),
+  });
+
+  const _diagnosisShape = t.Object({
+    id: t.String(),
+    value: t.String(),
+    label: t.String(),
+  });
+
+  const _authorShape = t.Object({
+    id: t.String(),
+    name: t.Nullable(t.String()),
+    email: t.String(),
+  });
+
+  const _contentShape = t.Object({
+    id: t.String(),
+    author_id: t.String(),
+    diagnosis_id: t.String(),
+    title: t.String(),
+    description: t.String(),
+    body: t.String(),
+    created_at: t.String(),
+    updated_at: t.String(),
+    author: _authorShape,
+    diagnosis: _diagnosisShape,
+    tags: t.Array(t.Object({ tag: _tagShape })),
+  });
   export const contentParams = t.Object({ content_id: t.String() });
   export type contentParams = typeof contentParams.static;
 
@@ -81,6 +76,9 @@ export namespace ContentModel {
     }),
   });
   export type contentList = typeof contentList.static;
+
+  export const deleteResponse = t.Object({ message: t.String() });
+  export type deleteResponse = typeof deleteResponse.static;
 
   export const notFound = t.Literal("Content not found");
   export type notFound = typeof notFound.static;

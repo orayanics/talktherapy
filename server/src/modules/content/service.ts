@@ -9,11 +9,9 @@ const contentInclude = {
   tags: { include: { tag: true } },
 } satisfies Prisma.ContentInclude;
 
-function formatContent(content: {
-  created_at: Date;
-  updated_at: Date;
-  [key: string]: unknown;
-}) {
+function formatContent<T extends { created_at: Date; updated_at: Date }>(
+  content: T,
+) {
   return {
     ...content,
     created_at: content.created_at.toISOString(),
@@ -30,28 +28,20 @@ function toSlug(name: string): string {
 }
 
 async function upsertTags(names: string[]): Promise<string[]> {
-  const ids: string[] = [];
-  for (const name of names) {
-    const slug = toSlug(name);
-    if (!slug) continue;
-    const tag = await prisma.tag.upsert({
-      where: { slug },
-      update: {},
-      create: { name: name.trim(), slug },
-    });
-    ids.push(tag.id);
-  }
-  return ids;
+  const entries = names
+    .map((name) => ({ name: name.trim(), slug: toSlug(name) }))
+    .filter((e) => e.slug);
+  const tags = await Promise.all(
+    entries.map((e) =>
+      prisma.tag.upsert({ where: { slug: e.slug }, update: {}, create: e }),
+    ),
+  );
+  return tags.map((tag) => tag.id);
 }
 
 export abstract class ContentService {
   static async listContent(params: ContentModel.listQuery) {
-    const {
-      page = 1,
-      per_page = 10,
-      search,
-      diagnosis_id,
-    } = params as ContentModel.listQuery;
+    const { page = 1, per_page = 10, search, diagnosis_id } = params;
 
     const where: Prisma.ContentWhereInput = {
       ...(search && {
