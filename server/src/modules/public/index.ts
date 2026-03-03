@@ -2,16 +2,13 @@ import { Elysia } from "elysia";
 import { Public } from "./service";
 import { DiagnosisModel } from "./model";
 
+// all public routes and resources
 export const publicModule = new Elysia({ prefix: "/public" }).get(
   "/diagnoses",
-  async () => {
-    const diagnoses = await Public.getDiagnoses();
-    return diagnoses;
-  },
+  () => Public.getDiagnoses(),
   {
     response: {
       200: DiagnosisModel.diagnosisArray,
-      400: DiagnosisModel.diagnosisInvalid,
     },
   },
 );

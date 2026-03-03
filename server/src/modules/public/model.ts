@@ -1,19 +1,13 @@
 import { t } from "elysia";
-const _shape = t.Object({
-  id: t.String(),
-  value: t.String(),
-  label: t.String(),
-  created_at: t.String(),
-  updated_at: t.String(),
-});
 
 export namespace DiagnosisModel {
-  export const diagnosis = _shape;
-  export type diagnosis = typeof diagnosis.static;
+  const _shape = t.Object({
+    id: t.String(),
+    value: t.String(),
+    label: t.String(),
+  });
 
-  export const diagnosisArray = t.Array(
-    t.Pick(_shape, ["id", "value", "label"]),
-  );
+  export const diagnosisArray = t.Array(_shape);
   export type diagnosisArray = typeof diagnosisArray.static;
 
   export const diagnosisInvalid = t.Literal("Invalid diagnosis data");
