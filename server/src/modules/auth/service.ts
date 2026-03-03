@@ -40,6 +40,11 @@ export abstract class Auth {
       );
     }
 
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { last_login: new Date() },
+    });
+
     const payload: JwtPayload = {
       userId: user.id,
       email: user.email,

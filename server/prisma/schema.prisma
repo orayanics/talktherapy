@@ -38,6 +38,7 @@ model User {
   account_role    String?
   account_permissions String @default("")
 
+  last_login      DateTime?
   created_at      DateTime @default(now())
   updated_at      DateTime @updatedAt
   created_by      String?

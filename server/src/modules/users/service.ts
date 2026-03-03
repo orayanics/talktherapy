@@ -4,13 +4,19 @@ import { Prisma } from "prisma/generated/browser";
 
 // prisma returns date object however in our api schema it is defined as string
 function serializeUser<
-  T extends { created_at: Date; updated_at: Date; deleted_at: Date | null },
+  T extends {
+    created_at: Date;
+    updated_at: Date;
+    deleted_at: Date | null;
+    last_login: Date | null;
+  },
 >(user: T) {
   return {
     ...user,
     created_at: user.created_at.toISOString(),
     updated_at: user.updated_at.toISOString(),
     deleted_at: user.deleted_at?.toISOString() ?? null,
+    last_login: user.last_login?.toISOString() ?? null,
   };
 }
 
@@ -85,11 +91,20 @@ export abstract class Users {
     const user = await prisma.user.findUnique({
       where: { id },
       omit: { password: true },
+      include: {
+        clinician: {
+          include: { diagnosis: true },
+        },
+      },
     });
     if (!user) {
       throw status(404, "User not found");
     }
-    return serializeUser(user);
+    const { clinician, ...rest } = user;
+    return {
+      ...serializeUser(rest),
+      ...(clinician?.diagnosis && { diagnosis: clinician.diagnosis.label }),
+    };
   }
 
   static async getUserCounts() {

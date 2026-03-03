@@ -13,6 +13,8 @@ export namespace UserModel {
     created_by: t.Optional(t.Nullable(t.String())),
     updated_by: t.Optional(t.Nullable(t.String())),
     deleted_at: t.Optional(t.Nullable(t.String())),
+    last_login: t.Optional(t.Nullable(t.String())),
+    diagnosis: t.Optional(t.String()),
   });
 
   const _statusCountItem = t.Object({

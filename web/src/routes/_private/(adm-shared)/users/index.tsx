@@ -257,7 +257,11 @@ function Table(props: UsersTableProps) {
             accessor: 'created_at',
             render: (value) => formatToLocalDateTime(value),
           },
-          { header: 'Last Login', accessor: 'last_login' },
+          {
+            header: 'Last Login',
+            accessor: 'last_login',
+            render: (value) => (value ? formatToLocalDateTime(value) : 'Never'),
+          },
           { header: 'Id', accessor: 'id', className: 'hidden' },
         ]}
         data={usersData}
