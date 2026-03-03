@@ -222,6 +222,7 @@ export abstract class Auth {
     await prisma.user.update({
       where: { id: user.id },
       data: {
+        name: data.name,
         password: hashedPassword,
         account_status: "active",
       },

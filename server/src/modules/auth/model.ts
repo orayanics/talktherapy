@@ -85,6 +85,11 @@ export namespace AuthModel {
   export type changePasswordBody = typeof changePasswordBody.static;
 
   export const activateBody = t.Object({
+    name: t.String({
+      minLength: 2,
+      maxLength: 100,
+      error: "Name must be between 2 and 100 characters long",
+    }),
     email: EmailField,
     otp_code: t.String({
       minLength: 6,

@@ -81,14 +81,14 @@ function generateOtpCode(): string {
 
 export async function createActivationOtp(userId: string): Promise<string> {
   // Clear any stale activation OTPs before issuing a new one
-  await prisma.otps.deleteMany({
+  await prisma.otp.deleteMany({
     where: { user_id: userId, purpose: OTP_PURPOSE_ACTIVATION },
   });
 
   const plainCode = generateOtpCode();
   const otp_code = await Bun.password.hash(plainCode);
 
-  await prisma.otps.create({
+  await prisma.otp.create({
     data: {
       user_id: userId,
       otp_code,
@@ -104,7 +104,7 @@ export async function verifyActivationOtp(
   userId: string,
   code: string,
 ): Promise<boolean> {
-  const otps = await prisma.otps.findMany({
+  const otps = await prisma.otp.findMany({
     where: {
       user_id: userId,
       purpose: OTP_PURPOSE_ACTIVATION,
@@ -122,7 +122,7 @@ export async function verifyActivationOtp(
 
   if (verified) {
     // Consume — delete all activation OTPs for this user
-    await prisma.otps.deleteMany({
+    await prisma.otp.deleteMany({
       where: { user_id: userId, purpose: OTP_PURPOSE_ACTIVATION },
     });
   }

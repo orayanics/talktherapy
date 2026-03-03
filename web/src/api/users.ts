@@ -21,7 +21,7 @@ export const usersQueryOptions = (params: UsersParams) =>
   queryOptions({
     queryKey: ['users', params],
     queryFn: async () => {
-      const { data } = await api.get('/auth/users', {
+      const { data } = await api.get('/users', {
         params: {
           search: params.search || undefined,
           account_status: params.account_status,
@@ -39,7 +39,7 @@ export const userDetailQueryOptions = (userId: string) => {
   return queryOptions({
     queryKey: ['users', userId],
     queryFn: async () => {
-      const { data } = await api.get(`/auth/users/${userId}`)
+      const { data } = await api.get(`/users/${userId}`)
       return data
     },
   })
