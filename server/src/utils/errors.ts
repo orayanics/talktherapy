@@ -31,4 +31,5 @@ export const customMessages: Record<string, string> = {
   medical_diagnosis: "Medical diagnosis is required.",
   source_referral: "Source referral is required.",
   referral_url: "Referral document is required.",
+  otp_code: "OTP code is required.",
 };

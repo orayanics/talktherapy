@@ -5,7 +5,7 @@ import AccountStatusBadge from '~/components/Badge/AccountStatusBadge'
 import { formatToLocalDateTime } from '~/utils/date'
 
 export default function ProfileAccInfo(props: UserResponse) {
-  const { account_role, account_status, created_at } = props
+  const { account_role, account_status, created_at, diagnosis } = props
 
   return (
     <>
@@ -19,7 +19,7 @@ export default function ProfileAccInfo(props: UserResponse) {
         {account_role === 'clinician' && (
           <div className="flex flex-row justify-between gap-2">
             <p className="font-bold">Specialization</p>
-            <p>SLP</p>
+            <p>{diagnosis}</p>
           </div>
         )}
 

@@ -15,7 +15,10 @@ export namespace AuthModel {
         "Password must be at least 8 characters and include uppercase, lowercase, number, and special character",
     });
 
-  export const MessageResponse = t.Object({ message: t.String() });
+  export const MessageResponse = t.Object({
+    message: t.String(),
+    account_role: t.Optional(t.String()),
+  });
   export type MessageResponse = typeof MessageResponse.static;
 
   export const InvalidInput = t.Literal("Invalid input data");
@@ -57,7 +60,8 @@ export namespace AuthModel {
 
   export const signUpAdminBody = t.Object({
     email: EmailField,
-    account_permissions: t.Optional(t.String({ default: "content:read" })),
+    // account_permissions
+    abilities: t.Optional(t.Array(t.String(), { default: ["content:read"] })),
   });
   export type signUpAdminBody = typeof signUpAdminBody.static;
 
@@ -84,6 +88,31 @@ export namespace AuthModel {
   });
   export type changePasswordBody = typeof changePasswordBody.static;
 
+  export const verifyOtpBody = t.Object({
+    email: EmailField,
+    otp_code: t.String({
+      minLength: 6,
+      maxLength: 6,
+      error: "OTP must be 6 digits",
+    }),
+  });
+  export type verifyOtpBody = typeof verifyOtpBody.static;
+
+  export const verifyOtpInvalid = t.Union([
+    t.Literal("Invalid request"),
+    t.Literal("Invalid or expired OTP"),
+    t.Literal("Invalid email or OTP"),
+  ]);
+  export type verifyOtpInvalid = typeof verifyOtpInvalid.static;
+
+  export const resendOtpBody = t.Object({
+    email: EmailField,
+  });
+  export type resendOtpBody = typeof resendOtpBody.static;
+
+  export const resendOtpInvalid = t.Literal("Invalid request");
+  export type resendOtpInvalid = typeof resendOtpInvalid.static;
+
   export const activateBody = t.Object({
     name: t.String({
       minLength: 2,
@@ -99,6 +128,9 @@ export namespace AuthModel {
     password: StrongPassword(),
     password_confirmation: StrongPassword(
       "Confirmation must meet password requirements",
+    ),
+    diagnosis_id: t.Optional(
+      t.String({ minLength: 1, error: "Diagnosis is required" }),
     ),
   });
   export type activateBody = typeof activateBody.static;

@@ -1,5 +1,4 @@
 import { Elysia, status } from "elysia";
-
 import { Auth } from "./service";
 import { AuthModel } from "./model";
 import { jwtPlugin } from "@/plugins/jwt";
@@ -138,6 +137,22 @@ export const authModule = new Elysia({ prefix: "/auth" })
     response: {
       200: AuthModel.MessageResponse,
       400: AuthModel.InvalidInput,
+    },
+  })
+  // POST: /auth/resend-otp
+  .post("/resend-otp", ({ body }) => Auth.resendOtp(body), {
+    body: AuthModel.resendOtpBody,
+    response: {
+      200: AuthModel.MessageResponse,
+      400: AuthModel.resendOtpInvalid,
+    },
+  })
+  // POST: /auth/verify-otp
+  .post("/verify-otp", ({ body }) => Auth.verifyOtp(body), {
+    body: AuthModel.verifyOtpBody,
+    response: {
+      200: AuthModel.MessageResponse,
+      400: AuthModel.verifyOtpInvalid,
     },
   })
   // POST: /auth/activate

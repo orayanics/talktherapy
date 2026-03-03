@@ -238,7 +238,19 @@ function Table(props: UsersTableProps) {
               </Link>
             ),
           },
-          { header: 'Email', accessor: 'email' },
+          {
+            header: 'Email',
+            accessor: 'email',
+            render: (value, row) => (
+              <Link
+                to="/users/$userId"
+                params={{ userId: row.id }}
+                className="link link-hover hover:text-primary"
+              >
+                {value}
+              </Link>
+            ),
+          },
           { header: 'User Type', accessor: 'account_role' },
           {
             header: 'Created At',
@@ -246,34 +258,7 @@ function Table(props: UsersTableProps) {
             render: (value) => formatToLocalDateTime(value),
           },
           { header: 'Last Login', accessor: 'last_login' },
-          {
-            header: 'Actions',
-            accessor: 'id',
-            render: (_value, row) => (
-              <InputDropdown
-                label="Actions"
-                className="flex flex-col gap-2"
-                btnClassName="btn-primary"
-                position="dropdown-center dropdown-left"
-              >
-                <Link
-                  to={'/users/$userId/edit'}
-                  params={{ userId: row.id }}
-                  className="btn btn-soft btn-primary"
-                >
-                  Edit
-                </Link>
-                <Link
-                  // TODO: Add deactivate user functionality
-                  to={'/users/$userId'}
-                  params={{ userId: row.id }}
-                  className="btn btn-soft btn-error"
-                >
-                  Deactivate
-                </Link>
-              </InputDropdown>
-            ),
-          },
+          { header: 'Id', accessor: 'id', className: 'hidden' },
         ]}
         data={usersData}
         renderers={{

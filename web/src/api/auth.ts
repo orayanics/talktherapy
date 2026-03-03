@@ -7,10 +7,12 @@ import { useNavigate, useRouter } from '@tanstack/react-router'
 import { isAxiosError } from 'axios'
 
 import type {
+  ActivateAccountPayload,
   LoginPayload,
   PatientRegisterPayload,
   UpdatePasswordPayload,
   UpdateUserPayload,
+  VerifyOtpPayload,
 } from '~/models/user/credentials'
 
 import { api } from '~/api/axios'
@@ -171,3 +173,48 @@ export const useEditPassword = () => {
     },
   })
 }
+
+export const useActiveAccount = () => {
+  const navigate = useNavigate()
+  const queryClient = useQueryClient()
+  const { showAlert } = useAlert()
+
+  return useMutation({
+    mutationFn: async (payload: ActivateAccountPayload) => {
+      const { data } = await api.post('/auth/activate', payload)
+      await api.post('/auth/login', {
+        email: payload.email,
+        password: payload.password,
+      })
+      return data
+    },
+    onSuccess: async () => {
+      localStorage.setItem('talktherapy_session', 'true')
+      await queryClient.invalidateQueries({ queryKey: ['session'] })
+      showAlert(LOGIN.success, 'success')
+      navigate({ to: '/dashboard' })
+    },
+    onError: (error) => {
+      if (isAxiosError(error)) {
+        console.error('Account activation failed:', error.response?.data)
+      }
+      showAlert(LOGIN.error, 'error')
+    },
+  })
+}
+
+export const useVerifyOtp = () =>
+  useMutation({
+    mutationFn: async (payload: VerifyOtpPayload) => {
+      const { data } = await api.post('/auth/verify-otp', payload)
+      return data
+    },
+  })
+
+export const useResendOtp = () =>
+  useMutation({
+    mutationFn: async (payload: { email: string }) => {
+      const { data } = await api.post('/auth/resend-otp', payload)
+      return data
+    },
+  })

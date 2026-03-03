@@ -2,7 +2,11 @@ import { status } from "elysia";
 import type { AuthModel } from "./model";
 import type { JwtPayload } from "@/utils/jwt";
 import { prisma } from "prisma/db";
-import { createActivationOtp, verifyActivationOtp } from "./helper";
+import {
+  createActivationOtp,
+  verifyActivationOtp,
+  checkActivationOtp,
+} from "./helper";
 import { sendActivationEmail } from "@/utils/email";
 
 export abstract class Auth {
@@ -160,12 +164,17 @@ export abstract class Auth {
     }
 
     const newUser = await prisma.$transaction(async (tx) => {
+      const permissions =
+        data.abilities && data.abilities.length > 0
+          ? data.abilities.join(",")
+          : "content:read";
+
       const user = await tx.user.create({
         data: {
           email: data.email,
           account_status: "inactive",
           account_role: "admin",
-          account_permissions: data.account_permissions ?? "content:read",
+          account_permissions: permissions,
           created_by: createdBy,
         },
       });
@@ -186,6 +195,64 @@ export abstract class Auth {
       message:
         "Admin account created. An activation OTP has been sent to the provided email.",
     };
+  }
+
+  static async resendOtp(data: AuthModel.resendOtpBody) {
+    const user = await prisma.user.findUnique({
+      where: { email: data.email },
+      select: {
+        id: true,
+        email: true,
+        account_status: true,
+        account_role: true,
+      },
+    });
+
+    if (
+      !user ||
+      user.account_status !== "inactive" ||
+      !(user.account_role === "admin" || user.account_role === "clinician")
+    ) {
+      throw status(400, "Invalid request" satisfies AuthModel.resendOtpInvalid);
+    }
+
+    // Clear all existing activation OTPs before issuing a fresh one
+    await prisma.otp.deleteMany({
+      where: { user_id: user.id, purpose: "account_activation" },
+    });
+
+    const otpCode = await createActivationOtp(user.id);
+    await sendActivationEmail(user.email, otpCode);
+
+    return { message: "A new OTP has been sent to the provided email." };
+  }
+
+  static async verifyOtp(data: AuthModel.verifyOtpBody) {
+    const user = await prisma.user.findUnique({
+      where: { email: data.email },
+      select: { id: true, account_status: true, account_role: true },
+    });
+
+    if (
+      !user ||
+      user.account_status !== "inactive" ||
+      !(user.account_role === "admin" || user.account_role === "clinician")
+    ) {
+      throw status(
+        400,
+        "Invalid email or OTP" satisfies AuthModel.verifyOtpInvalid,
+      );
+    }
+
+    const valid = await checkActivationOtp(user.id, data.otp_code);
+    if (!valid) {
+      throw status(
+        400,
+        "Invalid or expired OTP" satisfies AuthModel.verifyOtpInvalid,
+      );
+    }
+
+    return { message: "OTP verified", account_role: user.account_role };
   }
 
   static async activateAccount(data: AuthModel.activateBody) {
@@ -228,16 +295,34 @@ export abstract class Auth {
       },
     });
 
+    if (user.account_role === "clinician" && data.diagnosis_id) {
+      const diagnosis = await prisma.diagnosis.findUnique({
+        where: { id: data.diagnosis_id },
+        select: { id: true },
+      });
+      if (diagnosis) {
+        await prisma.clinician.update({
+          where: { user_id: user.id },
+          data: { diagnosis_id: diagnosis.id },
+        });
+      }
+    }
+
     return { message: "Account activated successfully." };
   }
 
   static async getSession(payload: JwtPayload) {
     const user = await prisma.user.findUnique({
-      where: {
-        id: payload.userId,
-      },
-      omit: {
-        password: true,
+      where: { id: payload.userId },
+      omit: { password: true },
+      include: {
+        clinician: {
+          select: {
+            diagnosis: {
+              select: { label: true },
+            },
+          },
+        },
       },
     });
 
@@ -245,8 +330,13 @@ export abstract class Auth {
       throw status(404, "User not found");
     }
 
+    const { clinician, ...rest } = user;
+
     return {
-      user,
+      user: {
+        ...rest,
+        ...(clinician && { diagnosis: clinician.diagnosis?.label ?? null }),
+      },
     };
   }
 

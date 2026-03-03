@@ -74,6 +74,7 @@ export interface UserResponse {
   updated_by: string | null
   deleted_at: string | null
   last_login: string | null
+  diagnosis?: string
 }
 
 // ─── Error Types ─────────────────────────────────────────────────────────────

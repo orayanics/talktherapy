@@ -180,6 +180,7 @@ export type ColumnForKey<T, TKey extends keyof T> = {
   header: string
   accessor: TKey
   render?: (value: T[TKey], row: T) => React.ReactNode
+  className?: string
 }
 
 export type Column<T> = { [K in keyof T]: ColumnForKey<T, K> }[keyof T]

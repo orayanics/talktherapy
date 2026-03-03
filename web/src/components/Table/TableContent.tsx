@@ -27,7 +27,7 @@ export default function TableContent<T extends { id?: React.Key }>({
             {columns.map((col) => (
               <th
                 key={String(col.accessor)}
-                className="border-b px-4 py-2 text-left font-semibold"
+                className={`border-b px-4 py-2 text-left font-semibold ${col.className ?? ''}`}
               >
                 {col.header}
               </th>
@@ -56,7 +56,7 @@ export default function TableContent<T extends { id?: React.Key }>({
                 return (
                   <td
                     key={String(col.accessor)}
-                    className="border-b px-4 py-2 align-middle"
+                    className={`border-b px-4 py-2 align-middle ${col.className ?? ''}`}
                   >
                     {col.render
                       ? col.render(value, row)

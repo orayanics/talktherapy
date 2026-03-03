@@ -72,7 +72,7 @@ export async function rotateRefreshToken(
 
 // ─── OTP helpers ─────────────────────────────────────────────────────────────
 
-const OTP_TTL_MS = 10 * 60 * 1000; // 10 minutes
+const OTP_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 1 week
 const OTP_PURPOSE_ACTIVATION = "account_activation";
 
 function generateOtpCode(): string {
@@ -128,4 +128,26 @@ export async function verifyActivationOtp(
   }
 
   return verified;
+}
+
+/** Check OTP validity without consuming it. Used for the pre-check step. */
+export async function checkActivationOtp(
+  userId: string,
+  code: string,
+): Promise<boolean> {
+  const otps = await prisma.otp.findMany({
+    where: {
+      user_id: userId,
+      purpose: OTP_PURPOSE_ACTIVATION,
+      expires_at: { gt: new Date() },
+    },
+  });
+
+  return Promise.any(
+    otps.map(async (otp) => {
+      const valid = await Bun.password.verify(code, otp.otp_code);
+      if (!valid) throw new Error();
+      return true;
+    }),
+  ).catch(() => false);
 }

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
-import RegisterClinician from '~/modules/register/RegisterClinician'
+import RegisterActivate from '~/modules/register/RegisterActivate'
 import RegisterPatient from '~/modules/register/RegisterPatient'
 
 import { useGetPublicDiagnoses } from '~/api/public'
@@ -19,7 +19,7 @@ function RouteComponent() {
     registerType === 0 ? (
       <RegisterPatient data={publicDiagnoses} />
     ) : (
-      <RegisterClinician />
+      <RegisterActivate data={publicDiagnoses} />
     )
 
   return (
@@ -61,7 +61,7 @@ function RouteComponent() {
                     checked={registerType === 1}
                     onChange={() => setRegisterType(1)}
                   />
-                  Clinician
+                  Activation
                 </label>
               </div>
             </div>

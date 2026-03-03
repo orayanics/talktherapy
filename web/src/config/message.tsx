@@ -13,6 +13,18 @@ export const REGISTRATION_PATIENT = {
   error: 'Registration failed. Please check your details and try again.',
 }
 
+export const ACTIVATE_ACCOUNT = {
+  success: 'Activation success! Logging you in.',
+  error: 'Activation failed. Please check your details and try again.',
+}
+
+export const OTP = {
+  resend: {
+    success: 'OTP resent successfully!',
+    error: 'Failed to resend OTP. Please try again later.',
+  },
+}
+
 export const LOGOUT = {
   success: 'Logged out successfully!',
   error: 'Logout failed. Please try again.',
