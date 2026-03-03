@@ -543,7 +543,7 @@ export abstract class AppointmentService {
   static async rescheduleAppointmentAsPatient(
     user_id: string,
     appointment_id: string,
-    body: AppointmentModel.patientRescheduleBody,
+    body: AppointmentModel.rescheduleBody,
   ) {
     const appointment = await AppointmentService.getPatientAppointment(
       user_id,
@@ -652,7 +652,6 @@ export abstract class AppointmentService {
    * today + N days is always allowed regardless of the time of day or server timezone.
    */
   static assertRescheduleCutoff(slotStartsAt: Date) {
-    console.log(slotStartsAt);
     const todayUTC = new Date();
     todayUTC.setUTCHours(0, 0, 0, 0);
 

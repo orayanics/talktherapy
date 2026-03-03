@@ -13,61 +13,45 @@ export const slotController = new Elysia({
   .use(jwtPlugin)
   .guard({ isAuth: true, hasRole: ["clinician", "admin"] }, (app) =>
     app
-      // ── GET /slots/:slot_id/appointment ─────────────────────────
+      // GET: /slots/:slot_id/appointment
       .get(
         "/:slot_id/appointment",
         async ({ auth, params }) => {
           if (auth!.role !== "clinician") {
             return SlotService.getAnySlotAppointment(params.slot_id);
           }
-
           const clinician_id = await AvailabilityService.resolveClinicianId(
             auth!.userId,
           );
           return SlotService.getSlotAppointment(clinician_id, params.slot_id);
         },
-        {
-          params: SlotModel.slotParams,
-          detail: { summary: "Get appointment details for a clinician's slot" },
-        },
+        { params: SlotModel.slotParams },
       ),
   )
   .guard({ isAuth: true, hasRole: ["patient"] }, (app) =>
     app
-      // ── GET /slots/available ────────────────────────────────────
-      .get(
-        "/available",
-        async ({ query }) => {
-          return SlotService.listAllSlots(query);
-        },
-        {
-          query: SlotModel.listQuery,
-          detail: {
-            summary: "List all available slots with optional filters",
-          },
-        },
-      )
-
-      // ── POST /slots/:slot_id/book ───────────────────────────────
+      // GET: /slots/available
+      .get("/available", ({ query }) => SlotService.listAllSlots(query), {
+        query: SlotModel.listQuery,
+      })
+      // POST: /slots/:slot_id/book
       .post(
         "/:slot_id/book",
-        async ({ auth, params, body }) => {
-          return AppointmentService.bookAppointment(
+        ({ auth, params, body }) =>
+          AppointmentService.bookAppointment(
             auth!.userId,
             params.slot_id,
             body,
-          );
-        },
+          ),
         {
           params: SlotModel.slotParams,
           body: AppointmentModel.bookBody,
-          detail: { summary: "Book an available slot as a patient" },
         },
       ),
   )
   .guard({ isAuth: true, hasRole: ["clinician"] }, (app) =>
     app
-      // ── GET /slots ──────────────────────────────────────────────
+      // GET: /slots
       .get(
         "/",
         async ({ auth, query }) => {
@@ -76,13 +60,9 @@ export const slotController = new Elysia({
           );
           return SlotService.listSlots(clinician_id, query);
         },
-        {
-          query: SlotModel.listQuery,
-          detail: { summary: "List own slots with optional filters" },
-        },
+        { query: SlotModel.listQuery },
       )
-
-      // ── PATCH /slots/:slot_id/block ─────────────────────────────
+      // PATCH: /slots/:slot_id/block
       .patch(
         "/:slot_id/block",
         async ({ auth, params }) => {
@@ -91,13 +71,9 @@ export const slotController = new Elysia({
           );
           return SlotService.blockSlot(clinician_id, params.slot_id);
         },
-        {
-          params: SlotModel.slotParams,
-          detail: { summary: "Block an available slot" },
-        },
+        { params: SlotModel.slotParams },
       )
-
-      // ── PATCH /slots/:slot_id/unblock ───────────────────────────
+      // PATCH: /slots/:slot_id/unblock
       .patch(
         "/:slot_id/unblock",
         async ({ auth, params }) => {
@@ -106,13 +82,9 @@ export const slotController = new Elysia({
           );
           return SlotService.unblockSlot(clinician_id, params.slot_id);
         },
-        {
-          params: SlotModel.slotParams,
-          detail: { summary: "Unblock a blocked slot" },
-        },
+        { params: SlotModel.slotParams },
       )
-
-      // ── DELETE /slots/:slot_id ──────────────────────────────────
+      // DELETE: /slots/:slot_id
       .delete(
         "/:slot_id",
         async ({ auth, params }) => {
@@ -121,9 +93,6 @@ export const slotController = new Elysia({
           );
           return SlotService.deleteSlot(clinician_id, params.slot_id);
         },
-        {
-          params: SlotModel.slotParams,
-          detail: { summary: "Delete a slot" },
-        },
+        { params: SlotModel.slotParams },
       ),
   );

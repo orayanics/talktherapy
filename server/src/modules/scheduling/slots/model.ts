@@ -7,8 +7,8 @@ export namespace SlotModel {
   export type slotParams = typeof slotParams.static;
 
   export const listQuery = t.Object({
-    from: t.Optional(t.String({ format: "date-time" })),
-    to: t.Optional(t.String({ format: "date-time" })),
+    from: t.Optional(t.String({ format: "date" })),
+    to: t.Optional(t.String({ format: "date" })),
     status: t.Optional(
       t.Union([
         t.Literal("AVAILABLE"),
@@ -19,13 +19,8 @@ export namespace SlotModel {
     ),
     diagnosis: t.Optional(t.Array(t.String())),
     clinician_id: t.Optional(t.String()),
-    page: t.Optional(t.Number({ minimum: 1, default: 1 })),
-    per_page: t.Optional(t.Number({ minimum: 1, maximum: 100, default: 10 })),
+    page: t.Optional(t.Numeric({ minimum: 1, default: 1 })),
+    per_page: t.Optional(t.Numeric({ minimum: 1, maximum: 100, default: 10 })),
   });
   export type listQuery = typeof listQuery.static;
-
-  export const blockBody = t.Object({
-    reason: t.Optional(t.String()),
-  });
-  export type blockBody = typeof blockBody.static;
 }

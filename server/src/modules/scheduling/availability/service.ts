@@ -18,87 +18,31 @@ export abstract class AvailabilityService {
     return clinician.id;
   }
 
-  // REturns all availability rules for admin
-  static async listAllRules(query: AvailabilityModel.listQuery) {
-    const { from, status: slotStatus } = query;
-    const PAGE_SIZE = 10;
-    const page = query.page || 1;
-    const perPage = query.per_page || PAGE_SIZE;
-    const skip = (page - 1) * perPage;
-
-    const slotFilter = from
-      ? {
-          starts_at: {
-            gte: new Date(`${from}T00:00:00+08:00`),
-            lte: new Date(`${from}T23:59:59.999+08:00`),
-          },
-        }
-      : {};
-
-    const hasFilter = Object.keys(slotFilter).length > 0;
-    const where = {
-      ...(slotStatus && { status: slotStatus }),
-      ...(hasFilter && { slots: { some: slotFilter } }),
-      is_active: true,
-    };
-
-    const [total, rules] = await prisma.$transaction([
-      prisma.availabilityRule.count({ where }),
-      prisma.availabilityRule.findMany({
-        where,
-        include: {
-          slots: {
-            where: hasFilter ? slotFilter : undefined,
-            select: { id: true, starts_at: true, ends_at: true, status: true },
-            orderBy: { starts_at: "asc" },
-          },
-        },
-        orderBy: { created_at: "desc" },
-        skip,
-        take: perPage,
-      }),
-    ]);
-
-    return {
-      data: rules,
-      meta: {
-        total,
-        page,
-        page_size: perPage,
-        page_count: Math.ceil(total / perPage),
-        to: skip + rules.length,
-        from: skip + 1,
-      },
-    };
-  }
-
   /**
-   * Returns all availability rules belonging to the clinician.
+   * Returns paginated availability rules.
+   * Pass clinician_id to scope to a specific clinician; omit for all active rules (admin).
    */
   static async listRules(
-    clinician_id: string,
     query: AvailabilityModel.listQuery,
+    clinician_id?: string,
   ) {
-    const { from, status: slotStatus } = query;
-    const PAGE_SIZE = 10;
-    const page = query.page || 1;
-    const perPage = query.per_page || PAGE_SIZE;
-    const skip = (page - 1) * perPage;
+    const { from, status: slotStatus, page = 1, per_page = 10 } = query;
+    const skip = (page - 1) * per_page;
 
-    const slotFilter = from
-      ? {
-          starts_at: {
-            gte: new Date(`${from}T00:00:00+08:00`),
-            lte: new Date(`${from}T23:59:59.999+08:00`),
-          },
-        }
-      : {};
-
-    const hasFilter = Object.keys(slotFilter).length > 0;
-    const where = {
-      clinician_id,
+    const slotWhere = {
       ...(slotStatus && { status: slotStatus }),
-      ...(hasFilter && { slots: { some: slotFilter } }),
+      ...(from && {
+        starts_at: {
+          gte: new Date(`${from}T00:00:00.000Z`),
+          lte: new Date(`${from}T23:59:59.999Z`),
+        },
+      }),
+    };
+    const hasSlotFilter = Object.keys(slotWhere).length > 0;
+
+    const where = {
+      ...(clinician_id && { clinician_id }),
+      ...(hasSlotFilter && { slots: { some: slotWhere } }),
       is_active: true,
     };
 
@@ -108,14 +52,14 @@ export abstract class AvailabilityService {
         where,
         include: {
           slots: {
-            where: hasFilter ? slotFilter : undefined,
+            where: hasSlotFilter ? slotWhere : undefined,
             select: { id: true, starts_at: true, ends_at: true, status: true },
             orderBy: { starts_at: "asc" },
           },
         },
         orderBy: { created_at: "desc" },
         skip,
-        take: perPage,
+        take: per_page,
       }),
     ]);
 
@@ -124,10 +68,10 @@ export abstract class AvailabilityService {
       meta: {
         total,
         page,
-        page_size: perPage,
-        page_count: Math.ceil(total / perPage),
-        to: skip + rules.length,
+        per_page,
+        last_page: Math.ceil(total / per_page),
         from: skip + 1,
+        to: skip + rules.length,
       },
     };
   }

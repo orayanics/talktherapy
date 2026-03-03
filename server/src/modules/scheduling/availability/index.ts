@@ -10,47 +10,37 @@ export const availabilityController = new Elysia({
   .use(jwtPlugin)
   .guard({ isAuth: true, hasRole: ["clinician", "admin"] }, (app) =>
     app
-      // ── GET /availability ───────────────────────────────────────
+      // GET: /availability
       .get(
         "/",
         async ({ auth, query }) => {
-          if (auth!.role !== "clinician") {
-            return AvailabilityService.listAllRules(query);
-          }
-
-          const clinician_id = await AvailabilityService.resolveClinicianId(
-            auth!.userId,
-          );
-          return AvailabilityService.listRules(clinician_id, query);
+          const clinician_id =
+            auth!.role !== "clinician"
+              ? undefined
+              : await AvailabilityService.resolveClinicianId(auth!.userId);
+          return AvailabilityService.listRules(query, clinician_id);
         },
-        {
-          query: AvailabilityModel.listQuery,
-          detail: { summary: "List own availability rules" },
-        },
+        { query: AvailabilityModel.listQuery },
       )
-      // ── GET /availability/:rule_id ──────────────────────────────
+      // GET: /availability/:rule_id
       .get(
         "/:rule_id",
         async ({ auth, params }) => {
           if (auth!.role !== "clinician") {
             return AvailabilityService.getRuleById(params.rule_id);
           }
-
           const clinician_id = await AvailabilityService.resolveClinicianId(
             auth!.userId,
           );
           return AvailabilityService.getRule(clinician_id, params.rule_id);
         },
-        {
-          params: AvailabilityModel.ruleParams,
-          detail: { summary: "Get a single availability rule with its slots" },
-        },
+        { params: AvailabilityModel.ruleParams },
       ),
   )
   .guard({ isAuth: true, hasRole: ["clinician"] }, (app) =>
     app
 
-      // ── POST /availability ──────────────────────────────────────
+      // POST: /availability
       .post(
         "/",
         async ({ auth, body }) => {
@@ -59,15 +49,10 @@ export const availabilityController = new Elysia({
           );
           return AvailabilityService.createRule(clinician_id, body);
         },
-        {
-          body: AvailabilityModel.createBody,
-          detail: {
-            summary: "Create an availability rule and pre-generate slots",
-          },
-        },
+        { body: AvailabilityModel.createBody },
       )
 
-      // ── PATCH /availability/:rule_id ────────────────────────────
+      // PATCH: /availability/:rule_id
       .patch(
         "/:rule_id",
         async ({ auth, params, body }) => {
@@ -83,13 +68,10 @@ export const availabilityController = new Elysia({
         {
           params: AvailabilityModel.ruleParams,
           body: AvailabilityModel.updateBody,
-          detail: {
-            summary: "Update rule (regenerates slots if timing changes)",
-          },
         },
       )
 
-      // ── DELETE /availability/:rule_id ───────────────────────────
+      // DELETE: /availability/:rule_id
       .delete(
         "/:rule_id",
         async ({ auth, params }) => {
@@ -98,9 +80,6 @@ export const availabilityController = new Elysia({
           );
           return AvailabilityService.deleteRule(clinician_id, params.rule_id);
         },
-        {
-          params: AvailabilityModel.ruleParams,
-          detail: { summary: "Delete a rule (blocked if booked slots exist)" },
-        },
+        { params: AvailabilityModel.ruleParams },
       ),
   );

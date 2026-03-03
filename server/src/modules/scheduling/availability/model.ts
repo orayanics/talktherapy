@@ -52,7 +52,7 @@ export namespace AvailabilityModel {
   export type ruleResponse = typeof ruleResponse.static;
 
   export const listQuery = t.Object({
-    from: t.Optional(t.String({ format: "date-time" })),
+    from: t.Optional(t.String({ format: "date" })),
     to: t.Optional(t.String({ format: "date-time" })),
     status: t.Optional(
       t.Union([
@@ -62,8 +62,8 @@ export namespace AvailabilityModel {
         t.Literal("CANCELLED"),
       ]),
     ),
-    page: t.Optional(t.Number({ minimum: 1, default: 1 })),
-    per_page: t.Optional(t.Number({ minimum: 1, maximum: 100, default: 10 })),
+    page: t.Optional(t.Numeric({ minimum: 1, default: 1 })),
+    per_page: t.Optional(t.Numeric({ minimum: 1, maximum: 100, default: 10 })),
   });
   export type listQuery = typeof listQuery.static;
 }

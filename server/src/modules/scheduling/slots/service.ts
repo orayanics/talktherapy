@@ -2,6 +2,35 @@ import { status } from "elysia";
 import { prisma } from "prisma/db";
 import type { SlotModel } from "./model";
 
+const APPOINTMENT_INCLUDE = {
+  slot: { select: { id: true, starts_at: true, ends_at: true, status: true } },
+  encounter: true,
+  events: { orderBy: { created_at: "desc" as const } },
+} as const;
+
+const SLOT_SELECT = {
+  omit: {
+    clinician_id: true,
+    created_at: true,
+    updated_at: true,
+    availability_rule_id: true,
+  },
+  include: {
+    appointments: {
+      where: { status: { not: "CANCELLED" } },
+      select: { id: true, patient_id: true, status: true },
+      take: 1,
+    },
+    clinician: {
+      select: {
+        id: true,
+        user: { select: { name: true } },
+        diagnosis: { select: { value: true, label: true } },
+      },
+    },
+  },
+} as const;
+
 export abstract class SlotService {
   /**
    * Returns all slots for the authenticated clinician, with optional filters.
@@ -82,14 +111,14 @@ export abstract class SlotService {
       diagnosis,
       clinician_id,
       page = 1,
-      per_page = 20,
+      per_page = 10,
     } = query;
 
-    const fromDate = from ? new Date(`${from}T00:00:00`) : null;
+    const fromDate = from ? new Date(`${from}T00:00:00.000Z`) : null;
     const toDate = from
-      ? new Date(`${from}T23:59:59.999`)
+      ? new Date(`${from}T23:59:59.999Z`)
       : to
-        ? new Date(`${to}T23:59:59.999`)
+        ? new Date(`${to}T23:59:59.999Z`)
         : null;
 
     const where = {
@@ -121,10 +150,10 @@ export abstract class SlotService {
       meta: {
         total,
         page,
-        page_size: per_page,
-        page_count: Math.ceil(total / per_page),
-        to: skip + data.length,
+        per_page,
+        last_page: Math.ceil(total / per_page),
         from: skip + 1,
+        to: skip + data.length,
       },
     };
   }
@@ -153,59 +182,20 @@ export abstract class SlotService {
 
     if (!slot) throw status(404, "Slot not found");
 
-    const appointment = await prisma.appointments.findFirst({
+    return prisma.appointments.findFirst({
       where: { slot_id },
       orderBy: { booked_at: "desc" },
-      include: {
-        slot: {
-          select: { id: true, starts_at: true, ends_at: true, status: true },
-        },
-        encounter: true,
-        events: { orderBy: { created_at: "desc" } },
-      },
+      include: APPOINTMENT_INCLUDE,
     });
-
-    return appointment ?? null;
   }
 
-  // Returns the appointment(with encounter, patient and events) for a slot
-  // used by admin/sudo users to view any slot's appointment details
+  // Returns the appointment (with encounter and events) for any slot.
+  // Used by admin/sudo to view any slot's appointment.
   static async getAnySlotAppointment(slot_id: string) {
-    const appointment = await prisma.appointments.findFirst({
+    return prisma.appointments.findFirst({
       where: { slot_id },
       orderBy: { booked_at: "desc" },
-      include: {
-        slot: {
-          select: { id: true, starts_at: true, ends_at: true, status: true },
-        },
-        encounter: true,
-        events: { orderBy: { created_at: "desc" } },
-      },
+      include: APPOINTMENT_INCLUDE,
     });
-
-    return appointment ?? null;
   }
 }
-
-const SLOT_SELECT = {
-  omit: {
-    clinician_id: true,
-    created_at: true,
-    updated_at: true,
-    availability_rule_id: true,
-  },
-  include: {
-    appointments: {
-      where: { status: { not: "CANCELLED" } },
-      select: { id: true, patient_id: true, status: true },
-      take: 1,
-    },
-    clinician: {
-      select: {
-        id: true,
-        user: { select: { name: true } },
-        diagnosis: { select: { value: true, label: true } },
-      },
-    },
-  },
-} as const;

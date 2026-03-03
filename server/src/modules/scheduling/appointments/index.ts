@@ -11,82 +11,55 @@ export const appointmentController = new Elysia({
   .use(jwtPlugin)
   .guard({ isAuth: true, hasRole: ["patient"] }, (app) =>
     app
-      // ── GET /appointments/my ────────────────────────────────────────
+      // GET: /appointments/my
       .get(
         "/my",
-        async ({ auth, query }) => {
-          return AppointmentService.listPatientAppointments(
-            auth!.userId,
-            query,
-          );
-        },
-        {
-          query: AppointmentModel.patientListQuery,
-          detail: {
-            summary: "List the authenticated patient's own appointments",
-          },
-        },
+        ({ auth, query }) =>
+          AppointmentService.listPatientAppointments(auth!.userId, query),
+        { query: AppointmentModel.patientListQuery },
       )
-
-      // ── GET /appointments/my/:appointment_id ────────────────────────
+      // GET: /appointments/my/:appointment_id
       .get(
         "/my/:appointment_id",
-        async ({ auth, params }) => {
-          return AppointmentService.getPatientAppointment(
+        ({ auth, params }) =>
+          AppointmentService.getPatientAppointment(
             auth!.userId,
             params.appointment_id,
-          );
-        },
-        {
-          params: AppointmentModel.appointmentParams,
-          detail: {
-            summary: "Get a single patient appointment with full details",
-          },
-        },
+          ),
+        { params: AppointmentModel.appointmentParams },
       )
-
-      // ── PATCH /appointments/my/:appointment_id/cancel ───────────────
+      // PATCH: /appointments/my/:appointment_id/cancel
       .patch(
         "/my/:appointment_id/cancel",
-        async ({ auth, params, body }) => {
-          return AppointmentService.cancelAppointmentAsPatient(
+        ({ auth, params, body }) =>
+          AppointmentService.cancelAppointmentAsPatient(
             auth!.userId,
             params.appointment_id,
             body,
-          );
-        },
+          ),
         {
           params: AppointmentModel.appointmentParams,
           body: AppointmentModel.patientCancelBody,
-          detail: {
-            summary: "Cancel a pending or confirmed appointment as patient",
-          },
         },
       )
-
-      // ── PATCH /appointments/my/:appointment_id/reschedule ───────────
+      // PATCH: /appointments/my/:appointment_id/reschedule
       .patch(
         "/my/:appointment_id/reschedule",
-        async ({ auth, params, body }) => {
-          return AppointmentService.rescheduleAppointmentAsPatient(
+        ({ auth, params, body }) =>
+          AppointmentService.rescheduleAppointmentAsPatient(
             auth!.userId,
             params.appointment_id,
             body,
-          );
-        },
+          ),
         {
           params: AppointmentModel.appointmentParams,
-          body: AppointmentModel.patientRescheduleBody,
-          detail: {
-            summary:
-              "Reschedule a patient appointment to a new slot (same clinician, >3 days away)",
-          },
+          body: AppointmentModel.rescheduleBody,
         },
       ),
   )
   .guard({ isAuth: true, hasRole: ["clinician"] }, (app) =>
     app
-      // ── GET /appointments ───────────────────────────────────────
+      // GET: /appointments
       .get(
         "/",
         async ({ auth, query }) => {
@@ -95,13 +68,10 @@ export const appointmentController = new Elysia({
           );
           return AppointmentService.listAppointments(clinician_id, query);
         },
-        {
-          query: AppointmentModel.listQuery,
-          detail: { summary: "List own appointments with optional filters" },
-        },
+        { query: AppointmentModel.listQuery },
       )
 
-      // ── GET /appointments/:appointment_id ───────────────────────
+      // GET: /appointments/:appointment_id
       .get(
         "/:appointment_id",
         async ({ auth, params }) => {
@@ -113,15 +83,10 @@ export const appointmentController = new Elysia({
             params.appointment_id,
           );
         },
-        {
-          params: AppointmentModel.appointmentParams,
-          detail: {
-            summary: "Get a single appointment with encounter and events",
-          },
-        },
+        { params: AppointmentModel.appointmentParams },
       )
 
-      // ── PATCH /appointments/:appointment_id/confirm ─────────────
+      // PATCH: /appointments/:appointment_id/confirm
       .patch(
         "/:appointment_id/confirm",
         async ({ auth, params }) => {
@@ -134,13 +99,10 @@ export const appointmentController = new Elysia({
             auth!.userId,
           );
         },
-        {
-          params: AppointmentModel.appointmentParams,
-          detail: { summary: "Confirm a pending appointment" },
-        },
+        { params: AppointmentModel.appointmentParams },
       )
 
-      // ── PATCH /appointments/:appointment_id/cancel ──────────────
+      // PATCH: /appointments/:appointment_id/cancel
       .patch(
         "/:appointment_id/cancel",
         async ({ auth, params, body }) => {
@@ -157,11 +119,10 @@ export const appointmentController = new Elysia({
         {
           params: AppointmentModel.appointmentParams,
           body: AppointmentModel.cancelBody,
-          detail: { summary: "Cancel a pending or confirmed appointment" },
         },
       )
 
-      // ── PATCH /appointments/:appointment_id/complete ────────────
+      // PATCH: /appointments/:appointment_id/complete
       .patch(
         "/:appointment_id/complete",
         async ({ auth, params }) => {
@@ -174,13 +135,10 @@ export const appointmentController = new Elysia({
             auth!.userId,
           );
         },
-        {
-          params: AppointmentModel.appointmentParams,
-          detail: { summary: "Mark a confirmed appointment as completed" },
-        },
+        { params: AppointmentModel.appointmentParams },
       )
 
-      // ── PATCH /appointments/:appointment_id/no-show ─────────────
+      // PATCH /appointments/:appointment_id/no-show
       .patch(
         "/:appointment_id/no-show",
         async ({ auth, params, body }) => {
@@ -197,11 +155,10 @@ export const appointmentController = new Elysia({
         {
           params: AppointmentModel.appointmentParams,
           body: AppointmentModel.noShowBody,
-          detail: { summary: "Mark a confirmed appointment as no-show" },
         },
       )
 
-      // ── PATCH /appointments/:appointment_id/reschedule ──────────
+      // PATCH: /appointments/:appointment_id/reschedule
       .patch(
         "/:appointment_id/reschedule",
         async ({ auth, params, body }) => {
@@ -218,10 +175,6 @@ export const appointmentController = new Elysia({
         {
           params: AppointmentModel.appointmentParams,
           body: AppointmentModel.rescheduleBody,
-          detail: {
-            summary:
-              "Reschedule to a new available slot (>3 days before appointment)",
-          },
         },
       ),
   );

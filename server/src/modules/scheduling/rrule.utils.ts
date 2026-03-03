@@ -1,4 +1,4 @@
-import { RRule, RRuleSet } from "rrule";
+import { RRule } from "rrule";
 import type { ExpandedOccurrence } from "./types";
 import { SLOT_EXPANSION_DAYS } from "./types";
 

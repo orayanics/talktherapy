@@ -1,21 +1,23 @@
 import { t } from "elysia";
 
 export namespace AppointmentModel {
+  const _statusUnion = t.Optional(
+    t.Union([
+      t.Literal("PENDING"),
+      t.Literal("CONFIRMED"),
+      t.Literal("CANCELLED"),
+      t.Literal("COMPLETED"),
+      t.Literal("NO_SHOW"),
+    ]),
+  );
+
   export const appointmentParams = t.Object({
     appointment_id: t.String(),
   });
   export type appointmentParams = typeof appointmentParams.static;
 
   export const listQuery = t.Object({
-    status: t.Optional(
-      t.Union([
-        t.Literal("PENDING"),
-        t.Literal("CONFIRMED"),
-        t.Literal("CANCELLED"),
-        t.Literal("COMPLETED"),
-        t.Literal("NO_SHOW"),
-      ]),
-    ),
+    status: _statusUnion,
     from: t.Optional(t.String({ format: "date-time" })),
     to: t.Optional(t.String({ format: "date-time" })),
   });
@@ -27,6 +29,7 @@ export namespace AppointmentModel {
   });
   export type cancelBody = typeof cancelBody.static;
 
+  // shared by clinician and patient reschedule routes
   export const rescheduleBody = t.Object({
     new_slot_id: t.String(),
   });
@@ -46,19 +49,11 @@ export namespace AppointmentModel {
   export type bookBody = typeof bookBody.static;
 
   export const patientListQuery = t.Object({
-    status: t.Optional(
-      t.Union([
-        t.Literal("PENDING"),
-        t.Literal("CONFIRMED"),
-        t.Literal("CANCELLED"),
-        t.Literal("COMPLETED"),
-        t.Literal("NO_SHOW"),
-      ]),
-    ),
+    status: _statusUnion,
     from: t.Optional(t.String({ format: "date-time" })),
     to: t.Optional(t.String({ format: "date-time" })),
-    page: t.Optional(t.Number({ minimum: 1, default: 1 })),
-    per_page: t.Optional(t.Number({ minimum: 1, maximum: 100, default: 10 })),
+    page: t.Optional(t.Numeric({ minimum: 1, default: 1 })),
+    per_page: t.Optional(t.Numeric({ minimum: 1, maximum: 100, default: 10 })),
   });
   export type patientListQuery = typeof patientListQuery.static;
 
@@ -66,9 +61,4 @@ export namespace AppointmentModel {
     reason: t.String({ minLength: 1 }),
   });
   export type patientCancelBody = typeof patientCancelBody.static;
-
-  export const patientRescheduleBody = t.Object({
-    new_slot_id: t.String(),
-  });
-  export type patientRescheduleBody = typeof patientRescheduleBody.static;
 }
