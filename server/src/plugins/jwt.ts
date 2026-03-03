@@ -7,6 +7,30 @@ if (!JWT_CONFIG.secret || !JWT_CONFIG.refreshSecret) {
   throw new Error("JWT secrets must be defined in environment variables");
 }
 
+type JwtVerifier = { verify: (token: string) => Promise<unknown> };
+
+async function verifyToken(
+  jwtInstance: JwtVerifier,
+  token: string,
+  source: "bearer" | "cookie",
+): Promise<Record<string, unknown> | null> {
+  let payload: unknown = null;
+  try {
+    payload = await jwtInstance.verify(token);
+  } catch (error) {
+    console.warn("JWT: verification error", {
+      source,
+      message: error instanceof Error ? error.message : String(error),
+    });
+    return null;
+  }
+  if (!payload || typeof payload !== "object") {
+    console.warn("JWT: verification failed", { source });
+    return null;
+  }
+  return payload as Record<string, unknown>;
+}
+
 export const jwtPlugin = new Elysia({ name: "jwt-plugin" })
   .use(cookie())
   .use(
@@ -34,34 +58,14 @@ export const jwtPlugin = new Elysia({ name: "jwt-plugin" })
     const sessionToken =
       typeof session?.value === "string" ? session.value : null;
 
-    const verify = async (token: string, source: "bearer" | "cookie") => {
-      let payload: unknown = null;
-      try {
-        payload = await jwt.verify(token);
-      } catch (error) {
-        console.warn("JWT: verification error", {
-          source,
-          message: error instanceof Error ? error.message : String(error),
-        });
-        return null;
-      }
-      if (!payload || typeof payload !== "object") {
-        console.warn("JWT: verification failed", { source });
-        return null;
-      }
-      return payload as Record<string, unknown>;
-    };
-
     let data: Record<string, unknown> | null = null;
     if (bearerToken) {
-      data = await verify(bearerToken, "bearer");
+      data = await verifyToken(jwt, bearerToken, "bearer");
     }
     if (!data && sessionToken && sessionToken !== bearerToken) {
-      data = await verify(sessionToken, "cookie");
+      data = await verifyToken(jwt, sessionToken, "cookie");
     }
-    if (!data) {
-      return { auth: null };
-    }
+    if (!data) return { auth: null };
 
     if (
       typeof data.userId !== "string" ||
@@ -92,7 +96,10 @@ export const jwtPlugin = new Elysia({ name: "jwt-plugin" })
     },
     hasRole: (roles: string[]) => ({
       beforeHandle({ auth }) {
-        if (!roles.includes(auth!.role)) {
+        if (!auth) {
+          return status(401, "Unauthorized");
+        }
+        if (!roles.includes(auth.role)) {
           return status(403, "Forbidden");
         }
       },

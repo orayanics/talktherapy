@@ -1,20 +1,5 @@
 import { prisma } from "prisma/db";
-import { JWT_CONFIG } from "@/utils/jwt";
-
-// consistent refresh time from jwt config
-function parseExpiryMs(expiry: string): number {
-  const match = expiry.match(/^(\d+)([smhd])$/);
-  if (!match) return 7 * 24 * 60 * 60 * 1000;
-  const value = parseInt(match[1], 10);
-  const unit = match[2];
-  const multipliers: Record<string, number> = {
-    s: 1_000,
-    m: 60_000,
-    h: 3_600_000,
-    d: 86_400_000,
-  };
-  return value * multipliers[unit];
-}
+import { JWT_CONFIG, parseExpiryMs } from "@/utils/jwt";
 
 const REFRESH_TOKEN_TTL_MS = parseExpiryMs(JWT_CONFIG.refreshExpiry as string);
 
