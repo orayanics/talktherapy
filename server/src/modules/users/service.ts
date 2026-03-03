@@ -2,6 +2,28 @@ import { status } from "elysia";
 import { prisma } from "prisma/db";
 import { Prisma } from "prisma/generated/browser";
 
+// prisma returns date object however in our api schema it is defined as string
+function serializeUser<
+  T extends { created_at: Date; updated_at: Date; deleted_at: Date | null },
+>(user: T) {
+  return {
+    ...user,
+    created_at: user.created_at.toISOString(),
+    updated_at: user.updated_at.toISOString(),
+    deleted_at: user.deleted_at?.toISOString() ?? null,
+  };
+}
+
+// return format result for groupBy count
+function formatStatusCount(
+  rows: { account_status: string; _count: { account_status: number } }[],
+) {
+  return rows.map((row) => ({
+    account_status: row.account_status,
+    count: row._count.account_status,
+  }));
+}
+
 export abstract class Users {
   static async getAllUsers(
     role: string,
@@ -19,13 +41,13 @@ export abstract class Users {
       account_role,
       page = 1,
       perPage = 10,
-    } = params || {};
+    } = params ?? {};
+
     const where: Prisma.UserWhereInput = {
-      // admins can't see other admins or sudo
+      // admins cannot see other admins or sudo accounts
       ...(role === "admin" && {
         NOT: { account_role: { in: ["admin", "sudo"] } },
       }),
-      // search across name and email
       ...(search && {
         OR: [{ name: { contains: search } }, { email: { contains: search } }],
       }),
@@ -47,7 +69,7 @@ export abstract class Users {
     const last_page = Math.ceil(total / perPage);
 
     return {
-      data: users,
+      data: users.map(serializeUser),
       meta: {
         total,
         page,
@@ -60,95 +82,53 @@ export abstract class Users {
   }
 
   static async getUserById(id: string) {
-    const where: Prisma.UserWhereUniqueInput = { id };
     const user = await prisma.user.findUnique({
-      where: where,
+      where: { id },
       omit: { password: true },
     });
     if (!user) {
       throw status(404, "User not found");
     }
-    return user;
+    return serializeUser(user);
   }
 
   static async getUserCounts() {
-    // get total (no sudo), patients, clinicians, admins
-    // get each account status count: active, pending, suspended, deactivated
-    const total = await prisma.user.count({
-      where: {
-        account_role: {
-          not: "sudo",
-        },
-      },
-    });
-    const patients = await prisma.user.count({
-      where: {
-        account_role: "patient",
-      },
-    });
-    // count patients per status
-    const patientStatusCount = await prisma.user.groupBy({
-      by: ["account_status"],
-      where: {
-        account_role: "patient",
-      },
-      _count: {
-        account_status: true,
-      },
-    });
-    const formattedPatientStatusCount = patientStatusCount.map((item) => ({
-      account_status: item.account_status,
-      count: item._count.account_status,
-    }));
+    const countByRole = (role: string) =>
+      prisma.user.count({ where: { account_role: role } });
 
-    const clinicians = await prisma.user.count({
-      where: {
-        account_role: "clinician",
-      },
-    });
-    const cliniciansStatusCount = await prisma.user.groupBy({
-      by: ["account_status"],
-      where: {
-        account_role: "clinician",
-      },
-      _count: {
-        account_status: true,
-      },
-    });
-    const formattedCliniciansStatusCount = cliniciansStatusCount.map(
-      (item) => ({
-        account_status: item.account_status,
-        count: item._count.account_status,
-      }),
-    );
+    const statusByRole = (role: string) =>
+      prisma.user.groupBy({
+        by: ["account_status"],
+        where: { account_role: role },
+        _count: { account_status: true },
+      });
 
-    const admins = await prisma.user.count({
-      where: {
-        account_role: "admin",
-      },
-    });
-    const adminStatusCount = await prisma.user.groupBy({
-      by: ["account_status"],
-      where: {
-        account_role: "admin",
-      },
-      _count: {
-        account_status: true,
-      },
-    });
-    const formattedAdminStatusCount = adminStatusCount.map((item) => ({
-      account_status: item.account_status,
-      count: item._count.account_status,
-    }));
+    const [
+      total,
+      patients,
+      clinicians,
+      admins,
+      patientStatusRows,
+      clinicianStatusRows,
+      adminStatusRows,
+    ] = await Promise.all([
+      prisma.user.count({ where: { account_role: { not: "sudo" } } }),
+      countByRole("patient"),
+      countByRole("clinician"),
+      countByRole("admin"),
+      statusByRole("patient"),
+      statusByRole("clinician"),
+      statusByRole("admin"),
+    ]);
 
     return {
       total,
       patients,
       clinicians,
       admins,
-      patientStatusCount: formattedPatientStatusCount,
-      clinicianStatusCount: formattedCliniciansStatusCount,
-      adminStatusCount: formattedAdminStatusCount,
+      patientStatusCount: formatStatusCount(patientStatusRows),
+      clinicianStatusCount: formatStatusCount(clinicianStatusRows),
+      adminStatusCount: formatStatusCount(adminStatusRows),
     };
   }
 }

@@ -4,7 +4,7 @@ import { jwtPlugin } from "@/plugins/jwt";
 
 import { authModule } from "@/modules/auth";
 import { publicModule } from "@/modules/public";
-import { users } from "@/modules/users";
+import { usersModule } from "@/modules/users";
 import { schedulingModule } from "./modules/scheduling";
 import { contentModule } from "./modules/content";
 
@@ -80,7 +80,7 @@ export const app = new Elysia()
       .use(jwtPlugin)
       .use(authModule)
       .use(publicModule)
-      .use(users)
+      .use(usersModule)
       .use(schedulingModule)
       .use(contentModule),
   )
