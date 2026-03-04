@@ -106,7 +106,7 @@ export namespace AuthModel {
   export type verifyOtpInvalid = typeof verifyOtpInvalid.static;
 
   export const resendOtpBody = t.Object({
-    email: EmailField,
+    id: t.String({ minLength: 1, error: "User ID is required" }),
   });
   export type resendOtpBody = typeof resendOtpBody.static;
 
@@ -144,4 +144,40 @@ export namespace AuthModel {
 
   export const accountPending = t.Literal("Account is pending activation");
   export type accountPending = typeof accountPending.static;
+
+  export const deactivateBody = t.Object({
+    id: t.String({ minLength: 1, error: "User ID is required" }),
+  });
+
+  export type deactivateBody = typeof deactivateBody.static;
+
+  export const deactivateInvalid = t.Literal(
+    "Account is not valid for deactivation",
+  );
+  export type deactivateInvalid = typeof deactivateInvalid.static;
+
+  export const reactivateBody = t.Object({
+    id: t.String({ minLength: 1, error: "User ID is required" }),
+  });
+  export type reactivateBody = typeof reactivateBody.static;
+
+  export const reactivateInvalid = t.Literal(
+    "Account is not valid for reactivation",
+  );
+  export type reactivateInvalid = typeof reactivateInvalid.static;
+
+  export const suspendBody = t.Object({
+    id: t.String({ minLength: 1, error: "User ID is required" }),
+  });
+  export type suspendBody = typeof suspendBody.static;
+
+  export const suspendInvalid = t.Literal(
+    "Account is not valid for suspension",
+  );
+  export type suspendInvalid = typeof suspendInvalid.static;
+
+  export const accountInactive = t.Literal(
+    "Account is not active. Contact support for assistance",
+  );
+  export type accountInactive = typeof accountInactive.static;
 }

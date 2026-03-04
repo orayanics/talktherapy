@@ -1,4 +1,9 @@
-import { Outlet, createFileRoute } from '@tanstack/react-router'
+import {
+  Outlet,
+  createFileRoute,
+  isRedirect,
+  redirect,
+} from '@tanstack/react-router'
 import type { UserType } from '~/models/user/user'
 import { sessionQueryOptions } from '~/api/auth'
 
@@ -7,18 +12,32 @@ import Sidebar from '~/components/Sidebar/Sidebar'
 
 export const Route = createFileRoute('/_private')({
   ssr: false,
+  beforeLoad: () => {
+    if (!localStorage.getItem('talktherapy_session')) {
+      throw redirect({ to: '/login' })
+    }
+  },
   loader: async ({ context: { queryClient } }) => {
     try {
       const session = await queryClient.ensureQueryData(sessionQueryOptions)
 
-      if (!session) throw Route.redirect({ to: '/login' })
+      if (!session || session.account_status !== 'active') {
+        queryClient.clear()
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('talktherapy_session')
+        }
+        throw redirect({ to: '/login' })
+      }
 
       return session
     } catch (error: unknown) {
-      console.error('Error loading session data:', error)
-      throw Route.redirect({
-        to: '/login',
-      })
+      if (isRedirect(error)) throw error
+
+      queryClient.clear()
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('talktherapy_session')
+      }
+      throw redirect({ to: '/login' })
     }
   },
   component: RouteComponent,
@@ -27,6 +46,7 @@ export const Route = createFileRoute('/_private')({
 function RouteComponent() {
   const session = Route.useLoaderData()
   const { account_role } = session
+
   return (
     <SessionProvider value={session}>
       <div className="flex bg-white">

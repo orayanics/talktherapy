@@ -14,6 +14,7 @@ import LoaderTable from '~/components/Loader/LoaderTable'
 import SkeletonError from '~/components/Skeleton/SkeletonError'
 import SkeletonNull from '~/components/Skeleton/SkeletonNull'
 import InputMultiselect from '~/components/Input/InputMultiselect'
+import { useAuthGuard } from '~/hooks/useAuthGuard'
 
 export default function ContentOverview({
   search,
@@ -57,6 +58,9 @@ export default function ContentOverview({
     })
   }
 
+  const { can } = useAuthGuard()
+  const isAllowedAction = can('content:create')
+
   return (
     <>
       <PageTitle
@@ -96,9 +100,11 @@ export default function ContentOverview({
               </button>
             </div>
 
-            <Link to="/content/create" className="btn btn-primary">
-              Add Content
-            </Link>
+            {isAllowedAction && (
+              <Link to="/content/create" className="btn btn-primary">
+                Add Content
+              </Link>
+            )}
           </div>
 
           <Table isLoading={isLoading} isError={isError} data={data} />

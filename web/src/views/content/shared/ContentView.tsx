@@ -94,6 +94,8 @@ const AdminContent = (props: AdminContentProps) => {
   const { title, name, description, label, tags, updated_at, contentId } = props
   const { handleSubmit, isLoading, errors } = useDeleteContent({ contentId })
   const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const { canAny } = useAuthGuard()
+  const isAllowedAction = canAny(['content:update', 'content:delete'])
 
   return (
     <>
@@ -113,24 +115,26 @@ const AdminContent = (props: AdminContentProps) => {
           <ContentRow label="Last Updated" value={updated_at.slice(0, 10)} />
         </div>
 
-        <div className="flex flex-col gap-2">
-          <Link
-            to="/content/$contentId/edit"
-            params={{ contentId }}
-            className="btn btn-soft btn-primary"
-          >
-            Edit
-          </Link>
-          <button
-            className="btn btn-soft btn-error"
-            onClick={() => setShowDeleteModal(true)}
-          >
-            Delete
-          </button>
-        </div>
+        {isAllowedAction && (
+          <div className="flex flex-col gap-2">
+            <Link
+              to="/content/$contentId/edit"
+              params={{ contentId }}
+              className="btn btn-soft btn-primary"
+            >
+              Edit
+            </Link>
+            <button
+              className="btn btn-soft btn-error"
+              onClick={() => setShowDeleteModal(true)}
+            >
+              Delete
+            </button>
+          </div>
+        )}
       </GridItem>
 
-      {showDeleteModal && (
+      {showDeleteModal && isAllowedAction && (
         <ModalConfirm
           title="Delete Content"
           description="Are you sure you want to delete this content? This action cannot be undone."

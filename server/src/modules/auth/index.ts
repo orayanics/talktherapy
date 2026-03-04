@@ -181,17 +181,45 @@ export const authModule = new Elysia({ prefix: "/auth" })
   // PROTECTED ROUTES: sudo only
   .guard({ isAuth: true, hasRole: ["sudo"] }, (app) =>
     // POST: /auth/signup/admin
-    app.post(
-      "/signup/admin",
-      async ({ body, auth }) => Auth.signUpAdmin(body, auth!.userId),
-      {
-        body: AuthModel.signUpAdminBody,
+    app
+      .post(
+        "/signup/admin",
+        async ({ body, auth }) => Auth.signUpAdmin(body, auth!.userId),
+        {
+          body: AuthModel.signUpAdminBody,
+          response: {
+            200: AuthModel.MessageResponse,
+            400: AuthModel.InvalidInput,
+          },
+        },
+      )
+      // POST: /auth/deactivate
+      .post("/deactivate", async ({ body }) => Auth.deactivateAccount(body), {
+        body: AuthModel.deactivateBody,
         response: {
           200: AuthModel.MessageResponse,
           400: AuthModel.InvalidInput,
+          403: AuthModel.deactivateInvalid,
         },
-      },
-    ),
+      })
+      // POST: /auth/reactivate
+      .post("/reactivate", async ({ body }) => Auth.reactivateAccount(body), {
+        body: AuthModel.deactivateBody,
+        response: {
+          200: AuthModel.MessageResponse,
+          400: AuthModel.InvalidInput,
+          403: AuthModel.deactivateInvalid,
+        },
+      })
+      // POST: /auth/suspend
+      .post("/suspend", async ({ body }) => Auth.suspendAccount(body), {
+        body: AuthModel.suspendBody,
+        response: {
+          200: AuthModel.MessageResponse,
+          400: AuthModel.InvalidInput,
+          403: AuthModel.suspendInvalid,
+        },
+      }),
   )
   // PROTECTED ROUTES: any auth user
   .guard({ isAuth: true }, (app) =>

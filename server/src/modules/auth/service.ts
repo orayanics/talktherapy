@@ -34,6 +34,17 @@ export abstract class Auth {
     }
 
     if (user.account_status !== "active") {
+      // if suspended or deactivated
+      if (
+        user.account_status === "suspended" ||
+        user.account_status === "deactivated"
+      ) {
+        throw status(
+          403,
+          "Account is not active. Contact support for assistance" satisfies AuthModel.accountInactive,
+        );
+      }
+
       throw status(
         403,
         "Account is pending activation" satisfies AuthModel.accountPending,
@@ -204,7 +215,7 @@ export abstract class Auth {
 
   static async resendOtp(data: AuthModel.resendOtpBody) {
     const user = await prisma.user.findUnique({
-      where: { email: data.email },
+      where: { id: data.id },
       select: {
         id: true,
         email: true,
@@ -314,6 +325,88 @@ export abstract class Auth {
     }
 
     return { message: "Account activated successfully." };
+  }
+
+  static async deactivateAccount(data: AuthModel.deactivateBody) {
+    const user = await prisma.user.findUnique({
+      where: { id: data.id },
+      select: { id: true, account_status: true, account_role: true },
+    });
+
+    // Deactivation is only allowed for account status: active
+    if (!user || user.account_status !== "active") {
+      throw status(
+        400,
+        "Account is not valid for deactivation" satisfies AuthModel.deactivateInvalid,
+      );
+    }
+
+    await prisma.$transaction([
+      prisma.user.update({
+        where: { id: user.id },
+        data: { account_status: "deactivated" },
+      }),
+      prisma.refreshToken.updateMany({
+        where: { user_id: user.id, revoked_at: null },
+        data: { revoked_at: new Date() },
+      }),
+    ]);
+
+    return { message: "Account deactivated successfully." };
+  }
+
+  // Reactivation is only allowed for account status: deactivated or suspended
+  static async reactivateAccount(data: AuthModel.reactivateBody) {
+    const user = await prisma.user.findUnique({
+      where: { id: data.id },
+      select: { id: true, account_status: true, account_role: true },
+    });
+
+    if (
+      !user ||
+      (user.account_status !== "deactivated" &&
+        user.account_status !== "suspended")
+    ) {
+      throw status(
+        400,
+        "Account is not valid for reactivation" satisfies AuthModel.reactivateInvalid,
+      );
+    }
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { account_status: "active" },
+    });
+
+    return { message: "Account reactivated successfully." };
+  }
+
+  static async suspendAccount(data: AuthModel.suspendBody) {
+    const user = await prisma.user.findUnique({
+      where: { id: data.id },
+      select: { id: true, account_status: true, account_role: true },
+    });
+
+    // Suspension is only allowed for account status: active
+    if (!user || user.account_status !== "active") {
+      throw status(
+        400,
+        "Account is not valid for suspension" satisfies AuthModel.suspendInvalid,
+      );
+    }
+
+    await prisma.$transaction([
+      prisma.user.update({
+        where: { id: user.id },
+        data: { account_status: "suspended" },
+      }),
+      prisma.refreshToken.updateMany({
+        where: { user_id: user.id, revoked_at: null },
+        data: { revoked_at: new Date() },
+      }),
+    ]);
+
+    return { message: "Account suspended successfully." };
   }
 
   static async getSession(payload: JwtPayload) {

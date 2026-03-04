@@ -9,8 +9,9 @@ export type { ContentItem }
 
 export default function ContentTable(props: { items: Array<ContentItem> }) {
   const { items } = props
-  const { is } = useAuthGuard()
+  const { is, can } = useAuthGuard()
   const isAdmin = is('admin')
+  const isAllowedAction = can('content:update')
 
   return (
     <div className="bg-white">
@@ -47,7 +48,7 @@ export default function ContentTable(props: { items: Array<ContentItem> }) {
                   <p className="text-xs text-gray-400">
                     {author.name ?? author.email}
                   </p>
-                  {isAdmin && (
+                  {isAdmin && isAllowedAction && (
                     <div className="flex gap-2 mt-1">
                       <Link
                         className="btn btn-primary btn-xs"

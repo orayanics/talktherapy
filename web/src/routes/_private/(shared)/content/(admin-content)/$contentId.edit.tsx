@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 
 import PageTitle from '~/components/Page/PageTitle'
@@ -7,6 +7,7 @@ import SkeletonError from '~/components/Skeleton/SkeletonError'
 
 import ContentMediaInfoEdit from '~/modules/content/ContentMediaInfoEdit'
 import { contentDetailQueryOptions } from '~/api/content'
+import { useAuthGuard } from '~/hooks/useAuthGuard'
 
 export const Route = createFileRoute(
   '/_private/(shared)/content/(admin-content)/$contentId/edit',
@@ -15,6 +16,15 @@ export const Route = createFileRoute(
 })
 
 function RouteComponent() {
+  const { can } = useAuthGuard()
+  const isAllowedAction = can('content:update')
+
+  if (!isAllowedAction) {
+    const navigate = useNavigate()
+    navigate({ to: '/unauthorized' })
+    return null
+  }
+
   const { contentId } = Route.useParams()
   const { data, isLoading, isError } = useQuery(
     contentDetailQueryOptions(contentId),

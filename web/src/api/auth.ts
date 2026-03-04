@@ -20,6 +20,7 @@ import { api } from '~/api/axios'
 import {
   LOGIN,
   LOGOUT,
+  OTP,
   PASSWORD_UPDATE,
   PROFILE_UPDATE,
   REGISTRATION_PATIENT,
@@ -211,10 +212,103 @@ export const useVerifyOtp = () =>
     },
   })
 
-export const useResendOtp = () =>
-  useMutation({
-    mutationFn: async (payload: { email: string }) => {
+export const useResendAccOtp = () => {
+  const navigate = useNavigate()
+  const queryClient = useQueryClient()
+  const { showAlert } = useAlert()
+
+  return useMutation({
+    mutationFn: async (payload: { id: string }) => {
       const { data } = await api.post('/auth/resend-otp', payload)
       return data
     },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: ['users', 'session'],
+      })
+      showAlert(OTP.resend.success, 'success')
+      navigate({ to: '.', replace: true })
+    },
+    onError: (error) => {
+      if (isAxiosError(error)) {
+        console.error('Failed to resend OTP:', error.response?.data)
+      }
+      showAlert(OTP.resend.error, 'error')
+    },
   })
+}
+
+export const useDeactivateAccount = () => {
+  const navigate = useNavigate()
+  const queryClient = useQueryClient()
+  const { showAlert } = useAlert()
+
+  return useMutation({
+    mutationFn: async (payload: { id: string }) => {
+      await api.post('/auth/deactivate', payload)
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: ['users', 'session'],
+      })
+      showAlert('Account deactivated successfully', 'success')
+      navigate({ to: '.', replace: true })
+    },
+    onError: (error) => {
+      if (isAxiosError(error)) {
+        console.error('Account deactivation failed:', error.response?.data)
+      }
+      showAlert('Failed to deactivate account', 'error')
+    },
+  })
+}
+
+export const useReactivateAccount = () => {
+  const navigate = useNavigate()
+  const queryClient = useQueryClient()
+  const { showAlert } = useAlert()
+
+  return useMutation({
+    mutationFn: async (payload: { id: string }) => {
+      await api.post('/auth/reactivate', payload)
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: ['users', 'session'],
+      })
+      showAlert('Account reactivated successfully', 'success')
+      navigate({ to: '.', replace: true })
+    },
+    onError: (error) => {
+      if (isAxiosError(error)) {
+        console.error('Account reactivation failed:', error.response?.data)
+      }
+      showAlert('Failed to reactivate account', 'error')
+    },
+  })
+}
+
+export const useSuspendAccount = () => {
+  const navigate = useNavigate()
+  const queryClient = useQueryClient()
+  const { showAlert } = useAlert()
+
+  return useMutation({
+    mutationFn: async (payload: { id: string }) => {
+      await api.post('/auth/suspend', payload)
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: ['users', 'session'],
+      })
+      showAlert('Account suspended successfully', 'success')
+      navigate({ to: '.', replace: true })
+    },
+    onError: (error) => {
+      if (isAxiosError(error)) {
+        console.error('Account suspension failed:', error.response?.data)
+      }
+      showAlert('Failed to suspend account', 'error')
+    },
+  })
+}

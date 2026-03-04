@@ -3,7 +3,7 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router'
 
 import Markdown from 'react-markdown'
 import rehypeRaw from 'rehype-raw'
-import type { ContentFormState } from '~/modules/content/ContentMediaCreate'
+import type { ContentFormState } from '~/models/content'
 
 import Grid from '~/components/Page/Grid'
 import GridItem from '~/components/Page/GridItem'

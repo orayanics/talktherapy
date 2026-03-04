@@ -128,8 +128,9 @@ function Table(props: UsersTableProps) {
   const [isClinicianModalOpen, setClinicianModalOpen] = useState(false)
   const [isAdminModalOpen, setAdminModalOpen] = useState(false)
 
-  const { is } = useAuthGuard()
+  const { is, can } = useAuthGuard()
   const isSudo = is('sudo')
+  const isAllowedAction = can('users:create')
 
   const { data, isLoading, error } = useQuery(
     usersQueryOptions({
@@ -195,25 +196,32 @@ function Table(props: UsersTableProps) {
           </button>
         </div>
 
-        <InputDropdown
-          label="Add User"
-          className="flex flex-col gap-2 lg:w-auto w-full"
-          btnClassName="lg:w-auto w-full btn-primary"
-        >
-          <button className="btn" onClick={() => setClinicianModalOpen(true)}>
-            Clinician
-          </button>
-          {isSudo && (
-            <button className="btn" onClick={() => setAdminModalOpen(true)}>
-              Admin
-            </button>
-          )}
-        </InputDropdown>
+        {isAllowedAction && (
+          <>
+            <InputDropdown
+              label="Add User"
+              className="flex flex-col gap-2 lg:w-auto w-full"
+              btnClassName="lg:w-auto w-full btn-primary"
+            >
+              <button
+                className="btn"
+                onClick={() => setClinicianModalOpen(true)}
+              >
+                Clinician
+              </button>
+              {isSudo && (
+                <button className="btn" onClick={() => setAdminModalOpen(true)}>
+                  Admin
+                </button>
+              )}
+            </InputDropdown>
 
-        <UserAddClinician
-          isOpen={isClinicianModalOpen}
-          onClose={() => setClinicianModalOpen(false)}
-        />
+            <UserAddClinician
+              isOpen={isClinicianModalOpen}
+              onClose={() => setClinicianModalOpen(false)}
+            />
+          </>
+        )}
         {isSudo && (
           <UserAddAdmin
             isOpen={isAdminModalOpen}

@@ -15,6 +15,7 @@ export function hasRole(
 
 export function hasPermission(user: UserResponse, permission: string): boolean {
   if (user.account_role === 'sudo') return true
+  if (user.account_status !== 'active') return false
   return user.account_permissions?.includes(permission) ?? false
 }
 

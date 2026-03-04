@@ -1,4 +1,4 @@
-import type { AccountRole } from '~/utils/auth-guard'
+import type { AccountRole } from '~/models/system'
 import { useSession } from '~/context/SessionContext'
 import {
   hasAllPermissions,
