@@ -2,7 +2,7 @@ import { Link } from '@tanstack/react-router'
 import type {
   ServerAppointmentStatus,
   SlotAppointmentEvent,
-} from '~/models/schedule'
+} from '~/models/booking'
 import type {
   MyAppointmentListProps,
   MyAppointmentRow,

@@ -1,4 +1,4 @@
-import type { AccountRole } from '~/models/system'
+import type { ACCOUNT_ROLE } from '~/models/account'
 import { useSession } from '~/context/SessionContext'
 import {
   hasAllPermissions,
@@ -17,6 +17,6 @@ export function useAuthGuard() {
       hasAllPermissions(session, permissions),
     canAny: (permissions: Array<string>) =>
       hasAnyPermission(session, permissions),
-    is: (...roles: Array<AccountRole>) => hasRole(session, ...roles),
+    is: (...roles: Array<ACCOUNT_ROLE>) => hasRole(session, ...roles),
   }
 }

@@ -1,9 +1,9 @@
 import { useEffect } from 'react'
 import { FaCheck, FaExclamation } from 'react-icons/fa'
-import type { AlertToastProps, AlertType } from '~/models/alert'
+import type { ALERT_TYPE, AlertToastProps } from '~/models/alert'
 
 const STYLES: Record<
-  AlertType,
+  ALERT_TYPE,
   { container: string; icon: string; closeBtn: string }
 > = {
   success: {
@@ -28,7 +28,7 @@ const STYLES: Record<
   },
 }
 
-const ICONS: Record<AlertType, React.ReactNode> = {
+const ICONS: Record<ALERT_TYPE, React.ReactNode> = {
   success: <FaCheck />,
   error: <FaExclamation />,
   info: <FaExclamation />,

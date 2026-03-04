@@ -1,20 +1,20 @@
-export type AlertType = 'success' | 'error' | 'info' | 'warning'
+export type ALERT_TYPE = 'success' | 'error' | 'info' | 'warning'
 
 export interface AlertContextValue {
-  showAlert: (message: string, type: AlertType) => void
+  showAlert: (message: string, type: ALERT_TYPE) => void
   hideAlert: () => void
 }
 
 export interface AlertState {
   message: string
-  type: AlertType
+  type: ALERT_TYPE
   visible: boolean
   id: number
 }
 
 export interface AlertToastProps {
   message: string
-  type: AlertType
+  type: ALERT_TYPE
   visible: boolean
   onClose: () => void
   duration?: number

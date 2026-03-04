@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import type { ReferralMode } from '~/models/schedule'
+import type { ReferralMode } from '~/models/booking'
 import type { ModalBookAppointmentProps } from '~/models/components'
 import ModalBody from '~/components/Modal/ModalBody'
 import ModalHeader from '~/components/Modal/ModalHeader'

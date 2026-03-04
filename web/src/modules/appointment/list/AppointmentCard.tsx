@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import useBookAppointment from './useBookAppointment'
 import ModalBookAppointment from './ModalBookAppointment'
-import type { AvailableSlot } from '~/models/schedule'
+import type { AvailableSlot } from '~/models/booking'
 import type { AppointmentCardProps } from '~/models/components'
 import { getTime } from '~/utils/date'
 

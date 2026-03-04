@@ -7,11 +7,11 @@ import { isAxiosError } from 'axios'
 
 import type {
   ClinicianMyPatientParams,
-  ClinicianPatientDetailDto,
   ClinicianPatientDetailParams,
-  CreateSoapPayload,
-  SoapDto,
-} from '~/models/schedule'
+} from '~/models/params'
+import type { ClinicianPatientDetailDto, SoapDto } from '~/models/booking'
+import type { CreateSoapPayload } from '~/models/payloads'
+
 import { api } from '~/api/axios'
 import { SOAP } from '~/config/message'
 import { useAlert } from '~/context/AlertContext'

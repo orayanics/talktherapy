@@ -1,4 +1,4 @@
-import type { APPOINTMENT_STATUS } from '~/models/appointment'
+import type { APPOINTMENT_STATUS } from '~/models/booking'
 
 export const APPOINTMENT_STATUS_STYLES: Record<APPOINTMENT_STATUS, string> = {
   pending:

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link } from '@tanstack/react-router'
 import useDeleteSlot from './useDeleteSlot'
-import type { SlotDto } from '~/models/schedule'
+import type { SlotDto } from '~/models/booking'
 import type {
   ScheduleSlotItemProps,
   ScheduleSlotProps,

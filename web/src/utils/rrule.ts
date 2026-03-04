@@ -1,4 +1,4 @@
-import type { Freq } from '~/models/schedule'
+import type { Freq } from '~/models/booking'
 
 export const DAYS = [
   { label: 'Mon', value: 'MO' },

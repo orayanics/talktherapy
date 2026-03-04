@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { isAxiosError } from 'axios'
 import type React from 'react'
-import type { ActivateAccountPayload } from '~/models/credentials'
+import type { ActivateAccountPayload } from '~/models/payloads'
 import type { ParsedError } from '~/models/system'
 import { useActiveAccount, useVerifyOtp } from '~/api/auth'
 import { parseError } from '~/utils/errors'

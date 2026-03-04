@@ -5,9 +5,9 @@ import useAddSoap from './useAddSoap'
 import type {
   ClinicianPatientDetailAppointmentDto,
   ClinicianPatientDetailDto,
-  ClinicianPatientDetailParams,
   SoapDto,
-} from '~/models/schedule'
+} from '~/models/booking'
+import type { ClinicianPatientDetailParams } from '~/models/params'
 
 import {
   clinicianPatientDetailQuery,

@@ -5,7 +5,7 @@ import {
   useEffect,
   useState,
 } from 'react'
-import type { AlertContextValue, AlertState, AlertType } from '~/models/alert'
+import type { ALERT_TYPE, AlertContextValue, AlertState } from '~/models/alert'
 import { AlertToast } from '~/components/Alert/AlertToast'
 
 export const AlertContext = createContext<AlertContextValue | null>(null)
@@ -13,7 +13,7 @@ export const AlertContext = createContext<AlertContextValue | null>(null)
 // Module-level store for use outside the React tree (e.g. axios interceptors, queryFns)
 let _globalShowAlert: AlertContextValue['showAlert'] | null = null
 
-export const showAlertGlobal = (message: string, type: AlertType) => {
+export const showAlertGlobal = (message: string, type: ALERT_TYPE) => {
   _globalShowAlert?.(message, type)
 }
 
@@ -35,7 +35,7 @@ export const AlertProvider = ({ children }: { children: React.ReactNode }) => {
     setAlert((prev) => ({ ...prev, visible: false }))
   }, [])
 
-  const showAlert = useCallback((message: string, type: AlertType) => {
+  const showAlert = useCallback((message: string, type: ALERT_TYPE) => {
     setAlert((prev) => ({
       message,
       type,

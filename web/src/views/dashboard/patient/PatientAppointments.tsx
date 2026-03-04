@@ -1,4 +1,4 @@
-import type { APPOINTMENT_STATUS } from '~/models/appointment'
+import type { APPOINTMENT_STATUS } from '~/models/booking'
 
 import AppointmentStatusBadge from '~/components/Badge/AppointmentStatusBadge'
 

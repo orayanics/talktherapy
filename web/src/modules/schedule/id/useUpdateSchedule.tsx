@@ -4,11 +4,11 @@ import { isAxiosError } from 'axios'
 import type React from 'react'
 
 import type { ParsedError } from '~/models/system'
+import type { AvailabilityRuleWithSlots } from '~/models/booking'
 import type {
-  AvailabilityRuleWithSlots,
   CreateSchedulePayload,
   UpdateAvailabilityPayload,
-} from '~/models/schedule'
+} from '~/models/payloads'
 import { useUpdateScheduleId } from '~/api/scheduling'
 import { toISODateTime } from '~/utils/date'
 import { buildRRule, parseRRule } from '~/utils/rrule'

@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { isAxiosError } from 'axios'
 import type React from 'react'
 
-import type { UpdateUserPayload } from '~/models/credentials'
+import type { UpdateUserPayload } from '~/models/payloads'
 
 import type { ParsedError } from '~/models/system'
 import { useEditProfile } from '~/api/auth'

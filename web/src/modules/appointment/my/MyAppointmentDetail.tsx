@@ -1,6 +1,6 @@
 import ModalRescheduleAppointment from './ModalRescheduleAppointment'
 import useMyAppointmentActions from './useMyAppointmentActions'
-import type { ServerAppointmentStatus } from '~/models/schedule'
+import type { ServerAppointmentStatus } from '~/models/booking'
 import type { MyAppointmentDetailProps } from '~/models/components'
 import ModalCancelAppointment from '~/modules/appointment/detail/ModalCancelAppointment'
 import AppointmentEventHistory from '~/modules/appointment/detail/AppointmentEventHistory'

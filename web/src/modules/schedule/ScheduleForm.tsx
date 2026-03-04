@@ -1,6 +1,6 @@
 import { FaSpinner } from 'react-icons/fa'
 import useSchedule from './useSchedule'
-import type { Freq } from '~/models/schedule'
+import type { Freq } from '~/models/booking'
 import { DAYS } from '~/utils/rrule'
 import { fieldError, hasOnlyMessage } from '~/utils/errors'
 

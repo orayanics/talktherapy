@@ -4,16 +4,16 @@ import type { ContentFormState } from '~/models/content'
 import type {
   AvailabilityRuleWithSlots,
   AvailableSlot,
-  BookAppointmentPayload,
   PatientMyAppointmentDetailDto,
   PatientMyAppointmentDto,
   ServerAppointmentStatus,
   SlotAppointmentDto,
   SlotAppointmentEvent,
   SlotDto,
-} from '~/models/schedule'
-import type { APPOINTMENT_STATUS } from './appointment'
+} from '~/models/booking'
+import type { APPOINTMENT_STATUS } from './booking'
 import type { ACCOUNT_ROLE, ACCOUNT_STATUS } from './account'
+import type { BookAppointmentPayload } from './payloads'
 
 export interface StatusProps<
   T extends APPOINTMENT_STATUS | ACCOUNT_STATUS =

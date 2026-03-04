@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { isAxiosError } from 'axios'
 
-import type { LoginPayload } from '~/models/credentials'
+import type { LoginPayload } from '~/models/payloads'
 import type { ParsedError } from '~/models/system'
 
 import { useLogin as useLoginApi } from '~/api/auth'

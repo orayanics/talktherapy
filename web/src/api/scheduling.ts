@@ -9,10 +9,12 @@ import { format } from 'date-fns/format'
 
 import type {
   AvailabilityRulesParams,
-  CreateAvailabilityPayload,
   PatientAppointmentsQueryParams,
+} from '~/models/params'
+import type {
+  CreateAvailabilityPayload,
   UpdateAvailabilityPayload,
-} from '~/models/schedule'
+} from '~/models/payloads'
 
 import { api } from '~/api/axios'
 import { SCHEDULE } from '~/config/message'

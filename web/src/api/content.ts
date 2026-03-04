@@ -6,11 +6,11 @@ import {
 import { useNavigate } from '@tanstack/react-router'
 import { isAxiosError } from 'axios'
 
+import type { ContentListParams } from '~/models/params'
 import type {
-  ContentListParams,
   CreateContentPayload,
   UpdateContentPayload,
-} from '~/models/content'
+} from '~/models/payloads'
 
 import { api } from '~/api/axios'
 import { CONTENT } from '~/config/message'

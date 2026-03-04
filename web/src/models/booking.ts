@@ -1,19 +1,13 @@
+export type APPOINTMENT_STATUS =
+  | 'pending'
+  | 'confirmed'
+  | 'cancelled'
+  | 'completed'
+  | 'no_show'
+
 export type Freq = 'none' | 'DAILY' | 'WEEKLY' | 'MONTHLY'
 export type SlotStatus = 'AVAILABLE' | 'BOOKED' | 'BLOCKED' | 'CANCELLED'
 export type ReferralMode = 'link' | 'file'
-
-export interface AvailabilityRulesParams {
-  date?: Date
-  page?: number
-  perPage?: number
-}
-
-export interface PatientAppointmentsQueryParams {
-  date?: Date
-  diagnosis?: string
-  page?: number
-  perPage?: number
-}
 
 export interface SlotDto {
   id: string
@@ -54,43 +48,6 @@ export interface ScheduleRecurrenceProps {
   }
   date: string
   lastSlot: SlotDto
-}
-
-export interface CreateAvailabilityPayload {
-  starts_at: string
-  ends_at: string
-  recurrence_rule?: string
-  horizon_days?: number
-}
-
-export interface CreateSchedulePayload {
-  date: string
-  start_time: string
-  end_time: string
-  freq: Freq
-  selected_days: Array<string>
-  horizon_days: number
-}
-
-export interface UpdateAvailabilityPayload {
-  starts_at?: string
-  ends_at?: string
-  recurrence_rule?: string
-  is_active?: boolean
-  horizon_days?: number
-}
-
-export interface BookAppointmentPayload {
-  medical_diagnosis?: string
-  source_referral?: string
-  chief_complaint?: string
-  referral_url?: string
-}
-
-export interface MyAppointmentsParams {
-  status?: ServerAppointmentStatus
-  page?: number
-  perPage?: number
 }
 
 export interface PatientMyAppointmentDto {
@@ -193,12 +150,6 @@ export interface PatientMyAppointmentDetailDto {
   events: Array<SlotAppointmentEvent>
 }
 
-export interface ClinicianMyPatientParams {
-  search?: string
-  page?: number
-  perPage?: number
-}
-
 export interface ClinicianMyPatient {
   id: string
   user_id: string
@@ -219,13 +170,6 @@ export interface PaginationMeta {
 }
 
 // ─── Patient Detail ─────────────────────────────────────────────────────────
-
-export interface ClinicianPatientDetailParams {
-  from?: string
-  to?: string
-  page?: number
-  perPage?: number
-}
 
 export interface ClinicianPatientDetailAppointmentDto {
   id: string
@@ -265,14 +209,4 @@ export interface SoapDto {
   comments: string | null
   created_at: string
   updated_at: string
-}
-
-export interface CreateSoapPayload {
-  activity_plan: string
-  session_type: string
-  subjective_notes: string
-  objective_notes: string
-  assessment: string
-  recommendation: string
-  comments?: string
 }

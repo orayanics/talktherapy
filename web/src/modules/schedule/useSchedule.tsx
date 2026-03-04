@@ -1,9 +1,12 @@
 import { useState } from 'react'
 import { addMonths, differenceInDays } from 'date-fns'
 import { isAxiosError } from 'axios'
-import type React from 'react';
-import type { ParsedError } from '~/models/system';
-import type { CreateAvailabilityPayload, CreateSchedulePayload  } from '~/models/schedule'
+import type React from 'react'
+import type { ParsedError } from '~/models/system'
+import type {
+  CreateAvailabilityPayload,
+  CreateSchedulePayload,
+} from '~/models/payloads'
 import { useCreateSchedule } from '~/api/scheduling'
 import { toISODateTime } from '~/utils/date'
 import { buildRRule } from '~/utils/rrule'

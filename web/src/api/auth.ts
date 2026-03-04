@@ -13,7 +13,7 @@ import type {
   UpdatePasswordPayload,
   UpdateUserPayload,
   VerifyOtpPayload,
-} from '~/models/credentials'
+} from '~/models/payloads'
 
 import { api } from '~/api/axios'
 

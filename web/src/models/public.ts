@@ -1,4 +1,4 @@
-import type { ActivateAccountPayload } from './credentials'
+import type { ActivateAccountPayload } from './payloads'
 import type { ParsedError } from './system'
 
 export interface DiagnosisItem {

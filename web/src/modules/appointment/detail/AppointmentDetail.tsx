@@ -1,7 +1,7 @@
 import ModalCancelAppointment from './ModalCancelAppointment'
 import useAppointmentActions from './useAppointmentActions'
 import AppointmentEventHistory from './AppointmentEventHistory'
-import type { ServerAppointmentStatus } from '~/models/schedule'
+import type { ServerAppointmentStatus } from '~/models/booking'
 import type { AppointmentDetailProps } from '~/models/components'
 import ModalConfirm from '~/components/Modal/ModalConfirm'
 import { formatToLocalDate, getTime } from '~/utils/date'

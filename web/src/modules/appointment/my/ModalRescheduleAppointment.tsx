@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 
-import type { AvailableSlot } from '~/models/schedule'
+import type { AvailableSlot } from '~/models/booking'
 import type { ModalRescheduleAppointmentProps } from '~/models/components'
 import ModalBody from '~/components/Modal/ModalBody'
 import ModalHeader from '~/components/Modal/ModalHeader'

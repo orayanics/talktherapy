@@ -5,10 +5,8 @@ import {
 } from '@tanstack/react-query'
 import { isAxiosError } from 'axios'
 
-import type {
-  BookAppointmentPayload,
-  MyAppointmentsParams,
-} from '~/models/schedule'
+import type { MyAppointmentsParams } from '~/models/params'
+import type { BookAppointmentPayload } from '~/models/payloads'
 import { api } from '~/api/axios'
 import { APPOINTMENT } from '~/config/message'
 import { useAlert } from '~/context/AlertContext'

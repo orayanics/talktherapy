@@ -1,11 +1,4 @@
-export type UsersParams = {
-  search?: string
-  account_status?: Array<string>
-  account_role?: Array<string>
-  page?: number
-  perPage?: number
-}
-
+// Session User
 export interface SESSION_USER {
   id: string
   name: string
@@ -24,17 +17,11 @@ export interface SESSION_USER {
   diagnosis?: string
 }
 
-// ─── Error Types ─────────────────────────────────────────────────────────────
-
+// API Response Types
 export interface ParsedError {
   message: string
   errors?: Record<string, Array<string>>
 }
 
-// ─── Auth Types ───────────────────────────────────────────────────────────────
-
-export type AccountRole = SESSION_USER['account_role']
-
-// ─── Context Types ────────────────────────────────────────────────────────────
-
+// Context Types
 export interface SessionContextValue extends SESSION_USER {}

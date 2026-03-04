@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { isAxiosError } from 'axios'
 
-import type { AvailableSlot, BookAppointmentPayload } from '~/models/schedule'
+import type { AvailableSlot } from '~/models/booking'
+import type { BookAppointmentPayload } from '~/models/payloads'
 import type { ParsedError } from '~/models/system'
 import { parseError } from '~/utils/errors'
 import { useBookAppointmentSlot } from '~/api/appointments'

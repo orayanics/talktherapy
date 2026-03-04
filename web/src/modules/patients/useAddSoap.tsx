@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { isAxiosError } from 'axios'
 
 import type { ParsedError } from '~/models/system'
-import type { CreateSoapPayload } from '~/models/schedule'
+import type { CreateSoapPayload } from '~/models/payloads'
 import { useCreateSoap } from '~/api/clinician'
 import { parseError } from '~/utils/errors'
 

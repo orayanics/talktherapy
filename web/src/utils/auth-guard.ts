@@ -1,12 +1,13 @@
 // ~/lib/auth-guards.ts
 import { redirect } from '@tanstack/react-router'
-import type { AccountRole, SESSION_USER } from '~/models/system'
+import type { ACCOUNT_ROLE } from '~/models/account'
+import type { SESSION_USER } from '~/models/system'
 /**
  * sudo bypasses all role checks.
  */
 export function hasRole(
   user: SESSION_USER,
-  ...allowedRoles: Array<AccountRole>
+  ...allowedRoles: Array<ACCOUNT_ROLE>
 ): boolean {
   if (user.account_role === 'sudo') return true
   return allowedRoles.includes(user.account_role)
@@ -42,7 +43,7 @@ export function hasAnyPermission(
 // Example: requireRole(session, 'admin', 'clinician') - allows admins and clinicians
 export function requireRole(
   user: SESSION_USER,
-  ...allowedRoles: Array<AccountRole>
+  ...allowedRoles: Array<ACCOUNT_ROLE>
 ): SESSION_USER {
   if (!hasRole(user, ...allowedRoles)) {
     throw redirect({ to: '/unauthorized' })

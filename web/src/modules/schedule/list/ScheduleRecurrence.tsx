@@ -1,4 +1,4 @@
-import type { ScheduleRecurrenceProps } from '~/models/schedule'
+import type { ScheduleRecurrenceProps } from '~/models/booking'
 import { formatToLocalDate } from '~/utils/date'
 
 export default function ScheduleRecurrence(props: ScheduleRecurrenceProps) {
