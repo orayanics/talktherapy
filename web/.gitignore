@@ -16,6 +16,7 @@ yarn.lock
 /blob-report/
 /playwright/.cache/
 .vite/
+dist
 
 # local env files
 .env.local

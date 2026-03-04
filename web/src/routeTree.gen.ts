@@ -19,7 +19,6 @@ import { Route as PrivatesudoRouteRouteImport } from './routes/_private/(sudo)/r
 import { Route as PrivatesharedRouteRouteImport } from './routes/_private/(shared)/route'
 import { Route as PrivatepatientRouteRouteImport } from './routes/_private/(patient)/route'
 import { Route as PrivateclinicianRouteRouteImport } from './routes/_private/(clinician)/route'
-import { Route as PrivateadminRouteRouteImport } from './routes/_private/(admin)/route'
 import { Route as PrivateadmSharedRouteRouteImport } from './routes/_private/(adm-shared)/route'
 import { Route as PrivateProfileIndexRouteImport } from './routes/_private/profile.index'
 import { Route as PublicAuthRegisterRouteImport } from './routes/_public/_auth/register'
@@ -90,10 +89,6 @@ const PrivatepatientRouteRoute = PrivatepatientRouteRouteImport.update({
 } as any)
 const PrivateclinicianRouteRoute = PrivateclinicianRouteRouteImport.update({
   id: '/(clinician)',
-  getParentRoute: () => PrivateRouteRoute,
-} as any)
-const PrivateadminRouteRoute = PrivateadminRouteRouteImport.update({
-  id: '/(admin)',
   getParentRoute: () => PrivateRouteRoute,
 } as any)
 const PrivateadmSharedRouteRoute = PrivateadmSharedRouteRouteImport.update({
@@ -324,7 +319,6 @@ export interface FileRoutesById {
   '/_public': typeof PublicRouteRouteWithChildren
   '/unauthorized': typeof UnauthorizedRoute
   '/_private/(adm-shared)': typeof PrivateadmSharedRouteRouteWithChildren
-  '/_private/(admin)': typeof PrivateadminRouteRoute
   '/_private/(clinician)': typeof PrivateclinicianRouteRouteWithChildren
   '/_private/(patient)': typeof PrivatepatientRouteRouteWithChildren
   '/_private/(shared)': typeof PrivatesharedRouteRouteWithChildren
@@ -429,7 +423,6 @@ export interface FileRouteTypes {
     | '/_public'
     | '/unauthorized'
     | '/_private/(adm-shared)'
-    | '/_private/(admin)'
     | '/_private/(clinician)'
     | '/_private/(patient)'
     | '/_private/(shared)'
@@ -542,13 +535,6 @@ declare module '@tanstack/react-router' {
       path: ''
       fullPath: ''
       preLoaderRoute: typeof PrivateclinicianRouteRouteImport
-      parentRoute: typeof PrivateRouteRoute
-    }
-    '/_private/(admin)': {
-      id: '/_private/(admin)'
-      path: ''
-      fullPath: ''
-      preLoaderRoute: typeof PrivateadminRouteRouteImport
       parentRoute: typeof PrivateRouteRoute
     }
     '/_private/(adm-shared)': {
@@ -891,7 +877,6 @@ const PrivatesudoRouteRouteWithChildren =
 
 interface PrivateRouteRouteChildren {
   PrivateadmSharedRouteRoute: typeof PrivateadmSharedRouteRouteWithChildren
-  PrivateadminRouteRoute: typeof PrivateadminRouteRoute
   PrivateclinicianRouteRoute: typeof PrivateclinicianRouteRouteWithChildren
   PrivatepatientRouteRoute: typeof PrivatepatientRouteRouteWithChildren
   PrivatesharedRouteRoute: typeof PrivatesharedRouteRouteWithChildren
@@ -904,7 +889,6 @@ interface PrivateRouteRouteChildren {
 
 const PrivateRouteRouteChildren: PrivateRouteRouteChildren = {
   PrivateadmSharedRouteRoute: PrivateadmSharedRouteRouteWithChildren,
-  PrivateadminRouteRoute: PrivateadminRouteRoute,
   PrivateclinicianRouteRoute: PrivateclinicianRouteRouteWithChildren,
   PrivatepatientRouteRoute: PrivatepatientRouteRouteWithChildren,
   PrivatesharedRouteRoute: PrivatesharedRouteRouteWithChildren,

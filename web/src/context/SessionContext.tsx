@@ -1,4 +1,5 @@
 import { createContext, useContext } from 'react'
+import type { ReactNode } from 'react'
 import type { SessionContextValue } from '~/models/system'
 
 export const SessionContext = createContext<SessionContextValue | null>(null)
@@ -15,7 +16,7 @@ export const SessionProvider = ({
   children,
   value,
 }: {
-  children: React.ReactNode
+  children: ReactNode
   value: SessionContextValue
 }) => {
   return (

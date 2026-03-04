@@ -1,10 +1,10 @@
-import type { UserResponse } from '~/models/system'
+import type { SESSION_USER } from '~/models/system'
 import RoleBadge from '~/components/Badge/RoleBadge'
 import AccountStatusBadge from '~/components/Badge/AccountStatusBadge'
 
 import { formatToLocalDateTime } from '~/utils/date'
 
-export default function ProfileAccInfo(props: UserResponse) {
+export default function ProfileAccInfo(props: SESSION_USER) {
   const { account_role, account_status, created_at, diagnosis } = props
 
   return (

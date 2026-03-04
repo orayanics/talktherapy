@@ -22,7 +22,6 @@ export enum PermissionKey {
   SYSTEM_MAINTENANCE = 'system:maintenance',
 }
 
-// map permission keys to human readable labels
 export const PermissionLabels: Record<PermissionKey, string> = {
   [PermissionKey.USERS_CREATE]: 'Create Users',
   [PermissionKey.USERS_READ]: 'Read Users',

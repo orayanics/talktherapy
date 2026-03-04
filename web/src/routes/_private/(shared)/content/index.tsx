@@ -1,12 +1,15 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useQueries } from '@tanstack/react-query'
 
-import SharedContentOverview from '~/views/content/shared/ContentOverview'
+import ContentList from '~/modules/content/ContentList'
 
 import { normalizeSearchArray } from '~/utils/query'
 
 import { useGetPublicDiagnoses } from '~/api/public'
 import { contentListQueryOptions } from '~/api/content'
+import Grid from '~/components/Page/Grid'
+import GridItem from '~/components/Page/GridItem'
+import PageTitle from '~/components/Page/PageTitle'
 
 export const Route = createFileRoute('/_private/(shared)/content/')({
   validateSearch: (search: Record<string, unknown>) => {
@@ -43,18 +46,28 @@ function RouteComponent() {
 
   const isLoading = diagnosesQuery.isLoading || contentQuery.isLoading
   const isError = diagnosesQuery.isError || contentQuery.isError
-  const diagnoses = diagnosesQuery.data
+  const diagnoses = diagnosesQuery.data?.data
   const content = contentQuery.data
 
   return (
-    <SharedContentOverview
-      search={search}
-      isLoading={isLoading}
-      isError={isError}
-      data={{
-        diagnoses,
-        content,
-      }}
-    />
+    <>
+      <PageTitle
+        heading="Content Media"
+        subheading="View all available speech therapy exercises in the system."
+      />
+      <Grid cols={12} gap={6}>
+        <GridItem colSpan={12} className="flex flex-col gap-4">
+          <ContentList
+            search={search}
+            isLoading={isLoading}
+            isError={isError}
+            data={{
+              content,
+              diagnoses,
+            }}
+          />
+        </GridItem>
+      </Grid>
+    </>
   )
 }

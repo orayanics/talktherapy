@@ -1,8 +1,11 @@
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 
-import PatientClinicianOverview from '~/modules/patients/PatientClinicianOverview'
+import MyPatientList from '~/modules/patients/MyPatientList'
 import { clinicianMyPatientsQuery } from '~/api/clinician'
+import PageTitle from '~/components/Page/PageTitle'
+import GridItem from '~/components/Page/GridItem'
+import Grid from '~/components/Page/Grid'
 
 export const Route = createFileRoute('/_private/(clinician)/patients/')({
   validateSearch: (search: Record<string, unknown>) => {
@@ -30,13 +33,22 @@ function RouteComponent() {
     }),
   )
 
-  console.log(data)
   return (
-    <PatientClinicianOverview
-      search={search}
-      isLoading={isLoading}
-      isError={isError}
-      data={data}
-    />
+    <>
+      <PageTitle
+        heading="My Patients"
+        subheading="View all your handled patients in the system."
+      />
+      <Grid cols={12} gap={6}>
+        <GridItem colSpan={12} className="flex flex-col gap-4">
+          <MyPatientList
+            search={search}
+            isLoading={isLoading}
+            isError={isError}
+            data={data}
+          />
+        </GridItem>
+      </Grid>
+    </>
   )
 }

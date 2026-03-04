@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { isAxiosError } from 'axios'
 
-import type { PermissionKey } from '~/models/user/permissions'
-import type { ParsedError } from '~/models/system';
+import type { PermissionKey } from '~/models/permissions'
+import type { ParsedError } from '~/models/system'
 import { useAddAdmin, useAddClinician } from '~/api/users'
 import { parseError } from '~/utils/errors'
 

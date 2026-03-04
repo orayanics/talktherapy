@@ -4,7 +4,7 @@ import {
   isRedirect,
   redirect,
 } from '@tanstack/react-router'
-import type { UserType } from '~/models/user/user'
+import type { ACCOUNT_ROLE } from '~/models/account'
 import { sessionQueryOptions } from '~/api/auth'
 
 import { SessionProvider } from '~/context/SessionContext'
@@ -46,7 +46,7 @@ function RouteComponent() {
   return (
     <SessionProvider value={session}>
       <div className="flex bg-white">
-        <Sidebar role={account_role as UserType}>
+        <Sidebar role={account_role as ACCOUNT_ROLE}>
           <div className="w-full flex-1 overflow-auto min-h-screen p-4">
             <Outlet />
           </div>

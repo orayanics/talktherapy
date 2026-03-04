@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 
-import SharedContentView from '~/views/content/shared/ContentView'
+import ContentView from '~/modules/content/ContentView'
 
 export const Route = createFileRoute('/_private/(shared)/content/$contentId')({
   component: RouteComponent,
@@ -8,5 +8,5 @@ export const Route = createFileRoute('/_private/(shared)/content/$contentId')({
 
 function RouteComponent() {
   const { contentId } = Route.useParams()
-  return <SharedContentView contentId={contentId} />
+  return <ContentView contentId={contentId} />
 }

@@ -3,6 +3,8 @@ import useDeactivateUser from './useDeactivateUser'
 import useReactiveUser from './useReactiveUser'
 import useSuspendUser from './useSuspendUser'
 
+import type { SESSION_USER } from '~/models/system'
+
 import Grid from '~/components/Page/Grid'
 import GridItem from '~/components/Page/GridItem'
 
@@ -12,7 +14,7 @@ import ProfileAccInfo from '~/modules/profile/ProfileAccInfo'
 import ProfileUserInfo from '~/modules/profile/ProfileUserInfo'
 import { useAuthGuard } from '~/hooks/useAuthGuard'
 
-export default function UserOverviewAdmin({ data }: { data: any }) {
+export default function UserDetail({ data }: { data: SESSION_USER }) {
   const { id, account_status } = data
 
   const { handleSubmit: handleResend, isLoading: isResending } = useResendOtp({

@@ -32,13 +32,15 @@ export namespace UserModel {
   export type userInvalid = typeof userInvalid.static;
 
   export const userCounts = t.Object({
-    total: t.Number(),
-    patients: t.Number(),
-    clinicians: t.Number(),
-    admins: t.Number(),
-    patientStatusCount: t.Array(_statusCountItem),
-    clinicianStatusCount: t.Array(_statusCountItem),
-    adminStatusCount: t.Array(_statusCountItem),
+    data: t.Object({
+      total: t.Number(),
+      patients: t.Number(),
+      clinicians: t.Number(),
+      admins: t.Number(),
+      patientStatusCount: t.Array(_statusCountItem),
+      clinicianStatusCount: t.Array(_statusCountItem),
+      adminStatusCount: t.Array(_statusCountItem),
+    }),
   });
   export type userCounts = typeof userCounts.static;
 

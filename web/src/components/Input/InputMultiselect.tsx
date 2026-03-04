@@ -28,14 +28,14 @@ export default function InputMultiselect(props: InputMultiSelectProps) {
       >
         {options.map((option) => (
           <label
-            key={option.value as string}
+            key={option.value}
             className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 px-2 pt-1 pb-2 border-b last:border-b-0"
           >
             <input
               className="checkbox checkbox-sm rounded-md"
               type="checkbox"
-              checked={value.includes(option.value as string)}
-              onChange={() => toggleOption(option.value as string)}
+              checked={value.includes(String(option.value))}
+              onChange={() => toggleOption(String(option.value))}
             />
             <span>{option.label}</span>
           </label>

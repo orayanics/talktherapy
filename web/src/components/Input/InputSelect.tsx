@@ -22,7 +22,7 @@ export default function FilterDropdown<T>(props: FilterDropdownProps<T>) {
         {placeholder || 'Select an option'}
       </option>
       {options.map((option) => (
-        <option key={option.value as string} value={option.value as string}>
+        <option key={option.value} value={option.value}>
           {option.label}
         </option>
       ))}

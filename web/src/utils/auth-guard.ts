@@ -1,26 +1,25 @@
 // ~/lib/auth-guards.ts
 import { redirect } from '@tanstack/react-router'
-import type { AccountRole, UserResponse } from '~/models/system'
-
+import type { AccountRole, SESSION_USER } from '~/models/system'
 /**
  * sudo bypasses all role checks.
  */
 export function hasRole(
-  user: UserResponse,
+  user: SESSION_USER,
   ...allowedRoles: Array<AccountRole>
 ): boolean {
   if (user.account_role === 'sudo') return true
   return allowedRoles.includes(user.account_role)
 }
 
-export function hasPermission(user: UserResponse, permission: string): boolean {
+export function hasPermission(user: SESSION_USER, permission: string): boolean {
   if (user.account_role === 'sudo') return true
   if (user.account_status !== 'active') return false
   return user.account_permissions?.includes(permission) ?? false
 }
 
 export function hasAllPermissions(
-  user: UserResponse,
+  user: SESSION_USER,
   permissions: Array<string>,
 ): boolean {
   if (user.account_role === 'sudo') return true
@@ -28,7 +27,7 @@ export function hasAllPermissions(
 }
 
 export function hasAnyPermission(
-  user: UserResponse,
+  user: SESSION_USER,
   permissions: Array<string>,
 ): boolean {
   if (user.account_role === 'sudo') return true
@@ -42,9 +41,9 @@ export function hasAnyPermission(
 // Example: requireRole(session, 'admin') - only allows admins
 // Example: requireRole(session, 'admin', 'clinician') - allows admins and clinicians
 export function requireRole(
-  user: UserResponse,
+  user: SESSION_USER,
   ...allowedRoles: Array<AccountRole>
-): UserResponse {
+): SESSION_USER {
   if (!hasRole(user, ...allowedRoles)) {
     throw redirect({ to: '/unauthorized' })
   }
@@ -52,9 +51,9 @@ export function requireRole(
 }
 
 export function requirePermission(
-  user: UserResponse,
+  user: SESSION_USER,
   permission: string,
-): UserResponse {
+): SESSION_USER {
   if (!hasPermission(user, permission)) {
     throw redirect({ to: '/unauthorized' })
   }
@@ -62,9 +61,9 @@ export function requirePermission(
 }
 
 export function requireAllPermissions(
-  user: UserResponse,
+  user: SESSION_USER,
   permissions: Array<string>,
-): UserResponse {
+): SESSION_USER {
   if (!hasAllPermissions(user, permissions)) {
     throw redirect({ to: '/unauthorized' })
   }
@@ -72,9 +71,9 @@ export function requireAllPermissions(
 }
 
 export function requireAnyPermission(
-  user: UserResponse,
+  user: SESSION_USER,
   permissions: Array<string>,
-): UserResponse {
+): SESSION_USER {
   if (!hasAnyPermission(user, permissions)) {
     throw redirect({ to: '/unauthorized' })
   }

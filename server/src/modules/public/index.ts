@@ -9,6 +9,7 @@ export const publicModule = new Elysia({ prefix: "/public" }).get(
   {
     response: {
       200: DiagnosisModel.diagnosisArray,
+      500: DiagnosisModel.diagnosisInvalid,
     },
   },
 );

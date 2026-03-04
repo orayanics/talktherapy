@@ -1,5 +1,5 @@
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa'
-import type { TablePaginationProps } from '~/models/components'
+import type { TablePaginationProps } from '~/models/table'
 import FilterDropdown from '~/components/Input/InputSelect'
 
 export default function TablePagination({

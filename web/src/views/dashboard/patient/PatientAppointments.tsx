@@ -1,4 +1,4 @@
-import type { AppointmentStatus } from '~/models/content'
+import type { APPOINTMENT_STATUS } from '~/models/appointment'
 
 import AppointmentStatusBadge from '~/components/Badge/AppointmentStatusBadge'
 
@@ -65,7 +65,7 @@ export default function PatientAppointments() {
             <div className="flex flex-col">
               <div className="flex justify-between items-center gap-2 mb-2">
                 <p className="font-bold">{date}</p>
-                <AppointmentStatusBadge status={status as AppointmentStatus} />
+                <AppointmentStatusBadge status={status as APPOINTMENT_STATUS} />
               </div>
               <p>
                 {startTime} - {endTime}

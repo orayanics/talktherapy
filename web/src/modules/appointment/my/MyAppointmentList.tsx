@@ -4,10 +4,10 @@ import type {
   SlotAppointmentEvent,
 } from '~/models/schedule'
 import type {
-  Column,
   MyAppointmentListProps,
   MyAppointmentRow,
 } from '~/models/components'
+import type { Column } from '~/models/table'
 import TableContent from '~/components/Table/TableContent'
 import { formatToLocalDate, getTime } from '~/utils/date'
 

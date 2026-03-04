@@ -2,12 +2,13 @@ import { useState } from 'react'
 import { Link } from '@tanstack/react-router'
 
 import usePatient from './usePatient'
-import type { ResponseData } from '~/models/system'
+import type { DiagnosisItem, RegisterDiagnosis } from '~/models/public'
 import ConsentsPatient from '~/components/Consents/ConsentsPatient'
 import { fieldError } from '~/utils/errors'
 
-export default function RegisterPatient(props: ResponseData) {
+export default function RegisterPatient(props: RegisterDiagnosis) {
   const { data } = props
+
   const { form, errors, isLoading, handleConsent, handleChange, handleSubmit } =
     usePatient()
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -56,9 +57,9 @@ export default function RegisterPatient(props: ResponseData) {
                 onChange={handleChange}
               >
                 <option value="">Select Diagnosis</option>
-                {data.map((diagnosis: any) => (
-                  <option key={diagnosis.id} value={diagnosis.id}>
-                    {diagnosis.label}
+                {data.map((item: DiagnosisItem) => (
+                  <option key={item.id} value={item.id}>
+                    {item.label}
                   </option>
                 ))}
               </select>

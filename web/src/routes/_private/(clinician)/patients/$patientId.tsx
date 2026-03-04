@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 
 import PageTitle from '~/components/Page/PageTitle'
+
 import {
   clinicianPatientDetailQuery,
   clinicianPatientSoapsQuery,
@@ -55,9 +56,10 @@ function RouteComponent() {
   return (
     <>
       <PageTitle
-        heading="Patient Overview"
+        heading="Patient Detail"
         subheading="View patient profile, appointment history, and SOAP notes."
       />
+
       <PatientDetailView
         patientId={patientId}
         initialPatientDetail={patientDetail}

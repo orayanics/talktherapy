@@ -1,6 +1,6 @@
-import type { UserResponse } from '~/models/system'
+import type { SESSION_USER } from '~/models/system'
 
-export default function ProfileUserInfo(props: UserResponse) {
+export default function ProfileUserInfo(props: SESSION_USER) {
   const { name, email } = props
 
   return (

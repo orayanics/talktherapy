@@ -7,7 +7,10 @@ export namespace DiagnosisModel {
     label: t.String(),
   });
 
-  export const diagnosisArray = t.Array(_shape);
+  export const diagnosisArray = t.Object({
+    data: t.Array(_shape),
+  });
+
   export type diagnosisArray = typeof diagnosisArray.static;
 
   export const diagnosisInvalid = t.Literal("Invalid diagnosis data");

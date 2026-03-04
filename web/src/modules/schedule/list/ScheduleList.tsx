@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import { useNavigate } from '@tanstack/react-router'
+import { Link, useNavigate } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 
-import type { ScheduleOverviewProps } from '~/models/components'
+import type { ScheduleListProps } from '~/models/table'
 
 import PageTitle from '~/components/Page/PageTitle'
 import Grid from '~/components/Page/Grid'
@@ -18,14 +18,14 @@ import ScheduleCard from '~/modules/schedule/list/ScheduleCard'
 import { availabilityRulesQuery } from '~/api/scheduling'
 import TablePagination from '~/components/Table/TablePagination'
 
-export default function ScheduleOverview({ search }: ScheduleOverviewProps) {
+export default function ScheduleList({ search }: ScheduleListProps) {
   const [selected, setSelected] = useState<Date | undefined>(new Date())
 
   return (
     <>
       <PageTitle
-        heading="Schedule Admin Overview"
-        subheading="View all schedules of clinicians within the system."
+        heading="Schedule Overview"
+        subheading="View all of your schedules within the system."
       />
       <Grid cols={12} gap={6}>
         <GridItem colSpan={12} className="flex flex-col gap-4 lg:col-span-3">
@@ -33,31 +33,38 @@ export default function ScheduleOverview({ search }: ScheduleOverviewProps) {
           <button className="btn" onClick={() => setSelected(undefined)}>
             View All Schedules
           </button>
+          <Link to="/schedules/create" className="btn btn-primary">
+            Add New Schedule
+          </Link>
         </GridItem>
 
         <GridItem colSpan={12} className="flex flex-col gap-4 lg:col-span-9">
           <p className="text-sm text-gray-500">
-            These are all the available schedules for the selected date.
-            Filtered by availability settings and timeslots.
+            These are your available schedules for the selected date. Filtered
+            by your availability settings and timeslots.
           </p>
-          <ScheduleList date={selected} search={search} />
+          <ScheduleTable date={selected} search={search} />
         </GridItem>
       </Grid>
     </>
   )
 }
 
-function ScheduleList({
+function ScheduleTable({
   date,
   search,
 }: {
   date?: Date
-  search: Record<string, unknown>
+  search: ScheduleListProps['search']
 }) {
   const page = search.page ?? 1
   const perPage = search.perPage ?? 10
 
-  const { data, isLoading, error } = useQuery(
+  const {
+    data = [],
+    isLoading,
+    error,
+  } = useQuery(
     availabilityRulesQuery({
       date,
       page: Number(page),
@@ -65,34 +72,47 @@ function ScheduleList({
     }),
   )
 
-  const navigate = useNavigate()
+  const { data: schedulesData, meta } = data
+  const { total, from, to } = meta || {
+    total: 0,
+    from: null,
+    to: null,
+  }
 
-  if (isLoading) return <LoaderTable />
-  if (error) return <SkeletonError />
-  if (!data.data || data.data.length === 0) return <SkeletonNull />
+  const navigate = useNavigate()
 
   return (
     <>
-      <ScheduleCard data={data.data} />
+      {isLoading ? (
+        <LoaderTable />
+      ) : error ? (
+        <SkeletonError />
+      ) : schedulesData && schedulesData.length > 0 ? (
+        <ScheduleCard data={schedulesData} />
+      ) : (
+        <SkeletonNull />
+      )}
 
       <TablePagination
-        page={Number(page)}
-        perPage={data.meta.page_size}
-        total={data.meta.total}
-        onPageChange={(newPage) =>
+        page={page}
+        perPage={perPage}
+        total={total}
+        onPageChange={(q: number) =>
           navigate({
+            from: '/schedules',
             to: '.',
-            search: { ...search, page: newPage },
+            search: { ...search, page: q },
           })
         }
-        onPerPageChange={(newPerPage) =>
+        onPerPageChange={(q: number) =>
           navigate({
+            from: '/schedules',
             to: '.',
-            search: { ...search, perPage: newPerPage, page: 1 },
+            search: { ...search, perPage: q, page: 1 },
           })
         }
-        from={data.meta.from}
-        to={data.meta.to}
+        from={from}
+        to={to}
       />
     </>
   )

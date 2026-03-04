@@ -1,9 +1,5 @@
 import React from 'react'
-import type {
-  Column,
-  ColumnForKey,
-  TableContentProps,
-} from '~/models/components'
+import type { Column, ColumnForKey, TableContentProps } from '~/models/table'
 
 export type { Column, ColumnForKey, TableContentProps }
 

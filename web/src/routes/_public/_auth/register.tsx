@@ -13,13 +13,13 @@ export const Route = createFileRoute('/_public/_auth/register')({
 })
 
 function RouteComponent() {
-  const publicDiagnoses = Route.useLoaderData()
+  const data = Route.useLoaderData()
   const [registerType, setRegisterType] = useState(0)
   const showRegister =
     registerType === 0 ? (
-      <RegisterPatient data={publicDiagnoses} />
+      <RegisterPatient {...data} />
     ) : (
-      <RegisterActivate data={publicDiagnoses} />
+      <RegisterActivate data={data} />
     )
 
   return (

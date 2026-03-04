@@ -137,13 +137,15 @@ export abstract class Users {
     ]);
 
     return {
-      total,
-      patients,
-      clinicians,
-      admins,
-      patientStatusCount: formatStatusCount(patientStatusRows),
-      clinicianStatusCount: formatStatusCount(clinicianStatusRows),
-      adminStatusCount: formatStatusCount(adminStatusRows),
+      data: {
+        total,
+        patients,
+        clinicians,
+        admins,
+        patientStatusCount: formatStatusCount(patientStatusRows),
+        clinicianStatusCount: formatStatusCount(clinicianStatusRows),
+        adminStatusCount: formatStatusCount(adminStatusRows),
+      },
     };
   }
 }

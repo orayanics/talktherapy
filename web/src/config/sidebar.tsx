@@ -6,7 +6,7 @@ import {
   FaMedkit,
   FaUser,
 } from 'react-icons/fa'
-import type { UserType } from '~/models/user/user'
+import type { ACCOUNT_ROLE } from '~/models/account'
 import type { NavItem } from '~/models/components'
 
 export type { NavItem }
@@ -123,7 +123,7 @@ export const PATIENT_NAV_ITEMS = [
   },
 ]
 
-export const NAV_BY_ROLE: Record<UserType, Array<NavItem>> = {
+export const NAV_BY_ROLE: Record<ACCOUNT_ROLE, Array<NavItem>> = {
   sudo: SUDO_NAV_ITEMS,
   admin: ADMIN_NAV_ITEMS,
   clinician: CLINICIAN_NAV_ITEMS,

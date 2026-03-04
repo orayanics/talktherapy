@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { userDetailQueryOptions } from '~/api/users'
-import UserOverviewAdmin from '~/modules/users/UserOverviewAdmin'
+import UserDetail from '~/modules/users/detail/UserDetail'
 
 export const Route = createFileRoute('/_private/(adm-shared)/users/$userId')({
   loader: ({ context: { queryClient }, params }) => {
@@ -13,5 +13,5 @@ export const Route = createFileRoute('/_private/(adm-shared)/users/$userId')({
 function RouteComponent() {
   const data = Route.useLoaderData()
 
-  return <UserOverviewAdmin data={data} />
+  return <UserDetail data={data} />
 }

@@ -1,7 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 
-import AdminOverview from '~/views/schedules/admin/ScheduleOverview'
-import ClinicianOverview from '~/views/schedules/clinician/ScheduleOverview'
+import ScheduleList from '~/modules/schedule/list/ScheduleList'
 
 import { useAuthGuard } from '~/hooks/useAuthGuard'
 
@@ -34,9 +33,5 @@ function RouteComponent() {
 
   const searchProps = Route.useSearch()
 
-  return isAdmin ? (
-    <AdminOverview search={searchProps} />
-  ) : (
-    <ClinicianOverview search={searchProps} />
-  )
+  return <ScheduleList search={searchProps} />
 }

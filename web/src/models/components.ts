@@ -1,10 +1,6 @@
 import type React from 'react'
 import type { ParsedError } from '~/models/system'
-import type {
-  AppointmentStatus,
-  ContentFormState,
-  ContentItem,
-} from '~/models/content'
+import type { ContentFormState } from '~/models/content'
 import type {
   AvailabilityRuleWithSlots,
   AvailableSlot,
@@ -16,18 +12,15 @@ import type {
   SlotAppointmentEvent,
   SlotDto,
 } from '~/models/schedule'
-import type { UserType } from '~/models/user/user'
+import type { APPOINTMENT_STATUS } from './appointment'
+import type { ACCOUNT_ROLE, ACCOUNT_STATUS } from './account'
 
-// ─── Alert ──────────────────────────────────────────────────────────────────
-
-// ─── Badge ──────────────────────────────────────────────────────────────────
-
-export interface AccountStatusBadgeProps {
-  status: string
-}
-
-export interface AppointmentStatusBadgeProps {
-  status: AppointmentStatus
+export interface StatusProps<
+  T extends APPOINTMENT_STATUS | ACCOUNT_STATUS =
+    | APPOINTMENT_STATUS
+    | ACCOUNT_STATUS,
+> {
+  status: T
 }
 
 export interface RoleBadgeProps {
@@ -58,7 +51,7 @@ export type FilterDrawerProps = {
 // ─── Input ──────────────────────────────────────────────────────────────────
 
 export interface Option {
-  value: unknown
+  value: string | number
   label: string
 }
 
@@ -171,48 +164,8 @@ export interface SidebarNavItemsProps {
 
 export interface SidebarProps {
   children: React.ReactNode
-  role: UserType
+  role: ACCOUNT_ROLE
 }
-
-// ─── Table ──────────────────────────────────────────────────────────────────
-
-export type ColumnForKey<T, TKey extends keyof T> = {
-  header: string
-  accessor: TKey
-  render?: (value: T[TKey], row: T) => React.ReactNode
-  className?: string
-}
-
-export type Column<T> = { [K in keyof T]: ColumnForKey<T, K> }[keyof T]
-
-export type TableContentProps<T> = {
-  columns: Array<Column<T>>
-  data: Array<T>
-  renderers?: Partial<Record<keyof T, (value: any, row: T) => React.ReactNode>>
-}
-
-export interface TableHeaderProps {
-  heading?: string
-  children?: React.ReactNode
-  className?: string
-}
-
-export type TablePaginationProps = {
-  page: number
-  perPage: number
-  total: number
-  lastPage?: number
-  from?: number | null
-  to?: number | null
-  onPageChange: (page: number) => void
-  onPerPageChange: (perPage: number) => void
-  perPageOptions?: Array<{
-    value: number
-    label: string
-  }>
-  className?: string
-}
-
 // ─── Appointment Components ─────────────────────────────────────────────────
 
 export interface AppointmentDetailProps {
@@ -359,46 +312,8 @@ export interface AdminContentProps {
 
 // ─── Dashboard Components ───────────────────────────────────────────────────
 
-export interface DashboardData {
-  total: number
-  patients: number
-  clinicians: number
-  admins: number
-  appointments: number
-}
-
 export interface AppointmentStatsCardProps {
   appointments?: number
-}
-
-// ─── Schedule Overview Components ───────────────────────────────────────────
-
-export interface ScheduleOverviewProps {
-  search: Record<string, unknown>
-}
-
-export interface ContentOverviewProps {
-  search: {
-    page?: number
-    perPage?: number
-    search?: string
-    diagnosis?: Array<string>
-  }
-  isLoading: boolean
-  isError: boolean
-  data:
-    | {
-        diagnoses: Array<{ value: string; label: string }>
-        content: {
-          data: Array<ContentItem>
-          meta: {
-            page: number
-            per_page: number
-            total: number
-          }
-        }
-      }
-    | undefined
 }
 
 // ─── Route-level Table Props ─────────────────────────────────────────────────
@@ -420,26 +335,6 @@ export interface LogsTableProps {
   perPage: number
 }
 
-export interface PatientListItem {
-  id: number
-  email: string
-  diagnosis: string
-  information: {
-    firstName: string
-    lastName: string
-    profileUrl: string
-  }
-}
-
-export interface PatientsTableProps {
-  onPageChange: (page: number) => void
-  onPerPageChange: (perPage: number) => void
-  isLoading?: boolean
-  data: Array<PatientListItem>
-  page: number
-  perPage: number
-}
-
 // ─── My Appointment List Row ─────────────────────────────────────────────────
 
 export type MyAppointmentRow = {
@@ -453,33 +348,4 @@ export type MyAppointmentRow = {
   room_id: string | null
   reason: string | null
   view: string
-}
-
-// Clinician-Patient List Overview
-export type ClinicianPatientOverviewItem = {
-  id: string
-  user_id: string
-  name: string
-  email: string
-  diagnosis: string
-  first_completed_at: string
-}
-
-export interface PatientClinicianOverviewProps {
-  search: {
-    page?: number
-    perPage?: number
-    search?: string
-    diagnosis?: Array<string>
-  }
-  isLoading: boolean
-  isError: boolean
-  data?: {
-    data: Array<ClinicianPatientOverviewItem>
-    meta: {
-      page: number
-      per_page: number
-      total: number
-    }
-  }
 }

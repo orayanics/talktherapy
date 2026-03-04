@@ -3,13 +3,11 @@ import { useEffect, useMemo, useState } from 'react'
 import debounce from 'debounce'
 
 import type {
-  ClinicianPatientOverviewItem,
-  PatientClinicianOverviewProps,
-} from '~/models/components'
+  MyPatientItem,
+  MyPatientsListTableFilters,
+  MyPatientsTableProps,
+} from '~/models/table'
 
-import PageTitle from '~/components/Page/PageTitle'
-import Grid from '~/components/Page/Grid'
-import GridItem from '~/components/Page/GridItem'
 import TablePagination from '~/components/Table/TablePagination'
 import TableContent from '~/components/Table/TableContent'
 
@@ -19,12 +17,12 @@ import SkeletonNull from '~/components/Skeleton/SkeletonNull'
 import { useAuthGuard } from '~/hooks/useAuthGuard'
 import { formatToLocalDateTime } from '~/utils/date'
 
-export default function PatientClinicianOverview({
+export default function MyPatientList({
   search,
   isLoading,
   isError,
   data,
-}: PatientClinicianOverviewProps) {
+}: MyPatientsTableProps) {
   const { data: tableData = [], meta } = data ?? {
     data: [],
     meta: { page: 1, per_page: 10, total: 0 },
@@ -66,64 +64,72 @@ export default function PatientClinicianOverview({
     })
   }
 
-  const { can } = useAuthGuard()
-  const isAllowedAction = can('content:create')
-
-  if (isLoading) return <LoaderTable />
-  if (isError) return <SkeletonError />
-
   return (
     <>
-      <PageTitle
-        heading="Content Media"
-        subheading="View all available speech therapy exercises in the system."
+      <TableFilters
+        search={searchInput}
+        onSearchChange={handleSearchChange}
+        onClearFilters={handleClear}
       />
-      <Grid cols={12} gap={6}>
-        <GridItem colSpan={12} className="flex flex-col gap-4">
-          <div className="flex flex-col lg:flex-row justify-between gap-2">
-            <div className="flex flex-col lg:flex-row gap-2">
-              <input
-                type="text"
-                placeholder="Search"
-                value={searchInput}
-                onChange={(e) => handleSearchChange(e.target.value)}
-                className="input"
-              />
 
-              <button className="btn btn-primary" onClick={handleClear}>
-                Clear Filters
-              </button>
-            </div>
+      {isLoading ? (
+        <LoaderTable />
+      ) : isError ? (
+        <SkeletonError />
+      ) : tableData.length ? (
+        <Table data={tableData} />
+      ) : (
+        <SkeletonNull />
+      )}
 
-            {isAllowedAction && (
-              <Link to="/content/create" className="btn btn-primary">
-                Add Content
-              </Link>
-            )}
-          </div>
-
-          {tableData.length > 0 ? <Table data={tableData} /> : <SkeletonNull />}
-
-          <TablePagination
-            page={page}
-            perPage={perPage}
-            total={meta.total}
-            onPageChange={(v) =>
-              navigate({ search: (prev) => ({ ...prev, page: v }) })
-            }
-            onPerPageChange={(v) => {
-              navigate({
-                search: (prev) => ({ ...prev, perPage: v, page: 1 }),
-              })
-            }}
-          />
-        </GridItem>
-      </Grid>
+      <TablePagination
+        page={page}
+        perPage={perPage}
+        total={meta.total}
+        onPageChange={(q: number) =>
+          navigate({ search: (prev) => ({ ...prev, page: q }) })
+        }
+        onPerPageChange={(q: number) => {
+          navigate({
+            search: (prev) => ({ ...prev, perPage: q, page: 1 }),
+          })
+        }}
+      />
     </>
   )
 }
 
-function Table({ data }: { data: Array<ClinicianPatientOverviewItem> }) {
+function TableFilters(props: MyPatientsListTableFilters) {
+  const { search, onSearchChange, onClearFilters } = props
+  const { can } = useAuthGuard()
+  const isAllowedAction = can('content:create')
+
+  return (
+    <div className="flex flex-col lg:flex-row justify-between gap-2">
+      <div className="flex flex-col lg:flex-row gap-2">
+        <input
+          type="text"
+          placeholder="Search"
+          value={search}
+          onChange={(e) => onSearchChange(e.target.value)}
+          className="input"
+        />
+
+        <button className="btn btn-primary" onClick={onClearFilters}>
+          Clear Filters
+        </button>
+      </div>
+
+      {isAllowedAction && (
+        <Link to="/content/create" className="btn btn-primary">
+          Add Content
+        </Link>
+      )}
+    </div>
+  )
+}
+
+function Table({ data }: { data: Array<MyPatientItem> }) {
   return (
     <TableContent
       columns={[
@@ -131,7 +137,7 @@ function Table({ data }: { data: Array<ClinicianPatientOverviewItem> }) {
         {
           header: 'Name',
           accessor: 'name',
-          render: (value, row) => (
+          render: (value: string, row: MyPatientItem) => (
             <Link
               to={'/patients/$patientId'}
               search={{
@@ -148,7 +154,7 @@ function Table({ data }: { data: Array<ClinicianPatientOverviewItem> }) {
         {
           header: 'Email',
           accessor: 'email',
-          render: (value, row) => (
+          render: (value: string, row: MyPatientItem) => (
             <Link
               to="/patients/$patientId"
               search={{
@@ -165,7 +171,8 @@ function Table({ data }: { data: Array<ClinicianPatientOverviewItem> }) {
         {
           header: 'Completed At',
           accessor: 'first_completed_at',
-          render: (value) => formatToLocalDateTime(value),
+          render: (value: string | null) =>
+            value ? formatToLocalDateTime(value) : null,
         },
       ]}
       data={data}

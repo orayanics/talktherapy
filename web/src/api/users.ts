@@ -9,7 +9,7 @@ import { isAxiosError } from 'axios'
 import type {
   AdminRegisterPayload,
   ClinicianRegisterPayload,
-} from '~/models/user/credentials'
+} from '~/models/credentials'
 import type { UsersParams } from '~/models/system'
 
 import { api } from '~/api/axios'

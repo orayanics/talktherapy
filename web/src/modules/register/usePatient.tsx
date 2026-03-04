@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { isAxiosError } from 'axios'
-import type React from 'react';
-import type { PatientRegisterPayload } from '~/models/user/credentials'
-import type { ParsedError } from '~/models/system';
+import type React from 'react'
+import type { PatientRegisterPayload } from '~/models/credentials'
+import type { ParsedError } from '~/models/system'
 import { useRegisterPatient } from '~/api/auth'
 import { parseError } from '~/utils/errors'
 
