@@ -23,9 +23,7 @@ export const Route = createFileRoute('/_private')({
 
       if (!session || session.account_status !== 'active') {
         queryClient.clear()
-        if (typeof window !== 'undefined') {
-          localStorage.removeItem('talktherapy_session')
-        }
+        localStorage.removeItem('talktherapy_session')
         throw redirect({ to: '/login' })
       }
 
@@ -34,9 +32,7 @@ export const Route = createFileRoute('/_private')({
       if (isRedirect(error)) throw error
 
       queryClient.clear()
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem('talktherapy_session')
-      }
+      localStorage.removeItem('talktherapy_session')
       throw redirect({ to: '/login' })
     }
   },
