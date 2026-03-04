@@ -11,7 +11,7 @@ export default function PageTitle(props: PageTitleProps) {
           </p>
         )}
         <h1
-          className={`font-bold text-2xl col-span-12 ${!subheading && 'mb-4'}`}
+          className={`font-bold text-2xl col-span-12 ${!subheading ? 'mb-4' : ''}`}
         >
           {heading}
         </h1>

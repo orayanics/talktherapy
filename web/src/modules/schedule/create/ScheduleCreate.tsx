@@ -1,7 +1,7 @@
 import ScheduleForm from '../ScheduleForm'
 import PageTitle from '~/components/Page/PageTitle'
 
-export default function index() {
+export default function ScheduleCreate() {
   return (
     <div>
       <PageTitle

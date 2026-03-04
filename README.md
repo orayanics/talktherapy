@@ -5,7 +5,7 @@
 To install both web and server dependencies:
 
 ```bash
-bun run install
+bun install
 ```
 
 To migrate sql:

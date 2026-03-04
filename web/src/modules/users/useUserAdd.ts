@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { isAxiosError } from 'axios'
 
+import type { ChangeEvent } from 'react'
 import type { PermissionKey } from '~/models/permissions'
 import type { ParsedError } from '~/models/system'
 import { useAddAdmin, useAddClinician } from '~/api/users'
@@ -13,7 +14,7 @@ export function useRegisterClinician() {
   }
   const [form, setForm] = useState(initialForm)
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setForm((prev) => ({ ...prev, [name]: value }))
   }
@@ -58,12 +59,12 @@ export function useRegisterAdmin() {
   }
   const [form, setForm] = useState(initialForm)
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setForm((prev) => ({ ...prev, [name]: value }))
   }
 
-  const handlePermissionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePermissionChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { value, checked } = e.target
     setForm((prev) => ({
       ...prev,

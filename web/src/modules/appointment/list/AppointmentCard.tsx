@@ -38,7 +38,7 @@ export default function AppointmentCard(props: AppointmentCardProps) {
           return (
             <div
               key={id}
-              className={`${current === id && 'border-primary'} collapse collapse-plus bg-base-100 border border-base-300`}
+              className={`${current === id ? 'border-primary' : ''} collapse collapse-plus bg-base-100 border border-base-300`}
               id={`slot-${id}`}
             >
               <input

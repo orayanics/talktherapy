@@ -76,7 +76,7 @@ export default function ScheduleSlot(props: ScheduleSlotProps) {
       <p className="font-mono uppercase text-primary">Schedule Slots</p>
       <div className="[&>div]:py-4 [&>div]:border-y [&>div]:border-gray-100 [&>div]:border-dashed">
         {slots.map((slot) => (
-          <ScheduleSlotItem {...slotProps} slot={slot} />
+          <ScheduleSlotItem key={slot.id} {...slotProps} slot={slot} />
         ))}
       </div>
     </div>
