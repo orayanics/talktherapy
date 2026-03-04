@@ -213,8 +213,179 @@ export abstract class AppointmentService {
         },
       });
 
+      // Record the patient as handled by this clinician (upsert — idempotent)
+      await tx.clinicianPatient.upsert({
+        where: {
+          clinician_id_patient_id: {
+            clinician_id,
+            patient_id: appointment.patient_id,
+          },
+        },
+        create: {
+          clinician_id,
+          patient_id: appointment.patient_id,
+          first_completed_at: new Date(),
+        },
+        update: {},
+      });
+
       return updated;
     });
+  }
+
+  /**
+   * Returns a specific handled patient's profile + their appointment history
+   * with this clinician. Date-filtered, paginated.
+   */
+  static async getHandledPatientAppointments(
+    clinician_id: string,
+    patient_id: string,
+    query: AppointmentModel.patientDetailQuery,
+  ) {
+    // Verify the patient is in the clinician's handled list
+    const link = await prisma.clinicianPatient.findUnique({
+      where: { clinician_id_patient_id: { clinician_id, patient_id } },
+      include: {
+        patient: {
+          include: {
+            user: {
+              select: { id: true, name: true, email: true, last_login: true },
+            },
+            diagnosis: { select: { label: true } },
+          },
+        },
+      },
+    });
+
+    if (!link)
+      throw status(404, "Patient not found or not handled by this clinician");
+
+    const { from, to, page = 1, per_page = 10 } = query;
+    const skip = (page - 1) * per_page;
+
+    const where = {
+      patient_id,
+      slot: {
+        clinician_id,
+        ...(from && { starts_at: { gte: new Date(from) } }),
+        ...(to && { ends_at: { lte: new Date(to) } }),
+      },
+      status: "COMPLETED" as const,
+    };
+
+    const [appointments, total] = await prisma.$transaction([
+      prisma.appointments.findMany({
+        where,
+        include: {
+          slot: {
+            select: { id: true, starts_at: true, ends_at: true, status: true },
+          },
+          encounter: true,
+        },
+        orderBy: { completed_at: "desc" },
+        skip,
+        take: per_page,
+      }),
+      prisma.appointments.count({ where }),
+    ]);
+
+    const { patient, first_completed_at } = link;
+
+    return {
+      patient: {
+        id: patient.id,
+        user_id: patient.user_id,
+        name: patient.user.name,
+        email: patient.user.email,
+        last_login: patient.user.last_login,
+        diagnosis: patient.diagnosis?.label ?? null,
+        first_completed_at,
+      },
+      appointments: {
+        data: appointments,
+        meta: {
+          total,
+          page,
+          page_size: per_page,
+          page_count: Math.ceil(total / per_page),
+          from: skip + 1,
+          to: skip + appointments.length,
+        },
+      },
+    };
+  }
+
+  /**
+   * Returns all patients the clinician has handled (≥1 completed appointment).
+   * Records are created atomically when an appointment is marked COMPLETED.
+   */
+  static async listHandledPatients(
+    clinician_id: string,
+    query: AppointmentModel.handledPatientsQuery,
+  ) {
+    const { search, page = 1, per_page = 10 } = query;
+    const skip = (page - 1) * per_page;
+
+    const where = {
+      clinician_id,
+      ...(search && {
+        patient: {
+          user: {
+            OR: [
+              { name: { contains: search } },
+              { email: { contains: search } },
+            ],
+          },
+        },
+      }),
+    };
+
+    const [records, total] = await prisma.$transaction([
+      prisma.clinicianPatient.findMany({
+        where,
+        include: {
+          patient: {
+            include: {
+              user: {
+                select: {
+                  id: true,
+                  name: true,
+                  email: true,
+                  last_login: true,
+                },
+              },
+              diagnosis: {
+                select: { label: true },
+              },
+            },
+          },
+        },
+        orderBy: { first_completed_at: "desc" },
+        skip,
+        take: per_page,
+      }),
+      prisma.clinicianPatient.count({ where }),
+    ]);
+
+    return {
+      data: records.map(({ patient, first_completed_at }) => ({
+        id: patient.id,
+        user_id: patient.user_id,
+        name: patient.user.name,
+        email: patient.user.email,
+        // last_login: patient.user.last_login,
+        diagnosis: patient.diagnosis?.label ?? null,
+        first_completed_at,
+      })),
+      meta: {
+        total,
+        page,
+        page_size: per_page,
+        page_count: Math.ceil(total / per_page),
+        from: skip + 1,
+        to: skip + records.length,
+      },
+    };
   }
 
   /**

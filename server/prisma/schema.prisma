@@ -83,6 +83,39 @@ model Patient {
 
   user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
   diagnosis Diagnosis? @relation(fields: [diagnosis_id], references: [id], onDelete: SetNull)
+  clinician_patients ClinicianPatient[]
+  soaps Soap[]
+}
+
+model ClinicianPatient {
+  clinician_id       String
+  patient_id         String
+  first_completed_at DateTime @default(now())
+
+  clinician Clinician @relation(fields: [clinician_id], references: [id], onDelete: Cascade)
+  patient   Patient   @relation(fields: [patient_id], references: [id], onDelete: Cascade)
+
+  @@id([clinician_id, patient_id])
+}
+
+model Soap {
+  id           String   @id @default(uuid())
+  clinician_id String
+  patient_id   String
+
+  activity_plan      String
+  session_type       String
+  subjective_notes   String
+  objective_notes    String
+  assessment         String
+  recommendation     String
+  comments           String?
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  clinician Clinician @relation(fields: [clinician_id], references: [id], onDelete: Cascade)
+  patient   Patient   @relation(fields: [patient_id], references: [id], onDelete: Cascade)
 }
 
 model Clinician {
@@ -95,6 +128,8 @@ model Clinician {
   user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
   diagnosis Diagnosis? @relation(fields: [diagnosis_id], references: [id], onDelete: SetNull)
   slots Slot[]
+  handled_patients ClinicianPatient[]
+  soaps Soap[]
 }
 
 model RefreshToken {

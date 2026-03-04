@@ -116,3 +116,14 @@ export const SCHEDULE = {
     error: 'Failed to delete schedule. Please try again.',
   },
 }
+
+export const SOAP = {
+  create: {
+    success: 'SOAP note created successfully!',
+    error: 'Failed to create SOAP note. Please try again.',
+  },
+  update: {
+    success: 'SOAP note updated successfully!',
+    error: 'Failed to update SOAP note. Please try again.',
+  },
+}

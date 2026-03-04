@@ -192,3 +192,87 @@ export interface PatientMyAppointmentDetailDto {
   encounter: SlotAppointmentEncounter | null
   events: Array<SlotAppointmentEvent>
 }
+
+export interface ClinicianMyPatientParams {
+  search?: string
+  page?: number
+  perPage?: number
+}
+
+export interface ClinicianMyPatient {
+  id: string
+  user_id: string
+  name: string | null
+  email: string
+  last_login: string | null
+  diagnosis: string | null
+  first_completed_at: string
+}
+
+export interface PaginationMeta {
+  total: number
+  page: number
+  page_size: number
+  page_count: number
+  from: number
+  to: number
+}
+
+// ─── Patient Detail ─────────────────────────────────────────────────────────
+
+export interface ClinicianPatientDetailParams {
+  from?: string
+  to?: string
+  page?: number
+  perPage?: number
+}
+
+export interface ClinicianPatientDetailAppointmentDto {
+  id: string
+  patient_id: string
+  status: ServerAppointmentStatus
+  completed_at: string | null
+  booked_at: string
+  slot: {
+    id: string
+    starts_at: string
+    ends_at: string
+    status: string
+  }
+  encounter: SlotAppointmentEncounter | null
+}
+
+export interface ClinicianPatientDetailDto {
+  patient: ClinicianMyPatient
+  appointments: {
+    data: Array<ClinicianPatientDetailAppointmentDto>
+    meta: PaginationMeta
+  }
+}
+
+// ─── SOAP ────────────────────────────────────────────────────────────────────
+
+export interface SoapDto {
+  id: string
+  clinician_id: string
+  patient_id: string
+  activity_plan: string
+  session_type: string
+  subjective_notes: string
+  objective_notes: string
+  assessment: string
+  recommendation: string
+  comments: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface CreateSoapPayload {
+  activity_plan: string
+  session_type: string
+  subjective_notes: string
+  objective_notes: string
+  assessment: string
+  recommendation: string
+  comments?: string
+}

@@ -71,6 +71,37 @@ export const appointmentController = new Elysia({
         { query: AppointmentModel.listQuery },
       )
 
+      // GET: /appointments/patients (handled patients with ≥1 completed appointment)
+      .get(
+        "/patients",
+        async ({ auth, query }) => {
+          const clinician_id = await AvailabilityService.resolveClinicianId(
+            auth!.userId,
+          );
+          return AppointmentService.listHandledPatients(clinician_id, query);
+        },
+        { query: AppointmentModel.handledPatientsQuery },
+      )
+
+      // GET: /appointments/patients/:patient_id (single handled patient + completed appointments)
+      .get(
+        "/patients/:patient_id",
+        async ({ auth, params, query }) => {
+          const clinician_id = await AvailabilityService.resolveClinicianId(
+            auth!.userId,
+          );
+          return AppointmentService.getHandledPatientAppointments(
+            clinician_id,
+            params.patient_id,
+            query,
+          );
+        },
+        {
+          params: AppointmentModel.patientDetailParams,
+          query: AppointmentModel.patientDetailQuery,
+        },
+      )
+
       // GET: /appointments/:appointment_id
       .get(
         "/:appointment_id",

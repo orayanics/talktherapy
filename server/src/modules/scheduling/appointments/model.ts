@@ -61,4 +61,24 @@ export namespace AppointmentModel {
     reason: t.String({ minLength: 1 }),
   });
   export type patientCancelBody = typeof patientCancelBody.static;
+
+  export const handledPatientsQuery = t.Object({
+    search: t.Optional(t.String()),
+    page: t.Optional(t.Numeric({ minimum: 1, default: 1 })),
+    per_page: t.Optional(t.Numeric({ minimum: 1, maximum: 100, default: 10 })),
+  });
+  export type handledPatientsQuery = typeof handledPatientsQuery.static;
+
+  export const patientDetailParams = t.Object({
+    patient_id: t.String(),
+  });
+  export type patientDetailParams = typeof patientDetailParams.static;
+
+  export const patientDetailQuery = t.Object({
+    from: t.Optional(t.String({ format: "date-time" })),
+    to: t.Optional(t.String({ format: "date-time" })),
+    page: t.Optional(t.Numeric({ minimum: 1, default: 1 })),
+    per_page: t.Optional(t.Numeric({ minimum: 1, maximum: 100, default: 10 })),
+  });
+  export type patientDetailQuery = typeof patientDetailQuery.static;
 }

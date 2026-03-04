@@ -454,3 +454,32 @@ export type MyAppointmentRow = {
   reason: string | null
   view: string
 }
+
+// Clinician-Patient List Overview
+export type ClinicianPatientOverviewItem = {
+  id: string
+  user_id: string
+  name: string
+  email: string
+  diagnosis: string
+  first_completed_at: string
+}
+
+export interface PatientClinicianOverviewProps {
+  search: {
+    page?: number
+    perPage?: number
+    search?: string
+    diagnosis?: Array<string>
+  }
+  isLoading: boolean
+  isError: boolean
+  data?: {
+    data: Array<ClinicianPatientOverviewItem>
+    meta: {
+      page: number
+      per_page: number
+      total: number
+    }
+  }
+}

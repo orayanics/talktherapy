@@ -1,159 +1,42 @@
-import { useState } from 'react'
-import { Link, createFileRoute } from '@tanstack/react-router'
-import type { PatientsTableProps } from '~/models/components'
+import { useQuery } from '@tanstack/react-query'
+import { createFileRoute } from '@tanstack/react-router'
 
-import Grid from '~/components/Page/Grid'
-import GridItem from '~/components/Page/GridItem'
-import PageTitle from '~/components/Page/PageTitle'
-import LoaderTable from '~/components/Loader/LoaderTable'
-import TableContent from '~/components/Table/TableContent'
-import TablePagination from '~/components/Table/TablePagination'
+import PatientClinicianOverview from '~/modules/patients/PatientClinicianOverview'
+import { clinicianMyPatientsQuery } from '~/api/clinician'
 
 export const Route = createFileRoute('/_private/(clinician)/patients/')({
+  validateSearch: (search: Record<string, unknown>) => {
+    const searchTerm =
+      typeof search.search === 'string' ? search.search : undefined
+    const page = Number(search.page ?? 1)
+    const perPage = Number(search.perPage ?? 10)
+
+    return {
+      ...(page !== 1 ? { page } : {}),
+      ...(perPage !== 10 ? { perPage } : {}),
+      ...(searchTerm ? { search: searchTerm } : {}),
+    }
+  },
   component: RouteComponent,
 })
 
 function RouteComponent() {
-  const [page, setPage] = useState(1)
-  const [perPage, setPerPage] = useState(10)
-  const isLoading = false
-
-  return (
-    <>
-      <PageTitle
-        heading="Patients Overview"
-        subheading="View all your patients."
-      />
-      <Grid cols={12} gap={6}>
-        <GridItem colSpan={12} className="flex flex-col gap-4">
-          <Table
-            data={PATIENT_LIST}
-            page={page}
-            perPage={perPage}
-            isLoading={isLoading}
-            onPageChange={setPage}
-            onPerPageChange={(val) => {
-              setPerPage(val)
-              setPage(1)
-            }}
-          />
-        </GridItem>
-      </Grid>
-    </>
+  const search = Route.useSearch()
+  const { data, isLoading, isError } = useQuery(
+    clinicianMyPatientsQuery({
+      search: search.search,
+      page: search.page,
+      perPage: search.perPage,
+    }),
   )
-}
 
-const PATIENT_LIST = [
-  {
-    id: 1,
-    email: 'meiyok.doe@example.com',
-    diagnosis: 'Expressive Language Disorder',
-    information: {
-      firstName: 'Meiyok',
-      lastName: 'Doe',
-      profileUrl: '',
-    },
-  },
-  {
-    id: 2,
-    email: 'alex.smith@example.com',
-    diagnosis: 'Articulation Disorder',
-    information: {
-      firstName: 'Alex',
-      lastName: 'Smith',
-      profileUrl: '',
-    },
-  },
-  {
-    id: 3,
-    email: 'jordan.lee@example.com',
-    diagnosis: 'Mixed Receptive-Expressive Language Disorder',
-    information: {
-      firstName: 'Jordan',
-      lastName: 'Lee',
-      profileUrl: '',
-    },
-  },
-  {
-    id: 4,
-    email: 'priya.patel@example.com',
-    diagnosis: 'Childhood Apraxia of Speech',
-    information: {
-      firstName: 'Priya',
-      lastName: 'Patel',
-      profileUrl: '',
-    },
-  },
-  {
-    id: 5,
-    email: 'carlos.mendez@example.com',
-    diagnosis: 'Fluency Disorder (Stuttering)',
-    information: {
-      firstName: 'Carlos',
-      lastName: 'Mendez',
-      profileUrl: '',
-    },
-  },
-  {
-    id: 6,
-    email: 'fatima.hassan@example.com',
-    diagnosis: 'Social (Pragmatic) Communication Disorder',
-    information: {
-      firstName: 'Fatima',
-      lastName: 'Hassan',
-      profileUrl: '',
-    },
-  },
-]
-
-function Table(props: PatientsTableProps) {
-  const {
-    isLoading = false,
-    page,
-    perPage,
-    onPageChange,
-    onPerPageChange,
-  } = props
-
+  console.log(data)
   return (
-    <>
-      <div className="flex flex-col lg:flex-row gap-2 justify-between">
-        {/* search input */}
-      </div>
-
-      {isLoading ? (
-        <LoaderTable className="h-120 max-h-120 " />
-      ) : (
-        <TableContent
-          columns={[
-            {
-              header: 'Name',
-              accessor: 'information',
-              render: (value, row) => (
-                <Link
-                  to="/patients/$patientId"
-                  params={{ patientId: row.id.toString() }}
-                  className="link link-hover hover:text-primary"
-                >
-                  {(value as { firstName: string; lastName: string }).firstName}{' '}
-                  {(value as { firstName: string; lastName: string }).lastName}
-                </Link>
-              ),
-            },
-            { header: 'Email', accessor: 'email' },
-            { header: 'Diagnosis', accessor: 'diagnosis' },
-          ]}
-          data={PATIENT_LIST}
-        />
-      )}
-
-      <TablePagination
-        page={page}
-        perPage={perPage}
-        total={PATIENT_LIST.length}
-        onPageChange={onPageChange}
-        onPerPageChange={onPerPageChange}
-      />
-    </>
+    <PatientClinicianOverview
+      search={search}
+      isLoading={isLoading}
+      isError={isError}
+      data={data}
+    />
   )
 }
