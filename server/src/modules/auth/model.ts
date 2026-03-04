@@ -142,6 +142,6 @@ export namespace AuthModel {
   ]);
   export type activateInvalid = typeof activateInvalid.static;
 
-  export const accountInactive = t.Literal("Account is not active");
-  export type accountInactive = typeof accountInactive.static;
+  export const accountPending = t.Literal("Account is pending activation");
+  export type accountPending = typeof accountPending.static;
 }

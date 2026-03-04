@@ -66,7 +66,7 @@ export interface UserResponse {
   email_verified_at: string | null
   created_at: string
   updated_at: string
-  account_status: 'active' | 'inactive' | 'pending' | 'suspended'
+  account_status: 'active' | 'deactivated' | 'pending' | 'suspended'
   account_role: 'sudo' | 'admin' | 'clinician' | 'patient'
   account_permissions: string | null
   account_icon: string | null

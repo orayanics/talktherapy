@@ -56,7 +56,7 @@ function RouteComponent() {
 
           <div className="flex flex-col gap-2 col-span-12">
             <button className="btn btn-primary">Deactivate User</button>
-            {account_status === 'inactive' && (
+            {account_status === 'pending' && (
               <button className="btn btn-soft" onClick={handleResendOtp}>
                 Resend OTP
               </button>

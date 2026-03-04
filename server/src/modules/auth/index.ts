@@ -43,7 +43,7 @@ export const authModule = new Elysia({ prefix: "/auth" })
       response: {
         200: AuthModel.signInResponse,
         400: AuthModel.signInInvalid,
-        403: AuthModel.accountInactive,
+        403: AuthModel.accountPending,
       },
     },
   )

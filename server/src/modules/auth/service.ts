@@ -36,7 +36,7 @@ export abstract class Auth {
     if (user.account_status !== "active") {
       throw status(
         403,
-        "Account is not active" satisfies AuthModel.accountInactive,
+        "Account is pending activation" satisfies AuthModel.accountPending,
       );
     }
 
@@ -131,7 +131,7 @@ export abstract class Auth {
       const user = await tx.user.create({
         data: {
           email: data.email,
-          account_status: "inactive",
+          account_status: "pending",
           account_role: "clinician",
           account_permissions: "content:read",
           created_by: createdBy,
@@ -177,7 +177,7 @@ export abstract class Auth {
       const user = await tx.user.create({
         data: {
           email: data.email,
-          account_status: "inactive",
+          account_status: "pending",
           account_role: "admin",
           account_permissions: permissions,
           created_by: createdBy,
@@ -215,7 +215,7 @@ export abstract class Auth {
 
     if (
       !user ||
-      user.account_status !== "inactive" ||
+      user.account_status !== "pending" ||
       !(user.account_role === "admin" || user.account_role === "clinician")
     ) {
       throw status(400, "Invalid request" satisfies AuthModel.resendOtpInvalid);
@@ -240,7 +240,7 @@ export abstract class Auth {
 
     if (
       !user ||
-      user.account_status !== "inactive" ||
+      user.account_status !== "pending" ||
       !(user.account_role === "admin" || user.account_role === "clinician")
     ) {
       throw status(
@@ -275,7 +275,7 @@ export abstract class Auth {
 
     if (
       !user ||
-      user.account_status !== "inactive" ||
+      user.account_status !== "pending" ||
       !(user.account_role === "admin" || user.account_role === "clinician")
     ) {
       throw status(400, "Invalid request" satisfies AuthModel.activateInvalid);

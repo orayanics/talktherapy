@@ -164,7 +164,7 @@ function Table(props: UsersTableProps) {
             placeholder="Account Status"
             options={[
               { value: 'active', label: 'Active' },
-              { value: 'inactive', label: 'Inactive' },
+              { value: 'deactivated', label: 'deactivated' },
               { value: 'pending', label: 'Pending' },
               { value: 'suspended', label: 'Suspended' },
             ]}
