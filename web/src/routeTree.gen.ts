@@ -26,6 +26,7 @@ import { Route as PublicAuthLoginRouteImport } from './routes/_public/_auth/logi
 import { Route as PrivateProfilePasswordRouteImport } from './routes/_private/profile.password'
 import { Route as PrivateProfileEditRouteImport } from './routes/_private/profile.edit'
 import { Route as PrivatesudoLogsRouteImport } from './routes/_private/(sudo)/logs'
+import { Route as PrivateroomRoomIdRouteImport } from './routes/_private/(room)/$roomId'
 import { Route as PrivatesharedSlotsRouteRouteImport } from './routes/_private/(shared)/slots/route'
 import { Route as PrivatesharedSchedulesRouteRouteImport } from './routes/_private/(shared)/schedules/route'
 import { Route as PrivatesharedSchedulesIndexRouteImport } from './routes/_private/(shared)/schedules/index'
@@ -122,6 +123,11 @@ const PrivatesudoLogsRoute = PrivatesudoLogsRouteImport.update({
   id: '/logs',
   path: '/logs',
   getParentRoute: () => PrivatesudoRouteRoute,
+} as any)
+const PrivateroomRoomIdRoute = PrivateroomRoomIdRouteImport.update({
+  id: '/(room)/$roomId',
+  path: '/$roomId',
+  getParentRoute: () => PrivateRouteRoute,
 } as any)
 const PrivatesharedSlotsRouteRoute = PrivatesharedSlotsRouteRouteImport.update({
   id: '/slots',
@@ -243,6 +249,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof PrivateDashboardRoute
   '/schedules': typeof PrivatesharedSchedulesRouteRouteWithChildren
   '/slots': typeof PrivatesharedSlotsRouteRouteWithChildren
+  '/$roomId': typeof PrivateroomRoomIdRoute
   '/logs': typeof PrivatesudoLogsRoute
   '/profile/edit': typeof PrivateProfileEditRoute
   '/profile/password': typeof PrivateProfilePasswordRoute
@@ -272,6 +279,7 @@ export interface FileRoutesByTo {
   '/unauthorized': typeof UnauthorizedRoute
   '/dashboard': typeof PrivateDashboardRoute
   '/slots': typeof PrivatesharedSlotsRouteRouteWithChildren
+  '/$roomId': typeof PrivateroomRoomIdRoute
   '/logs': typeof PrivatesudoLogsRoute
   '/profile/edit': typeof PrivateProfileEditRoute
   '/profile/password': typeof PrivateProfilePasswordRoute
@@ -310,6 +318,7 @@ export interface FileRoutesById {
   '/_public/': typeof PublicIndexRoute
   '/_private/(shared)/schedules': typeof PrivatesharedSchedulesRouteRouteWithChildren
   '/_private/(shared)/slots': typeof PrivatesharedSlotsRouteRouteWithChildren
+  '/_private/(room)/$roomId': typeof PrivateroomRoomIdRoute
   '/_private/(sudo)/logs': typeof PrivatesudoLogsRoute
   '/_private/profile/edit': typeof PrivateProfileEditRoute
   '/_private/profile/password': typeof PrivateProfilePasswordRoute
@@ -342,6 +351,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/schedules'
     | '/slots'
+    | '/$roomId'
     | '/logs'
     | '/profile/edit'
     | '/profile/password'
@@ -371,6 +381,7 @@ export interface FileRouteTypes {
     | '/unauthorized'
     | '/dashboard'
     | '/slots'
+    | '/$roomId'
     | '/logs'
     | '/profile/edit'
     | '/profile/password'
@@ -408,6 +419,7 @@ export interface FileRouteTypes {
     | '/_public/'
     | '/_private/(shared)/schedules'
     | '/_private/(shared)/slots'
+    | '/_private/(room)/$roomId'
     | '/_private/(sudo)/logs'
     | '/_private/profile/edit'
     | '/_private/profile/password'
@@ -559,6 +571,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/logs'
       preLoaderRoute: typeof PrivatesudoLogsRouteImport
       parentRoute: typeof PrivatesudoRouteRoute
+    }
+    '/_private/(room)/$roomId': {
+      id: '/_private/(room)/$roomId'
+      path: '/$roomId'
+      fullPath: '/$roomId'
+      preLoaderRoute: typeof PrivateroomRoomIdRouteImport
+      parentRoute: typeof PrivateRouteRoute
     }
     '/_private/(shared)/slots': {
       id: '/_private/(shared)/slots'
@@ -836,6 +855,7 @@ interface PrivateRouteRouteChildren {
   PrivatesharedRouteRoute: typeof PrivatesharedRouteRouteWithChildren
   PrivatesudoRouteRoute: typeof PrivatesudoRouteRouteWithChildren
   PrivateDashboardRoute: typeof PrivateDashboardRoute
+  PrivateroomRoomIdRoute: typeof PrivateroomRoomIdRoute
   PrivateProfileEditRoute: typeof PrivateProfileEditRoute
   PrivateProfilePasswordRoute: typeof PrivateProfilePasswordRoute
   PrivateProfileIndexRoute: typeof PrivateProfileIndexRoute
@@ -848,6 +868,7 @@ const PrivateRouteRouteChildren: PrivateRouteRouteChildren = {
   PrivatesharedRouteRoute: PrivatesharedRouteRouteWithChildren,
   PrivatesudoRouteRoute: PrivatesudoRouteRouteWithChildren,
   PrivateDashboardRoute: PrivateDashboardRoute,
+  PrivateroomRoomIdRoute: PrivateroomRoomIdRoute,
   PrivateProfileEditRoute: PrivateProfileEditRoute,
   PrivateProfilePasswordRoute: PrivateProfilePasswordRoute,
   PrivateProfileIndexRoute: PrivateProfileIndexRoute,

@@ -28,10 +28,13 @@ export interface JwtPayload {
 }
 export type JwtSignPayload = Pick<JwtPayload, "userId" | "email" | "role">;
 
-export const getCookieOptions = (isProd: boolean) => ({
+export const getCookieOptions = (_isProd: boolean) => ({
   httpOnly: true,
-  sameSite: isProd ? ("none" as const) : ("lax" as const),
-  secure: isProd,
+  // SameSite=None + Secure required for cross-origin cookies (frontend on
+  // port 3000, backend on port 8000 = different origins). Both servers run
+  // HTTPS in dev (self-signed cert) and prod, so Secure=true is always safe.
+  sameSite: "none" as const,
+  secure: true,
   path: "/",
   maxAge: Math.floor(parseExpiryMs(JWT_CONFIG.refreshExpiry) / 1000),
 });

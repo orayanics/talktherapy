@@ -4,7 +4,7 @@
   "sideEffects": false,
   "type": "module",
   "scripts": {
-    "dev": "bunx --bun vite",
+    "dev": "NODE_TLS_REJECT_UNAUTHORIZED=0 bunx --bun vite --host",
     "build": "vite build && tsc --noEmit",
     "preview": "vite preview",
     "start": "pnpx srvx --prod -s ../client dist/server/server.js",
@@ -42,6 +42,7 @@
     "@types/node": "^22.5.4",
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",
+    "@vitejs/plugin-basic-ssl": "^2.1.4",
     "@vitejs/plugin-react": "^4.3.4",
     "eslint": "^10.0.2",
     "prettier": "3.8.1",

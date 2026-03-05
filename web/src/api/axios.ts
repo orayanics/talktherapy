@@ -4,8 +4,21 @@ import type { AxiosRequestConfig } from 'axios'
 import { AXIOS, SESSION } from '~/config/message'
 import { showAlertGlobal } from '~/context/AlertContext'
 
+// Derive the API base URL dynamically so the same JS bundle works
+// regardless of which IP/hostname the browser loaded the page from.
+// VITE_APP_API_URL uses "localhost" as the host; on the client we swap it
+// for window.location.hostname so LAN devices hit the right IP.
+// On the server (SSR) window is undefined — localhost is correct there anyway.
+const _rawApiUrl =
+  (import.meta.env.VITE_APP_API_URL as string | undefined) ??
+  'https://localhost:8000/api/v1'
+const _apiBase =
+  typeof window !== 'undefined'
+    ? _rawApiUrl.replace('localhost', window.location.hostname)
+    : _rawApiUrl
+
 const instance = axios.create({
-  baseURL: import.meta.env.VITE_APP_API_URL,
+  baseURL: _apiBase,
   headers: {
     'Content-Type': 'application/json',
     Accept: 'application/json',

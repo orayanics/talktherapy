@@ -62,11 +62,21 @@ export default function MyAppointmentList(props: MyAppointmentListProps) {
     { header: 'Clinician', accessor: 'clinician' },
     { header: 'Chief Complaint', accessor: 'chief_complaint' },
     {
-      header: 'Room ID',
+      header: 'Room',
       accessor: 'room_id',
-      render: (value: string | null) =>
-        value ? (
-          <code className="text-xs font-mono">{value}</code>
+      render: (_: unknown, row: MyAppointmentRow) =>
+        row.room_id && row.status === 'CONFIRMED' ? (
+          <Link
+            to="/$roomId"
+            params={{ roomId: row.room_id }}
+            className="btn btn-primary btn-xs"
+          >
+            Join Session
+          </Link>
+        ) : row.room_id ? (
+          <code className="text-xs font-mono text-gray-400">
+            {row.room_id.slice(0, 8)}…
+          </code>
         ) : (
           <span className="text-gray-400 text-xs">—</span>
         ),

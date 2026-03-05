@@ -5,6 +5,7 @@ import type { MyAppointmentDetailProps } from '~/models/components'
 import ModalCancelAppointment from '~/modules/appointment/detail/ModalCancelAppointment'
 import AppointmentEventHistory from '~/modules/appointment/detail/AppointmentEventHistory'
 import { formatToLocalDate, getTime } from '~/utils/date'
+import { Link } from '@tanstack/react-router'
 
 const STATUS_BADGE: Record<ServerAppointmentStatus, string> = {
   PENDING: 'badge badge-outline bg-yellow-50 text-yellow-800 border-yellow-200',
@@ -88,11 +89,23 @@ export default function MyAppointmentDetail({
           <InfoRow label="Booked On" value={bookedDate} />
           <InfoRow label="Clinician" value={clinicianName} />
           <InfoRow label="Specialty" value={specialty} />
-          {room_id && (
+          {room_id && status !== 'CONFIRMED' && (
             <InfoRow
               label="Room ID"
               value={<code className="text-xs font-mono">{room_id}</code>}
             />
+          )}
+          {room_id && status === 'CONFIRMED' && (
+            <div className="flex flex-row justify-between gap-2 py-3 border-b border-dashed border-gray-100">
+              <p className="font-bold text-sm">Session Room</p>
+              <Link
+                to="/$roomId"
+                params={{ roomId: room_id }}
+                className="btn btn-primary btn-xs"
+              >
+                Join Session
+              </Link>
+            </div>
           )}
         </div>
 

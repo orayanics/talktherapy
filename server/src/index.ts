@@ -7,6 +7,7 @@ import { publicModule } from "@/modules/public";
 import { usersModule } from "@/modules/users";
 import { schedulingModule } from "./modules/scheduling";
 import { contentModule } from "./modules/content";
+import { sessionModule } from "./modules/session";
 
 import { customMessages } from "./utils/errors";
 
@@ -15,12 +16,15 @@ const corsOrigins = (process.env.APP_CORS_ORIGINS ?? "")
   .map((origin) => origin.trim())
   .filter(Boolean);
 
+const isDev = process.env.NODE_ENV !== "production";
+
 export const app = new Elysia()
   .use(
     cors({
-      origin: corsOrigins.length
-        ? corsOrigins
-        : ["http://localhost:3000", "http://localhost:5173"],
+      // In dev with no explicit origins set, allow any origin so LAN / network
+      // access works without having to hardcode IPs.  In production, always
+      // require APP_CORS_ORIGINS to be set explicitly.
+      origin: corsOrigins.length ? corsOrigins : isDev ? true : false,
       credentials: true,
       allowedHeaders: ["authorization", "content-type"],
       methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
@@ -82,10 +86,21 @@ export const app = new Elysia()
       .use(publicModule)
       .use(usersModule)
       .use(schedulingModule)
-      .use(contentModule),
+      .use(contentModule)
+      .use(sessionModule),
   )
 
-  .listen(8000);
+  .listen({
+    port: 8000,
+    hostname: "0.0.0.0",
+    tls: {
+      // Self-signed cert at monorepo root — generated once for dev.
+      // Both Vite (3000) and Elysia (8000) use the same cert so the browser
+      // only needs to accept the untrusted cert once per host.
+      cert: Bun.file(new URL("../../certs/cert.pem", import.meta.url)),
+      key: Bun.file(new URL("../../certs/key.pem", import.meta.url)),
+    },
+  });
 
 console.log(
   `🦊 Healthcare API running at ${app.server?.hostname}:${app.server?.port}`,

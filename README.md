@@ -27,3 +27,13 @@ To start the development server run:
 ```bash
 bun run dev
 ```
+
+To generate certs for HTTPS (required for WebRTC):
+
+```bash
+mkcert -install
+mkcert localhost
+
+# Generate certs
+mkcert -key-file key.pem -cert-file cert.pem localhost
+```
