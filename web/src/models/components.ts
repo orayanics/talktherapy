@@ -310,12 +310,6 @@ export interface AdminContentProps {
   contentId: string
 }
 
-// ─── Dashboard Components ───────────────────────────────────────────────────
-
-export interface AppointmentStatsCardProps {
-  appointments?: number
-}
-
 // ─── Route-level Table Props ─────────────────────────────────────────────────
 
 export interface LogItem {

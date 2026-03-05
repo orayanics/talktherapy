@@ -11,9 +11,14 @@ bun install
 To migrate sql:
 
 ```bash
+cd server
+# Generate Prisma Client
 bunx --bun prisma generate
+# Migrate the DB
 bunx --bun prisma migrate dev
-(if needed): bunx --bun prisma migrate reset
+# If error occurs, reset the DB and try again
+bunx --bun prisma migrate reset
+# Seed the DB
 bun run seed
 ```
 

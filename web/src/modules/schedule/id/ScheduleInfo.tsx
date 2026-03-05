@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { format } from 'date-fns'
 import { useNavigate } from '@tanstack/react-router'
 import useDeleteSchedule from './useDeleteSchedule'
+import useUpdateStatus from './useUpdateStatus'
 import type { ScheduleDetailsIdProps } from '~/models/components'
 import { parseRRule } from '~/utils/rrule'
 import ModalConfirm from '~/components/Modal/ModalConfirm'
@@ -25,6 +26,9 @@ export default function ScheduleDetailsId(props: ScheduleDetailsIdProps) {
   const handleDelete = () => {
     setShowDeleteModal(true)
   }
+
+  const { handleSubmit: handleStatusUpdate, isLoading: isUpdatingStatus } =
+    useUpdateStatus({ ruleId: id })
 
   return (
     <>
@@ -57,7 +61,7 @@ export default function ScheduleDetailsId(props: ScheduleDetailsIdProps) {
             <p>{is_active ? 'Active' : 'Inactive'}</p>
           </div>
 
-          {is_active && isClinician && (
+          {isClinician && (
             <div className="flex flex-col gap-2">
               <button
                 className="btn btn-primary"
@@ -70,8 +74,15 @@ export default function ScheduleDetailsId(props: ScheduleDetailsIdProps) {
               >
                 Edit Schedule
               </button>
-              <button className="btn btn-soft btn-error" onClick={handleDelete}>
+              <button className="btn btn-error" onClick={handleDelete}>
                 Delete Schedule
+              </button>
+              <button
+                className="btn btn-soft"
+                onClick={handleStatusUpdate}
+                disabled={isUpdatingStatus}
+              >
+                Set as {is_active ? 'Inactive' : 'Active'}
               </button>
             </div>
           )}

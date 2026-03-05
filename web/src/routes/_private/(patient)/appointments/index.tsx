@@ -42,7 +42,7 @@ function RouteComponent() {
   const [selected, setSelected] = useState<Date | undefined>(new Date())
   const searchProps = Route.useSearch()
   const publicDiagnoses = Route.useLoaderData()
-
+  const { data } = publicDiagnoses
   const navigate = useNavigate()
 
   return (
@@ -55,7 +55,7 @@ function RouteComponent() {
         <GridItem colSpan={12} className="flex flex-col gap-4 lg:col-span-4">
           <InputMultiselect
             placeholder="Filter by Diagnosis"
-            options={publicDiagnoses}
+            options={data}
             value={searchProps.diagnosis ?? []}
             onChange={(diagnosis) =>
               navigate({

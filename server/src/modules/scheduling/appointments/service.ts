@@ -185,15 +185,10 @@ export abstract class AppointmentService {
     }
 
     return prisma.$transaction(async (tx) => {
-      const slot = await tx.slot.update({
+      await tx.slot.update({
         where: { id: appointment.slot_id },
         data: { status: "COMPLETED" },
         select: { availability_rule_id: true },
-      });
-
-      await tx.availabilityRule.update({
-        where: { id: slot.availability_rule_id },
-        data: { is_active: false },
       });
 
       const updated = await tx.appointments.update({

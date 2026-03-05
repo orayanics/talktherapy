@@ -20,7 +20,7 @@ function RouteComponent() {
 
   if (isLoading) return <LoaderTable />
   if (error) return <SkeletonError />
-  if (!data.data || data.data.length === 0) return <SkeletonNull />
+  if (!data || data.length === 0) return <SkeletonNull />
 
   return <ScheduleEdit data={data} />
 }

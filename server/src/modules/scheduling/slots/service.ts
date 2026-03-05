@@ -36,27 +36,60 @@ export abstract class SlotService {
    * Returns all slots for the authenticated clinician, with optional filters.
    */
   static async listSlots(clinician_id: string, query: SlotModel.listQuery) {
-    const { from, to, status: slotStatus } = query;
+    const { from, to, status: slotStatus, page = 1, per_page = 10 } = query;
 
-    return prisma.slot.findMany({
-      where: {
-        clinician_id,
-        ...(slotStatus && { status: slotStatus }),
-        ...(from && { starts_at: { gte: new Date(from) } }),
-        ...(to && { ends_at: { lte: new Date(to) } }),
-      },
-      include: {
-        availability_rule: {
-          select: { id: true, recurrence_rule: true },
+    const toDate = to ? new Date(to) : undefined;
+    if (toDate) toDate.setUTCHours(23, 59, 59, 999);
+
+    const skip = (page - 1) * per_page;
+
+    const where = {
+      clinician_id,
+      ...(slotStatus && { status: slotStatus }),
+      ...(from && { starts_at: { gte: new Date(from) } }),
+      ...(toDate && { ends_at: { lte: toDate } }),
+    };
+
+    const [data, total] = await prisma.$transaction([
+      prisma.slot.findMany({
+        where,
+        include: {
+          availability_rule: {
+            select: { id: true, recurrence_rule: true },
+          },
+          appointments: {
+            where: { status: { not: "CANCELLED" } },
+            select: {
+              id: true,
+              status: true,
+              patient: {
+                select: {
+                  id: true,
+                  user: { select: { name: true } },
+                },
+              },
+            },
+            take: 1,
+          },
         },
-        appointments: {
-          where: { status: { not: "CANCELLED" } },
-          select: { id: true, patient_id: true, status: true },
-          take: 1,
-        },
+        orderBy: { starts_at: "asc" },
+        skip,
+        take: per_page,
+      }),
+      prisma.slot.count({ where }),
+    ]);
+
+    return {
+      data,
+      meta: {
+        total,
+        page,
+        per_page,
+        last_page: Math.ceil(total / per_page),
+        from: skip + 1,
+        to: skip + data.length,
       },
-      orderBy: { starts_at: "asc" },
-    });
+    };
   }
 
   /**

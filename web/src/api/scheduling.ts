@@ -35,6 +35,7 @@ export const availabilityRulesQuery = (params: AvailabilityRulesParams) =>
       })
       return data
     },
+    placeholderData: (prev) => prev,
     staleTime: 1000 * 60 * 5,
     retry: false,
   })
@@ -46,6 +47,7 @@ export const availabilityByIdQuery = (ruleId: string) =>
       const { data } = await api.get(`/scheduling/availability/${ruleId}`)
       return data
     },
+    placeholderData: (prev) => prev,
     staleTime: 1000 * 60 * 5,
     retry: false,
   })
@@ -65,7 +67,29 @@ export const appointmentsQuery = (params: PatientAppointmentsQueryParams) =>
       })
       return data
     },
+    placeholderData: (prev) => prev,
     staleTime: 1000 * 60 * 5,
+    retry: false,
+  })
+
+export const slotsQuery = (params: AvailabilityRulesParams) =>
+  queryOptions({
+    queryKey: ['slots', params],
+    queryFn: async () => {
+      const apiParams = {
+        ...(params.date && {
+          from: format(params.date, 'yyyy-MM-dd'),
+          to: format(params.date, 'yyyy-MM-dd'),
+        }),
+        page: params.page ?? 1,
+        per_page: params.perPage ?? 10,
+      }
+      const { data } = await api.get(`/scheduling/slots`, {
+        params: apiParams,
+      })
+      return data
+    },
+    placeholderData: (prev) => prev,
     retry: false,
   })
 
@@ -78,10 +102,11 @@ export const clinicianAvailableSlotsQuery = (clinicianId: string) =>
     queryKey: ['appointments', 'available', 'clinician', clinicianId],
     queryFn: async () => {
       const { data } = await api.get(`/scheduling/slots/available`, {
-        params: { clinician_id: clinicianId, per_page: 50 },
+        params: { clinician_id: clinicianId, per_page: 10 },
       })
       return data
     },
+    placeholderData: (prev) => prev,
     staleTime: 1000 * 60 * 2,
     retry: false,
   })
@@ -180,6 +205,32 @@ export const useDeleteSlotId = (slotId: string, ruleId: string) => {
         console.error('Failed to delete slot:', error.response?.data)
       }
       showAlert(SCHEDULE.delete.error, 'error')
+    },
+  })
+}
+
+// Schedule Rule
+export const useUpdateScheduleStatus = (ruleId: string) => {
+  const queryClient = useQueryClient()
+  const { showAlert } = useAlert()
+
+  return useMutation({
+    mutationFn: async () => {
+      const { data } = await api.patch(
+        `/scheduling/availability/${ruleId}/status`,
+      )
+      return data
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['availability', 'list'] })
+      queryClient.invalidateQueries({ queryKey: ['availability', ruleId] })
+      showAlert(SCHEDULE.update.success, 'success')
+    },
+    onError: (error) => {
+      if (isAxiosError(error)) {
+        console.error('Failed to update status:', error.response?.data)
+      }
+      showAlert(SCHEDULE.update.error, 'error')
     },
   })
 }

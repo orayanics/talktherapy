@@ -84,6 +84,7 @@ model Patient {
   user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
   diagnosis Diagnosis? @relation(fields: [diagnosis_id], references: [id], onDelete: SetNull)
   clinician_patients ClinicianPatient[]
+  appointments       Appointments[]
   soaps Soap[]
 }
 
@@ -189,7 +190,8 @@ model Appointments {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
-  slot Slot @relation(fields: [slot_id], references: [id])
+  slot    Slot    @relation(fields: [slot_id], references: [id])
+  patient Patient @relation(fields: [patient_id], references: [id])
   events      AppointmentEvent[]
   encounter   Encounter?
 }

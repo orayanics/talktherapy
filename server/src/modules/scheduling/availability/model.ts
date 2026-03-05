@@ -29,6 +29,11 @@ export namespace AvailabilityModel {
   });
   export type ruleParams = typeof ruleParams.static;
 
+  export const updateStatusParams = t.Object({
+    rule_id: t.String(),
+  });
+  export type updateStatusParams = typeof updateStatusParams.static;
+
   // ── Response Shapes ─────────────────────────────────────────────
 
   export const ruleResponse = t.Object({
@@ -53,7 +58,7 @@ export namespace AvailabilityModel {
 
   export const listQuery = t.Object({
     from: t.Optional(t.String({ format: "date" })),
-    to: t.Optional(t.String({ format: "date-time" })),
+    to: t.Optional(t.String({ format: "date" })),
     status: t.Optional(
       t.Union([
         t.Literal("AVAILABLE"),

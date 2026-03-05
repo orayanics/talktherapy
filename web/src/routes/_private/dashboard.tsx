@@ -25,17 +25,16 @@ export const Route = createFileRoute('/_private/dashboard')({
 function RouteComponent() {
   const { is } = useAuthGuard()
 
-  const { data } = useQuery({
+  const { data: adminData } = useQuery({
     ...dashboardDataQueryOptions,
     enabled: is('admin'),
   })
 
   const dashboardView = () => {
-    if (is('admin')) return <AdminSharedDashboard {...data} />
+    if (is('admin')) return <AdminSharedDashboard {...adminData} />
     if (is('clinician')) return <ClinicianDashboard />
     if (is('patient')) return <PatientDashboard />
   }
-
   return (
     <>
       <PageTitle

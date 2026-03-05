@@ -1,5 +1,5 @@
 import { DayPicker } from 'react-day-picker'
-import { format } from 'date-fns'
+import { format, startOfDay } from 'date-fns'
 import type { CalenderSingleProps } from '~/models/components'
 
 export default function CalenderSingle(props: CalenderSingleProps) {
@@ -23,7 +23,7 @@ export default function CalenderSingle(props: CalenderSingleProps) {
       mode="single"
       selected={date}
       onSelect={handleSelect}
-      disabled={{ before: new Date() }}
+      disabled={{ before: startOfDay(new Date()) }}
       footer={date ? `Selected: ${dateStr}` : 'Pick a day.'}
     />
   )

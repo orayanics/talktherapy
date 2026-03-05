@@ -81,5 +81,21 @@ export const availabilityController = new Elysia({
           return AvailabilityService.deleteRule(clinician_id, params.rule_id);
         },
         { params: AvailabilityModel.ruleParams },
+      )
+      // PATCH: /availability/:rule_id/status
+      .patch(
+        "/:rule_id/status",
+        async ({ auth, params }) => {
+          const clinician_id = await AvailabilityService.resolveClinicianId(
+            auth!.userId,
+          );
+          return AvailabilityService.updateRuleStatus(
+            clinician_id,
+            params.rule_id,
+          );
+        },
+        {
+          params: AvailabilityModel.updateStatusParams,
+        },
       ),
   );

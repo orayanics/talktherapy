@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
+import { startOfDay } from 'date-fns'
 
 import type { ScheduleListProps } from '~/models/table'
 
@@ -19,7 +20,9 @@ import { availabilityRulesQuery } from '~/api/scheduling'
 import TablePagination from '~/components/Table/TablePagination'
 
 export default function ScheduleList({ search }: ScheduleListProps) {
-  const [selected, setSelected] = useState<Date | undefined>(new Date())
+  const [selected, setSelected] = useState<Date | undefined>(
+    startOfDay(new Date()),
+  )
 
   return (
     <>

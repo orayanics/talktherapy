@@ -26,16 +26,16 @@ export abstract class AvailabilityService {
     query: AvailabilityModel.listQuery,
     clinician_id?: string,
   ) {
-    const { from, status: slotStatus, page = 1, per_page = 10 } = query;
+    const { from, to, status: slotStatus, page = 1, per_page = 10 } = query;
     const skip = (page - 1) * per_page;
 
     const slotWhere = {
       ...(slotStatus && { status: slotStatus }),
       ...(from && {
-        starts_at: {
-          gte: new Date(`${from}T00:00:00.000Z`),
-          lte: new Date(`${from}T23:59:59.999Z`),
-        },
+        starts_at: { gte: new Date(`${from}T00:00:00.000Z`) },
+      }),
+      ...(to && {
+        ends_at: { lte: new Date(`${to}T23:59:59.999Z`) },
       }),
     };
     const hasSlotFilter = Object.keys(slotWhere).length > 0;
@@ -43,7 +43,6 @@ export abstract class AvailabilityService {
     const where = {
       ...(clinician_id && { clinician_id }),
       ...(hasSlotFilter && { slots: { some: slotWhere } }),
-      is_active: true,
     };
 
     const [total, rules] = await prisma.$transaction([
@@ -351,5 +350,20 @@ export abstract class AvailabilityService {
 
     await prisma.availabilityRule.delete({ where: { id: rule_id } });
     return { deleted: true };
+  }
+
+  static async updateRuleStatus(clinician_id: string, rule_id: string) {
+    const rule = await prisma.availabilityRule.findFirst({
+      where: { id: rule_id, clinician_id },
+    });
+
+    if (!rule) throw status(404, "Availability rule not found");
+
+    await prisma.availabilityRule.update({
+      where: { id: rule_id },
+      data: { is_active: !rule.is_active },
+    });
+
+    return { updated: true };
   }
 }
