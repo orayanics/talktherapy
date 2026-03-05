@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import useBookAppointment from './useBookAppointment'
 import ModalBookAppointment from './ModalBookAppointment'
 import type { AvailableSlot } from '~/models/booking'
@@ -7,7 +6,6 @@ import { getTime } from '~/utils/date'
 
 export default function AppointmentCard(props: AppointmentCardProps) {
   const { data } = props
-  const [current, setCurrent] = useState<string>(data[0]?.id || '')
   const {
     selectedSlot,
     form,
@@ -38,16 +36,9 @@ export default function AppointmentCard(props: AppointmentCardProps) {
           return (
             <div
               key={id}
-              className={`${current === id ? 'border-primary' : ''} collapse collapse-plus bg-base-100 border border-base-300`}
-              id={`slot-${id}`}
+              className="flex flex-col gap-2 p-4 rounded-lg hover:border-primary bg-base-100 border border-base-300"
             >
-              <input
-                type="radio"
-                name={`accordion-${id}`}
-                checked={current === id}
-                onChange={() => setCurrent(id)}
-              />
-              <div className="collapse-title">
+              <div>
                 <div className="flex flex-row gap-4 items-center">
                   <button
                     type="button"
@@ -65,7 +56,7 @@ export default function AppointmentCard(props: AppointmentCardProps) {
                   </p>
                 </div>
               </div>
-              <div className="collapse-content flex flex-col gap-2 text-sm text-gray-600">
+              <div className="flex flex-col gap-2 text-sm text-gray-600">
                 <div>
                   <p className="font-mono text-primary">Clinician</p>
                   <p>{name}</p>

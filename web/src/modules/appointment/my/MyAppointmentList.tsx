@@ -60,7 +60,6 @@ export default function MyAppointmentList(props: MyAppointmentListProps) {
     { header: 'Date', accessor: 'date' },
     { header: 'Time', accessor: 'time' },
     { header: 'Clinician', accessor: 'clinician' },
-    { header: 'Specialty', accessor: 'specialty' },
     { header: 'Chief Complaint', accessor: 'chief_complaint' },
     {
       header: 'Room ID',
@@ -73,21 +72,11 @@ export default function MyAppointmentList(props: MyAppointmentListProps) {
         ),
     },
     {
-      header: 'Reason',
-      accessor: 'reason',
-      render: (value: string | null) =>
-        value ? (
-          <span className="text-sm text-gray-700">{value}</span>
-        ) : (
-          <span className="text-gray-400 text-xs">—</span>
-        ),
-    },
-    {
-      header: '',
+      header: 'Action',
       accessor: 'view',
       render: (value: string) => (
         <Link
-          to="/my-appointments/$appointmentId"
+          to="/appointments/$appointmentId"
           params={{ appointmentId: value }}
           className="btn btn-ghost btn-xs"
         >

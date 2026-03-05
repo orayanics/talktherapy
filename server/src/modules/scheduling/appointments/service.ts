@@ -196,6 +196,7 @@ export abstract class AppointmentService {
         data: {
           status: "COMPLETED",
           completed_at: new Date(),
+          room_id: null,
         },
       });
 

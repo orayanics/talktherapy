@@ -83,7 +83,7 @@ function AppointmentList({ date, search }: { date?: Date; search: any }) {
   const {
     data = [],
     isLoading,
-    error,
+    isError,
   } = useQuery(
     appointmentsQuery({
       date,
@@ -92,21 +92,28 @@ function AppointmentList({ date, search }: { date?: Date; search: any }) {
       diagnosis,
     }),
   )
-
+  const { data: appointments, meta } = data || {}
+  const { to, from, total } = meta || {}
   const navigate = useNavigate()
-
-  if (isLoading) return <LoaderTable />
-  if (error) return <SkeletonError />
-  if (!data.data || data.data.length === 0) return <SkeletonNull />
 
   return (
     <>
-      <AppointmentCard data={data.data} />
+      {isLoading ? (
+        <LoaderTable />
+      ) : isError ? (
+        <SkeletonError />
+      ) : !appointments || appointments.length === 0 ? (
+        <SkeletonNull />
+      ) : (
+        <AppointmentCard data={appointments} />
+      )}
 
       <TablePagination
         page={page}
         perPage={perPage}
-        total={data.meta.page_size}
+        total={total}
+        to={to}
+        from={from}
         onPageChange={() =>
           navigate({
             to: '.',

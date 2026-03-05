@@ -1,17 +1,15 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { useQuery } from '@tanstack/react-query'
 import { useAuthGuard } from '~/hooks/useAuthGuard'
 
-import { dashboardDataQueryOptions } from '~/api/dashboard'
 import { sessionQueryOptions } from '~/api/auth'
 
 import Grid from '~/components/Page/Grid'
 import GridItem from '~/components/Page/GridItem'
 import PageTitle from '~/components/Page/PageTitle'
 
-import PatientDashboard from '~/views/dashboard/patient'
-import AdminSharedDashboard from '~/views/dashboard/adm-shared/'
-import ClinicianDashboard from '~/views/dashboard/clinician'
+import AdminSharedDashboard from '~/modules/dashboard/AdminDashboard'
+import ClinicianDashboard from '~/modules/dashboard/clinician/ClinicianDashboard'
+import PatientDashboard from '~/modules/dashboard/patient/PatientDashboard'
 
 export const Route = createFileRoute('/_private/dashboard')({
   ssr: false,
@@ -24,17 +22,12 @@ export const Route = createFileRoute('/_private/dashboard')({
 
 function RouteComponent() {
   const { is } = useAuthGuard()
-
-  const { data: adminData } = useQuery({
-    ...dashboardDataQueryOptions,
-    enabled: is('admin'),
-  })
-
   const dashboardView = () => {
-    if (is('admin')) return <AdminSharedDashboard {...adminData} />
+    if (is('admin')) return <AdminSharedDashboard />
     if (is('clinician')) return <ClinicianDashboard />
     if (is('patient')) return <PatientDashboard />
   }
+
   return (
     <>
       <PageTitle

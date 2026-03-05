@@ -20,3 +20,12 @@ export const APPOINTMENT_STATUS_LABEL: Record<APPOINTMENT_STATUS, string> = {
   completed: 'Completed',
   no_show: 'No Show',
 }
+
+export const STATUS_OPTIONS = [
+  { value: '', label: 'All Statuses' },
+  { value: 'PENDING', label: 'Pending' },
+  { value: 'CONFIRMED', label: 'Confirmed' },
+  { value: 'CANCELLED', label: 'Cancelled' },
+  { value: 'COMPLETED', label: 'Completed' },
+  { value: 'NO_SHOW', label: 'No Show' },
+]
