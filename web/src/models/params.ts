@@ -16,6 +16,13 @@ export interface ContentListParams {
   diagnosis?: Array<string>
 }
 
+export interface BookmarkListParams {
+  page?: number
+  perPage?: number
+  search?: string
+  diagnosis?: Array<string>
+}
+
 // Schedule / Appointment Params
 
 export interface AvailabilityRulesParams {

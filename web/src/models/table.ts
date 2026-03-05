@@ -56,9 +56,11 @@ export interface ContentListTableFilters {
   search?: string
   diagnosis?: Array<string>
   diagnosisOptions: Array<DiagnosisItem>
+  showBookmarks: boolean
   onSearchChange: (search: string) => void
   onDiagnosisChange: (diagnosis: Array<string>) => void
   onClearFilters: () => void
+  onToggleBookmarks: () => void
 }
 
 export interface ContentListItem {

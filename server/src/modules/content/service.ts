@@ -167,4 +167,91 @@ export abstract class ContentService {
     await prisma.content.delete({ where: { id: content_id } });
     return { message: "Content deleted successfully" };
   }
+
+  static async addBookmark(user_id: string, content_id: string) {
+    const content = await prisma.content.findUnique({
+      where: { id: content_id },
+    });
+    if (!content) throw status(404, "Content not found");
+
+    const existing = await prisma.bookmark.findUnique({
+      where: { user_id_content_id: { user_id, content_id } },
+    });
+    if (existing) throw status(409, "Content already bookmarked");
+
+    const bookmark = await prisma.bookmark.create({
+      data: { user_id, content_id },
+    });
+    return {
+      ...bookmark,
+      created_at: bookmark.created_at.toISOString(),
+    };
+  }
+
+  static async removeBookmark(user_id: string, content_id: string) {
+    const existing = await prisma.bookmark.findUnique({
+      where: { user_id_content_id: { user_id, content_id } },
+    });
+    if (!existing) throw status(404, "Bookmark not found");
+
+    await prisma.bookmark.delete({
+      where: { user_id_content_id: { user_id, content_id } },
+    });
+    return { message: "Bookmark removed successfully" };
+  }
+
+  static async listBookmarks(
+    user_id: string,
+    params: ContentModel.bookmarkListQuery,
+  ) {
+    const { page = 1, per_page = 10, search, diagnosis_id } = params;
+
+    const where: Prisma.BookmarkWhereInput = {
+      user_id,
+      content: {
+        ...(search && {
+          OR: [
+            { title: { contains: search } },
+            { description: { contains: search } },
+          ],
+        }),
+        ...(diagnosis_id?.length && {
+          diagnosis: { value: { in: diagnosis_id } },
+        }),
+      },
+    };
+
+    const [items, total] = await prisma.$transaction([
+      prisma.bookmark.findMany({
+        where,
+        include: {
+          content: {
+            include: contentInclude,
+          },
+        },
+        skip: (page - 1) * per_page,
+        take: per_page,
+        orderBy: { created_at: "desc" },
+      }),
+      prisma.bookmark.count({ where }),
+    ]);
+
+    const last_page = Math.ceil(total / per_page);
+
+    return {
+      data: items.map((b) => ({
+        ...b,
+        created_at: b.created_at.toISOString(),
+        content: formatContent(b.content),
+      })),
+      meta: {
+        total,
+        page,
+        per_page,
+        last_page,
+        from: total === 0 ? 0 : (page - 1) * per_page + 1,
+        to: Math.min(page * per_page, total),
+      },
+    };
+  }
 }

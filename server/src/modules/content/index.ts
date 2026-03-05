@@ -66,4 +66,45 @@ export const contentModule = new Elysia({ prefix: "/content" })
           },
         },
       ),
+  )
+  .guard({ isAuth: true }, (app) =>
+    app
+      // GET: /content/bookmarks
+      .get(
+        "/bookmarks",
+        ({ auth, query }) => ContentService.listBookmarks(auth!.userId, query),
+        {
+          query: ContentModel.bookmarkListQuery,
+          response: {
+            200: ContentModel.bookmarkList,
+          },
+        },
+      )
+      // POST: /content/:content_id/bookmark
+      .post(
+        "/:content_id/bookmark",
+        ({ auth, params }) =>
+          ContentService.addBookmark(auth!.userId, params.content_id),
+        {
+          params: ContentModel.bookmarkParams,
+          response: {
+            200: ContentModel.bookmarkResponse,
+            404: ContentModel.notFound,
+            409: ContentModel.bookmarkAlreadyExists,
+          },
+        },
+      )
+      // DELETE: /content/:content_id/bookmark
+      .delete(
+        "/:content_id/bookmark",
+        ({ auth, params }) =>
+          ContentService.removeBookmark(auth!.userId, params.content_id),
+        {
+          params: ContentModel.bookmarkParams,
+          response: {
+            200: ContentModel.unbookmarkResponse,
+            404: ContentModel.bookmarkNotFound,
+          },
+        },
+      ),
   );

@@ -85,4 +85,54 @@ export namespace ContentModel {
 
   export const invalid = t.Literal("Invalid content data");
   export type invalid = typeof invalid.static;
+
+  // Bookmark models
+  export const bookmarkParams = t.Object({ content_id: t.String() });
+  export type bookmarkParams = typeof bookmarkParams.static;
+
+  export const bookmarkResponse = t.Object({
+    id: t.String(),
+    user_id: t.String(),
+    content_id: t.String(),
+    created_at: t.String(),
+  });
+  export type bookmarkResponse = typeof bookmarkResponse.static;
+
+  export const bookmarkListQuery = t.Object({
+    page: t.Optional(t.Numeric({ minimum: 1, default: 1 })),
+    per_page: t.Optional(t.Numeric({ minimum: 1, maximum: 100, default: 10 })),
+    search: t.Optional(t.String()),
+    diagnosis_id: t.Optional(t.Array(t.String())),
+  });
+  export type bookmarkListQuery = typeof bookmarkListQuery.static;
+
+  export const bookmarkList = t.Object({
+    data: t.Array(
+      t.Object({
+        id: t.String(),
+        user_id: t.String(),
+        content_id: t.String(),
+        created_at: t.String(),
+        content: _contentShape,
+      }),
+    ),
+    meta: t.Object({
+      total: t.Number(),
+      page: t.Number(),
+      per_page: t.Number(),
+      last_page: t.Number(),
+      from: t.Number(),
+      to: t.Number(),
+    }),
+  });
+  export type bookmarkList = typeof bookmarkList.static;
+
+  export const bookmarkAlreadyExists = t.Literal("Content already bookmarked");
+  export type bookmarkAlreadyExists = typeof bookmarkAlreadyExists.static;
+
+  export const bookmarkNotFound = t.Literal("Bookmark not found");
+  export type bookmarkNotFound = typeof bookmarkNotFound.static;
+
+  export const unbookmarkResponse = t.Object({ message: t.String() });
+  export type unbookmarkResponse = typeof unbookmarkResponse.static;
 }

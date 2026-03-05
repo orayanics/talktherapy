@@ -6,7 +6,8 @@ import {
 import { useNavigate } from '@tanstack/react-router'
 import { isAxiosError } from 'axios'
 
-import type { ContentListParams } from '~/models/params'
+import type { BookmarkListResponse } from '~/models/content'
+import type { BookmarkListParams, ContentListParams } from '~/models/params'
 import type {
   CreateContentPayload,
   UpdateContentPayload,
@@ -112,6 +113,75 @@ export const useDeleteContentId = (contentId: string) => {
         console.error('Failed to delete content:', error.response?.data)
       }
       showAlert(CONTENT.delete.error, 'error')
+    },
+  })
+}
+
+// Patient
+// bookmarks query
+export const bookmarkListQueryOptions = (params: BookmarkListParams) =>
+  queryOptions({
+    queryKey: ['bookmarks', 'list', params],
+    queryFn: async (): Promise<BookmarkListResponse> => {
+      const { data } = await api.get('/content/bookmarks', {
+        params: {
+          search: params.search || undefined,
+          diagnosis_id: params.diagnosis?.length ? params.diagnosis : undefined,
+          page: params.page ?? 1,
+          per_page: params.perPage ?? 10,
+        },
+      })
+      return data
+    },
+    placeholderData: (prev) => prev,
+  })
+
+// bookmarks mutations
+export const useAddBookmark = (contentId: string) => {
+  const queryClient = useQueryClient()
+  const { showAlert } = useAlert()
+
+  return useMutation({
+    mutationFn: async () => {
+      const { data } = await api.post(`/content/${contentId}/bookmark`)
+      return data
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['bookmarks', 'list'] })
+      showAlert('Content bookmarked successfully', 'success')
+    },
+    onError: (error) => {
+      if (isAxiosError(error)) {
+        const msg = error.response?.data
+        if (msg === 'Content already bookmarked') {
+          showAlert('Already bookmarked', 'warning')
+          return
+        }
+        console.error('Failed to add bookmark:', msg)
+      }
+      showAlert('Failed to bookmark content', 'error')
+    },
+  })
+}
+
+export const useRemoveBookmark = (contentId: string) => {
+  const queryClient = useQueryClient()
+  const { showAlert } = useAlert()
+
+  return useMutation({
+    mutationFn: async () => {
+      const { data } = await api.delete(`/content/${contentId}/bookmark`)
+      return data
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['bookmarks', 'list'] })
+      showAlert('Bookmark removed', 'success')
+    },
+    onError: (error) => {
+      if (isAxiosError(error)) {
+        console.error('Failed to remove bookmark:', error.response?.data)
+      }
+      showAlert('Failed to remove bookmark', 'error')
     },
   })
 }

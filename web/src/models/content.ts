@@ -28,3 +28,29 @@ export interface TagItem {
   name: string
   slug: string
 }
+
+export interface BookmarkItem {
+  id: string
+  user_id: string
+  content_id: string
+  created_at: string
+  content: ContentItem & {
+    body: string
+    author_id: string
+    diagnosis_id: string
+    created_at: string
+    updated_at: string
+  }
+}
+
+export interface BookmarkListResponse {
+  data: Array<BookmarkItem>
+  meta: {
+    total: number
+    page: number
+    per_page: number
+    last_page: number
+    from: number
+    to: number
+  }
+}
