@@ -49,7 +49,7 @@ export const clinicianPatientSoapsQuery = (patientId: string) =>
   queryOptions<Array<SoapDto>>({
     queryKey: ['clinician', 'patient', patientId, 'soaps'],
     queryFn: async () => {
-      const { data } = await api.get(`/scheduling/soap/patients/${patientId}`)
+      const { data } = await api.get(`/scheduling/soaps/patients/${patientId}`)
       return data
     },
     retry: false,

@@ -54,7 +54,7 @@ export const useCreateSoap = (patientId: string) => {
   return useMutation({
     mutationFn: async (payload: CreateSoapPayload) => {
       const { data } = await api.post(
-        `/scheduling/soap/patients/${patientId}`,
+        `/scheduling/soaps/patients/${patientId}`,
         payload,
       )
       return data
