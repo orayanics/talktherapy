@@ -118,25 +118,59 @@ export abstract class SoapService {
    * Returns all SOAP notes for a patient, each including the authoring
    * clinician's name (from the linked User record).
    */
-  static async listPatientSoaps(user_id: string) {
+  static async listPatientSoaps(
+    user_id: string,
+    query: SoapModel.patientListQuery,
+  ) {
     const patient_id = await SoapService.resolvePatientId(user_id);
+    const { from, to, clinician_name, page = 1, per_page = 10 } = query;
+    const skip = (page - 1) * per_page;
 
-    const soaps = await prisma.soap.findMany({
-      where: { patient_id },
-      include: {
-        clinician: {
-          select: {
-            user: { select: { name: true } },
+    const createdAtFilter: { gte?: Date; lte?: Date } = {};
+    if (from) createdAtFilter.gte = new Date(`${from}T00:00:00.000Z`);
+    if (to) createdAtFilter.lte = new Date(`${to}T23:59:59.999Z`);
+
+    const where = {
+      patient_id,
+      ...(Object.keys(createdAtFilter).length > 0 && {
+        created_at: createdAtFilter,
+      }),
+      ...(clinician_name && {
+        clinician: { user: { name: { contains: clinician_name } } },
+      }),
+    };
+
+    const [soaps, total] = await prisma.$transaction([
+      prisma.soap.findMany({
+        where,
+        include: {
+          clinician: {
+            select: {
+              user: { select: { name: true } },
+            },
           },
         },
-      },
-      orderBy: { created_at: "desc" },
-    });
+        orderBy: { created_at: "desc" },
+        skip,
+        take: per_page,
+      }),
+      prisma.soap.count({ where }),
+    ]);
 
-    return soaps.map(({ clinician, ...rest }) => ({
-      ...rest,
-      clinician_name: clinician.user.name ?? null,
-    }));
+    return {
+      data: soaps.map(({ clinician, ...rest }) => ({
+        ...rest,
+        clinician_name: clinician.user.name ?? null,
+      })),
+      meta: {
+        total,
+        page,
+        per_page,
+        last_page: Math.ceil(total / per_page),
+        from: skip + 1,
+        to: skip + soaps.length,
+      },
+    };
   }
 
   /**

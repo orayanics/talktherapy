@@ -32,6 +32,14 @@ export interface RoleBadgeProps {
 export interface CalenderSingleProps {
   date: Date | undefined
   onSelect: (date: Date | undefined) => void
+  disablePast?: boolean
+}
+
+export interface CalenderSingleDropdownProps {
+  date: Date | undefined
+  onSelect: (date: Date | undefined) => void
+  disablePast?: boolean
+  placeholder?: string
 }
 
 // ─── Consents ───────────────────────────────────────────────────────────────

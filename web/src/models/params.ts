@@ -49,3 +49,11 @@ export interface ClinicianPatientDetailParams {
   page?: number
   perPage?: number
 }
+
+export interface PatientRecordsParams {
+  from?: string
+  to?: string
+  clinician_name?: string
+  page?: number
+  perPage?: number
+}

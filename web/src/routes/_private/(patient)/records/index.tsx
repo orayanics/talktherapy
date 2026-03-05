@@ -1,30 +1,51 @@
 import { createFileRoute } from '@tanstack/react-router'
-import Markdown from 'react-markdown'
-import rehypeRaw from 'rehype-raw'
+import { useQuery } from '@tanstack/react-query'
+import { useState } from 'react'
+import type { RecordListItem } from '~/models/table'
 import PageTitle from '~/components/Page/PageTitle'
 import Grid from '~/components/Page/Grid'
 import GridItem from '~/components/Page/GridItem'
 
+import { patientSoapsQuery } from '~/api/soap'
+import RecordsList from '~/modules/records/RecordsList'
+import RecordDetail from '~/modules/records/RecordDetail'
+
 export const Route = createFileRoute('/_private/(patient)/records/')({
+  validateSearch: (search: Record<string, unknown>) => {
+    const searchTerm =
+      typeof search.search === 'string' ? search.search : undefined
+    const date = typeof search.date === 'string' ? search.date : undefined
+    const page = Number(search.page ?? 1)
+    const perPage = Number(search.perPage ?? 10)
+
+    return {
+      ...(page !== 1 ? { page } : {}),
+      ...(perPage !== 10 ? { perPage } : {}),
+      ...(searchTerm ? { search: searchTerm } : {}),
+      ...(date ? { date } : {}),
+    }
+  },
   component: RouteComponent,
 })
 
-const SAMPLE_RECORDS = [
-  {
-    id: '1',
-    date: '2023-01-15',
-    clinician: 'Dr. Smith',
-    feedback: `# Feedback\n\nYour blood pressure is improving. Keep up the good work with your diet and exercise!\n\n## Diagnosis\n\n- Hypertension Stage 1\n- Recommend lifestyle changes and follow-up in 3 months.`,
-  },
-  {
-    id: '2',
-    date: '2023-03-10',
-    clinician: 'Dr. Johnson',
-    feedback: `# Feedback\n\nYour cholesterol levels have decreased significantly. Continue with your current medication and diet.\n\n## Diagnosis\n\n- Hyperlipidemia\n- Continue statin therapy and monitor lipid levels in 6 months.`,
-  },
-]
-
 function RouteComponent() {
+  const search = Route.useSearch()
+  const [selected, setSelected] = useState<RecordListItem | undefined>()
+
+  const { data, isLoading, isError } = useQuery(
+    patientSoapsQuery({
+      from: search.date,
+      to: search.date,
+      clinician_name: search.search,
+      page: search.page,
+      perPage: search.perPage,
+    }),
+  )
+
+  const handleSelect = (record: RecordListItem) => {
+    setSelected((prev) => (prev?.id === record.id ? undefined : record))
+  }
+
   return (
     <>
       <PageTitle
@@ -32,47 +53,27 @@ function RouteComponent() {
         subheading="View your medical records and feedback from your healthcare providers."
       />
       <Grid cols={12} gap={6}>
-        <GridItem colSpan={4}>
-          <RecordList />
+        <GridItem colSpan={4} className="flex flex-col gap-4">
+          <RecordsList
+            data={data}
+            search={search}
+            isLoading={isLoading}
+            isError={isError}
+            selectedId={selected?.id}
+            onSelect={handleSelect}
+          />
         </GridItem>
 
         <GridItem colSpan={8}>
-          <RecordDetail recordId="1" />
+          {selected ? (
+            <RecordDetail record={selected} />
+          ) : (
+            <div className="flex items-center justify-center h-48 border rounded-lg opacity-40">
+              <p className="text-sm">Select a record to view details</p>
+            </div>
+          )}
         </GridItem>
       </Grid>
     </>
-  )
-}
-
-function RecordList() {
-  return (
-    <div className="flex flex-col gap-2">
-      {SAMPLE_RECORDS.map((record) => (
-        <div key={record.id} className="p-4 border rounded">
-          <h3 className="text-lg font-bold">
-            {record.date} - {record.clinician}
-          </h3>
-        </div>
-      ))}
-    </div>
-  )
-}
-
-function RecordDetail({ recordId }: { recordId: string }) {
-  const record = SAMPLE_RECORDS.find((r) => r.id === recordId)
-  if (!record) {
-    return <div>Record not found.</div>
-  }
-
-  return (
-    <div>
-      <h2 className="text-2xl font-bold mb-4">
-        Record from {record.date} by {record.clinician}
-      </h2>
-      <div className="prose">
-        {/* Render Markdown content here */}
-        <Markdown rehypePlugins={[rehypeRaw]}>{record.feedback}</Markdown>
-      </div>
-    </div>
   )
 }

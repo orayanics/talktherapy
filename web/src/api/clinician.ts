@@ -1,20 +1,12 @@
-import {
-  queryOptions,
-  useMutation,
-  useQueryClient,
-} from '@tanstack/react-query'
-import { isAxiosError } from 'axios'
+import { queryOptions } from '@tanstack/react-query'
 
 import type {
   ClinicianMyPatientParams,
   ClinicianPatientDetailParams,
 } from '~/models/params'
 import type { ClinicianPatientDetailDto, SoapDto } from '~/models/booking'
-import type { CreateSoapPayload } from '~/models/payloads'
 
 import { api } from '~/api/axios'
-import { SOAP } from '~/config/message'
-import { useAlert } from '~/context/AlertContext'
 
 export const clinicianMyPatientsQuery = (params: ClinicianMyPatientParams) =>
   queryOptions({
@@ -62,30 +54,3 @@ export const clinicianPatientSoapsQuery = (patientId: string) =>
     },
     retry: false,
   })
-
-export const useCreateSoap = (patientId: string) => {
-  const queryClient = useQueryClient()
-  const { showAlert } = useAlert()
-
-  return useMutation({
-    mutationFn: async (payload: CreateSoapPayload) => {
-      const { data } = await api.post(
-        `/scheduling/soap/patients/${patientId}`,
-        payload,
-      )
-      return data
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ['clinician', 'patient', patientId, 'soaps'],
-      })
-      showAlert(SOAP.create.success, 'success')
-    },
-    onError: (error) => {
-      if (isAxiosError(error)) {
-        console.error('Create SOAP failed:', error.response?.data)
-      }
-      showAlert(SOAP.create.error, 'error')
-    },
-  })
-}

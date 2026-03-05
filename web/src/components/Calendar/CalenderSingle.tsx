@@ -3,7 +3,7 @@ import { format, startOfDay } from 'date-fns'
 import type { CalenderSingleProps } from '~/models/components'
 
 export default function CalenderSingle(props: CalenderSingleProps) {
-  const { date, onSelect } = props
+  const { date, onSelect, disablePast = true } = props
   const dateStr = date ? format(date, 'yyyy-MM-dd') : undefined
 
   const handleSelect = (selectedDate: Date | undefined) => {
@@ -23,7 +23,7 @@ export default function CalenderSingle(props: CalenderSingleProps) {
       mode="single"
       selected={date}
       onSelect={handleSelect}
-      disabled={{ before: startOfDay(new Date()) }}
+      disabled={disablePast ? { before: startOfDay(new Date()) } : undefined}
       footer={date ? `Selected: ${dateStr}` : 'Pick a day.'}
     />
   )

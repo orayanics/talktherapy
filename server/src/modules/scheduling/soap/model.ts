@@ -26,4 +26,13 @@ export namespace SoapModel {
 
   export const updateBody = t.Partial(_information);
   export type updateBody = typeof updateBody.static;
+
+  export const patientListQuery = t.Object({
+    from: t.Optional(t.String({ format: "date" })),
+    to: t.Optional(t.String({ format: "date" })),
+    clinician_name: t.Optional(t.String()),
+    page: t.Optional(t.Numeric({ minimum: 1, default: 1 })),
+    per_page: t.Optional(t.Numeric({ minimum: 1, maximum: 100, default: 10 })),
+  });
+  export type patientListQuery = typeof patientListQuery.static;
 }

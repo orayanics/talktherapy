@@ -5,7 +5,7 @@ import { SoapService } from "./service";
 import { SoapModel } from "./model";
 
 export const soapController = new Elysia({
-  prefix: "/soap",
+  prefix: "/soaps",
   detail: { tags: ["Scheduling / SOAP"] },
 })
   .use(jwtPlugin)
@@ -13,12 +13,16 @@ export const soapController = new Elysia({
   // ── Patient routes ───────────────────────────────────────────────
   .guard({ isAuth: true, hasRole: ["patient"] }, (app) =>
     app
-      // GET /soap/my
-      .get("/my", ({ auth }) => SoapService.listPatientSoaps(auth!.userId))
-
-      // GET /soap/my/:soap_id
+      // GET /soaps
       .get(
-        "/my/:soap_id",
+        "/",
+        ({ auth, query }) => SoapService.listPatientSoaps(auth!.userId, query),
+        { query: SoapModel.patientListQuery },
+      )
+
+      // GET /soaps/:soap_id
+      .get(
+        "/:soap_id",
         ({ auth, params }) =>
           SoapService.getPatientSoap(auth!.userId, params.soap_id),
         { params: SoapModel.soapParams },
@@ -28,7 +32,7 @@ export const soapController = new Elysia({
   // ── Clinician routes ─────────────────────────────────────────────
   .guard({ isAuth: true, hasRole: ["clinician"] }, (app) =>
     app
-      // GET /soap/patients/:patient_id — list SOAPs for a handled patient
+      // GET /soaps/patients/:patient_id — list SOAPs for a handled patient
       .get(
         "/patients/:patient_id",
         async ({ auth, params }) => {
@@ -43,7 +47,7 @@ export const soapController = new Elysia({
         { params: SoapModel.patientParams },
       )
 
-      // POST /soap/patients/:patient_id — create SOAP for a handled patient
+      // POST /soaps/patients/:patient_id — create SOAP for a handled patient
       .post(
         "/patients/:patient_id",
         async ({ auth, params, body }) => {
@@ -58,7 +62,7 @@ export const soapController = new Elysia({
         },
       )
 
-      // GET /soap/:soap_id — get single SOAP (must own)
+      // GET /soaps/:soap_id — get single SOAP (must own)
       .get(
         "/:soap_id",
         async ({ auth, params }) => {
@@ -70,7 +74,7 @@ export const soapController = new Elysia({
         { params: SoapModel.soapParams },
       )
 
-      // PATCH /soap/:soap_id — update SOAP (must own)
+      // PATCH /soaps/:soap_id — update SOAP (must own)
       .patch(
         "/:soap_id",
         async ({ auth, params, body }) => {

@@ -149,6 +149,46 @@ export interface ScheduleListProps {
   }
 }
 
+export interface RecordListItem {
+  id: string
+  clinician_id: string
+  patient_id: string
+  activity_plan: string
+  session_type: string
+  subjective_notes: string
+  objective_notes: string
+  assessment: string
+  recommendation: string
+  comments: string | null
+  created_at: string
+  updated_at: string
+  clinician_name: string
+}
+
+export interface RecordsListProps {
+  search: {
+    page?: number
+    perPage?: number
+    date?: string
+    search?: string
+  }
+  isLoading: boolean
+  isError: boolean
+  selectedId?: string
+  onSelect: (record: RecordListItem) => void
+  data?: {
+    data: Array<RecordListItem>
+    meta: {
+      page: number
+      per_page: number
+      total: number
+      last_page?: number
+      from?: number
+      to?: number
+    }
+  }
+}
+
 // General Table Typing: Component
 // This is used for TableComponent
 export type ColumnForKey<T, TKey extends keyof T> = {

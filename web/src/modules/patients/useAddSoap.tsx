@@ -3,7 +3,7 @@ import { isAxiosError } from 'axios'
 
 import type { ParsedError } from '~/models/system'
 import type { CreateSoapPayload } from '~/models/payloads'
-import { useCreateSoap } from '~/api/clinician'
+import { useCreateSoap } from '~/api/soap'
 import { parseError } from '~/utils/errors'
 
 const DEFAULT_FORM: CreateSoapPayload = {
