@@ -302,7 +302,7 @@ export abstract class AppointmentService {
         meta: {
           total,
           page,
-          page_size: per_page,
+          per_page,
           page_count: Math.ceil(total / per_page),
           from: skip + 1,
           to: skip + appointments.length,
@@ -376,7 +376,7 @@ export abstract class AppointmentService {
       meta: {
         total,
         page,
-        page_size: per_page,
+        per_page,
         page_count: Math.ceil(total / per_page),
         from: skip + 1,
         to: skip + records.length,
@@ -600,7 +600,7 @@ export abstract class AppointmentService {
       meta: {
         total,
         page,
-        page_size: per_page,
+        per_page,
         page_count: Math.ceil(total / per_page),
         from: skip + 1,
         to: skip + data.length,

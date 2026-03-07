@@ -163,7 +163,7 @@ export interface ClinicianMyPatient {
 export interface PaginationMeta {
   total: number
   page: number
-  page_size: number
+  per_page: number
   page_count: number
   from: number
   to: number
@@ -195,6 +195,20 @@ export interface ClinicianPatientDetailDto {
 }
 
 // ─── SOAP ────────────────────────────────────────────────────────────────────
+
+export interface SoapMeta {
+  total: number
+  page: number
+  per_page: number
+  last_page: number
+  from: number
+  to: number
+}
+
+export interface SoapPaginatedDto {
+  data: Array<SoapDto>
+  meta: SoapMeta
+}
 
 export interface SoapDto {
   id: string

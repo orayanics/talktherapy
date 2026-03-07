@@ -67,15 +67,51 @@ export abstract class SoapService {
   }
 
   /**
-   * Returns all SOAP notes a clinician has written for a specific patient.
+   * Returns paginated SOAP notes a clinician has written for a specific patient.
    */
-  static async listSoapsByPatient(clinician_id: string, patient_id: string) {
+  static async listSoapsByPatient(
+    clinician_id: string,
+    patient_id: string,
+    query: SoapModel.clinicianListQuery,
+  ) {
     await SoapService.assertHandled(clinician_id, patient_id);
 
-    return prisma.soap.findMany({
-      where: { clinician_id, patient_id },
-      orderBy: { created_at: "desc" },
-    });
+    const { from, to, page = 1, per_page = 10 } = query;
+    const skip = (page - 1) * per_page;
+
+    const createdAtFilter: { gte?: Date; lte?: Date } = {};
+    if (from) createdAtFilter.gte = new Date(`${from}T00:00:00.000Z`);
+    if (to) createdAtFilter.lte = new Date(`${to}T23:59:59.999Z`);
+
+    const where = {
+      clinician_id,
+      patient_id,
+      ...(Object.keys(createdAtFilter).length > 0 && {
+        created_at: createdAtFilter,
+      }),
+    };
+
+    const [soaps, total] = await prisma.$transaction([
+      prisma.soap.findMany({
+        where,
+        orderBy: { created_at: "desc" },
+        skip,
+        take: per_page,
+      }),
+      prisma.soap.count({ where }),
+    ]);
+
+    return {
+      data: soaps,
+      meta: {
+        total,
+        page,
+        per_page,
+        last_page: Math.ceil(total / per_page),
+        from: skip + 1,
+        to: skip + soaps.length,
+      },
+    };
   }
 
   /**

@@ -204,6 +204,8 @@ export type TableContentProps<T> = {
   columns: Array<Column<T>>
   data: Array<T>
   renderers?: Partial<Record<keyof T, (value: any, row: T) => React.ReactNode>>
+  onRowClick?: (row: T) => void
+  selectedRowId?: React.Key
 }
 export interface TableHeaderProps {
   heading?: string

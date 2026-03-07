@@ -14,6 +14,8 @@ export default function TableContent<T extends { id?: React.Key }>({
   columns,
   data,
   renderers = {},
+  onRowClick,
+  selectedRowId,
 }: TableContentProps<T>) {
   return (
     <div className="overflow-auto h-120 max-h-120 bg-white rounded-lg border p-6">
@@ -42,32 +44,38 @@ export default function TableContent<T extends { id?: React.Key }>({
             </tr>
           )}
 
-          {data.map((row, rowIndex) => (
-            <tr
-              key={getRowId(row, rowIndex)}
-              className="transition-colors hover:bg-gray-50"
-            >
-              {columns.map((col) => {
-                const value = row[col.accessor]
-                return (
-                  <td
-                    key={String(col.accessor)}
-                    className={`border-b px-4 py-2 align-middle ${col.className ?? ''}`}
-                  >
-                    {col.render
-                      ? col.render(value, row)
-                      : renderers[col.accessor]
-                        ? renderers[col.accessor]!(value, row)
-                        : value != null
-                          ? typeof value === 'object'
-                            ? JSON.stringify(value)
-                            : (value as unknown as React.ReactNode)
-                          : ''}
-                  </td>
-                )
-              })}
-            </tr>
-          ))}
+          {data.map((row, rowIndex) => {
+            const rowId = getRowId(row, rowIndex)
+            const isSelected =
+              selectedRowId !== undefined && rowId === selectedRowId
+            return (
+              <tr
+                key={rowId}
+                onClick={() => onRowClick?.(row)}
+                className={`transition-colors hover:bg-gray-50 ${onRowClick ? 'cursor-pointer' : ''} ${isSelected ? 'bg-primary/10 hover:bg-primary/15' : ''}`}
+              >
+                {columns.map((col) => {
+                  const value = row[col.accessor]
+                  return (
+                    <td
+                      key={String(col.accessor)}
+                      className={`border-b px-4 py-2 align-middle ${col.className ?? ''}`}
+                    >
+                      {col.render
+                        ? col.render(value, row)
+                        : renderers[col.accessor]
+                          ? renderers[col.accessor]!(value, row)
+                          : value != null
+                            ? typeof value === 'object'
+                              ? JSON.stringify(value)
+                              : (value as unknown as React.ReactNode)
+                            : ''}
+                    </td>
+                  )
+                })}
+              </tr>
+            )
+          })}
         </tbody>
       </table>
     </div>

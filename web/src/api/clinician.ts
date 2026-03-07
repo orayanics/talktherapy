@@ -3,8 +3,12 @@ import { queryOptions } from '@tanstack/react-query'
 import type {
   ClinicianMyPatientParams,
   ClinicianPatientDetailParams,
+  PatientRecordsParams,
 } from '~/models/params'
-import type { ClinicianPatientDetailDto, SoapDto } from '~/models/booking'
+import type {
+  ClinicianPatientDetailDto,
+  SoapPaginatedDto,
+} from '~/models/booking'
 
 import { api } from '~/api/axios'
 
@@ -45,11 +49,24 @@ export const clinicianPatientDetailQuery = (
     retry: false,
   })
 
-export const clinicianPatientSoapsQuery = (patientId: string) =>
-  queryOptions<Array<SoapDto>>({
-    queryKey: ['clinician', 'patient', patientId, 'soaps'],
+export const clinicianPatientSoapsQuery = (
+  patientId: string,
+  params: PatientRecordsParams,
+) =>
+  queryOptions<SoapPaginatedDto>({
+    queryKey: ['clinician', 'patient', patientId, 'soaps', params],
     queryFn: async () => {
-      const { data } = await api.get(`/scheduling/soaps/patients/${patientId}`)
+      const { data } = await api.get(
+        `/scheduling/soaps/patients/${patientId}`,
+        {
+          params: {
+            ...(params.from && { from: params.from }),
+            ...(params.to && { to: params.to }),
+            page: params.page ?? 1,
+            per_page: params.perPage ?? 10,
+          },
+        },
+      )
       return data
     },
     retry: false,

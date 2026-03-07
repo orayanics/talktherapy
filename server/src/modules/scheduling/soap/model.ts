@@ -35,4 +35,12 @@ export namespace SoapModel {
     per_page: t.Optional(t.Numeric({ minimum: 1, maximum: 100, default: 10 })),
   });
   export type patientListQuery = typeof patientListQuery.static;
+
+  export const clinicianListQuery = t.Object({
+    from: t.Optional(t.String({ format: "date" })),
+    to: t.Optional(t.String({ format: "date" })),
+    page: t.Optional(t.Numeric({ minimum: 1, default: 1 })),
+    per_page: t.Optional(t.Numeric({ minimum: 1, maximum: 100, default: 10 })),
+  });
+  export type clinicianListQuery = typeof clinicianListQuery.static;
 }

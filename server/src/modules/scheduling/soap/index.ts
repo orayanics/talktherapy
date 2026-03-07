@@ -35,16 +35,20 @@ export const soapController = new Elysia({
       // GET /soaps/patients/:patient_id — list SOAPs for a handled patient
       .get(
         "/patients/:patient_id",
-        async ({ auth, params }) => {
+        async ({ auth, params, query }) => {
           const clinician_id = await AvailabilityService.resolveClinicianId(
             auth!.userId,
           );
           return SoapService.listSoapsByPatient(
             clinician_id,
             params.patient_id,
+            query,
           );
         },
-        { params: SoapModel.patientParams },
+        {
+          params: SoapModel.patientParams,
+          query: SoapModel.clinicianListQuery,
+        },
       )
 
       // POST /soaps/patients/:patient_id — create SOAP for a handled patient
