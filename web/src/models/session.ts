@@ -1,5 +1,3 @@
-// ── Session room types (mirrors server/src/modules/session/model.ts) ──────────
-
 export type SessionRole = 'clinician' | 'patient'
 
 export interface SessionParticipant {
@@ -7,7 +5,7 @@ export interface SessionParticipant {
   role: SessionRole
 }
 
-// ── Outbound (client → server) ────────────────────────────────────────────────
+// client to server: ws messsages/events sent from client to server
 
 export interface SendChatMessage {
   type: 'chat:message'
@@ -49,7 +47,7 @@ export type ClientMessage =
   | SendMediaToggle
   | SendPeerReady
 
-// ── Inbound (server → client) ─────────────────────────────────────────────────
+// server to client: ws messages/events sent from server to client
 
 export interface ServerRoomJoined {
   type: 'room:joined'
@@ -119,8 +117,6 @@ export type ServerMessage =
   | ServerMediaToggle
   | ServerPeerReady
 
-// ── Chat display model ─────────────────────────────────────────────────────────
-
 export interface ChatEntry {
   id: string
   from: string
@@ -129,8 +125,6 @@ export interface ChatEntry {
   timestamp: string
   isSelf: boolean
 }
-
-// ── Peer media state (what the remote peer has toggled) ───────────────────────
 
 export interface PeerMediaState {
   camera: boolean

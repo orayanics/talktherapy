@@ -71,12 +71,12 @@ export function useSessionSocket({
   // Build the WebSocket URL.
   // VITE_APP_WS_URL uses "localhost" as host; on the client we swap it for
   // window.location.hostname so LAN devices connect to the right IP.
-  // Guard against SSR (window undefined) — hooks still render on the server
-  // with TanStack Start; the WS only actually connects inside useEffect.
   const wsUrl = (() => {
     const base =
       import.meta.env.VITE_APP_WS_URL ?? 'wss://localhost:8000/api/v1'
     const url = new URL(base)
+
+    // ssr check
     if (typeof window !== 'undefined') {
       url.hostname = window.location.hostname
     }

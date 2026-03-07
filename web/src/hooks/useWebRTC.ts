@@ -4,11 +4,8 @@ import type { ClientMessage } from '~/models/session'
 export type RTCConnectionState = RTCPeerConnectionState | 'idle'
 
 export interface UseWebRTCOptions {
-  /**
-   * Whether this peer is the "polite" peer in the perfect negotiation pattern.
-   * The polite peer offers first and is willing to roll back on collision.
-   * Convention: clinician = impolite (false), patient = polite (true).
-   */
+  // Polite: offers first, rolls back on collision. Impolite: answers first, ignores offers during collision.
+  // Improvements: could potentially infer this from the signaling flow instead of hardcoding roles.
   polite: boolean
   send: (msg: ClientMessage) => void
 }
@@ -21,30 +18,20 @@ export interface UseWebRTCReturn {
   micEnabled: boolean
   toggleCamera: () => void
   toggleMic: () => void
-  /** Call when the other peer signals they're ready (peer:ready received) */
-  handlePeerReady: () => Promise<void>
-  /** Call with the remote SDP offer */
-  handleOffer: (sdp: string) => Promise<void>
-  /** Call with the remote SDP answer */
-  handleAnswer: (sdp: string) => Promise<void>
-  /** Call with a remote ICE candidate */
+  handlePeerReady: () => Promise<void> // Call when peer signals is ready
+  handleOffer: (sdp: string) => Promise<void> // Call with the remote SDP offer
+  handleAnswer: (sdp: string) => Promise<void> // Call with the remote SDP answer
   handleIceCandidate: (
     candidate: string,
     sdpMid: string | null,
     sdpMLineIndex: number | null,
-  ) => Promise<void>
+  ) => Promise<void> // Call with a remote ICE candidate
 }
 
 const ICE_SERVERS: Array<RTCIceServer> = [
   { urls: ['stun:stun.l.google.com:19302', 'stun:stun1.l.google.com:19302'] },
 ]
 
-/**
- * Manages a WebRTC peer connection for a 1-to-1 therapy session.
- *
- * Signaling is delegated back to the caller via the `send` callback,
- * which should forward messages through the session WebSocket.
- */
 export function useWebRTC({ polite, send }: UseWebRTCOptions): UseWebRTCReturn {
   const pcRef = useRef<RTCPeerConnection | null>(null)
   const makingOffer = useRef(false)
@@ -64,20 +51,11 @@ export function useWebRTC({ polite, send }: UseWebRTCOptions): UseWebRTCReturn {
     sendRef.current = send
   }, [send])
 
-  // ── Bootstrap: get user media and create RTCPeerConnection ─────────────────
+  // Initial: get user media, create peer connection, set up handlers. Cleanup on unmount.
   useEffect(() => {
     let cancelled = false
 
     const setup = async () => {
-      // Acquire local media
-      // navigator.mediaDevices is undefined on insecure (non-HTTPS) origins.
-      // eslint-disable-next-line
-      if (!navigator.mediaDevices?.getUserMedia) {
-        console.error(
-          '[webrtc] getUserMedia unavailable — page must be served over HTTPS or localhost',
-        )
-        return
-      }
       let stream: MediaStream
       try {
         stream = await navigator.mediaDevices.getUserMedia({
@@ -113,7 +91,7 @@ export function useWebRTC({ polite, send }: UseWebRTCOptions): UseWebRTCReturn {
       // Add local tracks
       stream.getTracks().forEach((track) => pc.addTrack(track, stream))
 
-      // ── Remote track handler ───────────────────────────────────────────────
+      // Remote stream and track
       const remoteMediaStream = new MediaStream()
       setRemoteStream(remoteMediaStream)
 
@@ -122,7 +100,7 @@ export function useWebRTC({ polite, send }: UseWebRTCOptions): UseWebRTCReturn {
         setRemoteStream(new MediaStream(remoteMediaStream.getTracks()))
       }
 
-      // ── ICE candidate handler ──────────────────────────────────────────────
+      // ICE candidates: send to peer when found
       pc.onicecandidate = ({ candidate }) => {
         if (!candidate) return
         sendRef.current({
@@ -133,7 +111,8 @@ export function useWebRTC({ polite, send }: UseWebRTCOptions): UseWebRTCReturn {
         })
       }
 
-      // ── Negotiation needed (re-offer on track changes after peer joins) ──────
+      // Polite: negotiation needed to send initial offer when peer joins, and to renegotiate if tracks change
+      // Impolite: only needed to renegotiate on track changes, since we wait for peer's offer before sending ours
       pc.onnegotiationneeded = async () => {
         if (!hasPeer.current) return // no peer yet, skip
         try {
@@ -150,7 +129,6 @@ export function useWebRTC({ polite, send }: UseWebRTCOptions): UseWebRTCReturn {
         }
       }
 
-      // ── Connection state ───────────────────────────────────────────────────
       pc.onconnectionstatechange = () => {
         setConnectionState(pc.connectionState)
       }
@@ -166,12 +144,13 @@ export function useWebRTC({ polite, send }: UseWebRTCOptions): UseWebRTCReturn {
   }, [])
 
   // ── Signaling handlers ─────────────────────────────────────────────────────
+  // Signaling flow: peer joins -> signals ready -> polite peer offers -> answer -> ICE candidates
 
-  /** Called when the peer signals they're ready — we initiate the offer */
+  // handlePeerReady
+  // -> polite peer create and send offer
+  // -> offer collision check
+  // -> set hasPeer true so future onnegotiationneeded will send offers
   const handlePeerReady = useCallback(async () => {
-    // Set hasPeer BEFORE the null check so that if the PC isn't created yet
-    // (getUserMedia still running), onnegotiationneeded will see it as true
-    // when it fires after tracks are added, and will send the offer then.
     hasPeer.current = true
     const pc = pcRef.current
     if (!pc) return // onnegotiationneeded will handle offer creation once PC is ready
@@ -186,7 +165,10 @@ export function useWebRTC({ polite, send }: UseWebRTCOptions): UseWebRTCReturn {
     }
   }, [])
 
-  /** Process a received offer. Creates an answer and sends it back. */
+  // handleOffer
+  // -> offer collision check (if we're already making an offer or not stable, we might be in a collision)
+  // -> if impolite and collision, ignore the offer (wait for peer to resend after their negotiation completes)
+  // -> otherwise, set remote description, create and send answer
   const handleOffer = useCallback(
     async (sdp: string) => {
       const pc = pcRef.current
@@ -205,7 +187,8 @@ export function useWebRTC({ polite, send }: UseWebRTCOptions): UseWebRTCReturn {
     [polite],
   )
 
-  /** Process a received answer. */
+  // handleAnswer
+  // -> set remote description
   const handleAnswer = useCallback(async (sdp: string) => {
     const pc = pcRef.current
     if (!pc || ignoreOffer.current) return
@@ -216,7 +199,8 @@ export function useWebRTC({ polite, send }: UseWebRTCOptions): UseWebRTCReturn {
     }
   }, [])
 
-  /** Add a remote ICE candidate. */
+  // If we're ignoring offers (in an offer collision as the impolite peer),
+  // ignore candidates too since they may be from the discarded offer
   const handleIceCandidate = useCallback(
     async (
       candidate: string,
@@ -241,8 +225,6 @@ export function useWebRTC({ polite, send }: UseWebRTCOptions): UseWebRTCReturn {
     },
     [],
   )
-
-  // ── Media toggles ──────────────────────────────────────────────────────────
 
   const toggleCamera = useCallback(() => {
     const stream = localStream
