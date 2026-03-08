@@ -79,7 +79,7 @@ export default function ContentView({ contentId }: ContentViewProps) {
 
           <Grid cols={12} gap={6}>
             <GridItem colSpan={12}>
-              <div className="overflow-auto flex flex-col gap-4 bg-gray-50 border-dashed border-gray-200 border p-4 rounded-lg max-h-200">
+              <div className="prose prose-sm max-w-none overflow-auto flex flex-col gap-4 bg-gray-50 border-dashed border-gray-200 border p-4 rounded-lg max-h-200">
                 <Markdown rehypePlugins={[rehypeRaw]}>{data.body}</Markdown>
               </div>
             </GridItem>

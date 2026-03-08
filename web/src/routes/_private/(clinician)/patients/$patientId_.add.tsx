@@ -1,6 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
 import Grid from '~/components/Page/Grid'
-import GridItem from '~/components/Page/GridItem'
 import PageTitle from '~/components/Page/PageTitle'
 
 import SoapForm from '~/modules/patients/soap/SoapForm'
@@ -21,9 +20,7 @@ function RouteComponent() {
       />
 
       <Grid cols={12} gap={6}>
-        <GridItem colSpan={6}>
-          <SoapForm patientId={patientId} />
-        </GridItem>
+        <SoapForm patientId={patientId} />
       </Grid>
     </>
   )

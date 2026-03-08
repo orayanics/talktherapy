@@ -286,11 +286,13 @@ export interface UserAddClinicianProps {
 
 export interface ContentMediaCreateProps {
   form: ContentFormState
-  onTitleChange: (v: string) => void
-  onDescriptionChange: (v: string) => void
-  onBodyChange: (v: string) => void
-  onDiagnosisIdChange: (v: string) => void
-  onTagsChange: (v: string) => void
+  errors: ParsedError | null
+  handleChange: (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
+  ) => void
+  handleBodyChange: (value: string | undefined) => void
 }
 
 export interface ContentMediaInfoEditProps {

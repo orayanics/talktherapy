@@ -44,11 +44,6 @@ export default function ProfileUpdate(props: SESSION_USER) {
           </div>
         </div>
 
-        <div className="flex flex-row justify-between gap-2">
-          <p className="font-bold">Email Address</p>
-          {/* <p>{email}</p> */}
-        </div>
-
         <div className="flex flex-col gap-2 col-span-12">
           <button
             className="btn btn-primary"
@@ -58,7 +53,8 @@ export default function ProfileUpdate(props: SESSION_USER) {
             Submit Changes
           </button>
           <button
-            className="btn btn-neutral"
+            className="btn"
+            type="button"
             onClick={() => navigate({ to: '/profile' })}
             disabled={isLoading}
           >

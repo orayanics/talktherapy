@@ -17,7 +17,7 @@ const SOAP_FIELDS: Array<{ label: string; key: keyof SoapDto }> = [
   { label: 'Comments', key: 'comments' },
 ]
 
-export default function SoapDetail({ soap }: SoapDetailViewProps) {
+export default function SoapPreview({ soap }: SoapDetailViewProps) {
   return (
     <div className="flex flex-col gap-4 overflow-auto max-h-200 bg-white rounded-lg border p-6">
       <div className="flex flex-col gap-1 border-b border-dashed border-gray-200 pb-4">

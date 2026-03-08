@@ -1,3 +1,5 @@
+@plugin "@tailwindcss/typography";
+
 @theme inline {
   --font-mono: 'Space Mono', monospace;
 }
@@ -124,4 +126,19 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* Fix MDEditor textarea height when highlightEnable={false} */
+.w-md-editor-input {
+  flex: 1;
+  height: 100% !important;
+}
+
+.w-md-editor-input textarea {
+  height: 100% !important;
+  min-height: 100% !important;
+}
+
+.w-md-editor-text {
+  height: 100% !important;
 }
