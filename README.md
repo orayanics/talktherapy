@@ -1,42 +1,39 @@
-# TanStack Start - Basic React Query Example
+# TalkTherapy
 
-A TanStack Start example demonstrating integration with TanStack Query (React Query).
+## Starting in local
 
-- [TanStack Router Docs](https://tanstack.com/router)
-- [TanStack Query Docs](https://tanstack.com/query)
+To install both web and server dependencies:
 
-## Start a new project based on this example
-
-To start a new project based on this example, run:
-
-```sh
-npx gitpick TanStack/router/tree/main/examples/react/start-basic-react-query start-basic-react-query
+```bash
+bun install
 ```
 
-## Getting Started
+To migrate sql:
 
-From your terminal:
-
-```sh
-pnpm install
-pnpm dev
+```bash
+cd server
+# Generate Prisma Client
+bunx --bun prisma generate
+# Migrate the DB
+bunx --bun prisma migrate dev
+# If error occurs, reset the DB and try again
+bunx --bun prisma migrate reset
+# Seed the DB
+bun run seed
 ```
 
-This starts your app in development mode, rebuilding assets on file changes.
+To start the development server run:
 
-## Build
-
-To build the app for production:
-
-```sh
-pnpm build
+```bash
+bun run dev
 ```
 
-## TanStack Query Integration
+To generate certs for HTTPS (required for WebRTC):
 
-This example demonstrates how to use TanStack Query with TanStack Start for:
+```bash
+mkcert -install
+mkcert localhost
 
-- Server-side data fetching
-- Client-side caching and synchronization
-- Optimistic updates
-- Automatic refetching
+# Generate certs
+mkcert -key-file key.pem -cert-file cert.pem localhost
+```
