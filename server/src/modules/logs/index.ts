@@ -2,6 +2,8 @@ import { Elysia } from "elysia";
 import { jwtPlugin } from "@/plugins/jwt";
 import { LogsModel } from "./model";
 import { LogsService } from "./service";
+import { NotificationService } from "@/modules/notifications/service";
+import { NOTIFICATION_TYPE } from "@/config/notifications";
 
 export const logsModule = new Elysia({ prefix: "/logs" })
   .use(jwtPlugin)
@@ -76,6 +78,15 @@ export const logsModule = new Elysia({ prefix: "/logs" })
             data: base64,
           }),
         );
+
+        // Notify the requesting admin that the export is ready
+        const userId = ws.data.auth?.userId;
+        if (userId) {
+          NotificationService.notify(
+            userId,
+            NOTIFICATION_TYPE.EXPORT_COMPLETE,
+          ).catch(console.error);
+        }
       } catch (err) {
         ws.send(
           JSON.stringify({

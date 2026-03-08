@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { FaFilter } from 'react-icons/fa'
+import { useState } from 'react'
+import { SlidersHorizontal } from 'lucide-react'
 import type { FilterDrawerProps } from '~/models/components'
 
 export default function FilterDrawer({ children }: FilterDrawerProps) {
@@ -12,7 +12,7 @@ export default function FilterDrawer({ children }: FilterDrawerProps) {
         onClick={() => setOpen(true)}
         type="button"
       >
-        <FaFilter />
+        <SlidersHorizontal />
       </button>
 
       {/* Overlay */}

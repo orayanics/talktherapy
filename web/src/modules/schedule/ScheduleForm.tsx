@@ -1,9 +1,9 @@
-import { FaSpinner } from 'react-icons/fa'
 import useSchedule from './useSchedule'
 import type { Freq } from '~/models/booking'
 import { DAYS } from '~/utils/rrule'
 import { fieldError, hasOnlyMessage } from '~/utils/errors'
 import { todayUtcStr } from '~/utils/date'
+import Loader from '~/components/Loader/Loader'
 
 export default function ScheduleForm() {
   const { form, errors, isLoading, handleChange, handleSubmit, toggleDay } =
@@ -271,7 +271,7 @@ export default function ScheduleForm() {
 
       {/* Actions */}
       <button type="submit" className="btn btn-primary" disabled={isLoading}>
-        {isLoading && <FaSpinner className="animate-spin" />} Create Schedule
+        {isLoading && <Loader />} Create Schedule
       </button>
     </form>
   )

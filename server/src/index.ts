@@ -9,7 +9,7 @@ import { schedulingModule } from "./modules/scheduling";
 import { contentModule } from "./modules/content";
 import { sessionModule } from "./modules/session";
 import { logsModule } from "./modules/logs";
-
+import { notificationsModule } from "./modules/notifications";
 import { customMessages } from "./utils/errors";
 
 const corsOrigins = (process.env.APP_CORS_ORIGINS ?? "")
@@ -89,7 +89,8 @@ export const app = new Elysia()
       .use(schedulingModule)
       .use(contentModule)
       .use(sessionModule)
-      .use(logsModule),
+      .use(logsModule)
+      .use(notificationsModule),
   )
 
   .listen({

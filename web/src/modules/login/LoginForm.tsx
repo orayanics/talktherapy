@@ -1,5 +1,5 @@
 import { Link } from '@tanstack/react-router'
-import { FaEnvelope, FaLock } from 'react-icons/fa'
+import { Lock, Mail } from 'lucide-react'
 import useLogin from './useLogin'
 import { fieldError, hasOnlyMessage } from '~/utils/errors'
 
@@ -20,7 +20,7 @@ export default function LoginForm() {
         )}
         <div>
           <label className="input w-full">
-            <FaEnvelope />
+            <Mail />
             <input
               type="email"
               placeholder="email@email.com"
@@ -39,7 +39,7 @@ export default function LoginForm() {
 
         <div>
           <label className="input w-full">
-            <FaLock />
+            <Lock />
             <input
               type="password"
               placeholder="********"

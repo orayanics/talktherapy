@@ -10,8 +10,7 @@ import { showAlertGlobal } from '~/context/AlertContext'
 // for window.location.hostname so LAN devices hit the right IP.
 // On the server (SSR) window is undefined — localhost is correct there anyway.
 const _rawApiUrl =
-  (import.meta.env.VITE_APP_API_URL as string | undefined) ??
-  'https://localhost:8000/api/v1'
+  import.meta.env.VITE_APP_API_URL ?? 'https://localhost:8000/api/v1'
 const _apiBase =
   typeof window !== 'undefined'
     ? _rawApiUrl.replace('localhost', window.location.hostname)
@@ -40,7 +39,16 @@ const processQueue = (error: unknown) => {
   failedQueue = []
 }
 
-const SKIP_REFRESH_URLS = ['/auth/login', '/auth/refresh']
+// STATUS 401: means "not authenticated". This can happen when:
+// - The user is not logged in and tries to access a protected resource.
+// - The user's session has expired (access token expired and refresh failed).
+// In either case, we want to clear any stale session state and redirect to /login.
+// For other 401s (e.g. malformed request with missing auth header), we still want
+// to alert the user of the error but there's no session state to clear.
+const SKIP_REFRESH_URLS = ['/auth/login', '/auth/refresh', '/auth/session']
+
+// URLs whose 401 is handled entirely by the caller — no toast alert needed.
+const SILENT_401_URLS = ['/auth/session']
 
 instance.interceptors.response.use(
   (response) => response,
@@ -49,12 +57,13 @@ instance.interceptors.response.use(
 
     const is401 = error.response?.status === 401
     const shouldSkip = SKIP_REFRESH_URLS.some((url) => original.url === url)
+    const isSilent = SILENT_401_URLS.some((url) => original.url === url)
     const alreadyRetried = original._retry
 
     if (!is401 || shouldSkip || alreadyRetried) {
-      if (is401) {
+      if (is401 && !isSilent) {
         showAlertGlobal(SESSION.expired, 'error')
-      } else {
+      } else if (!is401) {
         showAlertGlobal(AXIOS.generalError, 'error')
       }
       return Promise.reject(error)

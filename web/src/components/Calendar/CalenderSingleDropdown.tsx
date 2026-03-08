@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { DayPicker } from 'react-day-picker'
 import { format, startOfDay } from 'date-fns'
-import { FaCalendarAlt, FaTimes } from 'react-icons/fa'
+import { Calendar, Clock } from 'lucide-react'
 import type { CalenderSingleDropdownProps } from '~/models/components'
 
 export default function CalenderSingleDropdown(
@@ -47,7 +47,7 @@ export default function CalenderSingleDropdown(
         className="input input-bordered w-full flex items-center justify-between gap-2 text-left"
       >
         <span className="flex items-center gap-2">
-          <FaCalendarAlt className="opacity-50 shrink-0" />
+          <Calendar className="opacity-50 shrink-0" />
           {date ? (
             <span>{format(date, 'MMM d, yyyy')}</span>
           ) : (
@@ -55,7 +55,7 @@ export default function CalenderSingleDropdown(
           )}
         </span>
         {date && (
-          <FaTimes
+          <Clock
             className="opacity-50 hover:opacity-100 shrink-0"
             onClick={handleClear}
           />

@@ -1,25 +1,25 @@
-import { FaBookMedical } from 'react-icons/fa'
+import { Ambulance } from 'lucide-react'
 
 const FEATURES = [
   {
-    icon: <FaBookMedical />,
+    icon: <Ambulance />,
     title: 'Personalized Exercises',
     description:
       'Tailored exercises based on your specific speech therapy needs.',
   },
   {
-    icon: <FaBookMedical />,
+    icon: <Ambulance />,
     title: 'Skilled Doctors',
     description:
       'Access to experienced speech therapists for guidance and support.',
   },
   {
-    icon: <FaBookMedical />,
+    icon: <Ambulance />,
     title: 'Feedback System',
     description: 'Receive real-time feedback on your progress and performance.',
   },
   {
-    icon: <FaBookMedical />,
+    icon: <Ambulance />,
     title: 'Convenience',
     description: 'Access therapy sessions and resources anytime, anywhere.',
   },

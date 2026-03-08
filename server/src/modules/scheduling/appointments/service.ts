@@ -3,6 +3,8 @@ import { prisma } from "prisma/db";
 import type { AppointmentModel } from "./model";
 import { RESCHEDULE_CUTOFF_DAYS } from "../types";
 import { parseISO, nowUtc, utcStartOfDay, addDays } from "@/utils/date";
+import { NotificationService } from "@/modules/notifications/service";
+import { NOTIFICATION_TYPE } from "@/config/notifications";
 
 // Shared select configs — strip internal FKs (actor_id, appointment_id) from sub-objects
 const EVENT_SELECT = {
@@ -111,7 +113,7 @@ export abstract class AppointmentService {
       );
     }
 
-    return prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async (tx) => {
       const updated = await tx.appointments.update({
         where: { id: appointment_id },
         data: {
@@ -132,6 +134,17 @@ export abstract class AppointmentService {
 
       return updated;
     });
+    AppointmentService._resolveParties(appointment_id)
+      .then((parties) => {
+        if (parties)
+          AppointmentService._notify(
+            parties.patientUserId,
+            NOTIFICATION_TYPE.APPOINTMENT_CONFIRMED,
+            { starts_at: parties.starts_at, entity_id: appointment_id },
+          );
+      })
+      .catch(console.error);
+    return result;
   }
 
   /**
@@ -164,7 +177,7 @@ export abstract class AppointmentService {
     const shouldBlock =
       body.keep_blocked !== undefined ? body.keep_blocked : defaultBlock;
 
-    return prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async (tx) => {
       await tx.slot.update({
         where: { id: appointment.slot_id },
         data: { status: shouldBlock ? "BLOCKED" : "AVAILABLE" },
@@ -191,6 +204,17 @@ export abstract class AppointmentService {
 
       return updated;
     });
+    AppointmentService._resolveParties(appointment_id)
+      .then((parties) => {
+        if (parties)
+          AppointmentService._notify(
+            parties.patientUserId,
+            NOTIFICATION_TYPE.APPOINTMENT_CANCELLED_BY_CLINICIAN,
+            { starts_at: parties.starts_at, entity_id: appointment_id },
+          );
+      })
+      .catch(console.error);
+    return result;
   }
 
   /**
@@ -213,7 +237,7 @@ export abstract class AppointmentService {
       );
     }
 
-    return prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async (tx) => {
       await tx.slot.update({
         where: { id: appointment.slot_id },
         data: { status: "COMPLETED" },
@@ -256,6 +280,17 @@ export abstract class AppointmentService {
 
       return updated;
     });
+    AppointmentService._resolveParties(appointment_id)
+      .then((parties) => {
+        if (parties)
+          AppointmentService._notify(
+            parties.patientUserId,
+            NOTIFICATION_TYPE.APPOINTMENT_COMPLETED,
+            { starts_at: parties.starts_at, entity_id: appointment_id },
+          );
+      })
+      .catch(console.error);
+    return result;
   }
 
   /**
@@ -441,7 +476,7 @@ export abstract class AppointmentService {
       );
     }
 
-    return prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async (tx) => {
       const updated = await tx.appointments.update({
         where: { id: appointment_id },
         data: { status: "NO_SHOW" },
@@ -459,6 +494,17 @@ export abstract class AppointmentService {
 
       return updated;
     });
+    AppointmentService._resolveParties(appointment_id)
+      .then((parties) => {
+        if (parties)
+          AppointmentService._notify(
+            parties.patientUserId,
+            NOTIFICATION_TYPE.APPOINTMENT_NO_SHOW,
+            { starts_at: parties.starts_at, entity_id: appointment_id },
+          );
+      })
+      .catch(console.error);
+    return result;
   }
 
   /**
@@ -509,13 +555,27 @@ export abstract class AppointmentService {
 
     await AppointmentService.assertRescheduleCutoff(newSlot.starts_at);
 
-    return AppointmentService.performReschedule({
+    const result = await AppointmentService.performReschedule({
       appointment_id,
       old_slot_id: appointment.slot_id,
       new_slot_id: body.new_slot_id,
       actor_id,
       actor_type: "CLINICIAN",
     });
+    AppointmentService._resolveParties(appointment_id)
+      .then((parties) => {
+        if (parties)
+          AppointmentService._notify(
+            parties.patientUserId,
+            NOTIFICATION_TYPE.APPOINTMENT_RESCHEDULED_BY_CLINICIAN,
+            {
+              starts_at: newSlot.starts_at.toISOString(),
+              entity_id: appointment_id,
+            },
+          );
+      })
+      .catch(console.error);
+    return result;
   }
 
   // ── Shared / Internal ────────────────────────────────────────────
@@ -710,7 +770,7 @@ export abstract class AppointmentService {
 
     await AppointmentService.assertRescheduleCutoff(appointment.slot.starts_at);
 
-    return prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async (tx) => {
       await tx.slot.update({
         where: { id: appointment.slot_id },
         data: { status: "AVAILABLE" },
@@ -737,6 +797,17 @@ export abstract class AppointmentService {
 
       return updated;
     });
+    AppointmentService._resolveParties(appointment_id)
+      .then((parties) => {
+        if (parties)
+          AppointmentService._notify(
+            parties.clinicianUserId,
+            NOTIFICATION_TYPE.APPOINTMENT_CANCELLED_BY_PATIENT,
+            { starts_at: parties.starts_at, entity_id: appointment_id },
+          );
+      })
+      .catch(console.error);
+    return result;
   }
 
   /**
@@ -781,13 +852,27 @@ export abstract class AppointmentService {
 
     await AppointmentService.assertRescheduleCutoff(newSlot.starts_at);
 
-    return AppointmentService.performReschedule({
+    const result = await AppointmentService.performReschedule({
       appointment_id,
       old_slot_id: appointment.slot_id,
       new_slot_id: body.new_slot_id,
       actor_id: user_id,
       actor_type: "PATIENT",
     });
+    AppointmentService._resolveParties(appointment_id)
+      .then((parties) => {
+        if (parties)
+          AppointmentService._notify(
+            parties.clinicianUserId,
+            NOTIFICATION_TYPE.APPOINTMENT_RESCHEDULED_BY_PATIENT,
+            {
+              starts_at: newSlot.starts_at.toISOString(),
+              entity_id: appointment_id,
+            },
+          );
+      })
+      .catch(console.error);
+    return result;
   }
 
   /**
@@ -806,9 +891,15 @@ export abstract class AppointmentService {
 
     if (!patient) throw status(404, "Patient profile not found");
 
-    return prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async (tx) => {
       const slot = await tx.slot.findUnique({
         where: { id: slot_id },
+        select: {
+          id: true,
+          status: true,
+          starts_at: true,
+          clinician: { select: { user_id: true } },
+        },
       });
 
       if (!slot) throw status(404, "Slot not found");
@@ -849,8 +940,22 @@ export abstract class AppointmentService {
         },
       });
 
-      return appointment;
+      return {
+        appointment,
+        clinicianUserId: slot.clinician.user_id,
+        starts_at: slot.starts_at,
+      };
     });
+
+    AppointmentService._notify(
+      result.clinicianUserId,
+      NOTIFICATION_TYPE.APPOINTMENT_BOOKED,
+      {
+        starts_at: result.starts_at.toISOString(),
+        entity_id: result.appointment.id,
+      },
+    );
+    return result.appointment;
   }
 
   /**
@@ -869,5 +974,39 @@ export abstract class AppointmentService {
         `Rescheduling is not allowed within ${RESCHEDULE_CUTOFF_DAYS} days of the appointment`,
       );
     }
+  }
+
+  /**
+   * Resolves patient and clinician user_ids + slot start time for a given
+   * appointment. Used to build notification context.
+   */
+  private static async _resolveParties(appointmentId: string) {
+    const appt = await prisma.appointments.findUnique({
+      where: { id: appointmentId },
+      select: {
+        slot: {
+          select: {
+            starts_at: true,
+            clinician: { select: { user_id: true } },
+          },
+        },
+        patient: { select: { user_id: true } },
+      },
+    });
+    if (!appt) return null;
+    return {
+      patientUserId: appt.patient.user_id,
+      clinicianUserId: appt.slot.clinician.user_id,
+      starts_at: appt.slot.starts_at.toISOString(),
+    };
+  }
+
+  /** Fire-and-forget notification — never blocks the HTTP response. */
+  private static _notify(
+    userId: string,
+    type: (typeof NOTIFICATION_TYPE)[keyof typeof NOTIFICATION_TYPE],
+    context: { starts_at?: string; entity_id?: string } = {},
+  ) {
+    NotificationService.notify(userId, type, context).catch(console.error);
   }
 }

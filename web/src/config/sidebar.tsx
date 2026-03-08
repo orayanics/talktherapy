@@ -1,11 +1,12 @@
 import {
-  FaCalendar,
-  FaCog,
-  FaFile,
-  FaHome,
-  FaMedkit,
-  FaUser,
-} from 'react-icons/fa'
+  Calendar,
+  Clapperboard,
+  ClipboardPlus,
+  LayoutDashboard,
+  Logs,
+  Settings,
+  User,
+} from 'lucide-react'
 import type { ACCOUNT_ROLE } from '~/models/account'
 import type { NavItem } from '~/models/components'
 
@@ -15,22 +16,27 @@ export const SUDO_NAV_ITEMS = [
   {
     label: 'Dashboard',
     to: '/dashboard',
-    icon: <FaHome size={16} />,
+    icon: <LayoutDashboard size={16} />,
   },
   {
     label: 'Users',
     to: '/users',
-    icon: <FaUser size={16} />,
+    icon: <User size={16} />,
+  },
+  {
+    label: 'Content',
+    to: '/content',
+    icon: <Clapperboard size={16} />,
   },
   {
     label: 'Logs',
     to: '/logs',
-    icon: <FaFile size={16} />,
+    icon: <Logs size={16} />,
   },
   {
     label: 'Profile',
     to: '/profile',
-    icon: <FaCog size={16} />,
+    icon: <Settings size={16} />,
   },
 ]
 
@@ -38,27 +44,27 @@ export const ADMIN_NAV_ITEMS = [
   {
     label: 'Dashboard',
     to: '/dashboard',
-    icon: <FaHome size={16} />,
+    icon: <LayoutDashboard size={16} />,
   },
   {
     label: 'Users',
     to: '/users',
-    icon: <FaUser size={16} />,
+    icon: <User size={16} />,
   },
   {
     label: 'Content',
     to: '/content',
-    icon: <FaFile size={16} />,
+    icon: <Clapperboard size={16} />,
   },
   {
     label: 'Schedules',
     to: '/schedules',
-    icon: <FaCalendar size={16} />,
+    icon: <Calendar size={16} />,
   },
   {
     label: 'Profile',
     to: '/profile',
-    icon: <FaCog size={16} />,
+    icon: <Settings size={16} />,
   },
 ]
 
@@ -66,27 +72,27 @@ export const CLINICIAN_NAV_ITEMS = [
   {
     label: 'Dashboard',
     to: '/dashboard',
-    icon: <FaHome size={16} />,
+    icon: <LayoutDashboard size={16} />,
   },
   {
     label: 'Patients',
     to: '/patients',
-    icon: <FaUser size={16} />,
+    icon: <User size={16} />,
   },
   {
     label: 'Content',
     to: '/content',
-    icon: <FaFile size={16} />,
+    icon: <Clapperboard size={16} />,
   },
   {
     label: 'Schedules',
     to: '/schedules',
-    icon: <FaCalendar size={16} />,
+    icon: <Calendar size={16} />,
   },
   {
     label: 'Profile',
     to: '/profile',
-    icon: <FaCog size={16} />,
+    icon: <Settings size={16} />,
   },
 ]
 
@@ -94,27 +100,27 @@ export const PATIENT_NAV_ITEMS = [
   {
     label: 'Dashboard',
     to: '/dashboard',
-    icon: <FaHome size={16} />,
+    icon: <LayoutDashboard size={16} />,
   },
   {
     label: 'Appointments',
     to: '/appointments',
-    icon: <FaUser size={16} />,
+    icon: <Calendar size={16} />,
   },
   {
     label: 'Records',
     to: '/records',
-    icon: <FaMedkit size={16} />,
+    icon: <ClipboardPlus size={16} />,
   },
   {
     label: 'Content',
     to: '/content',
-    icon: <FaFile size={16} />,
+    icon: <Clapperboard size={16} />,
   },
   {
     label: 'Profile',
     to: '/profile',
-    icon: <FaCog size={16} />,
+    icon: <Settings size={16} />,
   },
 ]
 

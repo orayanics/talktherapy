@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { FaCheck, FaExclamation } from 'react-icons/fa'
+import { CircleAlert, CircleCheck } from 'lucide-react'
 import type { ALERT_TYPE, AlertToastProps } from '~/models/alert'
 
 const STYLES: Record<
@@ -29,10 +29,10 @@ const STYLES: Record<
 }
 
 const ICONS: Record<ALERT_TYPE, React.ReactNode> = {
-  success: <FaCheck />,
-  error: <FaExclamation />,
-  info: <FaExclamation />,
-  warning: <FaExclamation />,
+  success: <CircleCheck />,
+  error: <CircleAlert />,
+  info: <CircleAlert />,
+  warning: <CircleAlert />,
 }
 
 export const AlertToast = ({

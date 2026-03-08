@@ -1,5 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { patientMyAppointmentDetailQuery } from '~/api/appointments'
+import PageTitle from '~/components/Page/PageTitle'
 import MyAppointmentDetail from '~/modules/appointment/my/MyAppointmentDetail'
 
 export const Route = createFileRoute(
@@ -18,5 +19,13 @@ export const Route = createFileRoute(
 
 function RouteComponent() {
   const data = Route.useLoaderData()
-  return <MyAppointmentDetail appointment={data} />
+  return (
+    <>
+      <PageTitle
+        heading="Appointment Overview"
+        subheading="Review this appointment's details."
+      />
+      <MyAppointmentDetail appointment={data} />
+    </>
+  )
 }

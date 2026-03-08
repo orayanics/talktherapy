@@ -2,13 +2,13 @@ import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from '@tanstack/react-router'
 import debounce from 'debounce'
 import { format, parseISO } from 'date-fns'
-import { FaSpinner } from 'react-icons/fa'
 import type { RecordListItem, RecordsListProps } from '~/models/table'
 
 import CalenderSingleDropdown from '~/components/Calendar/CalenderSingleDropdown'
 import SkeletonError from '~/components/Skeleton/SkeletonError'
 import SkeletonNull from '~/components/Skeleton/SkeletonNull'
 import TablePagination from '~/components/Table/TablePagination'
+import Loader from '~/components/Loader/Loader'
 
 export default function RecordsList(props: RecordsListProps) {
   const { search, isLoading, isError, data, selectedId, onSelect } = props
@@ -74,7 +74,7 @@ export default function RecordsList(props: RecordsListProps) {
       />
 
       {isLoading ? (
-        <FaSpinner />
+        <Loader />
       ) : isError ? (
         <SkeletonError />
       ) : records.length === 0 ? (

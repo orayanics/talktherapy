@@ -1,6 +1,6 @@
 import { Link } from '@tanstack/react-router'
 
-import { FaBookmark } from 'react-icons/fa'
+import { Bookmark } from 'lucide-react'
 import useBookmark from './useBookmark'
 
 import type { ContentItem } from '~/models/content'
@@ -58,7 +58,7 @@ function ContentCard({
           onClick={toggle}
           disabled={isLoading}
         >
-          <FaBookmark
+          <Bookmark
             className={isBookmarked ? 'text-white' : 'text-secondary'}
           />
         </button>

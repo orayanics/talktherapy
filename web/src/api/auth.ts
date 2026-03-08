@@ -37,8 +37,11 @@ export const sessionQueryOptions = queryOptions({
       return data.user ?? null
     } catch (error) {
       if (isAxiosError(error) && error.response?.status === 401) {
-        showAlertGlobal(SESSION.expired, 'error')
-        return null // unauthenticated is not an error state
+        // 401 here means no valid session (fresh install, DB reset, token
+        // expired on page load). Silently return null — the _private route
+        // loader will clear localStorage and redirect to /login cleanly.
+        localStorage.removeItem('talktherapy_session')
+        return null
       }
       showAlertGlobal(SESSION.error, 'error')
       throw error // network errors, 500s — still throw

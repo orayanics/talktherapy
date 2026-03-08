@@ -1,10 +1,10 @@
-import { FaSpinner } from 'react-icons/fa'
 import useUpdateSchedule from './id/useUpdateSchedule'
 import type { Freq } from '~/models/booking'
 import type { ScheduleEditFormProps } from '~/models/components'
 import { DAYS } from '~/utils/rrule'
 import { fieldError, hasOnlyMessage } from '~/utils/errors'
 import { todayUtcStr } from '~/utils/date'
+import Loader from '~/components/Loader/Loader'
 
 export default function ScheduleEditForm({ data }: ScheduleEditFormProps) {
   const { form, errors, isLoading, handleChange, handleSubmit, toggleDay } =
@@ -273,7 +273,7 @@ export default function ScheduleEditForm({ data }: ScheduleEditFormProps) {
       </section>
 
       <button type="submit" className="btn btn-primary" disabled={isLoading}>
-        {isLoading && <FaSpinner className="animate-spin" />} Save Changes
+        {isLoading && <Loader />} Save Changes
       </button>
     </form>
   )

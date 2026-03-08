@@ -1,4 +1,4 @@
-import { FaChevronLeft, FaChevronRight } from 'react-icons/fa'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import type { TablePaginationProps } from '~/models/table'
 import InputSelect from '~/components/Input/InputSelect'
 
@@ -43,7 +43,7 @@ export default function TablePagination({
           onClick={handlePrev}
           disabled={currentPage === 1}
         >
-          <FaChevronLeft />
+          <ChevronLeft />
         </button>
         <span className="mx-2">
           Page <strong>{currentPage}</strong> of <strong>{totalPages}</strong>
@@ -53,7 +53,7 @@ export default function TablePagination({
           onClick={handleNext}
           disabled={currentPage === totalPages}
         >
-          <FaChevronRight />
+          <ChevronRight />
         </button>
       </div>
       <div className="flex flex-row items-center justify-center lg:justify-end gap-2 w-auto">
