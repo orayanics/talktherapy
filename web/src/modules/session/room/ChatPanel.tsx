@@ -86,7 +86,7 @@ export default function ChatPanel({ messages, onSend }: ChatPanelProps) {
 
           {/* compose */}
           <div className="border-t">
-            <div className="flex gap-2 mt-3">
+            <div className="flex gap-2 mt-3 mb-2">
               <input
                 type="text"
                 placeholder="Type a message…"

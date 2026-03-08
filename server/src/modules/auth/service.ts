@@ -8,6 +8,7 @@ import {
   checkActivationOtp,
 } from "./helper";
 import { sendActivationEmail } from "@/utils/email";
+import { logAction, AUDIT_ACTION, AUDIT_ENTITY } from "@/utils/audit";
 
 export abstract class Auth {
   static async signIn({ email, password }: AuthModel.signInBody) {
@@ -62,6 +63,15 @@ export abstract class Auth {
       role: user.account_role ?? "",
     };
 
+    logAction({
+      actorId: user.id,
+      actorEmail: user.email,
+      actorRole: user.account_role ?? null,
+      action: AUDIT_ACTION.LOGIN,
+      entity: AUDIT_ENTITY.SESSION,
+      details: "User logged in successfully",
+    });
+
     return {
       email: user.email,
       role: user.account_role,
@@ -106,6 +116,14 @@ export abstract class Auth {
           diagnosis_id: diagnosis.id,
         },
       });
+    });
+
+    logAction({
+      actorEmail: data.email,
+      actorRole: "patient",
+      action: AUDIT_ACTION.REGISTER_PATIENT,
+      entity: AUDIT_ENTITY.USER,
+      details: `Patient registered: ${data.email}`,
     });
 
     return {
@@ -162,6 +180,23 @@ export abstract class Auth {
     const otpCode = await createActivationOtp(newUser.id);
     await sendActivationEmail(newUser.email, otpCode);
 
+    logAction({
+      actorId: createdBy,
+      actorEmail: data.email,
+      actorRole: "clinician",
+      action: AUDIT_ACTION.REGISTER_CLINICIAN,
+      entity: AUDIT_ENTITY.USER,
+      entityId: newUser.id,
+      details: `Clinician account created: ${data.email}`,
+    });
+    logAction({
+      actorEmail: data.email,
+      action: AUDIT_ACTION.OTP_SENT,
+      entity: AUDIT_ENTITY.OTP,
+      entityId: newUser.id,
+      details: "Activation OTP sent to clinician",
+    });
+
     return {
       message:
         "Clinician account created. An activation OTP has been sent to the provided email.",
@@ -207,6 +242,23 @@ export abstract class Auth {
     const otpCode = await createActivationOtp(newUser.id);
     await sendActivationEmail(newUser.email, otpCode);
 
+    logAction({
+      actorId: createdBy,
+      actorEmail: data.email,
+      actorRole: "admin",
+      action: AUDIT_ACTION.REGISTER_ADMIN,
+      entity: AUDIT_ENTITY.USER,
+      entityId: newUser.id,
+      details: `Admin account created: ${data.email}`,
+    });
+    logAction({
+      actorEmail: data.email,
+      action: AUDIT_ACTION.OTP_SENT,
+      entity: AUDIT_ENTITY.OTP,
+      entityId: newUser.id,
+      details: "Activation OTP sent to admin",
+    });
+
     return {
       message:
         "Admin account created. An activation OTP has been sent to the provided email.",
@@ -240,6 +292,16 @@ export abstract class Auth {
     const otpCode = await createActivationOtp(user.id);
     await sendActivationEmail(user.email, otpCode);
 
+    logAction({
+      actorId: user.id,
+      actorEmail: user.email,
+      actorRole: user.account_role,
+      action: AUDIT_ACTION.OTP_RESENT,
+      entity: AUDIT_ENTITY.OTP,
+      entityId: user.id,
+      details: "Activation OTP resent",
+    });
+
     return { message: "A new OTP has been sent to the provided email." };
   }
 
@@ -267,6 +329,15 @@ export abstract class Auth {
         "Invalid or expired OTP" satisfies AuthModel.verifyOtpInvalid,
       );
     }
+
+    logAction({
+      actorId: user.id,
+      actorRole: user.account_role,
+      action: AUDIT_ACTION.OTP_VERIFIED,
+      entity: AUDIT_ENTITY.OTP,
+      entityId: user.id,
+      details: "Activation OTP verified",
+    });
 
     return { message: "OTP verified", account_role: user.account_role };
   }
@@ -324,6 +395,15 @@ export abstract class Auth {
       }
     }
 
+    logAction({
+      actorId: user.id,
+      actorRole: user.account_role,
+      action: AUDIT_ACTION.ACCOUNT_ACTIVATED,
+      entity: AUDIT_ENTITY.ACCOUNT,
+      entityId: user.id,
+      details: "Account activated",
+    });
+
     return { message: "Account activated successfully." };
   }
 
@@ -352,6 +432,15 @@ export abstract class Auth {
       }),
     ]);
 
+    logAction({
+      actorId: user.id,
+      actorRole: user.account_role,
+      action: AUDIT_ACTION.ACCOUNT_DEACTIVATED,
+      entity: AUDIT_ENTITY.ACCOUNT,
+      entityId: user.id,
+      details: "Account deactivated",
+    });
+
     return { message: "Account deactivated successfully." };
   }
 
@@ -376,6 +465,15 @@ export abstract class Auth {
     await prisma.user.update({
       where: { id: user.id },
       data: { account_status: "active" },
+    });
+
+    logAction({
+      actorId: user.id,
+      actorRole: user.account_role,
+      action: AUDIT_ACTION.ACCOUNT_REACTIVATED,
+      entity: AUDIT_ENTITY.ACCOUNT,
+      entityId: user.id,
+      details: "Account reactivated",
     });
 
     return { message: "Account reactivated successfully." };
@@ -405,6 +503,15 @@ export abstract class Auth {
         data: { revoked_at: new Date() },
       }),
     ]);
+
+    logAction({
+      actorId: user.id,
+      actorRole: user.account_role,
+      action: AUDIT_ACTION.ACCOUNT_SUSPENDED,
+      entity: AUDIT_ENTITY.ACCOUNT,
+      entityId: user.id,
+      details: "Account suspended",
+    });
 
     return { message: "Account suspended successfully." };
   }
@@ -493,6 +600,14 @@ export abstract class Auth {
     await prisma.user.update({
       where: { id: userId },
       data: { password: hashedPassword },
+    });
+
+    logAction({
+      actorId: userId,
+      action: AUDIT_ACTION.CHANGE_PASSWORD,
+      entity: AUDIT_ENTITY.USER,
+      entityId: userId,
+      details: "Password changed successfully",
     });
 
     return { message: "Password changed successfully" };

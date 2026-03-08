@@ -2,6 +2,7 @@ import { Elysia } from "elysia";
 import { jwtPlugin } from "@/plugins/jwt";
 import { ContentModel } from "./model";
 import { ContentService } from "./service";
+import { logAction, AUDIT_ACTION, AUDIT_ENTITY } from "@/utils/audit";
 
 export const contentModule = new Elysia({ prefix: "/content" })
   .use(jwtPlugin)
@@ -32,7 +33,21 @@ export const contentModule = new Elysia({ prefix: "/content" })
       // POST: /content
       .post(
         "/",
-        ({ auth, body }) => ContentService.createContent(auth!.userId, body),
+        async ({ auth, body }) => {
+          const content = await ContentService.createContent(
+            auth!.userId,
+            body,
+          );
+          logAction({
+            actorId: auth!.userId,
+            actorRole: auth!.role,
+            action: AUDIT_ACTION.CONTENT_CREATED,
+            entity: AUDIT_ENTITY.CONTENT,
+            entityId: content.id,
+            details: `Content created: ${body.title}`,
+          });
+          return content;
+        },
         {
           body: ContentModel.createBody,
           response: {
@@ -57,7 +72,18 @@ export const contentModule = new Elysia({ prefix: "/content" })
       // DELETE: /content/:content_id
       .delete(
         "/:content_id",
-        ({ params }) => ContentService.deleteContent(params.content_id),
+        async ({ auth, params }) => {
+          const result = await ContentService.deleteContent(params.content_id);
+          logAction({
+            actorId: auth!.userId,
+            actorRole: auth!.role,
+            action: AUDIT_ACTION.CONTENT_DELETED,
+            entity: AUDIT_ENTITY.CONTENT,
+            entityId: params.content_id,
+            details: `Content deleted: ${params.content_id}`,
+          });
+          return result;
+        },
         {
           params: ContentModel.contentParams,
           response: {

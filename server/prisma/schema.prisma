@@ -325,3 +325,16 @@ model Bookmark {
 
   @@unique([user_id, content_id])
 }
+
+// Audit / System Logs
+model AuditLog {
+  id          String   @id @default(uuid())
+  actor_id    String?
+  actor_email String?
+  actor_role  String?
+  action      String
+  entity      String?
+  entity_id   String?
+  details     String?
+  created_at  DateTime @default(now())
+}

@@ -8,6 +8,7 @@ import { usersModule } from "@/modules/users";
 import { schedulingModule } from "./modules/scheduling";
 import { contentModule } from "./modules/content";
 import { sessionModule } from "./modules/session";
+import { logsModule } from "./modules/logs";
 
 import { customMessages } from "./utils/errors";
 
@@ -87,7 +88,8 @@ export const app = new Elysia()
       .use(usersModule)
       .use(schedulingModule)
       .use(contentModule)
-      .use(sessionModule),
+      .use(sessionModule)
+      .use(logsModule),
   )
 
   .listen({

@@ -324,10 +324,14 @@ export interface AdminContentProps {
 
 export interface LogItem {
   id: string
-  timestamp: string
-  userId: string
+  actor_id: string | null
+  actor_email: string | null
+  actor_role: string | null
   action: string
-  details: string
+  entity: string | null
+  entity_id: string | null
+  details: string | null
+  created_at: string
 }
 
 export interface LogsTableProps {
@@ -337,6 +341,7 @@ export interface LogsTableProps {
   data: Array<LogItem>
   page: number
   perPage: number
+  total: number
 }
 
 // ─── My Appointment List Row ─────────────────────────────────────────────────
