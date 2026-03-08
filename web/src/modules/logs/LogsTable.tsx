@@ -1,4 +1,4 @@
-import { format } from 'date-fns'
+import { format, parseISO } from 'date-fns'
 import type { LogItem, LogsTableProps } from '~/models/components'
 
 import TableContent from '~/components/Table/TableContent'
@@ -12,7 +12,7 @@ export type { LogItem }
 function flattenForTable(items: Array<LogItem>) {
   return items.map((item) => ({
     id: item.id,
-    timestamp: format(new Date(item.created_at), 'yyyy-MM-dd HH:mm:ss'),
+    timestamp: format(parseISO(item.created_at), 'yyyy-MM-dd HH:mm:ss'),
     actor: item.actor_email || item.actor_id || '—',
     role: item.actor_role || '—',
     action: item.action,

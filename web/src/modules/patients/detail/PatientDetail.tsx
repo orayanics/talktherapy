@@ -1,4 +1,4 @@
-import { format } from 'date-fns'
+import { format, parseISO } from 'date-fns'
 
 interface PatientDetailProps {
   name: string | null
@@ -9,7 +9,7 @@ interface PatientDetailProps {
 
 export default function PatientDetail(props: PatientDetailProps) {
   const { diagnosis, email, first_completed_at, name } = props
-  const completedAt = format(new Date(first_completed_at), 'MMM d, yyyy')
+  const completedAt = format(parseISO(first_completed_at), 'MMM d, yyyy')
   return (
     <>
       <p className="font-bold uppercase text-primary">User Information</p>

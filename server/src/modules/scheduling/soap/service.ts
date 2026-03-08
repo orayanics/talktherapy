@@ -1,6 +1,7 @@
 import { status } from "elysia";
 import { prisma } from "prisma/db";
 import type { SoapModel } from "./model";
+import { toUtcStartOfDay, toUtcEndOfDay } from "@/utils/date";
 
 export abstract class SoapService {
   private static async resolvePatientId(user_id: string): Promise<string> {
@@ -80,8 +81,8 @@ export abstract class SoapService {
     const skip = (page - 1) * per_page;
 
     const createdAtFilter: { gte?: Date; lte?: Date } = {};
-    if (from) createdAtFilter.gte = new Date(`${from}T00:00:00.000Z`);
-    if (to) createdAtFilter.lte = new Date(`${to}T23:59:59.999Z`);
+    if (from) createdAtFilter.gte = toUtcStartOfDay(from);
+    if (to) createdAtFilter.lte = toUtcEndOfDay(to);
 
     const where = {
       clinician_id,
@@ -163,8 +164,8 @@ export abstract class SoapService {
     const skip = (page - 1) * per_page;
 
     const createdAtFilter: { gte?: Date; lte?: Date } = {};
-    if (from) createdAtFilter.gte = new Date(`${from}T00:00:00.000Z`);
-    if (to) createdAtFilter.lte = new Date(`${to}T23:59:59.999Z`);
+    if (from) createdAtFilter.gte = toUtcStartOfDay(from);
+    if (to) createdAtFilter.lte = toUtcEndOfDay(to);
 
     const where = {
       patient_id,

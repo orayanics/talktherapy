@@ -2,6 +2,7 @@ import { status } from "elysia";
 import { prisma } from "prisma/db";
 import { expandRRule, hasOverlap } from "../rrule.utils";
 import type { AvailabilityModel } from "./model";
+import { parseISO, toUtcStartOfDay, toUtcEndOfDay, nowUtc } from "@/utils/date";
 
 export abstract class AvailabilityService {
   /**
@@ -32,10 +33,10 @@ export abstract class AvailabilityService {
     const slotWhere = {
       ...(slotStatus && { status: slotStatus }),
       ...(from && {
-        starts_at: { gte: new Date(`${from}T00:00:00.000Z`) },
+        starts_at: { gte: toUtcStartOfDay(from) },
       }),
       ...(to && {
-        ends_at: { lte: new Date(`${to}T23:59:59.999Z`) },
+        ends_at: { lte: toUtcEndOfDay(to) },
       }),
     };
     const hasSlotFilter = Object.keys(slotWhere).length > 0;
@@ -115,8 +116,8 @@ export abstract class AvailabilityService {
     clinician_id: string,
     body: AvailabilityModel.createBody,
   ) {
-    const starts_at = new Date(body.starts_at);
-    const ends_at = new Date(body.ends_at);
+    const starts_at = parseISO(body.starts_at);
+    const ends_at = parseISO(body.ends_at);
 
     if (ends_at <= starts_at) {
       throw status(400, "End time must be after start time");
@@ -138,7 +139,7 @@ export abstract class AvailabilityService {
       where: {
         clinician_id,
         status: { not: "CANCELLED" },
-        starts_at: { gte: new Date() },
+        starts_at: { gte: nowUtc() },
       },
       select: { starts_at: true, ends_at: true },
     });
@@ -230,9 +231,9 @@ export abstract class AvailabilityService {
 
     return prisma.$transaction(async (tx) => {
       const starts_at = body.starts_at
-        ? new Date(body.starts_at)
+        ? parseISO(body.starts_at)
         : rule.starts_at;
-      const ends_at = body.ends_at ? new Date(body.ends_at) : rule.ends_at;
+      const ends_at = body.ends_at ? parseISO(body.ends_at) : rule.ends_at;
       const recurrence_rule =
         body.recurrence_rule !== undefined
           ? body.recurrence_rule
@@ -272,7 +273,7 @@ export abstract class AvailabilityService {
             clinician_id,
             availability_rule_id: { not: rule_id },
             status: { not: "CANCELLED" },
-            starts_at: { gte: new Date() },
+            starts_at: { gte: nowUtc() },
           },
           select: { starts_at: true, ends_at: true },
         });
@@ -309,8 +310,8 @@ export abstract class AvailabilityService {
       await tx.availabilityRule.update({
         where: { id: rule_id },
         data: {
-          starts_at: body.starts_at ? new Date(body.starts_at) : undefined,
-          ends_at: body.ends_at ? new Date(body.ends_at) : undefined,
+          starts_at: body.starts_at ? parseISO(body.starts_at) : undefined,
+          ends_at: body.ends_at ? parseISO(body.ends_at) : undefined,
           recurrence_rule:
             body.recurrence_rule !== undefined
               ? body.recurrence_rule

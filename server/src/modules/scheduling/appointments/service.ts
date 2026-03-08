@@ -2,6 +2,7 @@ import { status } from "elysia";
 import { prisma } from "prisma/db";
 import type { AppointmentModel } from "./model";
 import { RESCHEDULE_CUTOFF_DAYS } from "../types";
+import { parseISO, nowUtc, utcStartOfDay, addDays } from "@/utils/date";
 
 export abstract class AppointmentService {
   /**
@@ -17,8 +18,8 @@ export abstract class AppointmentService {
       where: {
         slot: {
           clinician_id,
-          ...(from && { starts_at: { gte: new Date(from) } }),
-          ...(to && { ends_at: { lte: new Date(to) } }),
+          ...(from && { starts_at: { gte: parseISO(from) } }),
+          ...(to && { ends_at: { lte: parseISO(to) } }),
         },
         ...(apptStatus && { status: apptStatus }),
       },
@@ -87,7 +88,7 @@ export abstract class AppointmentService {
         where: { id: appointment_id },
         data: {
           status: "CONFIRMED",
-          confirmed_at: new Date(),
+          confirmed_at: nowUtc(),
           room_id: crypto.randomUUID(),
         },
       });
@@ -145,7 +146,7 @@ export abstract class AppointmentService {
         where: { id: appointment_id },
         data: {
           status: "CANCELLED",
-          cancelled_at: new Date(),
+          cancelled_at: nowUtc(),
           room_id: null,
         },
       });
@@ -195,7 +196,7 @@ export abstract class AppointmentService {
         where: { id: appointment_id },
         data: {
           status: "COMPLETED",
-          completed_at: new Date(),
+          completed_at: nowUtc(),
           room_id: null,
         },
       });
@@ -220,7 +221,7 @@ export abstract class AppointmentService {
         create: {
           clinician_id,
           patient_id: appointment.patient_id,
-          first_completed_at: new Date(),
+          first_completed_at: nowUtc(),
         },
         update: {},
       });
@@ -263,8 +264,8 @@ export abstract class AppointmentService {
       patient_id,
       slot: {
         clinician_id,
-        ...(from && { starts_at: { gte: new Date(from) } }),
-        ...(to && { ends_at: { lte: new Date(to) } }),
+        ...(from && { starts_at: { gte: parseISO(from) } }),
+        ...(to && { ends_at: { lte: parseISO(to) } }),
       },
       status: "COMPLETED" as const,
     };
@@ -515,7 +516,7 @@ export abstract class AppointmentService {
         where: { id: appointment_id },
         data: {
           slot_id: new_slot_id,
-          rescheduled_at: new Date(),
+          rescheduled_at: nowUtc(),
         },
       });
 
@@ -553,8 +554,8 @@ export abstract class AppointmentService {
     const where = {
       patient_id: patient.id,
       ...(apptStatus && { status: apptStatus }),
-      ...(from && { slot: { starts_at: { gte: new Date(from) } } }),
-      ...(to && { slot: { ends_at: { lte: new Date(to) } } }),
+      ...(from && { slot: { starts_at: { gte: parseISO(from) } } }),
+      ...(to && { slot: { ends_at: { lte: parseISO(to) } } }),
     };
 
     const [data, total] = await prisma.$transaction([
@@ -680,7 +681,7 @@ export abstract class AppointmentService {
         where: { id: appointment_id },
         data: {
           status: "CANCELLED",
-          cancelled_at: new Date(),
+          cancelled_at: nowUtc(),
           room_id: null,
         },
       });
@@ -786,7 +787,7 @@ export abstract class AppointmentService {
           slot_id,
           patient_id: patient.id,
           status: "PENDING",
-          booked_at: new Date(),
+          booked_at: nowUtc(),
         },
       });
 
@@ -819,14 +820,9 @@ export abstract class AppointmentService {
    * today + N days is always allowed regardless of the time of day or server timezone.
    */
   static assertRescheduleCutoff(slotStartsAt: Date) {
-    const todayUTC = new Date();
-    todayUTC.setUTCHours(0, 0, 0, 0);
-
-    const slotDayUTC = new Date(slotStartsAt);
-    slotDayUTC.setUTCHours(0, 0, 0, 0);
-
-    const cutoff = new Date(todayUTC);
-    cutoff.setUTCDate(todayUTC.getUTCDate() + RESCHEDULE_CUTOFF_DAYS);
+    const todayUTC = utcStartOfDay(nowUtc());
+    const slotDayUTC = utcStartOfDay(slotStartsAt);
+    const cutoff = addDays(todayUTC, RESCHEDULE_CUTOFF_DAYS);
 
     if (slotDayUTC < cutoff) {
       throw status(

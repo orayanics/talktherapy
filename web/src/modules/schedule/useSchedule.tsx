@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { addMonths, differenceInDays } from 'date-fns'
+import { addMonths, differenceInDays, parseISO } from 'date-fns'
 import { isAxiosError } from 'axios'
 import type React from 'react'
 import type { ParsedError } from '~/models/system'
@@ -48,8 +48,8 @@ export default function useSchedule() {
       const horizonDays =
         form.freq === 'MONTHLY'
           ? differenceInDays(
-              addMonths(new Date(form.date), days),
-              new Date(form.date),
+              addMonths(parseISO(form.date), days),
+              parseISO(form.date),
             )
           : days
 

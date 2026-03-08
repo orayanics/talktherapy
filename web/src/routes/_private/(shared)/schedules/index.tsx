@@ -1,4 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { parseISO } from 'date-fns'
 
 import ScheduleList from '~/modules/schedule/list/ScheduleList'
 
@@ -8,7 +9,7 @@ export const Route = createFileRoute('/_private/(shared)/schedules/')({
   ssr: false,
   validateSearch: (search: Record<string, unknown>) => {
     const date =
-      typeof search.date === 'string' ? new Date(search.date) : undefined
+      typeof search.date === 'string' ? parseISO(search.date) : undefined
     const page = Number(search.page ?? 1)
     const perPage = Number(search.perPage ?? 10)
 

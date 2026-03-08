@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { format } from 'date-fns'
+import { format, parseISO } from 'date-fns'
 import { useNavigate } from '@tanstack/react-router'
 import useDeleteSchedule from './useDeleteSchedule'
 import useUpdateStatus from './useUpdateStatus'
@@ -14,10 +14,10 @@ export default function ScheduleDetailsId(props: ScheduleDetailsIdProps) {
   const { is } = useAuthGuard()
   const isClinician = is('clinician')
 
-  const start = format(new Date(starts_at), 'pp')
-  const end = format(new Date(ends_at), 'pp')
+  const start = format(parseISO(starts_at), 'pp')
+  const end = format(parseISO(ends_at), 'pp')
   const lastSlot = slots[slots.length - 1]
-  const lastSlotEnd = format(new Date(lastSlot.ends_at), 'PPpp')
+  const lastSlotEnd = format(parseISO(lastSlot.ends_at), 'PPpp')
   const recurrenceInfo = parseRRule(recurrence_rule)
 
   const { handleSubmit, isLoading, errors } = useDeleteSchedule({ ruleId: id })
@@ -41,7 +41,7 @@ export default function ScheduleDetailsId(props: ScheduleDetailsIdProps) {
           </div>
           <div className="flex flex-row justify-between gap-2">
             <p className="font-bold">Schedule Start</p>
-            <p>{format(new Date(starts_at), 'PPpp')}</p>
+            <p>{format(parseISO(starts_at), 'PPpp')}</p>
           </div>
 
           <div className="flex flex-row justify-between gap-2">

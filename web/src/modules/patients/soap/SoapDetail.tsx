@@ -1,4 +1,4 @@
-import { format } from 'date-fns'
+import { format, parseISO } from 'date-fns'
 import Markdown from 'react-markdown'
 import rehypeRaw from 'rehype-raw'
 import type { SoapDto } from '~/models/booking'
@@ -23,7 +23,7 @@ export default function SoapDetail({ soap }: SoapDetailViewProps) {
       <div className="flex flex-col gap-1 border-b border-dashed border-gray-200 pb-4">
         <p className="font-bold uppercase text-primary text-sm">SOAP Record</p>
         <p className="text-xs text-gray-400">
-          Created {format(new Date(soap.created_at), 'MMMM d, yyyy')}
+          Created {format(parseISO(soap.created_at), 'MMMM d, yyyy')}
         </p>
       </div>
 

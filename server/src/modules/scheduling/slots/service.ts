@@ -1,6 +1,7 @@
 import { status } from "elysia";
 import { prisma } from "prisma/db";
 import type { SlotModel } from "./model";
+import { parseISO, toUtcEndOfDay } from "@/utils/date";
 
 const APPOINTMENT_INCLUDE = {
   slot: { select: { id: true, starts_at: true, ends_at: true, status: true } },
@@ -38,15 +39,14 @@ export abstract class SlotService {
   static async listSlots(clinician_id: string, query: SlotModel.listQuery) {
     const { from, to, status: slotStatus, page = 1, per_page = 10 } = query;
 
-    const toDate = to ? new Date(to) : undefined;
-    if (toDate) toDate.setUTCHours(23, 59, 59, 999);
+    const toDate = to ? toUtcEndOfDay(to) : undefined;
 
     const skip = (page - 1) * per_page;
 
     const where = {
       clinician_id,
       ...(slotStatus && { status: slotStatus }),
-      ...(from && { starts_at: { gte: new Date(from) } }),
+      ...(from && { starts_at: { gte: parseISO(from) } }),
       ...(toDate && { ends_at: { lte: toDate } }),
     };
 
@@ -147,11 +147,11 @@ export abstract class SlotService {
       per_page = 10,
     } = query;
 
-    const fromDate = from ? new Date(`${from}T00:00:00.000Z`) : null;
+    const fromDate = from ? parseISO(`${from}T00:00:00.000Z`) : null;
     const toDate = from
-      ? new Date(`${from}T23:59:59.999Z`)
+      ? parseISO(`${from}T23:59:59.999Z`)
       : to
-        ? new Date(`${to}T23:59:59.999Z`)
+        ? parseISO(`${to}T23:59:59.999Z`)
         : null;
 
     const where = {

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
+import { parseISO } from 'date-fns'
 
 import PageTitle from '~/components/Page/PageTitle'
 import Grid from '~/components/Page/Grid'
@@ -23,7 +24,7 @@ export const Route = createFileRoute('/_private/(patient)/appointments/')({
     const perPage = Number(search.perPage ?? 10)
     const diagnosis = normalizeSearchArray(search.diagnosis)
     const date =
-      typeof search.date === 'string' ? new Date(search.date) : undefined
+      typeof search.date === 'string' ? parseISO(search.date) : undefined
 
     return {
       ...(diagnosis.length ? { diagnosis } : {}),

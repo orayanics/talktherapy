@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { format } from 'date-fns'
+import { format, parseISO } from 'date-fns'
 
 import { MessageCircleMore } from 'lucide-react'
 import type { ChatEntry } from '~/models/session'
@@ -76,7 +76,7 @@ export default function ChatPanel({ messages, onSend }: ChatPanelProps) {
                   {msg.text}
                 </div>
                 <div className="chat-footer opacity-50">
-                  {format(new Date(msg.timestamp), 'p')}
+                  {format(parseISO(msg.timestamp), 'p')}
                 </div>
               </div>
             ))}

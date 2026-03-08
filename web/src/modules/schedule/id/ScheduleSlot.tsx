@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { format, parseISO } from 'date-fns'
 import { Link } from '@tanstack/react-router'
 import useDeleteSlot from './useDeleteSlot'
 import type { SlotDto } from '~/models/booking'
@@ -28,8 +29,8 @@ function ScheduleSlotItem({ is_active, slot, ruleId }: ScheduleSlotItemProps) {
           className="flex flex-row gap-4"
         >
           <p>
-            {new Date(starts_at).toLocaleTimeString()} -{' '}
-            {new Date(ends_at).toLocaleTimeString()}
+            {format(parseISO(starts_at), 'p')} -{' '}
+            {format(parseISO(ends_at), 'p')}
           </p>
           <p className="badge badge-soft">{status}</p>
         </Link>

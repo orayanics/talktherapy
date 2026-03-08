@@ -1,5 +1,6 @@
 import Markdown from 'react-markdown'
 import rehypeRaw from 'rehype-raw'
+import { format, parseISO } from 'date-fns'
 import type { RecordListItem } from '~/models/table'
 
 interface RecordDetailProps {
@@ -33,11 +34,7 @@ export default function RecordDetail({ record }: RecordDetailProps) {
         <p className="text-sm opacity-60">
           By <span className="font-medium">{record.clinician_name}</span>
           {' · '}
-          {new Date(record.created_at).toLocaleDateString(undefined, {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-          })}
+          {format(parseISO(record.created_at), 'MMMM d, yyyy')}
         </p>
         <span className="text-xs uppercase font-semibold opacity-50">
           {record.session_type}

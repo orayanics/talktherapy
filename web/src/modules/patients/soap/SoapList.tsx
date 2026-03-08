@@ -1,4 +1,4 @@
-import { format } from 'date-fns'
+import { format, parseISO } from 'date-fns'
 import type { SoapDto } from '~/models/booking'
 import TableContent from '~/components/Table/TableContent'
 
@@ -19,7 +19,7 @@ export default function SoapList({
         {
           header: 'Date',
           accessor: 'created_at',
-          render: (created_at) => format(new Date(created_at), 'MM/dd/yyyy'),
+          render: (created_at) => format(parseISO(created_at), 'MM/dd/yyyy'),
         },
         { header: 'Activity Plan', accessor: 'activity_plan' },
         { header: 'Session', accessor: 'session_type' },

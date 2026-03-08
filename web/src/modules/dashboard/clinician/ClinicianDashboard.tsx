@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
-import { format, startOfDay } from 'date-fns'
+import { format, parseISO, startOfDay } from 'date-fns'
 import { useState } from 'react'
 
 import { slotsQuery } from '~/api/scheduling'
@@ -93,8 +93,8 @@ function SlotItem(props: any) {
       <li className="p-4 flex justify-between border rounded-lg">
         <Link to={'/slots/$slotId'} params={{ slotId: id }} className="flex-1">
           <p>
-            {format(new Date(starts_at), 'pp')} -{' '}
-            {format(new Date(ends_at), 'pp')}
+            {format(parseISO(starts_at), 'pp')} -{' '}
+            {format(parseISO(ends_at), 'pp')}
           </p>
           <span>{status}</span>
         </Link>

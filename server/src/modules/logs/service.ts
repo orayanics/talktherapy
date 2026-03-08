@@ -1,5 +1,6 @@
 import { prisma } from "prisma/db";
 import type { LogsModel } from "./model";
+import { toUtcStartOfDay, toUtcEndOfDay, todayUtcStr } from "@/utils/date";
 
 function serializeLog(log: {
   id: string;
@@ -37,8 +38,8 @@ export abstract class LogsService {
       ...(action && { action }),
       ...((date_from || date_to) && {
         created_at: {
-          ...(date_from && { gte: new Date(date_from + "T00:00:00.000Z") }),
-          ...(date_to && { lte: new Date(date_to + "T23:59:59.999Z") }),
+          ...(date_from && { gte: toUtcStartOfDay(date_from) }),
+          ...(date_to && { lte: toUtcEndOfDay(date_to) }),
         },
       }),
     };
@@ -73,8 +74,8 @@ export abstract class LogsService {
     const where = date
       ? {
           created_at: {
-            gte: new Date(date + "T00:00:00.000Z"),
-            lte: new Date(date + "T23:59:59.999Z"),
+            gte: toUtcStartOfDay(date),
+            lte: toUtcEndOfDay(date),
           },
         }
       : {};
@@ -85,7 +86,7 @@ export abstract class LogsService {
     });
 
     const CHUNK_SIZE = 100;
-    const dateStr = date ?? new Date().toISOString().slice(0, 10);
+    const dateStr = date ?? todayUtcStr();
     const baseName = `logs-${dateStr}`;
 
     // No logs → reject so the WebSocket handler sends an error frame

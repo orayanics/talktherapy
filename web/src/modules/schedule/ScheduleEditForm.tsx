@@ -4,6 +4,7 @@ import type { Freq } from '~/models/booking'
 import type { ScheduleEditFormProps } from '~/models/components'
 import { DAYS } from '~/utils/rrule'
 import { fieldError, hasOnlyMessage } from '~/utils/errors'
+import { todayUtcStr } from '~/utils/date'
 
 export default function ScheduleEditForm({ data }: ScheduleEditFormProps) {
   const { form, errors, isLoading, handleChange, handleSubmit, toggleDay } =
@@ -43,7 +44,7 @@ export default function ScheduleEditForm({ data }: ScheduleEditFormProps) {
             aria-required
             className="input validator w-full"
             placeholder="Pick a date"
-            min={new Date().toISOString().split('T')[0]}
+            min={todayUtcStr()}
             title="Must be valid date"
           />
           {fieldError(errors, 'date') && (

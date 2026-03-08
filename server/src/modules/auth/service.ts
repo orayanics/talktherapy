@@ -2,6 +2,7 @@ import { status } from "elysia";
 import type { AuthModel } from "./model";
 import type { JwtPayload } from "@/utils/jwt";
 import { prisma } from "prisma/db";
+import { nowUtc } from "@/utils/date";
 import {
   createActivationOtp,
   verifyActivationOtp,
@@ -54,7 +55,7 @@ export abstract class Auth {
 
     await prisma.user.update({
       where: { id: user.id },
-      data: { last_login: new Date() },
+      data: { last_login: nowUtc() },
     });
 
     const payload: JwtPayload = {
@@ -428,7 +429,7 @@ export abstract class Auth {
       }),
       prisma.refreshToken.updateMany({
         where: { user_id: user.id, revoked_at: null },
-        data: { revoked_at: new Date() },
+        data: { revoked_at: nowUtc() },
       }),
     ]);
 
@@ -500,7 +501,7 @@ export abstract class Auth {
       }),
       prisma.refreshToken.updateMany({
         where: { user_id: user.id, revoked_at: null },
-        data: { revoked_at: new Date() },
+        data: { revoked_at: nowUtc() },
       }),
     ]);
 

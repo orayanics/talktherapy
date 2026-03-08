@@ -1,5 +1,6 @@
 import { prisma } from "prisma/db";
 import { JWT_CONFIG, parseExpiryMs } from "@/utils/jwt";
+import { addMs, nowUtc } from "@/utils/date";
 
 const REFRESH_TOKEN_TTL_MS = parseExpiryMs(JWT_CONFIG.refreshExpiry as string);
 
@@ -9,7 +10,7 @@ export async function createRefreshToken(userId: string, rawToken: string) {
     data: {
       user_id: userId,
       token_hash,
-      expires_at: new Date(Date.now() + REFRESH_TOKEN_TTL_MS),
+      expires_at: addMs(nowUtc(), REFRESH_TOKEN_TTL_MS),
     },
   });
 }
@@ -34,7 +35,7 @@ export async function findAndMatchRefreshToken(
 export async function revokeRefreshToken(tokenId: string) {
   await prisma.refreshToken.update({
     where: { id: tokenId },
-    data: { revoked_at: new Date() },
+    data: { revoked_at: nowUtc() },
   });
 }
 
@@ -42,10 +43,10 @@ export async function revokeExpiredTokensForUser(userId: string) {
   await prisma.refreshToken.updateMany({
     where: {
       user_id: userId,
-      expires_at: { lt: new Date() },
+      expires_at: { lt: nowUtc() },
       revoked_at: null,
     },
-    data: { revoked_at: new Date() },
+    data: { revoked_at: nowUtc() },
   });
 }
 
@@ -58,13 +59,13 @@ export async function rotateRefreshToken(
   await prisma.$transaction([
     prisma.refreshToken.update({
       where: { id: tokenId },
-      data: { revoked_at: new Date() },
+      data: { revoked_at: nowUtc() },
     }),
     prisma.refreshToken.create({
       data: {
         user_id: userId,
         token_hash,
-        expires_at: new Date(Date.now() + REFRESH_TOKEN_TTL_MS),
+        expires_at: addMs(nowUtc(), REFRESH_TOKEN_TTL_MS),
       },
     }),
   ]);
@@ -93,7 +94,7 @@ export async function createActivationOtp(userId: string): Promise<string> {
       user_id: userId,
       otp_code,
       purpose: OTP_PURPOSE_ACTIVATION,
-      expires_at: new Date(Date.now() + OTP_TTL_MS),
+      expires_at: addMs(nowUtc(), OTP_TTL_MS),
     },
   });
 
@@ -108,7 +109,7 @@ export async function verifyActivationOtp(
     where: {
       user_id: userId,
       purpose: OTP_PURPOSE_ACTIVATION,
-      expires_at: { gt: new Date() },
+      expires_at: { gt: nowUtc() },
     },
   });
 
@@ -139,7 +140,7 @@ export async function checkActivationOtp(
     where: {
       user_id: userId,
       purpose: OTP_PURPOSE_ACTIVATION,
-      expires_at: { gt: new Date() },
+      expires_at: { gt: nowUtc() },
     },
   });
 

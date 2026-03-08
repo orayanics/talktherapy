@@ -1,6 +1,7 @@
 import { RRule } from "rrule";
 import type { ExpandedOccurrence } from "./types";
 import { SLOT_EXPANSION_DAYS } from "./types";
+import { addDays, addMilliseconds, isBefore, nowUtc } from "@/utils/date";
 
 const FREQ_HORIZON_MAP: Record<string, number> = {
   WEEKLY: 30,
@@ -37,13 +38,12 @@ export function expandRRule(
 
   // Horizon is measured from starts_at so that schedules starting in the
   // future still generate the requested number of slots.
-  const horizon = new Date(starts_at);
-  horizon.setDate(horizon.getDate() + cappedHorizon);
+  const horizon = addDays(starts_at, cappedHorizon);
 
   const durationMs = ends_at.getTime() - starts_at.getTime();
 
   if (!rrule) {
-    if (starts_at < new Date()) return [];
+    if (isBefore(starts_at, nowUtc())) return [];
     return [{ starts_at, ends_at }];
   }
 
@@ -57,7 +57,7 @@ export function expandRRule(
   const occurrences = rule.between(starts_at, horizon, true);
   return occurrences.map((occ) => ({
     starts_at: occ,
-    ends_at: new Date(occ.getTime() + durationMs),
+    ends_at: addMilliseconds(occ, durationMs),
   }));
 }
 

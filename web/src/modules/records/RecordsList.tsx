@@ -93,7 +93,7 @@ export default function RecordsList(props: RecordsListProps) {
             >
               <p className="font-bold">{record.clinician_name}</p>
               <p className="text-sm opacity-60">
-                {new Date(record.created_at).toLocaleDateString()}
+                {format(parseISO(record.created_at), 'M/d/yyyy')}
               </p>
               <p className="text-xs uppercase font-semibold opacity-50 mt-1">
                 {record.session_type}

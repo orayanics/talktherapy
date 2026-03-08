@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { addMonths, differenceInDays, format } from 'date-fns'
+import { addMonths, differenceInDays, format, parseISO } from 'date-fns'
 import { isAxiosError } from 'axios'
 import type React from 'react'
 
@@ -24,9 +24,9 @@ export default function useUpdateSchedule({
   const parsed = parseRRule(data.recurrence_rule)
 
   const [form, setForm] = useState<CreateSchedulePayload>({
-    date: format(new Date(data.starts_at), 'yyyy-MM-dd'),
-    start_time: format(new Date(data.starts_at), 'HH:mm'),
-    end_time: format(new Date(data.ends_at), 'HH:mm'),
+    date: format(parseISO(data.starts_at), 'yyyy-MM-dd'),
+    start_time: format(parseISO(data.starts_at), 'HH:mm'),
+    end_time: format(parseISO(data.ends_at), 'HH:mm'),
     freq: parsed.freq ?? 'none',
     selected_days: parsed.byday,
     horizon_days: 1,
@@ -57,8 +57,8 @@ export default function useUpdateSchedule({
       const horizonDays =
         form.freq === 'MONTHLY'
           ? differenceInDays(
-              addMonths(new Date(form.date), days),
-              new Date(form.date),
+              addMonths(parseISO(form.date), days),
+              parseISO(form.date),
             )
           : days
 

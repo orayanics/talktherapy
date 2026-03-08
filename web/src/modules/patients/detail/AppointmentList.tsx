@@ -1,5 +1,5 @@
 import { useNavigate } from '@tanstack/react-router'
-import { format } from 'date-fns'
+import { format, parseISO } from 'date-fns'
 import type { ClinicianPatientDetailAppointmentDto } from '~/models/booking'
 import TableContent from '~/components/Table/TableContent'
 import TablePagination from '~/components/Table/TablePagination'
@@ -37,7 +37,7 @@ export default function AppointmentList({
             header: 'Date',
             accessor: 'slot',
             render: (slot) => {
-              return format(new Date(slot.starts_at), 'MM/dd/yyyy')
+              return format(parseISO(slot.starts_at), 'MM/dd/yyyy')
             },
           },
           { header: 'Status', accessor: 'status' },
