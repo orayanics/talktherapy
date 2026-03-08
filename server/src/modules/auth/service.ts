@@ -520,9 +520,25 @@ export abstract class Auth {
   static async getSession(payload: JwtPayload) {
     const user = await prisma.user.findUnique({
       where: { id: payload.userId },
-      omit: { password: true },
-      include: {
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        account_role: true,
+        account_status: true,
+        account_permissions: true,
+        created_at: true,
+        updated_at: true,
+        last_login: true,
+        deleted_at: true,
         clinician: {
+          select: {
+            diagnosis: {
+              select: { label: true },
+            },
+          },
+        },
+        patient: {
           select: {
             diagnosis: {
               select: { label: true },
@@ -536,12 +552,13 @@ export abstract class Auth {
       throw status(404, "User not found");
     }
 
-    const { clinician, ...rest } = user;
+    const { clinician, patient, ...rest } = user;
 
     return {
       user: {
         ...rest,
-        ...(clinician && { diagnosis: clinician.diagnosis?.label ?? null }),
+        diagnosis:
+          clinician?.diagnosis?.label ?? patient?.diagnosis?.label ?? null,
       },
     };
   }

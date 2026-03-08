@@ -3,10 +3,30 @@ import { prisma } from "prisma/db";
 import type { SlotModel } from "./model";
 import { parseISO, toUtcEndOfDay } from "@/utils/date";
 
+// Strip internal FKs from appointment sub-objects
+const EVENT_SELECT = {
+  id: true,
+  type: true,
+  actor_type: true,
+  reason: true,
+  created_at: true,
+} as const;
+
+const ENCOUNTER_SELECT = {
+  id: true,
+  chief_complaint: true,
+  diagnosis: true,
+  referral_source: true,
+  referral_url: true,
+} as const;
+
 const APPOINTMENT_INCLUDE = {
   slot: { select: { id: true, starts_at: true, ends_at: true, status: true } },
-  encounter: true,
-  events: { orderBy: { created_at: "desc" as const } },
+  encounter: { select: ENCOUNTER_SELECT },
+  events: {
+    select: EVENT_SELECT,
+    orderBy: { created_at: "desc" as const },
+  },
 } as const;
 
 const SLOT_SELECT = {
@@ -109,6 +129,7 @@ export abstract class SlotService {
     return prisma.slot.update({
       where: { id: slot_id },
       data: { status: "BLOCKED" },
+      select: { id: true, status: true },
     });
   }
 
@@ -128,6 +149,7 @@ export abstract class SlotService {
     return prisma.slot.update({
       where: { id: slot_id },
       data: { status: "AVAILABLE" },
+      select: { id: true, status: true },
     });
   }
 

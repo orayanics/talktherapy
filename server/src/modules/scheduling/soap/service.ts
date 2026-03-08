@@ -3,6 +3,20 @@ import { prisma } from "prisma/db";
 import type { SoapModel } from "./model";
 import { toUtcStartOfDay, toUtcEndOfDay } from "@/utils/date";
 
+// Strip internal FKs from SOAP responses
+const SOAP_SELECT = {
+  id: true,
+  activity_plan: true,
+  session_type: true,
+  subjective_notes: true,
+  objective_notes: true,
+  assessment: true,
+  recommendation: true,
+  comments: true,
+  created_at: true,
+  updated_at: true,
+} as const;
+
 export abstract class SoapService {
   private static async resolvePatientId(user_id: string): Promise<string> {
     const patient = await prisma.patient.findUnique({
@@ -64,6 +78,7 @@ export abstract class SoapService {
         recommendation: data.recommendation,
         comments: data.comments ?? null,
       },
+      select: SOAP_SELECT,
     });
   }
 
@@ -95,6 +110,7 @@ export abstract class SoapService {
     const [soaps, total] = await prisma.$transaction([
       prisma.soap.findMany({
         where,
+        select: SOAP_SELECT,
         orderBy: { created_at: "desc" },
         skip,
         take: per_page,
@@ -119,7 +135,10 @@ export abstract class SoapService {
    * Returns a single SOAP note — clinician must own it.
    */
   static async getSoap(clinician_id: string, soap_id: string) {
-    return SoapService.assertOwner(clinician_id, soap_id);
+    const soap = await SoapService.assertOwner(clinician_id, soap_id);
+    // Strip internal FKs before returning to the client
+    const { clinician_id: _cid, patient_id: _pid, ...rest } = soap;
+    return rest;
   }
 
   /**
@@ -146,7 +165,12 @@ export abstract class SoapService {
       update.recommendation = data.recommendation;
     if (data.comments !== undefined) update.comments = data.comments;
 
-    return prisma.soap.update({ where: { id: soap_id }, data: update });
+    const updated = await prisma.soap.update({
+      where: { id: soap_id },
+      data: update,
+      select: SOAP_SELECT,
+    });
+    return updated;
   }
 
   // Patient operations
@@ -195,10 +219,12 @@ export abstract class SoapService {
     ]);
 
     return {
-      data: soaps.map(({ clinician, ...rest }) => ({
-        ...rest,
-        clinician_name: clinician.user.name ?? null,
-      })),
+      data: soaps.map(
+        ({ clinician, clinician_id: _cid, patient_id: _pid, ...rest }) => ({
+          ...rest,
+          clinician_name: clinician.user.name ?? null,
+        }),
+      ),
       meta: {
         total,
         page,
@@ -229,7 +255,7 @@ export abstract class SoapService {
 
     if (!soap) throw status(404, "SOAP note not found");
 
-    const { clinician, ...rest } = soap;
+    const { clinician, clinician_id: _cid, patient_id: _pid, ...rest } = soap;
     return { ...rest, clinician_name: clinician.user.name ?? null };
   }
 }

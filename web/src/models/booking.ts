@@ -212,8 +212,6 @@ export interface SoapPaginatedDto {
 
 export interface SoapDto {
   id: string
-  clinician_id: string
-  patient_id: string
   activity_plan: string
   session_type: string
   subjective_notes: string

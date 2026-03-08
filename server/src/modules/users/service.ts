@@ -2,6 +2,20 @@ import { status } from "elysia";
 import { prisma } from "prisma/db";
 import { Prisma } from "prisma/generated/browser";
 
+// Shared explicit field selection — never leak password, email_verified_at, created_by, updated_by
+const USER_SELECT = {
+  id: true,
+  name: true,
+  email: true,
+  account_role: true,
+  account_status: true,
+  account_permissions: true,
+  created_at: true,
+  updated_at: true,
+  last_login: true,
+  deleted_at: true,
+} as const;
+
 // prisma returns date object however in our api schema it is defined as string
 function serializeUser<
   T extends {
@@ -64,7 +78,7 @@ export abstract class Users {
     const [users, total] = await prisma.$transaction([
       prisma.user.findMany({
         where,
-        omit: { password: true },
+        select: USER_SELECT,
         skip: (page - 1) * perPage,
         take: perPage,
         orderBy: { created_at: "desc" },
@@ -90,20 +104,28 @@ export abstract class Users {
   static async getUserById(id: string) {
     const user = await prisma.user.findUnique({
       where: { id },
-      omit: { password: true },
-      include: {
+      select: {
+        ...USER_SELECT,
         clinician: {
-          include: { diagnosis: true },
+          select: {
+            diagnosis: { select: { label: true } },
+          },
+        },
+        patient: {
+          select: {
+            diagnosis: { select: { label: true } },
+          },
         },
       },
     });
     if (!user) {
       throw status(404, "User not found");
     }
-    const { clinician, ...rest } = user;
+    const { clinician, patient, ...rest } = user;
     return {
       ...serializeUser(rest),
-      ...(clinician?.diagnosis && { diagnosis: clinician.diagnosis.label }),
+      diagnosis:
+        clinician?.diagnosis?.label ?? patient?.diagnosis?.label ?? null,
     };
   }
 

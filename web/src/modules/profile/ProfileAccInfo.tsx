@@ -23,6 +23,13 @@ export default function ProfileAccInfo(props: SESSION_USER) {
           </div>
         )}
 
+        {account_role === 'patient' && (
+          <div className="flex flex-row justify-between gap-2">
+            <p className="font-bold">Diagnosis</p>
+            <p>{diagnosis}</p>
+          </div>
+        )}
+
         <div className="flex flex-row justify-between gap-2">
           <p className="font-bold">Account Status</p>
           <AccountStatusBadge status={account_status} />

@@ -26,8 +26,6 @@ export interface UserListItem {
   account_permissions: ACCOUNT_PERMISSIONS | ACCOUNT_PERMISSIONS_ARRAY
   created_at: string
   updated_at: string
-  created_by: string
-  updated_by: string | null
   deleted_at: string | null
   last_login: string | null
 }
@@ -153,8 +151,6 @@ export interface ScheduleListProps {
 
 export interface RecordListItem {
   id: string
-  clinician_id: string
-  patient_id: string
   activity_plan: string
   session_type: string
   subjective_notes: string

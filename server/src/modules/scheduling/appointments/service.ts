@@ -4,6 +4,23 @@ import type { AppointmentModel } from "./model";
 import { RESCHEDULE_CUTOFF_DAYS } from "../types";
 import { parseISO, nowUtc, utcStartOfDay, addDays } from "@/utils/date";
 
+// Shared select configs — strip internal FKs (actor_id, appointment_id) from sub-objects
+const EVENT_SELECT = {
+  id: true,
+  type: true,
+  actor_type: true,
+  reason: true,
+  created_at: true,
+} as const;
+
+const ENCOUNTER_SELECT = {
+  id: true,
+  chief_complaint: true,
+  diagnosis: true,
+  referral_source: true,
+  referral_url: true,
+} as const;
+
 export abstract class AppointmentService {
   /**
    * Returns all appointments for the clinician, with slot and encounter data.
@@ -32,8 +49,9 @@ export abstract class AppointmentService {
             status: true,
           },
         },
-        encounter: true,
+        encounter: { select: ENCOUNTER_SELECT },
         events: {
+          select: EVENT_SELECT,
           orderBy: { created_at: "desc" },
           take: 5,
         },
@@ -53,9 +71,19 @@ export abstract class AppointmentService {
         slot: { clinician_id },
       },
       include: {
-        slot: true,
-        encounter: true,
-        events: { orderBy: { created_at: "desc" } },
+        slot: {
+          select: {
+            id: true,
+            starts_at: true,
+            ends_at: true,
+            status: true,
+          },
+        },
+        encounter: { select: ENCOUNTER_SELECT },
+        events: {
+          select: EVENT_SELECT,
+          orderBy: { created_at: "desc" },
+        },
       },
     });
 
@@ -277,7 +305,14 @@ export abstract class AppointmentService {
           slot: {
             select: { id: true, starts_at: true, ends_at: true, status: true },
           },
-          encounter: true,
+          encounter: {
+            select: {
+              id: true,
+              chief_complaint: true,
+              diagnosis: true,
+              referral_source: true,
+            },
+          },
         },
         orderBy: { completed_at: "desc" },
         skip,
@@ -586,6 +621,7 @@ export abstract class AppointmentService {
             },
           },
           events: {
+            select: EVENT_SELECT,
             orderBy: { created_at: "desc" },
           },
         },
@@ -639,8 +675,11 @@ export abstract class AppointmentService {
             },
           },
         },
-        encounter: true,
-        events: { orderBy: { created_at: "desc" } },
+        encounter: { select: ENCOUNTER_SELECT },
+        events: {
+          select: EVENT_SELECT,
+          orderBy: { created_at: "desc" },
+        },
       },
     });
 

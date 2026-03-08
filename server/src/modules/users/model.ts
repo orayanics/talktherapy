@@ -10,11 +10,9 @@ export namespace UserModel {
     account_permissions: t.Nullable(t.String()),
     created_at: t.String(),
     updated_at: t.String(),
-    created_by: t.Optional(t.Nullable(t.String())),
-    updated_by: t.Optional(t.Nullable(t.String())),
     deleted_at: t.Optional(t.Nullable(t.String())),
     last_login: t.Optional(t.Nullable(t.String())),
-    diagnosis: t.Optional(t.String()),
+    diagnosis: t.Optional(t.Nullable(t.String())),
   });
 
   const _statusCountItem = t.Object({
