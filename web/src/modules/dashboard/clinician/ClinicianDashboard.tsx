@@ -3,8 +3,13 @@ import { Link } from '@tanstack/react-router'
 import { format, parseISO, startOfDay } from 'date-fns'
 import { useState } from 'react'
 
+import type {
+  ClinicianDashboardSlot,
+  ClinicianDashboardSlotsDto,
+} from '~/models/booking'
 import { slotsQuery } from '~/api/scheduling'
 import CalenderSingle from '~/components/Calendar/CalenderSingle'
+import InputMultiselect from '~/components/Input/InputMultiselect'
 
 import Grid from '~/components/Page/Grid'
 import GridItem from '~/components/Page/GridItem'
@@ -13,6 +18,11 @@ import TablePagination from '~/components/Table/TablePagination'
 import LoaderTable from '~/components/Loader/LoaderTable'
 import SkeletonError from '~/components/Skeleton/SkeletonError'
 import SkeletonNull from '~/components/Skeleton/SkeletonNull'
+import {
+  APPOINTMENT_STATUS_BADGE,
+  APPOINTMENT_STATUS_TEXT,
+  STATUS_OPTIONS,
+} from '~/config/appointmentStatus'
 
 export default function ClinicianDashboard() {
   const [selected, setSelected] = useState<Date | undefined>(
@@ -20,20 +30,27 @@ export default function ClinicianDashboard() {
   )
   const [page, setPage] = useState(1)
   const [perPage, setPerPage] = useState(10)
+  const [status, setStatus] = useState<Array<string>>([])
 
   const handleDateSelect = (date: Date | undefined) => {
     setSelected(date)
     setPage(1)
   }
 
+  const handleStatusChange = (values: Array<string>) => {
+    setStatus(values)
+    setPage(1)
+  }
+
   const { data, isLoading, isError } = useQuery(
     slotsQuery({
       date: selected,
+      status,
       page,
       perPage,
     }),
   )
-  const { data: slots, meta } = data || {}
+  const { data: slots, meta } = (data as ClinicianDashboardSlotsDto) || {}
   const {
     page: metaPage,
     per_page: metaPerPage,
@@ -57,6 +74,12 @@ export default function ClinicianDashboard() {
         </GridItem>
         <GridItem colSpan={12} className="lg:col-span-6 flex flex-col gap-4">
           <p className="font-mono uppercase text-primary">Today's Schedule</p>
+          <InputMultiselect
+            placeholder="Filter by status"
+            options={STATUS_OPTIONS.filter((o) => o.value !== '')}
+            value={status}
+            onChange={handleStatusChange}
+          />
           {isLoading ? (
             <LoaderTable />
           ) : isError ? (
@@ -64,7 +87,9 @@ export default function ClinicianDashboard() {
           ) : !slots || slots.length === 0 ? (
             <SkeletonNull />
           ) : (
-            slots.map((slot: any) => <SlotItem key={slot.id} {...slot} />)
+            slots.map((slot: ClinicianDashboardSlot) => (
+              <SlotItem key={slot.id} {...slot} />
+            ))
           )}
           <TablePagination
             page={metaPage ?? page}
@@ -85,7 +110,7 @@ export default function ClinicianDashboard() {
   )
 }
 
-function SlotItem(props: any) {
+function SlotItem(props: ClinicianDashboardSlot) {
   const { starts_at, ends_at, status, id, appointments } = props
   const { status: appointmentStatus, patient } = appointments[0] || {}
   return (
@@ -99,11 +124,11 @@ function SlotItem(props: any) {
           <span>{status}</span>
         </Link>
         {appointmentStatus && (
-          <div>
+          <div className="flex flex-col items-end">
             <p>{patient.user.name}</p>
-            <p className="text-xs text-right uppercase font-semibold opacity-60">
-              {appointmentStatus}
-            </p>
+            <span className={APPOINTMENT_STATUS_BADGE[appointmentStatus]}>
+              {APPOINTMENT_STATUS_TEXT[appointmentStatus]}
+            </span>
           </div>
         )}
       </li>

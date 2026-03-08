@@ -57,17 +57,33 @@ export abstract class SlotService {
    * Returns all slots for the authenticated clinician, with optional filters.
    */
   static async listSlots(clinician_id: string, query: SlotModel.listQuery) {
-    const { from, to, status: slotStatus, page = 1, per_page = 10 } = query;
+    const {
+      from,
+      to,
+      status: slotStatus,
+      appointment_status,
+      page = 1,
+      per_page = 10,
+    } = query;
 
     const toDate = to ? toUtcEndOfDay(to) : undefined;
 
     const skip = (page - 1) * per_page;
+
+    const apptStatuses = appointment_status
+      ? Array.isArray(appointment_status)
+        ? appointment_status
+        : [appointment_status]
+      : undefined;
 
     const where = {
       clinician_id,
       ...(slotStatus && { status: slotStatus }),
       ...(from && { starts_at: { gte: parseISO(from) } }),
       ...(toDate && { ends_at: { lte: toDate } }),
+      ...(apptStatuses?.length && {
+        appointments: { some: { status: { in: apptStatuses } } },
+      }),
     };
 
     const [data, total] = await prisma.$transaction([
@@ -78,7 +94,9 @@ export abstract class SlotService {
             select: { id: true, recurrence_rule: true },
           },
           appointments: {
-            where: { status: { not: "CANCELLED" } },
+            where: apptStatuses?.length
+              ? { status: { in: apptStatuses } }
+              : { status: { not: "CANCELLED" } },
             select: {
               id: true,
               status: true,

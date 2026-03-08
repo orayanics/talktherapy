@@ -18,11 +18,14 @@ import ScheduleCard from '~/modules/schedule/list/ScheduleCard'
 
 import { availabilityRulesQuery } from '~/api/scheduling'
 import TablePagination from '~/components/Table/TablePagination'
+import { useAuthGuard } from '~/hooks/useAuthGuard'
 
 export default function ScheduleList({ search }: ScheduleListProps) {
   const [selected, setSelected] = useState<Date | undefined>(
     startOfDay(new Date()),
   )
+  const { is } = useAuthGuard()
+  const isClinician = is('clinician')
 
   return (
     <>
@@ -36,9 +39,11 @@ export default function ScheduleList({ search }: ScheduleListProps) {
           <button className="btn" onClick={() => setSelected(undefined)}>
             View All Schedules
           </button>
-          <Link to="/schedules/create" className="btn btn-primary">
-            Add New Schedule
-          </Link>
+          {isClinician && (
+            <Link to="/schedules/create" className="btn btn-primary">
+              Add New Schedule
+            </Link>
+          )}
         </GridItem>
 
         <GridItem colSpan={12} className="flex flex-col gap-4 lg:col-span-9">

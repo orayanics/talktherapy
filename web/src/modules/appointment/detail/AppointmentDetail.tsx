@@ -1,32 +1,24 @@
+import { Link } from '@tanstack/react-router'
+import { parseISO } from 'date-fns'
 import ModalCancelAppointment from './ModalCancelAppointment'
 import useAppointmentActions from './useAppointmentActions'
 import AppointmentEventHistory from './AppointmentEventHistory'
-import type { ServerAppointmentStatus } from '~/models/booking'
-import type { AppointmentDetailProps } from '~/models/components'
+import type {
+  ServerAppointmentStatus,
+  SlotAppointmentDto,
+} from '~/models/booking'
 import ModalConfirm from '~/components/Modal/ModalConfirm'
+import {
+  APPOINTMENT_STATUS_BADGE,
+  APPOINTMENT_STATUS_TEXT,
+} from '~/config/appointmentStatus'
 import { formatToLocalDate, getTime } from '~/utils/date'
 import { useAuthGuard } from '~/hooks/useAuthGuard'
-import { Link } from '@tanstack/react-router'
-
-const STATUS_BADGE: Record<ServerAppointmentStatus, string> = {
-  PENDING: 'badge badge-outline bg-yellow-50 text-yellow-800 border-yellow-200',
-  CONFIRMED: 'badge badge-outline bg-blue-50 text-blue-800 border-blue-200',
-  CANCELLED: 'badge badge-outline bg-red-50 text-red-800 border-red-200',
-  COMPLETED: 'badge badge-outline bg-green-50 text-green-800 border-green-200',
-  NO_SHOW: 'badge badge-outline bg-gray-50 text-gray-800 border-gray-200',
-}
-
-const STATUS_LABEL: Record<ServerAppointmentStatus, string> = {
-  PENDING: 'Pending',
-  CONFIRMED: 'Confirmed',
-  CANCELLED: 'Cancelled',
-  COMPLETED: 'Completed',
-  NO_SHOW: 'No Show',
-}
 
 const CAN_CONFIRM: Array<ServerAppointmentStatus> = ['PENDING']
 const CAN_COMPLETE: Array<ServerAppointmentStatus> = ['CONFIRMED']
 const CAN_CANCEL: Array<ServerAppointmentStatus> = ['PENDING', 'CONFIRMED']
+const CAN_NO_SHOW: Array<ServerAppointmentStatus> = ['CONFIRMED']
 
 function InfoRow({ label, value }: { label: string; value: React.ReactNode }) {
   return (
@@ -37,41 +29,39 @@ function InfoRow({ label, value }: { label: string; value: React.ReactNode }) {
   )
 }
 
-export default function AppointmentDetail(props: AppointmentDetailProps) {
-  const { appointment } = props
-  const {
-    id,
-    status,
-    booked_at,
-    patient_id,
-    room_id,
-    slot,
-    encounter,
-    events,
-  } = appointment
+export default function AppointmentDetail(props: SlotAppointmentDto) {
+  const { id, status, booked_at, room_id, slot, encounter, events } = props
 
   const {
     confirmOpen,
     completeOpen,
     cancelOpen,
+    noShowOpen,
     cancelReason,
+    noShowReason,
+    setNoShowReason,
     keepBlocked,
     setKeepBlocked,
     confirmErrors,
     completeErrors,
     cancelErrors,
+    noShowErrors,
     isConfirming,
     isCompleting,
     isCancelling,
+    isMarkingNoShow,
     openConfirm,
     closeConfirm,
     openComplete,
     closeComplete,
     openCancel,
     closeCancel,
+    openNoShow,
+    closeNoShow,
     handleConfirm,
     handleComplete,
     handleCancel,
+    handleNoShow,
     setCancelReason,
   } = useAppointmentActions(id)
 
@@ -79,6 +69,8 @@ export default function AppointmentDetail(props: AppointmentDetailProps) {
   const startTime = getTime(slot.starts_at)
   const endTime = getTime(slot.ends_at)
   const bookedDate = formatToLocalDate(booked_at)
+
+  const isPastAppointment = parseISO(slot.starts_at) < new Date()
 
   const { is } = useAuthGuard()
   const isClinician = is('clinician')
@@ -91,7 +83,9 @@ export default function AppointmentDetail(props: AppointmentDetailProps) {
           <p className="font-bold uppercase text-primary text-sm tracking-wide">
             Appointment Details
           </p>
-          <span className={STATUS_BADGE[status]}>{STATUS_LABEL[status]}</span>
+          <span className={APPOINTMENT_STATUS_BADGE[status]}>
+            {APPOINTMENT_STATUS_TEXT[status]}
+          </span>
         </div>
 
         {/* Schedule info */}
@@ -102,10 +96,6 @@ export default function AppointmentDetail(props: AppointmentDetailProps) {
           <InfoRow label="Date" value={date} />
           <InfoRow label="Time" value={`${startTime} – ${endTime}`} />
           <InfoRow label="Booked On" value={bookedDate} />
-          <InfoRow
-            label="Patient ID"
-            value={<code className="text-xs font-mono">{patient_id}</code>}
-          />
           {room_id && status !== 'CONFIRMED' && (
             <InfoRow
               label="Room ID"
@@ -168,7 +158,8 @@ export default function AppointmentDetail(props: AppointmentDetailProps) {
         {/* Actions */}
         {(CAN_CONFIRM.includes(status) ||
           CAN_COMPLETE.includes(status) ||
-          CAN_CANCEL.includes(status)) &&
+          CAN_CANCEL.includes(status) ||
+          (CAN_NO_SHOW.includes(status) && isPastAppointment)) &&
           isClinician && (
             <div className="flex flex-row gap-2 justify-end">
               {CAN_CANCEL.includes(status) && (
@@ -178,6 +169,15 @@ export default function AppointmentDetail(props: AppointmentDetailProps) {
                   onClick={openCancel}
                 >
                   {status === 'PENDING' ? 'Reject' : 'Cancel Appointment'}
+                </button>
+              )}
+              {CAN_NO_SHOW.includes(status) && isPastAppointment && (
+                <button
+                  type="button"
+                  className="btn btn-warning btn-outline"
+                  onClick={openNoShow}
+                >
+                  Mark No Show
                 </button>
               )}
               {CAN_COMPLETE.includes(status) && (
@@ -247,6 +247,20 @@ export default function AppointmentDetail(props: AppointmentDetailProps) {
           onConfirm={handleCancel}
           onCancel={closeCancel}
           states={{ isLoading: isCancelling, errors: cancelErrors }}
+        />
+      )}
+
+      {noShowOpen && (
+        <ModalCancelAppointment
+          title="Mark as No Show"
+          confirmText="Mark No Show"
+          description="The patient did not attend this appointment. This action cannot be undone."
+          reason={noShowReason}
+          onReasonChange={setNoShowReason}
+          showKeepBlocked={false}
+          onConfirm={handleNoShow}
+          onCancel={closeNoShow}
+          states={{ isLoading: isMarkingNoShow, errors: noShowErrors }}
         />
       )}
     </>

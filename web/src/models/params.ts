@@ -27,6 +27,7 @@ export interface BookmarkListParams {
 
 export interface AvailabilityRulesParams {
   date?: Date
+  status?: Array<string>
   page?: number
   perPage?: number
 }

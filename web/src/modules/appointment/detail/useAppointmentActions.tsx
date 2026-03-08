@@ -6,6 +6,7 @@ import {
   useCancelAppointmentById,
   useCompleteAppointmentById,
   useConfirmAppointmentById,
+  useNoShowAppointmentById,
 } from '~/api/appointments'
 import { parseError } from '~/utils/errors'
 
@@ -13,15 +14,19 @@ export default function useAppointmentActions(appointmentId: string) {
   const [confirmOpen, setConfirmOpen] = useState(false)
   const [completeOpen, setCompleteOpen] = useState(false)
   const [cancelOpen, setCancelOpen] = useState(false)
+  const [noShowOpen, setNoShowOpen] = useState(false)
   const [cancelReason, setCancelReason] = useState('')
+  const [noShowReason, setNoShowReason] = useState('')
   const [keepBlocked, setKeepBlocked] = useState(true)
   const [confirmErrors, setConfirmErrors] = useState<ParsedError | null>(null)
   const [completeErrors, setCompleteErrors] = useState<ParsedError | null>(null)
   const [cancelErrors, setCancelErrors] = useState<ParsedError | null>(null)
+  const [noShowErrors, setNoShowErrors] = useState<ParsedError | null>(null)
 
   const confirmMutation = useConfirmAppointmentById(appointmentId)
   const completeMutation = useCompleteAppointmentById(appointmentId)
   const cancelMutation = useCancelAppointmentById(appointmentId)
+  const noShowMutation = useNoShowAppointmentById(appointmentId)
 
   function openConfirm() {
     setConfirmErrors(null)
@@ -55,6 +60,18 @@ export default function useAppointmentActions(appointmentId: string) {
     setCancelErrors(null)
     setCancelReason('')
     setKeepBlocked(true)
+  }
+
+  function openNoShow() {
+    setNoShowErrors(null)
+    setNoShowReason('')
+    setNoShowOpen(true)
+  }
+
+  function closeNoShow() {
+    setNoShowOpen(false)
+    setNoShowErrors(null)
+    setNoShowReason('')
   }
 
   async function handleConfirm() {
@@ -104,28 +121,51 @@ export default function useAppointmentActions(appointmentId: string) {
     }
   }
 
+  async function handleNoShow() {
+    setNoShowErrors(null)
+    try {
+      await noShowMutation.mutateAsync({ reason: noShowReason || undefined })
+      setNoShowOpen(false)
+      setNoShowReason('')
+      return true
+    } catch (error: unknown) {
+      setNoShowErrors(
+        isAxiosError(error) ? parseError(error.response?.data ?? null) : null,
+      )
+      return false
+    }
+  }
+
   return {
     confirmOpen,
     completeOpen,
     cancelOpen,
+    noShowOpen,
     cancelReason,
+    noShowReason,
+    setNoShowReason,
     keepBlocked,
     setKeepBlocked,
     confirmErrors,
     completeErrors,
     cancelErrors,
+    noShowErrors,
     isConfirming: confirmMutation.isPending,
     isCompleting: completeMutation.isPending,
     isCancelling: cancelMutation.isPending,
+    isMarkingNoShow: noShowMutation.isPending,
     openConfirm,
     closeConfirm,
     openComplete,
     closeComplete,
     openCancel,
     closeCancel,
+    openNoShow,
+    closeNoShow,
     handleConfirm,
     handleComplete,
     handleCancel,
+    handleNoShow,
     setCancelReason,
   }
 }

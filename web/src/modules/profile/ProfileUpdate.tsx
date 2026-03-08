@@ -20,11 +20,6 @@ export default function ProfileUpdate(props: SESSION_USER) {
         }}
         className="[&>div]:py-4 [&>div]:border-y [&>div]:border-gray-100 [&>div]:border-dashed"
       >
-        <div className="flex flex-row justify-between gap-2">
-          <p className="font-bold">User Picture</p>
-          <div className="h-20 w-20 bg-gray-300 rounded-lg" />
-        </div>
-
         <div className="flex flex-col lg:flex-row justify-between gap-2">
           <p className="font-bold">Full Name</p>
           <div>

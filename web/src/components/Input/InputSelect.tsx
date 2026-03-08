@@ -1,6 +1,6 @@
 import type { FilterDropdownProps } from '~/models/components'
 
-export default function FilterDropdown<T>(props: FilterDropdownProps<T>) {
+export default function InputSelect<T>(props: FilterDropdownProps<T>) {
   const { placeholder, options, value, onChange, className } = props
   const selectedValue =
     value === null || value === undefined ? '' : String(value)

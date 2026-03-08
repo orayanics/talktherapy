@@ -7,7 +7,6 @@ import type {
   PatientMyAppointmentDetailDto,
   PatientMyAppointmentDto,
   ServerAppointmentStatus,
-  SlotAppointmentDto,
   SlotAppointmentEvent,
   SlotDto,
 } from '~/models/booking'
@@ -175,10 +174,6 @@ export interface SidebarProps {
   role: ACCOUNT_ROLE
 }
 // ─── Appointment Components ─────────────────────────────────────────────────
-
-export interface AppointmentDetailProps {
-  appointment: SlotAppointmentDto
-}
 
 export interface AppointmentEventHistoryProps {
   events: Array<SlotAppointmentEvent>
@@ -351,6 +346,7 @@ export type MyAppointmentRow = {
   status: ServerAppointmentStatus
   date: string
   time: string
+  starts_at: string
   clinician: string
   specialty: string
   chief_complaint: string

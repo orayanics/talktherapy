@@ -146,7 +146,30 @@ export const useCancelAppointmentById = (appointmentId: string) => {
   })
 }
 
-// ── Clinician: unblock a slot ─────────────────────────────────────────────────
+export const useNoShowAppointmentById = (appointmentId: string) => {
+  const queryClient = useQueryClient()
+  const { showAlert } = useAlert()
+
+  return useMutation({
+    mutationFn: async (payload: { reason?: string }) => {
+      const { data } = await api.patch(
+        `/scheduling/appointments/${appointmentId}/no-show`,
+        payload,
+      )
+      return data
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['clinician', 'slot'] })
+      showAlert(APPOINTMENT.noShow.success, 'success')
+    },
+    onError: (error) => {
+      if (isAxiosError(error)) {
+        console.error('Failed to mark no-show:', error.response?.data)
+      }
+      showAlert(APPOINTMENT.noShow.error, 'error')
+    },
+  })
+}
 
 export const useUnblockSlot = (slotId: string) => {
   const queryClient = useQueryClient()

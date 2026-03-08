@@ -21,7 +21,7 @@ export const Route = createFileRoute('/_private/(shared)/slots/$slotId')({
 function RouteComponent() {
   const { slotId } = Route.useParams()
 
-  const { data, isLoading, error } = useQuery(
+  const { data, isLoading, isError } = useQuery(
     clinicianSlotAppointmentQuery(slotId),
   )
 
@@ -30,9 +30,7 @@ function RouteComponent() {
   const showUnblock =
     data?.status === 'CANCELLED' && data?.slot?.status === 'BLOCKED'
 
-  if (isLoading) return <LoaderTable />
-  if (error) return <SkeletonError />
-  if (!data) return <SkeletonNull />
+  console.log(data)
 
   return (
     <>
@@ -43,7 +41,15 @@ function RouteComponent() {
 
       <Grid cols={12} gap={6}>
         <GridItem colSpan={12} className="flex flex-col gap-4">
-          <AppointmentDetail appointment={data} />
+          {isLoading ? (
+            <LoaderTable />
+          ) : isError ? (
+            <SkeletonError />
+          ) : !data ? (
+            <SkeletonNull />
+          ) : (
+            <AppointmentDetail {...data} />
+          )}
           {showUnblock && (
             <div className="flex flex-row justify-end pt-2 border-t border-dashed border-gray-200">
               <button

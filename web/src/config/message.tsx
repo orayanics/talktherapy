@@ -85,6 +85,10 @@ export const APPOINTMENT = {
     success: 'Slot unblocked successfully!',
     error: 'Failed to unblock slot. Please try again.',
   },
+  noShow: {
+    success: 'Appointment marked as no-show.',
+    error: 'Failed to mark appointment as no-show. Please try again.',
+  },
 }
 
 export const CONTENT = {

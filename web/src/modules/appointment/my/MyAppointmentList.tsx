@@ -1,4 +1,5 @@
 import { Link } from '@tanstack/react-router'
+import { parseISO } from 'date-fns'
 import type {
   ServerAppointmentStatus,
   SlotAppointmentEvent,
@@ -9,15 +10,11 @@ import type {
 } from '~/models/components'
 import type { Column } from '~/models/table'
 import TableContent from '~/components/Table/TableContent'
+import {
+  APPOINTMENT_STATUS_BADGE,
+  APPOINTMENT_STATUS_TEXT,
+} from '~/config/appointmentStatus'
 import { formatToLocalDate, getTime } from '~/utils/date'
-
-const STATUS_BADGE: Record<ServerAppointmentStatus, string> = {
-  PENDING: 'badge badge-outline bg-yellow-50 text-yellow-800 border-yellow-200',
-  CONFIRMED: 'badge badge-outline bg-blue-50 text-blue-800 border-blue-200',
-  CANCELLED: 'badge badge-outline bg-red-50 text-red-800 border-red-200',
-  COMPLETED: 'badge badge-outline bg-green-50 text-green-800 border-green-200',
-  NO_SHOW: 'badge badge-outline bg-gray-50 text-gray-800 border-gray-200',
-}
 
 /**
  * Returns the reason from the most recent patient-visible event.
@@ -41,6 +38,7 @@ export default function MyAppointmentList(props: MyAppointmentListProps) {
     status: appt.status,
     date: formatToLocalDate(appt.slot.starts_at),
     time: `${getTime(appt.slot.starts_at)} – ${getTime(appt.slot.ends_at)}`,
+    starts_at: appt.slot.starts_at,
     clinician: appt.slot.clinician.user.name ?? '—',
     specialty: appt.slot.clinician.diagnosis?.label ?? '—',
     chief_complaint: appt.encounter?.chief_complaint ?? '—',
@@ -54,7 +52,9 @@ export default function MyAppointmentList(props: MyAppointmentListProps) {
       header: 'Status',
       accessor: 'status',
       render: (value: ServerAppointmentStatus) => (
-        <span className={STATUS_BADGE[value]}>{value}</span>
+        <span className={APPOINTMENT_STATUS_BADGE[value]}>
+          {APPOINTMENT_STATUS_TEXT[value]}
+        </span>
       ),
     },
     { header: 'Date', accessor: 'date' },
@@ -64,22 +64,31 @@ export default function MyAppointmentList(props: MyAppointmentListProps) {
     {
       header: 'Room',
       accessor: 'room_id',
-      render: (_: unknown, row: MyAppointmentRow) =>
-        row.room_id && row.status === 'CONFIRMED' ? (
-          <Link
-            to="/$roomId"
-            params={{ roomId: row.room_id }}
-            className="btn btn-primary btn-xs"
-          >
-            Join Session
-          </Link>
-        ) : row.room_id ? (
-          <code className="text-xs font-mono text-gray-400">
-            {row.room_id.slice(0, 8)}…
-          </code>
-        ) : (
-          <span className="text-gray-400 text-xs">—</span>
-        ),
+      render: (_: unknown, row: MyAppointmentRow) => {
+        const isPastAppointment = parseISO(row.starts_at) < new Date()
+
+        if (row.status !== 'CONFIRMED' && isPastAppointment && row.room_id) {
+          return (
+            <code className="text-xs font-mono text-gray-400">
+              {row.room_id.slice(0, 8)}…
+            </code>
+          )
+        }
+
+        if (row.status === 'CONFIRMED' && !isPastAppointment && row.room_id) {
+          return (
+            <Link
+              to="/$roomId"
+              params={{ roomId: row.room_id }}
+              className="btn btn-primary btn-xs"
+            >
+              Join Session
+            </Link>
+          )
+        }
+
+        return <span className="text-gray-400 text-xs">—</span>
+      },
     },
     {
       header: 'Action',

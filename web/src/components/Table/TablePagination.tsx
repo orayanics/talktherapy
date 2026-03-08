@@ -1,6 +1,6 @@
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa'
 import type { TablePaginationProps } from '~/models/table'
-import FilterDropdown from '~/components/Input/InputSelect'
+import InputSelect from '~/components/Input/InputSelect'
 
 export default function TablePagination({
   page,
@@ -64,7 +64,7 @@ export default function TablePagination({
           </p>
         )}
         <p className="whitespace-nowrap">No. of Items</p>
-        <FilterDropdown
+        <InputSelect
           placeholder="Select one"
           options={perPageOptions}
           value={perPage}

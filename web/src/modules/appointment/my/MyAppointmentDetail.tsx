@@ -1,27 +1,15 @@
+import { Link } from '@tanstack/react-router'
 import ModalRescheduleAppointment from './ModalRescheduleAppointment'
 import useMyAppointmentActions from './useMyAppointmentActions'
 import type { ServerAppointmentStatus } from '~/models/booking'
 import type { MyAppointmentDetailProps } from '~/models/components'
 import ModalCancelAppointment from '~/modules/appointment/detail/ModalCancelAppointment'
 import AppointmentEventHistory from '~/modules/appointment/detail/AppointmentEventHistory'
+import {
+  APPOINTMENT_STATUS_BADGE,
+  APPOINTMENT_STATUS_TEXT,
+} from '~/config/appointmentStatus'
 import { formatToLocalDate, getTime } from '~/utils/date'
-import { Link } from '@tanstack/react-router'
-
-const STATUS_BADGE: Record<ServerAppointmentStatus, string> = {
-  PENDING: 'badge badge-outline bg-yellow-50 text-yellow-800 border-yellow-200',
-  CONFIRMED: 'badge badge-outline bg-blue-50 text-blue-800 border-blue-200',
-  CANCELLED: 'badge badge-outline bg-red-50 text-red-800 border-red-200',
-  COMPLETED: 'badge badge-outline bg-green-50 text-green-800 border-green-200',
-  NO_SHOW: 'badge badge-outline bg-gray-50 text-gray-800 border-gray-200',
-}
-
-const STATUS_LABEL: Record<ServerAppointmentStatus, string> = {
-  PENDING: 'Pending',
-  CONFIRMED: 'Confirmed',
-  CANCELLED: 'Cancelled',
-  COMPLETED: 'Completed',
-  NO_SHOW: 'No Show',
-}
 
 const CAN_CANCEL: Array<ServerAppointmentStatus> = ['PENDING', 'CONFIRMED']
 const CAN_RESCHEDULE: Array<ServerAppointmentStatus> = ['PENDING', 'CONFIRMED']
@@ -76,7 +64,9 @@ export default function MyAppointmentDetail({
           <p className="font-bold uppercase text-primary text-sm tracking-wide">
             Appointment Details
           </p>
-          <span className={STATUS_BADGE[status]}>{STATUS_LABEL[status]}</span>
+          <span className={APPOINTMENT_STATUS_BADGE[status]}>
+            {APPOINTMENT_STATUS_TEXT[status]}
+          </span>
         </div>
 
         {/* Schedule info */}

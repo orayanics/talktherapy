@@ -17,6 +17,26 @@ export namespace SlotModel {
         t.Literal("CANCELLED"),
       ]),
     ),
+    appointment_status: t.Optional(
+      t.Union([
+        t.Array(
+          t.Union([
+            t.Literal("PENDING"),
+            t.Literal("CONFIRMED"),
+            t.Literal("CANCELLED"),
+            t.Literal("COMPLETED"),
+            t.Literal("NO_SHOW"),
+          ]),
+        ),
+        t.Union([
+          t.Literal("PENDING"),
+          t.Literal("CONFIRMED"),
+          t.Literal("CANCELLED"),
+          t.Literal("COMPLETED"),
+          t.Literal("NO_SHOW"),
+        ]),
+      ]),
+    ),
     diagnosis: t.Optional(t.Array(t.String())),
     clinician_id: t.Optional(t.String()),
     page: t.Optional(t.Numeric({ minimum: 1, default: 1 })),

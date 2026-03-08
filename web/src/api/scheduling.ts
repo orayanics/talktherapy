@@ -81,6 +81,7 @@ export const slotsQuery = (params: AvailabilityRulesParams) =>
           from: format(params.date, 'yyyy-MM-dd'),
           to: format(params.date, 'yyyy-MM-dd'),
         }),
+        ...(params.status?.length && { appointment_status: params.status }),
         page: params.page ?? 1,
         per_page: params.perPage ?? 10,
       }

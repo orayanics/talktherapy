@@ -222,3 +222,28 @@ export interface SoapDto {
   created_at: string
   updated_at: string
 }
+
+// ─── Clinician Dashboard ──────────────────────────────────────────────────────
+
+export interface ClinicianDashboardSlotAppointment {
+  id: string
+  status: ServerAppointmentStatus
+  patient: {
+    id: string
+    user: { name: string | null }
+  }
+}
+
+export interface ClinicianDashboardSlot {
+  id: string
+  starts_at: string
+  ends_at: string
+  status: SlotStatus
+  availability_rule: { id: string; recurrence_rule: string } | null
+  appointments: Array<ClinicianDashboardSlotAppointment>
+}
+
+export interface ClinicianDashboardSlotsDto {
+  data: Array<ClinicianDashboardSlot>
+  meta: SoapMeta
+}

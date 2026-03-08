@@ -3,6 +3,10 @@ import { format, parseISO } from 'date-fns'
 import type { ClinicianPatientDetailAppointmentDto } from '~/models/booking'
 import TableContent from '~/components/Table/TableContent'
 import TablePagination from '~/components/Table/TablePagination'
+import {
+  APPOINTMENT_STATUS_BADGE,
+  APPOINTMENT_STATUS_TEXT,
+} from '~/config/appointmentStatus'
 
 interface AppoinmentListProps {
   data?: Array<ClinicianPatientDetailAppointmentDto>
@@ -40,7 +44,18 @@ export default function AppointmentList({
               return format(parseISO(slot.starts_at), 'MM/dd/yyyy')
             },
           },
-          { header: 'Status', accessor: 'status' },
+          {
+            header: 'Status',
+            accessor: 'status',
+
+            render: (status) => {
+              return (
+                <span className={APPOINTMENT_STATUS_BADGE[status]}>
+                  {APPOINTMENT_STATUS_TEXT[status]}
+                </span>
+              )
+            },
+          },
           {
             header: 'Chief Complaint',
             accessor: 'encounter',
