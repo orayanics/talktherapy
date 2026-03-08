@@ -3,6 +3,10 @@ import { useQuery } from '@tanstack/react-query'
 import type { ContentMediaCreateProps } from '~/models/components'
 import { useGetPublicDiagnoses } from '~/api/public'
 
+import Loader from '~/components/Loader/Loader'
+import SkeletonError from '~/components/Skeleton/SkeletonError'
+import SkeletonNull from '~/components/Skeleton/SkeletonNull'
+
 export default function ContentMediaCreate(props: ContentMediaCreateProps) {
   const {
     form,
@@ -13,8 +17,8 @@ export default function ContentMediaCreate(props: ContentMediaCreateProps) {
     onTagsChange,
   } = props
 
-  const { data: diagnoses = [] } = useQuery(useGetPublicDiagnoses)
-
+  const { data = [], isLoading, isError } = useQuery(useGetPublicDiagnoses)
+  const diagnoses = data.data
   return (
     <>
       <p className="font-bold uppercase text-primary">Content Information</p>
@@ -64,19 +68,27 @@ export default function ContentMediaCreate(props: ContentMediaCreateProps) {
           <p className="font-bold">
             Category <span className="text-error">*</span>
           </p>
-          <select
-            className="select"
-            value={form.diagnosisId}
-            onChange={(e) => onDiagnosisIdChange(e.target.value)}
-            required
-          >
-            <option value="">Select a category</option>
-            {diagnoses.map((d: { id: string; label: string }) => (
-              <option key={d.id} value={d.id}>
-                {d.label}
-              </option>
-            ))}
-          </select>
+          {isLoading ? (
+            <Loader />
+          ) : isError ? (
+            <SkeletonError />
+          ) : diagnoses.length === 0 ? (
+            <SkeletonNull />
+          ) : (
+            <select
+              className="select"
+              value={form.diagnosisId}
+              onChange={(e) => onDiagnosisIdChange(e.target.value)}
+              required
+            >
+              <option value="">Select a category</option>
+              {diagnoses.map((d: { id: string; label: string }) => (
+                <option key={d.id} value={d.id}>
+                  {d.label}
+                </option>
+              ))}
+            </select>
+          )}
         </div>
 
         <div className="flex flex-col gap-2">

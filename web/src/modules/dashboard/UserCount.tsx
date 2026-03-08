@@ -4,30 +4,7 @@ import Grid from '~/components/Page/Grid'
 import GridItem from '~/components/Page/GridItem'
 import { ACCOUNT_STATUS_TEXT } from '~/config/accountStatus'
 
-function StatusBreakdown({ status }: { status: DashboardStatusCount }) {
-  const entries = Object.entries(status) as Array<
-    [keyof DashboardStatusCount, number]
-  >
-  return (
-    <div className="mt-4">
-      <ul className="mt-2 space-y-1 text-sm text-gray-700">
-        {entries.map(([label, count]) => {
-          const style = ACCOUNT_STATUS_TEXT[label]
-          return (
-            <li key={label} className="capitalize">
-              <p className={`${style} text-right`}>
-                <span>{label}</span>{' '}
-                <span className="text-stone-400">{count}</span>
-              </p>
-            </li>
-          )
-        })}
-      </ul>
-    </div>
-  )
-}
-
-export default function UserCount(data: DashboardCount['data']) {
+export default function UserCount({ data }: { data: DashboardCount['data'] }) {
   const {
     total,
     patients,
@@ -79,5 +56,28 @@ export default function UserCount(data: DashboardCount['data']) {
         </GridItem>
       ))}
     </Grid>
+  )
+}
+
+function StatusBreakdown({ status }: { status: DashboardStatusCount }) {
+  const entries = Object.entries(status) as Array<
+    [keyof DashboardStatusCount, number]
+  >
+  return (
+    <div className="mt-4">
+      <ul className="mt-2 space-y-1 text-sm text-gray-700">
+        {entries.map(([label, count]) => {
+          const style = ACCOUNT_STATUS_TEXT[label]
+          return (
+            <li key={label} className="capitalize">
+              <p className={`${style} text-right`}>
+                <span>{label}</span>{' '}
+                <span className="text-stone-400">{count}</span>
+              </p>
+            </li>
+          )
+        })}
+      </ul>
+    </div>
   )
 }

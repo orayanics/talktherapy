@@ -46,6 +46,7 @@ import { Route as PrivatesharedContentadminContentRouteRouteImport } from './rou
 import { Route as PrivatesharedSchedulesScheduleIdEditRouteImport } from './routes/_private/(shared)/schedules/$scheduleId_.edit'
 import { Route as PrivatesharedContentadminContentCreateRouteImport } from './routes/_private/(shared)/content/(admin-content)/create'
 import { Route as PrivateclinicianPatientsPatientIdRecordsRouteImport } from './routes/_private/(clinician)/patients/$patientId_.records'
+import { Route as PrivateclinicianPatientsPatientIdAddRouteImport } from './routes/_private/(clinician)/patients/$patientId_.add'
 import { Route as PrivatesharedContentadminContentContentIdEditRouteImport } from './routes/_private/(shared)/content/(admin-content)/$contentId.edit'
 
 const UnauthorizedRoute = UnauthorizedRouteImport.update({
@@ -243,6 +244,12 @@ const PrivateclinicianPatientsPatientIdRecordsRoute =
     path: '/patients/$patientId/records',
     getParentRoute: () => PrivateclinicianRouteRoute,
   } as any)
+const PrivateclinicianPatientsPatientIdAddRoute =
+  PrivateclinicianPatientsPatientIdAddRouteImport.update({
+    id: '/patients/$patientId_/add',
+    path: '/patients/$patientId/add',
+    getParentRoute: () => PrivateclinicianRouteRoute,
+  } as any)
 const PrivatesharedContentadminContentContentIdEditRoute =
   PrivatesharedContentadminContentContentIdEditRouteImport.update({
     id: '/$contentId/edit',
@@ -277,6 +284,7 @@ export interface FileRoutesByFullPath {
   '/records/': typeof PrivatepatientRecordsIndexRoute
   '/content/': typeof PrivatesharedContentIndexRoute
   '/schedules/': typeof PrivatesharedSchedulesIndexRoute
+  '/patients/$patientId/add': typeof PrivateclinicianPatientsPatientIdAddRoute
   '/patients/$patientId/records': typeof PrivateclinicianPatientsPatientIdRecordsRoute
   '/content/create': typeof PrivatesharedContentadminContentCreateRoute
   '/schedules/$scheduleId/edit': typeof PrivatesharedSchedulesScheduleIdEditRoute
@@ -307,6 +315,7 @@ export interface FileRoutesByTo {
   '/appointments': typeof PrivatepatientAppointmentsIndexRoute
   '/records': typeof PrivatepatientRecordsIndexRoute
   '/schedules': typeof PrivatesharedSchedulesIndexRoute
+  '/patients/$patientId/add': typeof PrivateclinicianPatientsPatientIdAddRoute
   '/patients/$patientId/records': typeof PrivateclinicianPatientsPatientIdRecordsRoute
   '/content/create': typeof PrivatesharedContentadminContentCreateRoute
   '/schedules/$scheduleId/edit': typeof PrivatesharedSchedulesScheduleIdEditRoute
@@ -348,6 +357,7 @@ export interface FileRoutesById {
   '/_private/(patient)/records/': typeof PrivatepatientRecordsIndexRoute
   '/_private/(shared)/content/': typeof PrivatesharedContentIndexRoute
   '/_private/(shared)/schedules/': typeof PrivatesharedSchedulesIndexRoute
+  '/_private/(clinician)/patients/$patientId_/add': typeof PrivateclinicianPatientsPatientIdAddRoute
   '/_private/(clinician)/patients/$patientId_/records': typeof PrivateclinicianPatientsPatientIdRecordsRoute
   '/_private/(shared)/content/(admin-content)/create': typeof PrivatesharedContentadminContentCreateRoute
   '/_private/(shared)/schedules/$scheduleId_/edit': typeof PrivatesharedSchedulesScheduleIdEditRoute
@@ -382,6 +392,7 @@ export interface FileRouteTypes {
     | '/records/'
     | '/content/'
     | '/schedules/'
+    | '/patients/$patientId/add'
     | '/patients/$patientId/records'
     | '/content/create'
     | '/schedules/$scheduleId/edit'
@@ -412,6 +423,7 @@ export interface FileRouteTypes {
     | '/appointments'
     | '/records'
     | '/schedules'
+    | '/patients/$patientId/add'
     | '/patients/$patientId/records'
     | '/content/create'
     | '/schedules/$scheduleId/edit'
@@ -452,6 +464,7 @@ export interface FileRouteTypes {
     | '/_private/(patient)/records/'
     | '/_private/(shared)/content/'
     | '/_private/(shared)/schedules/'
+    | '/_private/(clinician)/patients/$patientId_/add'
     | '/_private/(clinician)/patients/$patientId_/records'
     | '/_private/(shared)/content/(admin-content)/create'
     | '/_private/(shared)/schedules/$scheduleId_/edit'
@@ -725,6 +738,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivateclinicianPatientsPatientIdRecordsRouteImport
       parentRoute: typeof PrivateclinicianRouteRoute
     }
+    '/_private/(clinician)/patients/$patientId_/add': {
+      id: '/_private/(clinician)/patients/$patientId_/add'
+      path: '/patients/$patientId/add'
+      fullPath: '/patients/$patientId/add'
+      preLoaderRoute: typeof PrivateclinicianPatientsPatientIdAddRouteImport
+      parentRoute: typeof PrivateclinicianRouteRoute
+    }
     '/_private/(shared)/content/(admin-content)/$contentId/edit': {
       id: '/_private/(shared)/content/(admin-content)/$contentId/edit'
       path: '/$contentId/edit'
@@ -753,6 +773,7 @@ const PrivateadmSharedRouteRouteWithChildren =
 interface PrivateclinicianRouteRouteChildren {
   PrivateclinicianPatientsPatientIdRoute: typeof PrivateclinicianPatientsPatientIdRoute
   PrivateclinicianPatientsIndexRoute: typeof PrivateclinicianPatientsIndexRoute
+  PrivateclinicianPatientsPatientIdAddRoute: typeof PrivateclinicianPatientsPatientIdAddRoute
   PrivateclinicianPatientsPatientIdRecordsRoute: typeof PrivateclinicianPatientsPatientIdRecordsRoute
 }
 
@@ -760,6 +781,8 @@ const PrivateclinicianRouteRouteChildren: PrivateclinicianRouteRouteChildren = {
   PrivateclinicianPatientsPatientIdRoute:
     PrivateclinicianPatientsPatientIdRoute,
   PrivateclinicianPatientsIndexRoute: PrivateclinicianPatientsIndexRoute,
+  PrivateclinicianPatientsPatientIdAddRoute:
+    PrivateclinicianPatientsPatientIdAddRoute,
   PrivateclinicianPatientsPatientIdRecordsRoute:
     PrivateclinicianPatientsPatientIdRecordsRoute,
 }
