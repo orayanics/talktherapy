@@ -73,7 +73,7 @@ export async function rotateRefreshToken(
 
 // ─── OTP helpers ─────────────────────────────────────────────────────────────
 
-const OTP_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 1 week
+const OTP_TTL_MS = 30 * 60 * 1000; // 30 minutes
 const OTP_PURPOSE_ACTIVATION = "account_activation";
 
 function generateOtpCode(): string {

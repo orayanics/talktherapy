@@ -1,6 +1,6 @@
 import { status } from "elysia";
 import { prisma } from "prisma/db";
-import { Prisma } from "prisma/generated/browser";
+import { Prisma } from "prisma/generated/client";
 import type { ContentModel } from "./model";
 
 const contentInclude = {

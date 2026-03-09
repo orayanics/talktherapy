@@ -11,6 +11,15 @@ import {
 import { sendActivationEmail } from "@/utils/email";
 import { logAction, AUDIT_ACTION, AUDIT_ENTITY } from "@/utils/audit";
 
+let dummyHashPromise: Promise<string> | null = null;
+
+async function getDummyHash() {
+  if (!dummyHashPromise) {
+    dummyHashPromise = Bun.password.hash("__timing_dummy__");
+  }
+  return dummyHashPromise;
+}
+
 export abstract class Auth {
   static async signIn({ email, password }: AuthModel.signInBody) {
     const user = await prisma.user.findUnique({
@@ -24,11 +33,11 @@ export abstract class Auth {
       },
     });
 
-    if (
-      !user ||
-      !user.account_role ||
-      !(await Bun.password.verify(password, user.password ?? ""))
-    ) {
+    // dummy hash to mitigate timing attacks for non-existent users
+    const hashToVerify = user?.password ?? (await getDummyHash());
+    const passwordMatch = await Bun.password.verify(password, hashToVerify);
+
+    if (!user || !user.account_role || !passwordMatch) {
       throw status(
         400,
         "Invalid email or password" satisfies AuthModel.signInInvalid,
@@ -268,7 +277,7 @@ export abstract class Auth {
 
   static async resendOtp(data: AuthModel.resendOtpBody) {
     const user = await prisma.user.findUnique({
-      where: { id: data.id },
+      where: { email: data.email },
       select: {
         id: true,
         email: true,

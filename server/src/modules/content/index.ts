@@ -3,9 +3,11 @@ import { jwtPlugin } from "@/plugins/jwt";
 import { ContentModel } from "./model";
 import { ContentService } from "./service";
 import { logAction, AUDIT_ACTION, AUDIT_ENTITY } from "@/utils/audit";
+import { globalRateLimit } from "@/plugins/rateLimit";
 
 export const contentModule = new Elysia({ prefix: "/content" })
   .use(jwtPlugin)
+  .use(globalRateLimit)
   .guard({ isAuth: true }, (app) =>
     app
       // GET: /content

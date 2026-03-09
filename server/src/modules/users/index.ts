@@ -2,9 +2,11 @@ import { Elysia } from "elysia";
 import { Users } from "./service";
 import { UserModel } from "./model";
 import { jwtPlugin } from "@/plugins/jwt";
+import { globalRateLimit } from "@/plugins/rateLimit";
 
 export const usersModule = new Elysia({ prefix: "/users" })
   .use(jwtPlugin)
+  .use(globalRateLimit)
   .guard({ isAuth: true, hasRole: ["admin", "sudo"] }, (app) =>
     app
       // GET: /users

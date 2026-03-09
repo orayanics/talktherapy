@@ -188,10 +188,10 @@ export abstract class SlotService {
     } = query;
 
     const fromDate = from ? parseISO(`${from}T00:00:00.000Z`) : null;
-    const toDate = from
-      ? parseISO(`${from}T23:59:59.999Z`)
-      : to
-        ? parseISO(`${to}T23:59:59.999Z`)
+    const toDate = to
+      ? parseISO(`${to}T23:59:59.999Z`)
+      : from
+        ? parseISO(`${from}T23:59:59.999Z`)
         : null;
 
     const where = {

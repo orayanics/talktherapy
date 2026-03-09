@@ -2,6 +2,7 @@ import { Elysia, status, t } from "elysia";
 import { jwtPlugin } from "@/plugins/jwt";
 import { SessionService } from "./service";
 import { InboundMessage } from "./model";
+import { globalRateLimit } from "@/plugins/rateLimit";
 
 /**
  * Session module — WebSocket-based therapy session rooms.
@@ -25,24 +26,21 @@ export const sessionModule = new Elysia({
   detail: { tags: ["Session"] },
 })
   .use(jwtPlugin)
+  .use(globalRateLimit)
 
   .ws("/:roomId", {
-    // ── Inbound message validation ───────────────────────────────────────────
     body: InboundMessage,
-
-    // ── Query params ─────────────────────────────────────────────────────────
     query: t.Optional(
       t.Object({
         token: t.Optional(t.String()),
       }),
     ),
-
-    // ── Params ───────────────────────────────────────────────────────────────
     params: t.Object({
       roomId: t.String(),
     }),
 
-    // ── Auth + authorization guard (runs before WS upgrade) ──────────────────
+    // check auth before ws connection
+    // if fail return 401 and no ws connection
     async beforeHandle({ auth, jwt, query, params, set }) {
       // Allow query-param token as a fallback (cookie is preferred).
       if (!auth && query?.token) {
@@ -85,7 +83,6 @@ export const sessionModule = new Elysia({
       }
     },
 
-    // ── Connection opened ────────────────────────────────────────────────────
     async open(ws) {
       const { auth, params } = ws.data;
       if (!auth) {
@@ -131,7 +128,6 @@ export const sessionModule = new Elysia({
       );
     },
 
-    // ── Inbound message ──────────────────────────────────────────────────────
     async message(ws, body) {
       const { auth, params } = ws.data;
       if (!auth) return;
@@ -139,18 +135,15 @@ export const sessionModule = new Elysia({
       const roomId = params.roomId;
       const { userId } = auth;
 
-      // Resolve role for this sender
-      let senderRole: "clinician" | "patient";
-      try {
-        const result = await SessionService.authorizeRoom(roomId, userId);
-        senderRole = result.role;
-      } catch {
-        ws.close(4003, "Forbidden");
+      // Resolve role from in-memory participant map (populated in open)
+      const participant = SessionService.getParticipant(roomId, userId);
+      if (!participant) {
+        ws.close(4003, "Not in room");
         return;
       }
+      const senderRole = participant.role;
 
       switch (body.type) {
-        // ── Chat ─────────────────────────────────────────────────────────────
         case "chat:message":
           SessionService.broadcastExcept(roomId, userId, {
             type: "chat:message",
@@ -169,7 +162,6 @@ export const sessionModule = new Elysia({
           });
           break;
 
-        // ── WebRTC signaling (relay to peer only) ─────────────────────────────
         case "webrtc:offer": {
           const peer = SessionService.getPeer(roomId, userId);
           if (peer) {
@@ -208,7 +200,6 @@ export const sessionModule = new Elysia({
           break;
         }
 
-        // ── Media toggle notification ─────────────────────────────────────────
         case "media:toggle":
           SessionService.broadcastExcept(roomId, userId, {
             type: "media:toggle",
@@ -218,7 +209,6 @@ export const sessionModule = new Elysia({
           });
           break;
 
-        // ── Peer ready (initiator signals they're ready to receive offer) ─────
         case "peer:ready": {
           const peer = SessionService.getPeer(roomId, userId);
           if (peer) {
@@ -232,7 +222,6 @@ export const sessionModule = new Elysia({
       }
     },
 
-    // ── Connection closed ────────────────────────────────────────────────────
     close(ws) {
       const { auth, params } = ws.data;
       if (!auth) return;

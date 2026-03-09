@@ -1,6 +1,7 @@
 import { Elysia } from "elysia";
 import { cors } from "@elysiajs/cors";
 import { jwtPlugin } from "@/plugins/jwt";
+import { prisma } from "prisma/db";
 
 import { authModule } from "@/modules/auth";
 import { publicModule } from "@/modules/public";
@@ -34,7 +35,8 @@ export const app = new Elysia()
 
   // Global error handler
   .onError(({ code, error, set }) => {
-    console.error("Error:", error);
+    if (process.env.NODE_ENV !== "production") console.error("Error:", error);
+    else console.error("[error]", code);
 
     if (code === "VALIDATION") {
       set.status = 400;
@@ -72,13 +74,16 @@ export const app = new Elysia()
     };
   })
 
-  // Health check
-  .get("/", () => ({
-    message: "Healthcare Appointment System API",
-    version: "1.0.0",
-    status: "healthy",
-    timestamp: new Date().toISOString(),
-  }))
+  // Health check: check DB Connection + basic server responsiveness
+  .get("/", async () => {
+    await prisma.$queryRaw`SELECT 1`;
+    return {
+      message: "Healthcare Appointment System API",
+      version: "1.0.0",
+      status: "healthy",
+      timestamp: new Date().toISOString(),
+    };
+  })
 
   .group("/api/v1", (app) =>
     app

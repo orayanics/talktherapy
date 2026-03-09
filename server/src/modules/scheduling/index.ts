@@ -3,6 +3,7 @@ import { availabilityController } from "./availability";
 import { slotController } from "./slots";
 import { appointmentController } from "./appointments";
 import { soapController } from "./soap";
+import { globalRateLimit } from "@/plugins/rateLimit";
 
 /**
  * Scheduling module
@@ -16,6 +17,7 @@ import { soapController } from "./soap";
  *   /scheduling/soap           - SOAP notes (clinician write, patient read)
  */
 export const schedulingModule = new Elysia({ prefix: "/scheduling" })
+  .use(globalRateLimit)
   .use(availabilityController)
   .use(slotController)
   .use(appointmentController)

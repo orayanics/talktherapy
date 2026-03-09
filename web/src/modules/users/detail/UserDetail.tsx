@@ -15,10 +15,10 @@ import ProfileUserInfo from '~/modules/profile/ProfileUserInfo'
 import { useAuthGuard } from '~/hooks/useAuthGuard'
 
 export default function UserDetail({ data }: { data: SESSION_USER }) {
-  const { id, account_status } = data
+  const { id, email, account_status } = data
 
   const { handleSubmit: handleResend, isLoading: isResending } = useResendOtp({
-    id,
+    email,
   })
   const { handleSubmit: handleDeactivate, isLoading: isDeactivating } =
     useDeactivateUser({ id })
@@ -68,16 +68,16 @@ export default function UserDetail({ data }: { data: SESSION_USER }) {
                   </>
                 )}
 
-                {account_status === 'deactivated' ||
-                  (account_status === 'suspended' && (
-                    <button
-                      className="btn btn-primary"
-                      onClick={handleReactivate}
-                      disabled={isLoading}
-                    >
-                      Reactivate User
-                    </button>
-                  ))}
+                {(account_status === 'deactivated' ||
+                  account_status === 'suspended') && (
+                  <button
+                    className="btn btn-primary"
+                    onClick={handleReactivate}
+                    disabled={isLoading}
+                  >
+                    Reactivate User
+                  </button>
+                )}
 
                 {account_status === 'pending' && (
                   <button

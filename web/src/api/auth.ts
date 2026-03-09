@@ -221,7 +221,7 @@ export const useResendAccOtp = () => {
   const { showAlert } = useAlert()
 
   return useMutation({
-    mutationFn: async (payload: { id: string }) => {
+    mutationFn: async (payload: { email: string }) => {
       const { data } = await api.post('/auth/resend-otp', payload)
       return data
     },

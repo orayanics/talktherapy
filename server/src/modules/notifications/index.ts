@@ -1,12 +1,14 @@
 import { Elysia, t } from "elysia";
 import { jwtPlugin } from "@/plugins/jwt";
 import { NotificationService } from "./service";
+import { globalRateLimit } from "@/plugins/rateLimit";
 
 export const notificationsModule = new Elysia({
   prefix: "/notifications",
   detail: { tags: ["Notifications"] },
 })
   .use(jwtPlugin)
+  .use(globalRateLimit)
   .guard({ isAuth: true }, (app) =>
     app
       // GET /notifications — paginated list

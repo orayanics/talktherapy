@@ -5,7 +5,7 @@ import type { ParsedError } from '~/models/system'
 import { parseError } from '~/utils/errors'
 import { useResendAccOtp } from '~/api/auth'
 
-export default function useResendOtp({ id }: { id: string }) {
+export default function useResendOtp({ email }: { email: string }) {
   const [errors, setErrors] = useState<ParsedError | null>(null)
 
   const resendOtpMutation = useResendAccOtp()
@@ -13,7 +13,7 @@ export default function useResendOtp({ id }: { id: string }) {
   async function handleSubmit() {
     setErrors(null)
     try {
-      await resendOtpMutation.mutateAsync({ id: id })
+      await resendOtpMutation.mutateAsync({ email })
       return true
     } catch (error: unknown) {
       setErrors(

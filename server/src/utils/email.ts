@@ -22,11 +22,11 @@ export async function sendActivationEmail(
     from: FROM_ADDRESS,
     to,
     subject: "Activate your TalkTherapy account",
-    text: `Your activation code is: ${otpCode}\n\nThis code expires in 10 minutes. Do not share it with anyone.`,
+    text: `Your activation code is: ${otpCode}\n\nThis code expires in 30 minutes. Do not share it with anyone.`,
     html: `
       <p>Use the following code to activate your account:</p>
       <h2 style="letter-spacing:0.2em">${otpCode}</h2>
-      <p>This code expires in <strong>10 minutes</strong>. Do not share it with anyone.</p>
+      <p>This code expires in <strong>30 minutes</strong>. Do not share it with anyone.</p>
     `,
   });
 }

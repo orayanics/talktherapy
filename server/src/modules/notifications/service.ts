@@ -112,7 +112,7 @@ export abstract class NotificationService {
 
   static async list(userId: string, page: number, per_page: number) {
     const skip = (page - 1) * per_page;
-    const [data, total] = await prisma.$transaction([
+    const [data, total, unread] = await prisma.$transaction([
       prisma.notification.findMany({
         where: { user_id: userId },
         orderBy: { created_at: "desc" },
@@ -120,6 +120,7 @@ export abstract class NotificationService {
         take: per_page,
       }),
       prisma.notification.count({ where: { user_id: userId } }),
+      prisma.notification.count({ where: { user_id: userId, read_at: null } }),
     ]);
 
     return {
@@ -129,9 +130,7 @@ export abstract class NotificationService {
         page,
         per_page,
         last_page: Math.ceil(total / per_page),
-        unread: await prisma.notification.count({
-          where: { user_id: userId, read_at: null },
-        }),
+        unread,
       },
     };
   }

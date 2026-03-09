@@ -4,9 +4,11 @@ import { LogsModel } from "./model";
 import { LogsService } from "./service";
 import { NotificationService } from "@/modules/notifications/service";
 import { NOTIFICATION_TYPE } from "@/config/notifications";
+import { globalRateLimit } from "@/plugins/rateLimit";
 
 export const logsModule = new Elysia({ prefix: "/logs" })
   .use(jwtPlugin)
+  .use(globalRateLimit)
   .guard({ isAuth: true, hasRole: ["sudo"] }, (app) =>
     // GET: /logs
     app.get("/", ({ query }) => LogsService.getLogs(query), {

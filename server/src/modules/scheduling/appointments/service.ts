@@ -241,7 +241,6 @@ export abstract class AppointmentService {
       await tx.slot.update({
         where: { id: appointment.slot_id },
         data: { status: "COMPLETED" },
-        select: { availability_rule_id: true },
       });
 
       const updated = await tx.appointments.update({

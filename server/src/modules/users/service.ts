@@ -1,7 +1,6 @@
 import { status } from "elysia";
 import { prisma } from "prisma/db";
-import { Prisma } from "prisma/generated/browser";
-
+import { Prisma } from "prisma/generated/client";
 // Shared explicit field selection — never leak password, email_verified_at, created_by, updated_by
 const USER_SELECT = {
   id: true,

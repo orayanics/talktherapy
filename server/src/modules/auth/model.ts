@@ -106,7 +106,7 @@ export namespace AuthModel {
   export type verifyOtpInvalid = typeof verifyOtpInvalid.static;
 
   export const resendOtpBody = t.Object({
-    id: t.String({ minLength: 1, error: "User ID is required" }),
+    email: EmailField,
   });
   export type resendOtpBody = typeof resendOtpBody.static;
 

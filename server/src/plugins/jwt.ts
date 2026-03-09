@@ -2,6 +2,7 @@ import { Elysia, status } from "elysia";
 import { cookie } from "@elysiajs/cookie";
 import { jwt } from "@elysiajs/jwt";
 import { JWT_CONFIG, type JwtPayload } from "@/utils/jwt";
+import { prisma } from "prisma/db";
 
 if (!JWT_CONFIG.secret || !JWT_CONFIG.refreshSecret) {
   throw new Error("JWT secrets must be defined in environment variables");
@@ -100,6 +101,31 @@ export const jwtPlugin = new Elysia({ name: "jwt-plugin" })
           return status(401, "Unauthorized");
         }
         if (!roles.includes(auth.role)) {
+          return status(403, "Forbidden");
+        }
+      },
+    }),
+    hasPermission: (permissions: string[]) => ({
+      async beforeHandle({ auth }) {
+        if (!auth) {
+          return status(401, "Unauthorized");
+        }
+        // skip if sudo
+        if (auth.role === "sudo") {
+          return;
+        }
+        const user = await prisma.user.findUnique({
+          where: { id: auth.userId },
+          select: { account_permissions: true },
+        });
+        if (!user) {
+          return status(401, "Unauthorized");
+        }
+        const granted = user.account_permissions
+          ? user.account_permissions.split(",").map((p) => p.trim())
+          : [];
+        const hasAll = permissions.every((p) => granted.includes(p));
+        if (!hasAll) {
           return status(403, "Forbidden");
         }
       },

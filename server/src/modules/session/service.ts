@@ -109,6 +109,14 @@ export abstract class SessionService {
     return undefined;
   }
 
+  /** Returns the participant for a specific userId without creating an empty room. */
+  static getParticipant(
+    roomId: string,
+    userId: string,
+  ): Participant | undefined {
+    return rooms.get(roomId)?.get(userId);
+  }
+
   // ── Broadcast helpers ──────────────────────────────────────────────────────
 
   /** Send a structured message to a single WebSocket */
