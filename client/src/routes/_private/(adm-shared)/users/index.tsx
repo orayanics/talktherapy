@@ -11,7 +11,7 @@ const roleSchema = z
   .transform((v) => toArray(v))
   .transform((arr) =>
     arr
-      .map((v) => String(v).toLowerCase())
+      .map((v) => String(v))
       .filter((v) => ROLE_VALUES.includes(v as (typeof ROLE_VALUES)[number])),
   )
 
@@ -20,7 +20,7 @@ const statusSchema = z
   .transform((v) => toArray(v))
   .transform((arr) =>
     arr
-      .map((v) => String(v).toUpperCase())
+      .map((v) => String(v))
       .filter((v) =>
         STATUS_VALUES.includes(v as (typeof STATUS_VALUES)[number]),
       ),

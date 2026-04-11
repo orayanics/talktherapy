@@ -5,8 +5,8 @@ export const ROLE_VALUES = [
   'superadmin',
 ] as const
 export const STATUS_VALUES = [
-  'PENDING',
-  'ACTIVE',
-  'SUSPENDED',
-  'INACTIVE',
+  'pending',
+  'active',
+  'suspended',
+  'inactive',
 ] as const

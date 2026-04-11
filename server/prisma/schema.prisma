@@ -20,6 +20,20 @@ datasource db {
   provider = "sqlite"
 }
 
+enum Role {
+  superadmin
+  admin
+  clinician
+  patient
+}
+
+enum AccountStatus {
+  pending
+  active
+  suspended
+  inactive
+}
+
 model User {
   id            String    @id
   name          String
@@ -31,12 +45,12 @@ model User {
   sessions      Session[]
   accounts      Account[]
 
-  role       String?
+  role       Role 
   banned     Boolean?  @default(false)
   banReason  String?
   banExpires DateTime?
 
-  status String @default("pending")
+  status AccountStatus @default(pending)
   diagnosis String?
 
   @@unique([email])

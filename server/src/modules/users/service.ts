@@ -1,17 +1,9 @@
 import { prisma } from "@/lib/client";
 import { buildMeta } from "@/lib/paginate";
 
-export interface UsersQueryParams {
-  page?: number;
-  per_page?: number;
-  search?: string;
-  sort_by?: string;
-  sort?: "asc" | "desc";
-  role?: string[];
-  account_status?: string[];
-}
+import { type TUsersListSchema } from "./model";
 
-export async function fetchAllUsers(params: UsersQueryParams) {
+export async function fetchAllUsers(params: TUsersListSchema) {
   const {
     page = 1,
     per_page = 20,
@@ -32,11 +24,13 @@ export async function fetchAllUsers(params: UsersQueryParams) {
   }
 
   if (role && role.length > 0) {
-    where.role = { in: role };
+    where.role = { in: role.map((r) => String(r).trim().toLowerCase()) };
   }
 
   if (account_status && account_status.length > 0) {
-    where.account_status = { in: account_status };
+    where.status = {
+      in: account_status.map((s) => String(s).trim().toLowerCase()),
+    };
   }
 
   const [data, total] = await Promise.all([

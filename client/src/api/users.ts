@@ -4,14 +4,12 @@ import {
   useQueryClient,
 } from '@tanstack/react-query'
 import { api } from './client'
-import type { QueryParams, UsersParams, Meta, Diagnosis } from '@/types/params'
+import type { QueryParams, UsersParams, Meta } from '@/types/params'
 import { useAlert } from '@/context/AlertContext'
 import { USER } from '@/constants/message'
 import { useNavigate } from '@tanstack/react-router'
 
 import type { UserResponse } from './session'
-
-// Response Item
 
 export interface UsersCount {
   active_users: number
@@ -48,7 +46,7 @@ export const fetchUsers = (
   return queryOptions<UsersResponse>({
     queryKey: ['users', query],
     queryFn: async () => {
-      const data = await api('/users', {
+      const { data } = await api('/users', {
         method: 'GET',
         params: query,
       })
@@ -62,7 +60,7 @@ export const fetchUser = (id: string) => {
   return queryOptions<UserResponse>({
     queryKey: ['user', id],
     queryFn: async () => {
-      const data = await api(`/users/${id}`, {
+      const { data } = await api(`/users/${id}`, {
         method: 'GET',
       })
       return data
