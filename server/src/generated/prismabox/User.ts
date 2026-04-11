@@ -13,11 +13,28 @@ export const UserPlain = t.Object(
     image: __nullable__(t.String()),
     createdAt: t.Date(),
     updatedAt: t.Date(),
-    role: __nullable__(t.String()),
+    role: t.Union(
+      [
+        t.Literal("superadmin"),
+        t.Literal("admin"),
+        t.Literal("clinician"),
+        t.Literal("patient"),
+      ],
+      { additionalProperties: false },
+    ),
     banned: __nullable__(t.Boolean()),
     banReason: __nullable__(t.String()),
     banExpires: __nullable__(t.Date()),
-    status: t.String(),
+    status: t.Union(
+      [
+        t.Literal("pending"),
+        t.Literal("active"),
+        t.Literal("suspended"),
+        t.Literal("inactive"),
+      ],
+      { additionalProperties: false },
+    ),
+    diagnosis_id: __nullable__(t.String()),
   },
   { additionalProperties: false },
 );
@@ -62,6 +79,17 @@ export const UserRelations = t.Object(
       ),
       { additionalProperties: false },
     ),
+    diagnosis: __nullable__(
+      t.Object(
+        {
+          id: t.String(),
+          label: t.String(),
+          value: t.String(),
+          createdAt: t.Date(),
+        },
+        { additionalProperties: false },
+      ),
+    ),
   },
   { additionalProperties: false },
 );
@@ -72,11 +100,29 @@ export const UserPlainInputCreate = t.Object(
     email: t.String(),
     emailVerified: t.Optional(t.Boolean()),
     image: t.Optional(__nullable__(t.String())),
-    role: t.Optional(__nullable__(t.String())),
+    role: t.Union(
+      [
+        t.Literal("superadmin"),
+        t.Literal("admin"),
+        t.Literal("clinician"),
+        t.Literal("patient"),
+      ],
+      { additionalProperties: false },
+    ),
     banned: t.Optional(__nullable__(t.Boolean())),
     banReason: t.Optional(__nullable__(t.String())),
     banExpires: t.Optional(__nullable__(t.Date())),
-    status: t.Optional(t.String()),
+    status: t.Optional(
+      t.Union(
+        [
+          t.Literal("pending"),
+          t.Literal("active"),
+          t.Literal("suspended"),
+          t.Literal("inactive"),
+        ],
+        { additionalProperties: false },
+      ),
+    ),
   },
   { additionalProperties: false },
 );
@@ -87,11 +133,31 @@ export const UserPlainInputUpdate = t.Object(
     email: t.Optional(t.String()),
     emailVerified: t.Optional(t.Boolean()),
     image: t.Optional(__nullable__(t.String())),
-    role: t.Optional(__nullable__(t.String())),
+    role: t.Optional(
+      t.Union(
+        [
+          t.Literal("superadmin"),
+          t.Literal("admin"),
+          t.Literal("clinician"),
+          t.Literal("patient"),
+        ],
+        { additionalProperties: false },
+      ),
+    ),
     banned: t.Optional(__nullable__(t.Boolean())),
     banReason: t.Optional(__nullable__(t.String())),
     banExpires: t.Optional(__nullable__(t.Date())),
-    status: t.Optional(t.String()),
+    status: t.Optional(
+      t.Union(
+        [
+          t.Literal("pending"),
+          t.Literal("active"),
+          t.Literal("suspended"),
+          t.Literal("inactive"),
+        ],
+        { additionalProperties: false },
+      ),
+    ),
   },
   { additionalProperties: false },
 );
@@ -124,6 +190,19 @@ export const UserRelationsInputCreate = t.Object(
               },
               { additionalProperties: false },
             ),
+            { additionalProperties: false },
+          ),
+        },
+        { additionalProperties: false },
+      ),
+    ),
+    diagnosis: t.Optional(
+      t.Object(
+        {
+          connect: t.Object(
+            {
+              id: t.String({ additionalProperties: false }),
+            },
             { additionalProperties: false },
           ),
         },
@@ -187,6 +266,20 @@ export const UserRelationsInputUpdate = t.Partial(
           { additionalProperties: false },
         ),
       ),
+      diagnosis: t.Partial(
+        t.Object(
+          {
+            connect: t.Object(
+              {
+                id: t.String({ additionalProperties: false }),
+              },
+              { additionalProperties: false },
+            ),
+            disconnect: t.Boolean(),
+          },
+          { additionalProperties: false },
+        ),
+      ),
     },
     { additionalProperties: false },
   ),
@@ -207,11 +300,28 @@ export const UserWhere = t.Partial(
           image: t.String(),
           createdAt: t.Date(),
           updatedAt: t.Date(),
-          role: t.String(),
+          role: t.Union(
+            [
+              t.Literal("superadmin"),
+              t.Literal("admin"),
+              t.Literal("clinician"),
+              t.Literal("patient"),
+            ],
+            { additionalProperties: false },
+          ),
           banned: t.Boolean(),
           banReason: t.String(),
           banExpires: t.Date(),
-          status: t.String(),
+          status: t.Union(
+            [
+              t.Literal("pending"),
+              t.Literal("active"),
+              t.Literal("suspended"),
+              t.Literal("inactive"),
+            ],
+            { additionalProperties: false },
+          ),
+          diagnosis_id: t.String(),
         },
         { additionalProperties: false },
       ),
@@ -258,11 +368,28 @@ export const UserWhereUnique = t.Recursive(
               image: t.String(),
               createdAt: t.Date(),
               updatedAt: t.Date(),
-              role: t.String(),
+              role: t.Union(
+                [
+                  t.Literal("superadmin"),
+                  t.Literal("admin"),
+                  t.Literal("clinician"),
+                  t.Literal("patient"),
+                ],
+                { additionalProperties: false },
+              ),
               banned: t.Boolean(),
               banReason: t.String(),
               banExpires: t.Date(),
-              status: t.String(),
+              status: t.Union(
+                [
+                  t.Literal("pending"),
+                  t.Literal("active"),
+                  t.Literal("suspended"),
+                  t.Literal("inactive"),
+                ],
+                { additionalProperties: false },
+              ),
+              diagnosis_id: t.String(),
             },
             { additionalProperties: false },
           ),
@@ -290,6 +417,8 @@ export const UserSelect = t.Partial(
       banReason: t.Boolean(),
       banExpires: t.Boolean(),
       status: t.Boolean(),
+      diagnosis_id: t.Boolean(),
+      diagnosis: t.Boolean(),
       _count: t.Boolean(),
     },
     { additionalProperties: false },
@@ -298,7 +427,14 @@ export const UserSelect = t.Partial(
 
 export const UserInclude = t.Partial(
   t.Object(
-    { sessions: t.Boolean(), accounts: t.Boolean(), _count: t.Boolean() },
+    {
+      sessions: t.Boolean(),
+      accounts: t.Boolean(),
+      role: t.Boolean(),
+      status: t.Boolean(),
+      diagnosis: t.Boolean(),
+      _count: t.Boolean(),
+    },
     { additionalProperties: false },
   ),
 );
@@ -327,9 +463,6 @@ export const UserOrderBy = t.Partial(
       updatedAt: t.Union([t.Literal("asc"), t.Literal("desc")], {
         additionalProperties: false,
       }),
-      role: t.Union([t.Literal("asc"), t.Literal("desc")], {
-        additionalProperties: false,
-      }),
       banned: t.Union([t.Literal("asc"), t.Literal("desc")], {
         additionalProperties: false,
       }),
@@ -339,7 +472,7 @@ export const UserOrderBy = t.Partial(
       banExpires: t.Union([t.Literal("asc"), t.Literal("desc")], {
         additionalProperties: false,
       }),
-      status: t.Union([t.Literal("asc"), t.Literal("desc")], {
+      diagnosis_id: t.Union([t.Literal("asc"), t.Literal("desc")], {
         additionalProperties: false,
       }),
     },

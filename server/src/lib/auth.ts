@@ -1,5 +1,5 @@
 import { betterAuth } from "better-auth";
-import { admin as adminPlugin, openAPI } from "better-auth/plugins";
+import { admin as adminPlugin, openAPI, emailOTP } from "better-auth/plugins";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import {
   ac,
@@ -48,6 +48,18 @@ export const auth = betterAuth({
         patient,
       },
       adminRoles: ["admin", "superadmin"],
+    }),
+    emailOTP({
+      // TODO: Implement email logic, GMAIL SMTP
+      async sendVerificationOTP({ email, otp, type }) {
+        if (type === "sign-in") {
+          // Send the OTP for sign in
+        } else if (type === "email-verification") {
+          // Send the OTP for email verification
+        } else {
+          // Send the OTP for password reset
+        }
+      },
     }),
   ],
 });

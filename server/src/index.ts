@@ -6,6 +6,8 @@ import { betterAuthPlugin } from "./plugin/better-auth";
 import { OpenAPI } from "./lib/auth";
 
 import { usersModule } from "./modules/users";
+import { registerModule } from "./modules/register";
+import { publicModule } from "./modules/public";
 
 const app = new Elysia()
   .use(
@@ -25,6 +27,8 @@ const app = new Elysia()
     }),
   )
   .use(betterAuthPlugin)
+  .use(publicModule)
+  .use(registerModule)
   .use(usersModule)
   .get("/", () => "Hello Elysia")
   .listen(process.env.SERVER_PORT || 8000);

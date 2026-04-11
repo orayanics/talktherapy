@@ -21,7 +21,7 @@ export default function useRegisterAdmin() {
     defaultValues: {
       name: '',
       email: '',
-      permissions: [],
+      password: '',
     },
   })
 

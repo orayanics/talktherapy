@@ -34,6 +34,15 @@ enum AccountStatus {
   inactive
 }
 
+model Diagnosis {
+  id          String   @id
+  label       String   @unique
+  value       String   @unique
+  createdAt   DateTime @default(now())
+
+  users User[]
+}
+
 model User {
   id            String    @id
   name          String
@@ -51,7 +60,8 @@ model User {
   banExpires DateTime?
 
   status AccountStatus @default(pending)
-  diagnosis String?
+  diagnosis_id String?
+  diagnosis Diagnosis? @relation(fields: [diagnosis_id], references: [id], onDelete: SetNull)
 
   @@unique([email])
   @@map("user")

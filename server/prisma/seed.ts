@@ -39,8 +39,35 @@ async function seedSuperadmin() {
   console.log("✅ Superadmin created:", user.email);
 }
 
+async function seedDiagnoses() {
+  const diagnoses = [
+    { value: "ASD", label: "Autism Spectrum Disorder" },
+    { value: "ADHD", label: "Attention-Deficit Hyperactivity Disorder" },
+    { value: "GDD", label: "Global Developmental Delay" },
+    { value: "CP", label: "Cerebral Palsy" },
+    { value: "DS", label: "Down Syndrome" },
+    { value: "HI", label: "Hearing Impairment" },
+    { value: "CLP", label: "Cleft Lip and/or Palate" },
+    { value: "STR", label: "Stroke" },
+    { value: "STUT", label: "Stuttering" },
+    { value: "APH", label: "Aphasia" },
+    { value: "OTH", label: "Others" },
+  ];
+
+  await prisma.diagnosis.createMany({
+    data: diagnoses.map((d) => ({
+      id: crypto.randomUUID(),
+      value: d.value,
+      label: d.label,
+    })),
+  });
+
+  console.log("✅ Diagnoses seeded");
+}
+
 async function main() {
   console.log("🌱 Starting seed...\n");
+  await seedDiagnoses();
   await seedSuperadmin();
   console.log("\n✅ Seed completed");
 }

@@ -21,6 +21,8 @@ export default function useRegisterClinician() {
     defaultValues: {
       name: '',
       email: '',
+      password: '',
+      diagnosis_id: '',
     },
   })
 

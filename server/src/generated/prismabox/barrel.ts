@@ -1,3 +1,6 @@
+export * from "./Role";
+export * from "./AccountStatus";
+export * from "./Diagnosis";
 export * from "./User";
 export * from "./Session";
 export * from "./Account";
