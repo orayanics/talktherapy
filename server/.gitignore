@@ -43,3 +43,4 @@ package-lock.json
 /src/generated/prisma
 
 dev.db
+.env
