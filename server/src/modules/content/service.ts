@@ -69,7 +69,12 @@ export const listContent = async (opts: any, userId?: string) => {
     }),
   ]);
 
-  return { data, meta: buildMeta(total, page, per_page, data.length) };
+  const items = data.map((item: any) => ({
+    ...item,
+    is_bookmarked: !!(item.bookmarks && item.bookmarks.length > 0),
+  }));
+
+  return { data: items, meta: buildMeta(total, page, per_page, items.length) };
 };
 
 export const getContent = async (id: string, userId?: string) => {
@@ -82,7 +87,11 @@ export const getContent = async (id: string, userId?: string) => {
       bookmarks: userId ? { where: { userId } } : undefined,
     },
   });
-  return content;
+  if (!content) return content;
+  return {
+    ...content,
+    is_bookmarked: !!(content.bookmarks && content.bookmarks.length > 0),
+  };
 };
 
 export const createContent = async (data: TStoreContent, userId: string) => {
@@ -137,7 +146,10 @@ export const createContent = async (data: TStoreContent, userId: string) => {
       },
     });
 
-    return loads;
+    return {
+      ...loads,
+      is_bookmarked: !!(loads?.bookmarks && loads.bookmarks.length > 0),
+    };
   });
 };
 
@@ -196,7 +208,10 @@ export const updateContent = async (id: string, data: any, userId?: string) => {
       },
     });
 
-    return loads;
+    return {
+      ...loads,
+      is_bookmarked: !!(loads?.bookmarks && loads.bookmarks.length > 0),
+    };
   });
 };
 
@@ -231,6 +246,13 @@ export const addBookmark = async (contentId: string, userId: string) => {
       },
     },
   });
+
+  if (loaded && loaded.content) {
+    loaded.content = {
+      ...loaded.content,
+      is_bookmarked: true,
+    } as any;
+  }
 
   return loaded;
 };
@@ -289,5 +311,16 @@ export const listBookmarks = async (opts: any, userId: string) => {
     }),
   ]);
 
-  return { items, meta: buildMeta(total, page, per_page, items.length) };
+  const mapped = items.map((b) => ({
+    ...b,
+    content: {
+      ...b.content,
+      is_bookmarked: !!(b.content?.bookmarks && b.content.bookmarks.length > 0),
+    },
+  }));
+
+  return {
+    items: mapped,
+    meta: buildMeta(total, page, per_page, mapped.length),
+  };
 };

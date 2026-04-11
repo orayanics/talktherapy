@@ -16,7 +16,16 @@ export const ListContentSchema = z.preprocess(
       .optional(),
     sort: z.enum(["asc", "desc"]).optional(),
     is_bookmarked: z
-      .preprocess((v) => (v === undefined ? null : v), z.boolean().nullable())
+      .preprocess((v) => {
+        if (v === undefined) return undefined;
+        if (v === null) return null;
+        if (typeof v === "string") {
+          const s = v.toLowerCase().trim();
+          if (s === "true" || s === "1") return true;
+          if (s === "false" || s === "0") return false;
+        }
+        return v;
+      }, z.boolean().nullable())
       .optional(),
   }),
 );
