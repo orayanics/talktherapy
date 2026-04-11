@@ -44,7 +44,7 @@ export interface Content {
     label: string
   }
 
-  tags: { tag: Tag }[]
+  tags: Tag[]
 }
 
 export interface ContentTag {
@@ -83,7 +83,7 @@ export const fetchContentList = (
   }>({
     queryKey: ['content', query],
     queryFn: async () => {
-      const data = await api('/content', {
+      const { data } = await api('/content', {
         method: 'GET',
         params: query,
       })

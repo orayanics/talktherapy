@@ -62,9 +62,12 @@ export default function useUpdateContentForm({
       title: content.title,
       description: content.description,
       body: content.body,
-      diagnosis_id: content.diagnosis_id,
-      tag_names: content.tags.map((t) => t.tag.name),
-      //   tag_names: content.tags.map((t) => t.tag.name).join(', '),
+      diagnosis_id:
+        (content as any).diagnosis_id ?? (content as any).diagnosisId ?? '',
+      tag_names: content.tags.map((t) => {
+        const tag = (t as any).tag ?? (t as any)
+        return tag.name
+      }),
     })
   }, [content, reset])
 

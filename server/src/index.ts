@@ -8,6 +8,7 @@ import { OpenAPI } from "./lib/auth";
 import { usersModule } from "./modules/users";
 import { registerModule } from "./modules/register";
 import { publicModule } from "./modules/public";
+import { contentModule } from "./modules/content";
 
 const app = new Elysia()
   .use(
@@ -21,7 +22,7 @@ const app = new Elysia()
   .use(
     cors({
       origin: "http://localhost:3000",
-      methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+      methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
       credentials: true,
       allowedHeaders: ["Content-Type", "Authorization"],
     }),
@@ -30,6 +31,7 @@ const app = new Elysia()
   .use(publicModule)
   .use(registerModule)
   .use(usersModule)
+  .use(contentModule)
   .get("/", () => "Hello Elysia")
   .listen(process.env.SERVER_PORT || 8000);
 

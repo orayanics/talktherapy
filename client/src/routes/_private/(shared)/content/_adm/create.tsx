@@ -10,7 +10,6 @@ import { Controller } from 'react-hook-form'
 import { ArrowLeft } from 'lucide-react'
 
 import useContentForm from '@/modules/content/useContentForm'
-import { useRequirePermission } from '@/hooks/useAuth'
 import StateLoading from '@/components/State/StateLoading'
 import StateError from '@/components/State/StateError'
 import RowError from '@/components/Table/RowError'
@@ -20,9 +19,6 @@ export const Route = createFileRoute('/_private/(shared)/content/_adm/create')({
 })
 
 function RouteComponent() {
-  const canCreateContent = useRequirePermission('content.create')
-  if (!canCreateContent) return null
-
   const { register, onSubmit, control, errors, apiError, isLoading } =
     useContentForm()
   const { data: diagnoses, isPending, isError } = useQuery(fetchDiagnoses)

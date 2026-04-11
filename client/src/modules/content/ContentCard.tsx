@@ -47,11 +47,14 @@ export default function ContentCard({ content }: { content: Content }) {
         <>
           <div className="divider h-px" />
           <div className="space-x-1">
-            {content.tags.slice(0, 2).map((item) => (
-              <p key={item.tag.id} className="badge badge-neutral badge-soft">
-                {item.tag.name}
-              </p>
-            ))}
+            {content.tags.slice(0, 2).map((item) => {
+              const tag = (item as any).tag ?? (item as any)
+              return (
+                <p key={tag.id} className="badge badge-neutral badge-soft">
+                  {tag.name}
+                </p>
+              )
+            })}
 
             {content.tags.length > 2 && (
               <p className="badge badge-neutral badge-soft">

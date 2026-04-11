@@ -17,10 +17,8 @@ import useDeleteContent from './useDeleteContent'
 import { useAuthGuard } from '@/hooks/useAuth'
 
 export default function ContentDetail({ contentId }: { contentId: string }) {
-  const { is, can } = useAuthGuard()
-  const isAdmin = is('ADMIN')
-  const canDelete = can('content.delete')
-  const canEdit = can('content.update')
+  const { is } = useAuthGuard()
+  const isAdmin = is('admin')
 
   const { data, isPending, isError } = useQuery(fetchContentById(contentId))
 
@@ -36,7 +34,7 @@ export default function ContentDetail({ contentId }: { contentId: string }) {
         <StateError />
       ) : (
         <div className="space-y-4">
-          {isAdmin && canDelete && (
+          {isAdmin && (
             <ModalConfirm
               title="Delete this content?"
               description={
@@ -65,38 +63,37 @@ export default function ContentDetail({ contentId }: { contentId: string }) {
               </p>
               {data.tags.length > 0 && (
                 <div className="space-x-1">
-                  {data.tags.map((item) => (
-                    <p
-                      key={item.tag.id}
-                      className="badge badge-neutral badge-soft"
-                    >
-                      {item.tag.name}
-                    </p>
-                  ))}
+                  {data.tags.map((item) => {
+                    const tag = (item as any).tag ?? (item as any)
+                    return (
+                      <p
+                        key={tag.id}
+                        className="badge badge-neutral badge-soft"
+                      >
+                        {tag.name}
+                      </p>
+                    )
+                  })}
                 </div>
               )}
             </div>
 
             {isAdmin && (
               <div className="space-x-2">
-                {canEdit && (
-                  <Link
-                    to="/content/$contentId/edit"
-                    params={{ contentId }}
-                    className="btn btn-neutral"
-                  >
-                    Edit
-                  </Link>
-                )}
+                <Link
+                  to="/content/$contentId/edit"
+                  params={{ contentId }}
+                  className="btn btn-neutral"
+                >
+                  Edit
+                </Link>
 
-                {canDelete && (
-                  <button
-                    className="btn btn-error"
-                    onClick={() => setShowDeleteModal(true)}
-                  >
-                    Delete
-                  </button>
-                )}
+                <button
+                  className="btn btn-error"
+                  onClick={() => setShowDeleteModal(true)}
+                >
+                  Delete
+                </button>
               </div>
             )}
           </div>

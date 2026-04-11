@@ -19,7 +19,7 @@ const searchSchema = z
       .optional()
       .transform((v) =>
         toArray(v)
-          .map((val) => String(val).toLowerCase())
+          .map((val) => String(val))
           .filter((val) => val.length > 0),
       ),
 

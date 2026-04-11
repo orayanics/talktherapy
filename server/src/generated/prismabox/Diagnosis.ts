@@ -48,6 +48,22 @@ export const DiagnosisRelations = t.Object(
       ),
       { additionalProperties: false },
     ),
+    diagnosisContents: t.Array(
+      t.Object(
+        {
+          id: t.String(),
+          authorId: t.String(),
+          diagnosisId: __nullable__(t.String()),
+          title: t.String(),
+          description: t.String(),
+          body: t.String(),
+          createdAt: t.Date(),
+          updatedAt: t.Date(),
+        },
+        { additionalProperties: false },
+      ),
+      { additionalProperties: false },
+    ),
   },
   { additionalProperties: false },
 );
@@ -80,6 +96,22 @@ export const DiagnosisRelationsInputCreate = t.Object(
         { additionalProperties: false },
       ),
     ),
+    diagnosisContents: t.Optional(
+      t.Object(
+        {
+          connect: t.Array(
+            t.Object(
+              {
+                id: t.String({ additionalProperties: false }),
+              },
+              { additionalProperties: false },
+            ),
+            { additionalProperties: false },
+          ),
+        },
+        { additionalProperties: false },
+      ),
+    ),
   },
   { additionalProperties: false },
 );
@@ -88,6 +120,31 @@ export const DiagnosisRelationsInputUpdate = t.Partial(
   t.Object(
     {
       users: t.Partial(
+        t.Object(
+          {
+            connect: t.Array(
+              t.Object(
+                {
+                  id: t.String({ additionalProperties: false }),
+                },
+                { additionalProperties: false },
+              ),
+              { additionalProperties: false },
+            ),
+            disconnect: t.Array(
+              t.Object(
+                {
+                  id: t.String({ additionalProperties: false }),
+                },
+                { additionalProperties: false },
+              ),
+              { additionalProperties: false },
+            ),
+          },
+          { additionalProperties: false },
+        ),
+      ),
+      diagnosisContents: t.Partial(
         t.Object(
           {
             connect: t.Array(
@@ -194,6 +251,7 @@ export const DiagnosisSelect = t.Partial(
       value: t.Boolean(),
       createdAt: t.Boolean(),
       users: t.Boolean(),
+      diagnosisContents: t.Boolean(),
       _count: t.Boolean(),
     },
     { additionalProperties: false },
@@ -202,7 +260,7 @@ export const DiagnosisSelect = t.Partial(
 
 export const DiagnosisInclude = t.Partial(
   t.Object(
-    { users: t.Boolean(), _count: t.Boolean() },
+    { users: t.Boolean(), diagnosisContents: t.Boolean(), _count: t.Boolean() },
     { additionalProperties: false },
   ),
 );

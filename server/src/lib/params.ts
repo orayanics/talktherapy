@@ -31,5 +31,15 @@ export const normalizeKeys = (input: unknown) => {
     obj.account_status = obj["account_status[]"];
   }
 
+  // Generic: map any param like `foo[]` → `foo` when base key missing
+  for (const key of Object.keys(obj)) {
+    if (key.endsWith("[]")) {
+      const base = key.slice(0, -2);
+      if (obj[base] === undefined) {
+        obj[base] = obj[key];
+      }
+    }
+  }
+
   return obj;
 };

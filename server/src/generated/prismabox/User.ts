@@ -90,6 +90,47 @@ export const UserRelations = t.Object(
         { additionalProperties: false },
       ),
     ),
+    contents: t.Array(
+      t.Object(
+        {
+          id: t.String(),
+          authorId: t.String(),
+          diagnosisId: __nullable__(t.String()),
+          title: t.String(),
+          description: t.String(),
+          body: t.String(),
+          createdAt: t.Date(),
+          updatedAt: t.Date(),
+        },
+        { additionalProperties: false },
+      ),
+      { additionalProperties: false },
+    ),
+    bookmarks: t.Array(
+      t.Object(
+        {
+          id: t.String(),
+          userId: t.String(),
+          contentId: t.String(),
+          createdAt: t.Date(),
+          updatedAt: t.Date(),
+        },
+        { additionalProperties: false },
+      ),
+      { additionalProperties: false },
+    ),
+    tags: t.Array(
+      t.Object(
+        {
+          id: t.String(),
+          name: t.String(),
+          slug: t.String(),
+          authorId: t.String(),
+        },
+        { additionalProperties: false },
+      ),
+      { additionalProperties: false },
+    ),
   },
   { additionalProperties: false },
 );
@@ -209,6 +250,54 @@ export const UserRelationsInputCreate = t.Object(
         { additionalProperties: false },
       ),
     ),
+    contents: t.Optional(
+      t.Object(
+        {
+          connect: t.Array(
+            t.Object(
+              {
+                id: t.String({ additionalProperties: false }),
+              },
+              { additionalProperties: false },
+            ),
+            { additionalProperties: false },
+          ),
+        },
+        { additionalProperties: false },
+      ),
+    ),
+    bookmarks: t.Optional(
+      t.Object(
+        {
+          connect: t.Array(
+            t.Object(
+              {
+                id: t.String({ additionalProperties: false }),
+              },
+              { additionalProperties: false },
+            ),
+            { additionalProperties: false },
+          ),
+        },
+        { additionalProperties: false },
+      ),
+    ),
+    tags: t.Optional(
+      t.Object(
+        {
+          connect: t.Array(
+            t.Object(
+              {
+                id: t.String({ additionalProperties: false }),
+              },
+              { additionalProperties: false },
+            ),
+            { additionalProperties: false },
+          ),
+        },
+        { additionalProperties: false },
+      ),
+    ),
   },
   { additionalProperties: false },
 );
@@ -276,6 +365,81 @@ export const UserRelationsInputUpdate = t.Partial(
               { additionalProperties: false },
             ),
             disconnect: t.Boolean(),
+          },
+          { additionalProperties: false },
+        ),
+      ),
+      contents: t.Partial(
+        t.Object(
+          {
+            connect: t.Array(
+              t.Object(
+                {
+                  id: t.String({ additionalProperties: false }),
+                },
+                { additionalProperties: false },
+              ),
+              { additionalProperties: false },
+            ),
+            disconnect: t.Array(
+              t.Object(
+                {
+                  id: t.String({ additionalProperties: false }),
+                },
+                { additionalProperties: false },
+              ),
+              { additionalProperties: false },
+            ),
+          },
+          { additionalProperties: false },
+        ),
+      ),
+      bookmarks: t.Partial(
+        t.Object(
+          {
+            connect: t.Array(
+              t.Object(
+                {
+                  id: t.String({ additionalProperties: false }),
+                },
+                { additionalProperties: false },
+              ),
+              { additionalProperties: false },
+            ),
+            disconnect: t.Array(
+              t.Object(
+                {
+                  id: t.String({ additionalProperties: false }),
+                },
+                { additionalProperties: false },
+              ),
+              { additionalProperties: false },
+            ),
+          },
+          { additionalProperties: false },
+        ),
+      ),
+      tags: t.Partial(
+        t.Object(
+          {
+            connect: t.Array(
+              t.Object(
+                {
+                  id: t.String({ additionalProperties: false }),
+                },
+                { additionalProperties: false },
+              ),
+              { additionalProperties: false },
+            ),
+            disconnect: t.Array(
+              t.Object(
+                {
+                  id: t.String({ additionalProperties: false }),
+                },
+                { additionalProperties: false },
+              ),
+              { additionalProperties: false },
+            ),
           },
           { additionalProperties: false },
         ),
@@ -419,6 +583,9 @@ export const UserSelect = t.Partial(
       status: t.Boolean(),
       diagnosis_id: t.Boolean(),
       diagnosis: t.Boolean(),
+      contents: t.Boolean(),
+      bookmarks: t.Boolean(),
+      tags: t.Boolean(),
       _count: t.Boolean(),
     },
     { additionalProperties: false },
@@ -433,6 +600,9 @@ export const UserInclude = t.Partial(
       role: t.Boolean(),
       status: t.Boolean(),
       diagnosis: t.Boolean(),
+      contents: t.Boolean(),
+      bookmarks: t.Boolean(),
+      tags: t.Boolean(),
       _count: t.Boolean(),
     },
     { additionalProperties: false },

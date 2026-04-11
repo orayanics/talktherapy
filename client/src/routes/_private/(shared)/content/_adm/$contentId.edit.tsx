@@ -10,7 +10,6 @@ import { Controller } from 'react-hook-form'
 import { ArrowLeft } from 'lucide-react'
 
 import useUpdateContentForm from '@/modules/content/useUpdateContentForm'
-import { useRequirePermission } from '@/hooks/useAuth'
 import StateLoading from '@/components/State/StateLoading'
 import StateError from '@/components/State/StateError'
 import RowError from '@/components/Table/RowError'
@@ -23,8 +22,6 @@ export const Route = createFileRoute(
 
 function RouteComponent() {
   const { contentId } = Route.useParams()
-  const canUpdateContent = useRequirePermission('content.update')
-  if (!canUpdateContent) return null
 
   const { register, onSubmit, errors, apiError, isLoading, control } =
     useUpdateContentForm({ contentId })
@@ -110,7 +107,7 @@ function RouteComponent() {
           <div>
             <label>
               <span className="text-xs font-mono text-gray-400">
-                Diagonis Category
+                Diagnosis Category
               </span>
               <select className="select w-full" {...register('diagnosis_id')}>
                 <option value="">Select Diagnosis</option>

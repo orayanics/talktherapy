@@ -12,9 +12,8 @@ import { useAuthGuard } from '@/hooks/useAuth'
 import ContentCard from './ContentCard'
 
 export default function ContentList() {
-  const { is, can } = useAuthGuard()
-  const isAdmin = is('ADMIN')
-  const canCreate = can('content.create')
+  const { is } = useAuthGuard()
+  const isAdmin = is('admin')
 
   const search = useSearch({ from: '/_private/(shared)/content/' })
   const navigate = useNavigate({ from: '/content/' })
@@ -68,7 +67,7 @@ export default function ContentList() {
           updateSearch={updateSearch}
         />
 
-        {isAdmin && canCreate && (
+        {isAdmin && (
           <Link to="/content/create" className="btn btn-neutral">
             Add Content
           </Link>
@@ -79,7 +78,7 @@ export default function ContentList() {
         <StateLoading />
       ) : isError ? (
         <StateError />
-      ) : data.data.length == 0 ? (
+      ) : contents.length == 0 ? (
         <StateNull />
       ) : (
         <div className="grid grid-cols-12 gap-4">
