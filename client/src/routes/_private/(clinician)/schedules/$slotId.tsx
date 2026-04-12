@@ -39,8 +39,8 @@ function RouteComponent() {
             <h1 className="text-xl font-bold pb-2 mb-2 border-b border-slate-300">
               Time Slot Details
             </h1>
-            <Row label="Start At" value={formatDate(data.start_at, 'p')} />
-            <Row label="End At" value={formatDate(data.end_at, 'p')} />
+            <Row label="Start At" value={formatDate(data.startAt, 'p')} />
+            <Row label="End At" value={formatDate(data.endAt, 'p')} />
             <Row
               label="Status"
               value={<AppointmentPill status={data.status} />}
@@ -48,7 +48,7 @@ function RouteComponent() {
             <Row
               label="Is Hidden"
               value={
-                data.is_hidden ? (
+                data.isHidden ? (
                   <CircleCheck className="text-emerald-600" />
                 ) : (
                   <CircleX className="text-rose-600" />

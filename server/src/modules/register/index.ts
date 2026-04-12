@@ -2,7 +2,11 @@ import { betterAuthPlugin } from "@/plugin/better-auth";
 import Elysia from "elysia";
 
 import { registerAdmin, registerClinician, registerPatient } from "./service";
-import { RegisterAdminSchema, RegisterUserSchema } from "./model";
+import {
+  RegisterAdminSchema,
+  RegisterClinicianSchema,
+  RegisterPatientSchema,
+} from "./model";
 import { ApiSuccess, ApiError, tryOk, ok } from "@/lib/response";
 import { logAudit } from "@/lib/audit";
 
@@ -52,7 +56,7 @@ export const registerModule = new Elysia({ prefix: "/register" })
       return status(200, ok(result.data));
     },
     {
-      body: RegisterUserSchema,
+      body: RegisterClinicianSchema,
       response: {
         200: ApiSuccess(),
         400: ApiError,
@@ -68,7 +72,7 @@ export const registerModule = new Elysia({ prefix: "/register" })
       return status(200, ok(result.data));
     },
     {
-      body: RegisterUserSchema,
+      body: RegisterPatientSchema,
       response: {
         200: ApiSuccess(),
         400: ApiError,

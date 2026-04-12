@@ -27,4 +27,17 @@ export const betterAuthPlugin = new Elysia({
         return { user: session.user, session: session.session };
       },
     },
+  })
+  .macro({
+    requireClinician: {
+      async resolve({ status, request: { headers } }) {
+        const session = await auth.api.getSession({ headers });
+        if (!session) return status(401);
+        const role = session.user.role;
+        if (role !== "clinician") {
+          return status(403);
+        }
+        return { user: session.user, session: session.session };
+      },
+    },
   });

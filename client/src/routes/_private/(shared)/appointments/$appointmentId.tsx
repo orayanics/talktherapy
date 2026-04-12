@@ -57,19 +57,19 @@ function RouteComponent() {
               label="Appointment Time"
               value={
                 <div className="flex gap-4">
-                  <p>{formatDate(appointment.slot.start_at, 'p')}</p>
+                  <p>{formatDate(appointment.slot.startAt, 'p')}</p>
                   <span>to</span>
-                  <p>{formatDate(appointment.slot.end_at, 'p')}</p>
+                  <p>{formatDate(appointment.slot.endAt, 'p')}</p>
                 </div>
               }
             />
             <Row label="Patient Name" value={appointment.patient.name} />
             <Row label="Patient Email" value={appointment.patient.email} />
             <Row label="Clinician Name" value={appointment.clinician.name} />
-            <Row
+            {/* <Row
               label="Clinician Specialization"
               value={appointment.clinician.diagnosis}
-            />
+            /> */}
           </div>
 
           {encounterObj && (
@@ -137,7 +137,7 @@ function RouteComponent() {
                         {ev.type.replace('_', ' ')}
                       </h3>
                       <span className="text-slate-300">•</span>
-                      <RolePill role={ev.actor_type.toUpperCase()} />
+                      <RolePill role={ev.actor_type} />
                     </div>
 
                     {ev.reason && (

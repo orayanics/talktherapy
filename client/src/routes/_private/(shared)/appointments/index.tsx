@@ -55,7 +55,8 @@ export const Route = createFileRoute('/_private/(shared)/appointments/')({
 
 function RouteComponent() {
   const { is } = useAuthGuard()
-  const isClinician = is('CLINICIAN')
+  const isClinician = is('clinician')
+
   const search = useSearch({ from: '/_private/(shared)/appointments/' })
   const navigate = useNavigate({ from: '/appointments/' })
 
@@ -160,7 +161,7 @@ function RouteComponent() {
                     to="/appointments/$appointmentId"
                     params={{ appointmentId: row.id }}
                   >
-                    {formatDate(row.slot.start_at)}
+                    {formatDate(row.slot.startAt)}
                   </Link>
                 ),
               },
@@ -169,9 +170,9 @@ function RouteComponent() {
                 accessor: 'slot',
                 render: (row) => (
                   <div className="flex gap-2">
-                    <div>{formatDate(row.slot.start_at, 'p')}</div>
+                    <div>{formatDate(row.slot.startAt, 'p')}</div>
                     <div>to</div>
-                    <div>{formatDate(row.slot.end_at, 'p')}</div>
+                    <div>{formatDate(row.slot.endAt, 'p')}</div>
                   </div>
                 ),
               },
@@ -180,11 +181,11 @@ function RouteComponent() {
                 accessor: 'clinician',
                 render: (row) => row.clinician.name,
               },
-              {
-                header: 'Patient',
-                accessor: 'patient',
-                render: (row) => row.patient.name,
-              },
+              // {
+              //   header: 'Patient',
+              //   accessor: 'patient',
+              //   render: (row) => row.patient.name,
+              // },
               {
                 header: 'Status',
                 accessor: 'status',
@@ -194,7 +195,7 @@ function RouteComponent() {
                 header: 'Action',
                 accessor: 'id',
                 render: (row) => {
-                  if (row.status === 'Pending') {
+                  if (row.status === 'PENDING') {
                     return (
                       <div className="flex gap-2">
                         {isClinician ? (
@@ -224,7 +225,7 @@ function RouteComponent() {
                     )
                   }
 
-                  if (row.status === 'Accepted') {
+                  if (row.status === 'ACCEPTED') {
                     return isClinician ? (
                       <div className="flex gap-2">
                         <button

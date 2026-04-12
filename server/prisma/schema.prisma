@@ -34,6 +34,32 @@ enum AccountStatus {
   inactive
 }
 
+enum SlotStatus {
+  FREE
+  PENDING
+  ACCEPTED
+  REJECT
+  CANCELLED
+  COMPLETED
+}
+
+enum AppointmentStatus {
+  PENDING
+  ACCEPTED
+  REJECT
+  CANCELLED
+  COMPLETED
+}
+
+enum AppointmentEventType {
+  STATUS_CHANGE
+}
+
+enum ActorType {
+  patient
+  clinician
+}
+
 model Diagnosis {
   id          String   @id
   label       String   @unique
@@ -68,6 +94,12 @@ model User {
   bookmarks Bookmark[]
   tags      Tag[]
   auditLogs AuditLog[] @relation("UserAuditLogs")
+  patientAppointments Appointment[] @relation("PatientAppointments")
+  clinicianAppointments Appointment[] @relation("ClinicianAppointments")
+  availabilityRules AvailabilityRule[] @relation("AvailabilityClinician")
+  clinicianPatients ClinicianPatient[] @relation("ClinicianPatients")
+  patientClinicians ClinicianPatient[] @relation("PatientClinicians")
+  slots Slot[] @relation("UserSlots")
 
   @@unique([email])
   @@map("user")
@@ -181,3 +213,111 @@ model AuditLog {
   actor User? @relation("UserAuditLogs", fields: [actorId], references: [id], onDelete: Cascade)
 
 }
+
+// Appointment-related models converted from Laravel Eloquent models
+model Appointment {
+  id           String   @id @default(uuid())
+  slotId       String?
+  patientId    String
+  clinicianId  String?
+  status       String?
+  bookedAt     DateTime?
+  confirmedAt  DateTime?
+  cancelledAt  DateTime?
+  completedAt  DateTime?
+  rescheduledAt DateTime?
+  roomId       String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  patient  User     @relation("PatientAppointments", fields: [patientId], references: [id], onDelete: Cascade)
+  clinician User?   @relation("ClinicianAppointments", fields: [clinicianId], references: [id], onDelete: SetNull)
+
+  slot     Slot?    @relation(fields: [slotId], references: [id])
+  events   AppointmentEvent[]
+  encounter Encounter?
+
+  @@index([patientId])
+  @@index([clinicianId])
+  @@map("appointment")
+}
+
+model AppointmentEvent {
+  id            String   @id @default(uuid())
+  appointmentId String
+  type          String?
+  actorType     String?
+  actorId       String?
+  reason        String?
+  createdAt     DateTime @default(now())
+
+  appointment Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+
+  @@index([appointmentId])
+  @@map("events")
+}
+
+model AvailabilityRule {
+  id             String   @id @default(uuid())
+  clinicianId    String
+  startAt        DateTime
+  endAt          DateTime
+  recurrenceRule String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  clinician User @relation("AvailabilityClinician", fields: [clinicianId], references: [id], onDelete: Cascade)
+  slots     Slot[]
+
+  @@index([clinicianId])
+  @@map("schedules")
+}
+
+model Slot {
+  id                 String   @id @default(uuid())
+  availabilityRuleId String?
+  clinicianId        String
+  startAt            DateTime
+  endAt              DateTime
+  status             SlotStatus @default(FREE)
+  isHidden           Boolean  @default(false)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  availabilityRule AvailabilityRule? @relation(fields: [availabilityRuleId], references: [id], onDelete: Cascade)
+  appointments Appointment[]
+  user User @relation("UserSlots",fields: [clinicianId], references: [id], onDelete: Cascade)
+
+  @@index([availabilityRuleId])
+  @@index([clinicianId])
+  @@map("slot")
+}
+
+model ClinicianPatient {
+  id               String   @id @default(uuid())
+  clinicianId      String
+  patientId        String
+  firstCompletedAt DateTime?
+
+  clinician User @relation("ClinicianPatients", fields: [clinicianId], references: [id], onDelete: Cascade)
+  patient   User @relation("PatientClinicians", fields: [patientId], references: [id], onDelete: Cascade)
+
+  @@unique([clinicianId, patientId])
+  @@map("clinician_patient")
+}
+
+model Encounter {
+  id             String   @id @default(uuid())
+  appointmentId  String   @unique
+  diagnosis      String?
+  chiefComplaint String?
+  referralSource String?
+  referralUrl    String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  appointment Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+
+  @@index([appointmentId])
+}
+

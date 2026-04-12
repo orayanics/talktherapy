@@ -1,9 +1,11 @@
-import { createFileRoute, Outlet } from '@tanstack/react-router'
-import { requireRole } from '@/utils/auth-guard'
+import { createFileRoute, Navigate, Outlet } from '@tanstack/react-router'
+import { useAuthGuard } from '@/hooks/useAuth'
 
 export const Route = createFileRoute('/_private/(patient)')({
-  loader: ({ context }) => {
-    requireRole(context.session, 'PATIENT')
+  component: () => {
+    const { is } = useAuthGuard()
+    const isAllowed = is('patient')
+    if (!isAllowed) return <Navigate to="/unauthorized" />
+    return <Outlet />
   },
-  component: () => <Outlet />,
 })

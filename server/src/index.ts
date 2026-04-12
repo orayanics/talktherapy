@@ -10,6 +10,10 @@ import { registerModule } from "./modules/register";
 import { publicModule } from "./modules/public";
 import { contentModule } from "./modules/content";
 import { logsModule } from "./modules/logs";
+import { appointmentsModule } from "./modules/appointments";
+import { slotsModule } from "./modules/slots";
+import { scheduleModule } from "./modules/schedule";
+import { clinicianPatientModule } from "./modules/clinicianPatient";
 
 const app = new Elysia()
   .use(
@@ -34,6 +38,10 @@ const app = new Elysia()
   .use(usersModule)
   .use(contentModule)
   .use(logsModule)
+  .use(appointmentsModule)
+  .use(slotsModule)
+  .use(scheduleModule)
+  .use(clinicianPatientModule)
   .get("/", () => "Hello Elysia")
   .listen(process.env.SERVER_PORT || 8000);
 

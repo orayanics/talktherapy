@@ -146,6 +146,114 @@ export const UserRelations = t.Object(
       ),
       { additionalProperties: false },
     ),
+    patientAppointments: t.Array(
+      t.Object(
+        {
+          id: t.String(),
+          slotId: __nullable__(t.String()),
+          patientId: t.String(),
+          clinicianId: __nullable__(t.String()),
+          status: __nullable__(t.String()),
+          bookedAt: __nullable__(t.Date()),
+          confirmedAt: __nullable__(t.Date()),
+          cancelledAt: __nullable__(t.Date()),
+          completedAt: __nullable__(t.Date()),
+          rescheduledAt: __nullable__(t.Date()),
+          roomId: __nullable__(t.String()),
+          createdAt: t.Date(),
+          updatedAt: t.Date(),
+        },
+        { additionalProperties: false },
+      ),
+      { additionalProperties: false },
+    ),
+    clinicianAppointments: t.Array(
+      t.Object(
+        {
+          id: t.String(),
+          slotId: __nullable__(t.String()),
+          patientId: t.String(),
+          clinicianId: __nullable__(t.String()),
+          status: __nullable__(t.String()),
+          bookedAt: __nullable__(t.Date()),
+          confirmedAt: __nullable__(t.Date()),
+          cancelledAt: __nullable__(t.Date()),
+          completedAt: __nullable__(t.Date()),
+          rescheduledAt: __nullable__(t.Date()),
+          roomId: __nullable__(t.String()),
+          createdAt: t.Date(),
+          updatedAt: t.Date(),
+        },
+        { additionalProperties: false },
+      ),
+      { additionalProperties: false },
+    ),
+    availabilityRules: t.Array(
+      t.Object(
+        {
+          id: t.String(),
+          clinicianId: t.String(),
+          startAt: t.Date(),
+          endAt: t.Date(),
+          recurrenceRule: __nullable__(t.String()),
+          createdAt: t.Date(),
+          updatedAt: t.Date(),
+        },
+        { additionalProperties: false },
+      ),
+      { additionalProperties: false },
+    ),
+    clinicianPatients: t.Array(
+      t.Object(
+        {
+          id: t.String(),
+          clinicianId: t.String(),
+          patientId: t.String(),
+          firstCompletedAt: __nullable__(t.Date()),
+        },
+        { additionalProperties: false },
+      ),
+      { additionalProperties: false },
+    ),
+    patientClinicians: t.Array(
+      t.Object(
+        {
+          id: t.String(),
+          clinicianId: t.String(),
+          patientId: t.String(),
+          firstCompletedAt: __nullable__(t.Date()),
+        },
+        { additionalProperties: false },
+      ),
+      { additionalProperties: false },
+    ),
+    slots: t.Array(
+      t.Object(
+        {
+          id: t.String(),
+          availabilityRuleId: __nullable__(t.String()),
+          clinicianId: t.String(),
+          startAt: t.Date(),
+          endAt: t.Date(),
+          status: t.Union(
+            [
+              t.Literal("FREE"),
+              t.Literal("PENDING"),
+              t.Literal("ACCEPTED"),
+              t.Literal("REJECT"),
+              t.Literal("CANCELLED"),
+              t.Literal("COMPLETED"),
+            ],
+            { additionalProperties: false },
+          ),
+          isHidden: t.Boolean(),
+          createdAt: t.Date(),
+          updatedAt: t.Date(),
+        },
+        { additionalProperties: false },
+      ),
+      { additionalProperties: false },
+    ),
   },
   { additionalProperties: false },
 );
@@ -314,6 +422,102 @@ export const UserRelationsInputCreate = t.Object(
       ),
     ),
     auditLogs: t.Optional(
+      t.Object(
+        {
+          connect: t.Array(
+            t.Object(
+              {
+                id: t.String({ additionalProperties: false }),
+              },
+              { additionalProperties: false },
+            ),
+            { additionalProperties: false },
+          ),
+        },
+        { additionalProperties: false },
+      ),
+    ),
+    patientAppointments: t.Optional(
+      t.Object(
+        {
+          connect: t.Array(
+            t.Object(
+              {
+                id: t.String({ additionalProperties: false }),
+              },
+              { additionalProperties: false },
+            ),
+            { additionalProperties: false },
+          ),
+        },
+        { additionalProperties: false },
+      ),
+    ),
+    clinicianAppointments: t.Optional(
+      t.Object(
+        {
+          connect: t.Array(
+            t.Object(
+              {
+                id: t.String({ additionalProperties: false }),
+              },
+              { additionalProperties: false },
+            ),
+            { additionalProperties: false },
+          ),
+        },
+        { additionalProperties: false },
+      ),
+    ),
+    availabilityRules: t.Optional(
+      t.Object(
+        {
+          connect: t.Array(
+            t.Object(
+              {
+                id: t.String({ additionalProperties: false }),
+              },
+              { additionalProperties: false },
+            ),
+            { additionalProperties: false },
+          ),
+        },
+        { additionalProperties: false },
+      ),
+    ),
+    clinicianPatients: t.Optional(
+      t.Object(
+        {
+          connect: t.Array(
+            t.Object(
+              {
+                id: t.String({ additionalProperties: false }),
+              },
+              { additionalProperties: false },
+            ),
+            { additionalProperties: false },
+          ),
+        },
+        { additionalProperties: false },
+      ),
+    ),
+    patientClinicians: t.Optional(
+      t.Object(
+        {
+          connect: t.Array(
+            t.Object(
+              {
+                id: t.String({ additionalProperties: false }),
+              },
+              { additionalProperties: false },
+            ),
+            { additionalProperties: false },
+          ),
+        },
+        { additionalProperties: false },
+      ),
+    ),
+    slots: t.Optional(
       t.Object(
         {
           connect: t.Array(
@@ -500,6 +704,156 @@ export const UserRelationsInputUpdate = t.Partial(
           { additionalProperties: false },
         ),
       ),
+      patientAppointments: t.Partial(
+        t.Object(
+          {
+            connect: t.Array(
+              t.Object(
+                {
+                  id: t.String({ additionalProperties: false }),
+                },
+                { additionalProperties: false },
+              ),
+              { additionalProperties: false },
+            ),
+            disconnect: t.Array(
+              t.Object(
+                {
+                  id: t.String({ additionalProperties: false }),
+                },
+                { additionalProperties: false },
+              ),
+              { additionalProperties: false },
+            ),
+          },
+          { additionalProperties: false },
+        ),
+      ),
+      clinicianAppointments: t.Partial(
+        t.Object(
+          {
+            connect: t.Array(
+              t.Object(
+                {
+                  id: t.String({ additionalProperties: false }),
+                },
+                { additionalProperties: false },
+              ),
+              { additionalProperties: false },
+            ),
+            disconnect: t.Array(
+              t.Object(
+                {
+                  id: t.String({ additionalProperties: false }),
+                },
+                { additionalProperties: false },
+              ),
+              { additionalProperties: false },
+            ),
+          },
+          { additionalProperties: false },
+        ),
+      ),
+      availabilityRules: t.Partial(
+        t.Object(
+          {
+            connect: t.Array(
+              t.Object(
+                {
+                  id: t.String({ additionalProperties: false }),
+                },
+                { additionalProperties: false },
+              ),
+              { additionalProperties: false },
+            ),
+            disconnect: t.Array(
+              t.Object(
+                {
+                  id: t.String({ additionalProperties: false }),
+                },
+                { additionalProperties: false },
+              ),
+              { additionalProperties: false },
+            ),
+          },
+          { additionalProperties: false },
+        ),
+      ),
+      clinicianPatients: t.Partial(
+        t.Object(
+          {
+            connect: t.Array(
+              t.Object(
+                {
+                  id: t.String({ additionalProperties: false }),
+                },
+                { additionalProperties: false },
+              ),
+              { additionalProperties: false },
+            ),
+            disconnect: t.Array(
+              t.Object(
+                {
+                  id: t.String({ additionalProperties: false }),
+                },
+                { additionalProperties: false },
+              ),
+              { additionalProperties: false },
+            ),
+          },
+          { additionalProperties: false },
+        ),
+      ),
+      patientClinicians: t.Partial(
+        t.Object(
+          {
+            connect: t.Array(
+              t.Object(
+                {
+                  id: t.String({ additionalProperties: false }),
+                },
+                { additionalProperties: false },
+              ),
+              { additionalProperties: false },
+            ),
+            disconnect: t.Array(
+              t.Object(
+                {
+                  id: t.String({ additionalProperties: false }),
+                },
+                { additionalProperties: false },
+              ),
+              { additionalProperties: false },
+            ),
+          },
+          { additionalProperties: false },
+        ),
+      ),
+      slots: t.Partial(
+        t.Object(
+          {
+            connect: t.Array(
+              t.Object(
+                {
+                  id: t.String({ additionalProperties: false }),
+                },
+                { additionalProperties: false },
+              ),
+              { additionalProperties: false },
+            ),
+            disconnect: t.Array(
+              t.Object(
+                {
+                  id: t.String({ additionalProperties: false }),
+                },
+                { additionalProperties: false },
+              ),
+              { additionalProperties: false },
+            ),
+          },
+          { additionalProperties: false },
+        ),
+      ),
     },
     { additionalProperties: false },
   ),
@@ -643,6 +997,12 @@ export const UserSelect = t.Partial(
       bookmarks: t.Boolean(),
       tags: t.Boolean(),
       auditLogs: t.Boolean(),
+      patientAppointments: t.Boolean(),
+      clinicianAppointments: t.Boolean(),
+      availabilityRules: t.Boolean(),
+      clinicianPatients: t.Boolean(),
+      patientClinicians: t.Boolean(),
+      slots: t.Boolean(),
       _count: t.Boolean(),
     },
     { additionalProperties: false },
@@ -661,6 +1021,12 @@ export const UserInclude = t.Partial(
       bookmarks: t.Boolean(),
       tags: t.Boolean(),
       auditLogs: t.Boolean(),
+      patientAppointments: t.Boolean(),
+      clinicianAppointments: t.Boolean(),
+      availabilityRules: t.Boolean(),
+      clinicianPatients: t.Boolean(),
+      patientClinicians: t.Boolean(),
+      slots: t.Boolean(),
       _count: t.Boolean(),
     },
     { additionalProperties: false },

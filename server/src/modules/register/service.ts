@@ -1,5 +1,9 @@
 import { auth } from "@/lib/auth";
-import type { TRegisterAdminSchema, TRegisterUserSchema } from "./model";
+import type {
+  TRegisterAdminSchema,
+  TRegisterClinicianSchema,
+  TRegisterPatientSchema,
+} from "./model";
 import { prisma } from "@/lib/client";
 
 export async function registerAdmin(body: TRegisterAdminSchema) {
@@ -14,7 +18,7 @@ export async function registerAdmin(body: TRegisterAdminSchema) {
   return newUser;
 }
 
-export async function registerPatient(body: TRegisterUserSchema) {
+export async function registerPatient(body: TRegisterPatientSchema) {
   const newUser = await auth.api.createUser({
     body: {
       email: body.email,
@@ -35,7 +39,7 @@ export async function registerPatient(body: TRegisterUserSchema) {
   return newUser;
 }
 
-export async function registerClinician(body: TRegisterUserSchema) {
+export async function registerClinician(body: TRegisterClinicianSchema) {
   const newUser = await auth.api.createUser({
     body: {
       email: body.email,

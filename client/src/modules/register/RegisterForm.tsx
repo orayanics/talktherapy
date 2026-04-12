@@ -111,7 +111,11 @@ export default function RegisterForm() {
         <RowError message={errors.consent?.message} />
 
         <div className="flex flex-col gap-4 items-center">
-          <button disabled={isLoading} className="btn btn-neutral btn-block">
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="btn btn-neutral btn-block"
+          >
             Register
           </button>
 

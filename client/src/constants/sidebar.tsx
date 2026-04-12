@@ -138,7 +138,7 @@ export const PATIENT_NAV_ITEMS = [
 
 export const NAV_BY_ROLE: Record<USER_ROLE, Array<NavItem>> = {
   superadmin: superadmin_NAV_ITEMS,
-  ADMIN: ADMIN_NAV_ITEMS,
-  CLINICIAN: CLINICIAN_NAV_ITEMS,
-  PATIENT: PATIENT_NAV_ITEMS,
+  admin: ADMIN_NAV_ITEMS,
+  clinician: CLINICIAN_NAV_ITEMS,
+  patient: PATIENT_NAV_ITEMS,
 }

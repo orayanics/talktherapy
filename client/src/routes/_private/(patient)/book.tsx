@@ -131,21 +131,25 @@ function RouteComponent() {
               },
               {
                 header: 'Date',
-                accessor: 'start_at',
-                render: (row) => formatDate(row.start_at, 'PP'),
+                accessor: 'startAt',
+                render: (row) => formatDate(row.startAt, 'PP'),
               },
               {
                 header: 'Time',
-                accessor: 'start_at',
+                accessor: 'startAt',
                 render: (row) => (
                   <div className="flex gap-2">
-                    <div>{formatDate(row.start_at, 'p')}</div>
+                    <div>{formatDate(row.startAt, 'p')}</div>
                     <div>to</div>
-                    <div>{formatDate(row.end_at, 'p')}</div>
+                    <div>{formatDate(row.endAt, 'p')}</div>
                   </div>
                 ),
               },
-              { header: 'Specialization', accessor: 'clinician_diagnosis' },
+              {
+                header: 'Specialization',
+                accessor: 'user',
+                render: (row) => row.user.diagnosis.label,
+              },
               { header: 'Status', accessor: 'status' },
               {
                 header: 'Action',
@@ -155,7 +159,7 @@ function RouteComponent() {
                     <button
                       className="btn btn-primary"
                       onClick={() => openBooking(row.id)}
-                      disabled={row.status !== 'Free' || isBooking}
+                      disabled={row.status !== 'FREE' || isBooking}
                     >
                       Book
                     </button>

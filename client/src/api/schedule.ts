@@ -9,32 +9,35 @@ import { useAlert } from '@/context/AlertContext'
 import { useNavigate } from '@tanstack/react-router'
 import type { TSchedule } from '@/modules/schedules/schema'
 import { APPOINTMENT as APPT_MSG } from '@/constants/message'
+import type { DiagnosisItem } from './public'
 
 export type APPOINTMENT_STATUS =
-  | 'Free'
-  | 'Pending'
-  | 'Accepted'
-  | 'Reject'
-  | 'Cancelled'
-  | 'Completed'
+  | 'FREE'
+  | 'PENDING'
+  | 'ACCEPTED'
+  | 'REJECT'
+  | 'CANCELLED'
+  | 'COMPLETED'
 
 export type SLOT_STATUS =
-  | 'Free'
-  | 'Pending'
-  | 'Accepted'
-  | 'Reject'
-  | 'Cancelled'
-  | 'Completed'
+  | 'FREE'
+  | 'PENDING'
+  | 'ACCEPTED'
+  | 'REJECT'
+  | 'CANCELLED'
+  | 'COMPLETED'
 
 export interface Slot {
   id: string
   schedule_id: string
   clinician_id: string
-  start_at: string
-  end_at: string
+  startAt: string
+  endAt: string
   status: SLOT_STATUS
-  is_hidden: boolean
-  clinician_diagnosis?: string | null
+  isHidden: boolean
+  user: {
+    diagnosis: DiagnosisItem
+  }
 }
 
 export interface SlotsResponse {
@@ -117,7 +120,7 @@ export const fetchSlots = (
   return queryOptions<SlotsResponse>({
     queryKey: ['slots', query],
     queryFn: async () => {
-      const data = await api(`/slots`, {
+      const { data } = await api(`/appointments/slots`, {
         method: 'GET',
         params: query,
       })
@@ -147,7 +150,7 @@ export const mutateSchedule = () => {
 
   return useMutation({
     mutationFn: async (payload: TSchedule) => {
-      const { data } = await api('/schedules', {
+      const { data } = await api('/schedule', {
         method: 'POST',
         data: JSON.stringify(payload),
       })
@@ -211,7 +214,10 @@ export const fetchAppointments = (
   return queryOptions<AppointmentsResponse>({
     queryKey: ['appointments', query],
     queryFn: async () => {
-      const data = await api(`/appointments`, { method: 'GET', params: query })
+      const { data } = await api(`/appointments/me`, {
+        method: 'GET',
+        params: query,
+      })
       return data
     },
     staleTime: 30 * 60 * 1000,
