@@ -1,14 +1,14 @@
-import type { WebSocket } from "ws";
+type WSSender = { send: (data: string) => void };
 
-const sockets = new Map<string, Set<WebSocket>>();
+const sockets = new Map<string, Set<WSSender>>();
 
 export const NotificationHub = {
-  add(userId: string, ws: WebSocket) {
+  add(userId: string, ws: WSSender) {
     if (!sockets.has(userId)) sockets.set(userId, new Set());
     sockets.get(userId)!.add(ws);
   },
 
-  remove(userId: string, ws: WebSocket) {
+  remove(userId: string, ws: WSSender) {
     const set = sockets.get(userId);
     if (!set) return;
     set.delete(ws);

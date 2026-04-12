@@ -8,12 +8,15 @@ import { createNotification, listNotifications, markAsRead } from "./service";
 import NotificationHub from "./ws";
 import { verifyJoinToken, signJoinToken } from "@/lib/joinToken";
 import { z } from "zod";
+import type { ElysiaWS } from "../session/model";
 
 const META = Symbol("notif-ws-meta");
 
-const getMeta = (ws: any) => {
-  if (!ws.data[META]) ws.data[META] = { userId: null };
-  return ws.data[META];
+type NotifMeta = { userId: string | null };
+
+const getMeta = (ws: ElysiaWS) => {
+  if (!ws.data[META]) ws.data[META] = { userId: null } as NotifMeta;
+  return ws.data[META] as NotifMeta;
 };
 
 export const notificationsModule = new Elysia({ prefix: "/notifications" })
@@ -25,9 +28,9 @@ export const notificationsModule = new Elysia({ prefix: "/notifications" })
   .ws("/ws", {
     query: t.Object({ token: t.String() }),
 
-    open: async (ws) => {
+    open: async (ws: ElysiaWS) => {
       const meta = getMeta(ws);
-      const token = ws.data.query?.token;
+      const token = (ws.data.query as Record<string, any>)?.token;
       if (!token) {
         ws.close(4001, "Unauthorized");
         return;
@@ -52,14 +55,14 @@ export const notificationsModule = new Elysia({ prefix: "/notifications" })
         return;
       }
 
-      NotificationHub.add(meta.userId, ws.raw);
+      NotificationHub.add(meta.userId as string, ws.raw);
     },
 
-    message: (ws) => {
+    message: (ws: ElysiaWS) => {
       // notifications WS is receive-less for now; keep for extensibility
     },
 
-    close: (ws) => {
+    close: (ws: ElysiaWS) => {
       const meta = getMeta(ws);
       if (meta.userId) NotificationHub.remove(meta.userId, ws.raw);
     },
@@ -73,7 +76,7 @@ export const notificationsModule = new Elysia({ prefix: "/notifications" })
       if (!session)
         return status(401, { success: false, error: "Unauthorized" });
       const data = await listNotifications(session.user.id, {
-        limit: query.limit as number | undefined,
+        limit: Number(query.limit),
         unreadOnly: (query as any).unreadOnly as boolean | undefined,
       });
       return status(200, ok(data));
@@ -96,16 +99,15 @@ export const notificationsModule = new Elysia({ prefix: "/notifications" })
     },
     {
       requireAdmin: true,
-      body: CreateNotificationSchema as unknown as any,
+      body: CreateNotificationSchema,
       response: { 201: ApiSuccess(), 400: ApiError, 401: ApiError },
     },
   )
 
-  // Return a short-lived join token that the client can use to authenticate WS
   .post(
     "/join-token",
     async ({ user, status }) => {
-      if (!user) return status(401, { error: "Unauthorized" });
+      if (!user) return status(401, { error: "Unauthorized", success: false });
       // Use signJoinToken to mint a short-lived token containing userId
       const token = signJoinToken(
         { appointmentId: user.id, roomId: user.id, userId: user.id } as any,
@@ -116,10 +118,9 @@ export const notificationsModule = new Elysia({ prefix: "/notifications" })
     {
       auth: true,
       response: { 200: t.Object({ token: t.String() }), 401: ApiError },
-    } as any,
+    },
   )
 
-  // Mark a notification as read for the authenticated user
   .post(
     "/:id/read",
     async ({ params, request, status }) => {
