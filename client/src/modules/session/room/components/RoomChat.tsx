@@ -15,6 +15,16 @@ export default function RoomChat({ messages, onSend }: ChatProps) {
     setText('')
   }
 
+  const normalizeMessage = (raw: string) => {
+    if (raw.startsWith('You: ')) {
+      return { from: 'local' as const, text: raw.slice(5) }
+    }
+    if (raw.startsWith('Peer: ')) {
+      return { from: 'peer' as const, text: raw.slice(6) }
+    }
+    return { from: 'peer' as const, text: raw }
+  }
+
   return (
     <div className="flex flex-col h-full bg-base-100/50">
       <div className="flex-1 overflow-y-auto p-4 space-y-4 flex flex-col justify-end">
@@ -24,13 +34,25 @@ export default function RoomChat({ messages, onSend }: ChatProps) {
             <span className="text-sm">No messages yet. Say hi!</span>
           </div>
         ) : (
-          messages.map((m, i) => (
-            <div key={i} className="chat chat-end animate-fade-in w-full">
-              <div className="chat-bubble chat-bubble-neutral text-sm shadow-sm">
-                {m}
+          messages.map((m, i) => {
+            const msg = normalizeMessage(m)
+            const isLocal = msg.from === 'local'
+            return (
+              <div
+                key={i}
+                className={`chat ${isLocal ? 'chat-end' : 'chat-start'} animate-fade-in w-full`}
+              >
+                <div className="chat-header text-xs text-base-content/50">
+                  {isLocal ? 'You' : 'Peer'}
+                </div>
+                <div
+                  className={`chat-bubble text-sm shadow-sm ${isLocal ? 'chat-bubble-primary' : 'chat-bubble-neutral'}`}
+                >
+                  {msg.text}
+                </div>
               </div>
-            </div>
-          ))
+            )
+          })
         )}
       </div>
       <div className="p-4 bg-base-200/50 border-t border-base-300 mt-auto">
