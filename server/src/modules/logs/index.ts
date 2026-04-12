@@ -5,6 +5,7 @@ import { ApiError, ApiSuccess } from "@/lib/response";
 
 import { LogsListSchema, LogsExportSchema } from "./model";
 import { fetchAllLogs } from "./service";
+import { logAudit } from "@/lib/audit";
 
 export const logsModule = new Elysia({ prefix: "/logs" })
   .use(betterAuthPlugin)
@@ -28,10 +29,19 @@ export const logsModule = new Elysia({ prefix: "/logs" })
   // export endpoint
   .get(
     "/export",
-    async ({ query, status }) => {
+    async ({ user, query, status }) => {
       try {
         const { exportLogs } = await import("./service");
         const result = await exportLogs(query);
+        await logAudit({
+          actorId: user.id,
+          actorEmail: user.email,
+          actorRole: user?.role ?? "unknown",
+          action: "system.audit",
+          details: {
+            filename: result.filename,
+          },
+        });
         return new Response(result.content, {
           headers: {
             "Content-Type": result.contentType,

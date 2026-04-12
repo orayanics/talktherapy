@@ -19,6 +19,7 @@ import {
   removeBookmark,
   listBookmarks,
 } from "./service";
+import { logAudit } from "@/lib/audit";
 
 export const contentModule = new Elysia({ prefix: "/content" })
   .use(betterAuthPlugin)
@@ -52,13 +53,23 @@ export const contentModule = new Elysia({ prefix: "/content" })
   )
   .post(
     "/",
-    async ({ body, request, status }) => {
+    async ({ user, body, request, status }) => {
       const session = await auth.api.getSession({ headers: request.headers });
       if (!session)
         return status(401, { success: false, error: "Unauthorized" });
       const userId = session.user.id;
       const result = await tryOk(() => createContent(body, userId));
       if (!result.success) return status(400, result);
+      await logAudit({
+        actorId: user.id,
+        actorEmail: user.email,
+        actorRole: user?.role ?? "unknown",
+        action: "content.create",
+        details: {
+          title: body.title,
+        },
+      });
+
       return status(201, ok(result.data));
     },
     {
@@ -69,13 +80,22 @@ export const contentModule = new Elysia({ prefix: "/content" })
   )
   .patch(
     "/:id",
-    async ({ params, body, request, status }) => {
+    async ({ user, params, body, request, status }) => {
       const session = await auth.api.getSession({ headers: request.headers });
       if (!session)
         return status(401, { success: false, error: "Unauthorized" });
       const userId = session.user.id;
       const result = await tryOk(() => updateContent(params.id, body, userId));
       if (!result.success) return status(400, result);
+      await logAudit({
+        actorId: user.id,
+        actorEmail: user.email,
+        actorRole: user?.role ?? "unknown",
+        action: "content.update",
+        details: {
+          title: body.title,
+        },
+      });
       return status(200, ok(result.data));
     },
     {
@@ -87,11 +107,20 @@ export const contentModule = new Elysia({ prefix: "/content" })
   )
   .delete(
     "/:id",
-    async ({ params, status, request }) => {
+    async ({ user, params, status, request }) => {
       const session = await auth.api.getSession({ headers: request.headers });
       if (!session)
         return status(401, { success: false, error: "Unauthorized" });
       await deleteContent(params.id);
+      await logAudit({
+        actorId: user.id,
+        actorEmail: user.email,
+        actorRole: user?.role ?? "unknown",
+        action: "content.delete",
+        details: {
+          id: params.id,
+        },
+      });
       return status(200, ok({ message: "Content deleted" }));
     },
     {

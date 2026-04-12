@@ -9,6 +9,7 @@ import {
   updateSoap,
 } from "./service";
 import { StoreSoapSchema, UpdateSoapSchema, SoapQuerySchema } from "./model";
+import { logAudit } from "@/lib/audit";
 
 export const soapsModule = new Elysia({ prefix: "/soaps" })
   .use(betterAuthPlugin)
@@ -49,6 +50,16 @@ export const soapsModule = new Elysia({ prefix: "/soaps" })
         createSoap(patientId, clinicianId, body),
       );
       if (!result.success) return status(400, result);
+      await logAudit({
+        actorId: user.id,
+        actorEmail: user.email,
+        actorRole: user?.role ?? "unknown",
+        action: "soap.create",
+        details: {
+          id: result.data.id,
+          session: body.session_type,
+        },
+      });
       return status(201, ok(result.data));
     },
     {
@@ -91,6 +102,16 @@ export const soapsModule = new Elysia({ prefix: "/soaps" })
       const clinicianId = user.id;
       const result = await tryOk(() => updateSoap(soapId, clinicianId, body));
       if (!result.success) return status(400, result);
+      await logAudit({
+        actorId: user.id,
+        actorEmail: user.email,
+        actorRole: user?.role ?? "unknown",
+        action: "soap.update",
+        details: {
+          id: result.data.id,
+          session: body.session_type,
+        },
+      });
       return status(200, ok(result.data));
     },
     {
