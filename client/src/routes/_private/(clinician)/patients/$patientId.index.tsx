@@ -119,12 +119,13 @@ function RouteComponent() {
                     )}
                   </button>
                 ),
-                accessor: 'created_at',
-                render: (row) => formatDate(row.created_at),
+                accessor: 'createdAt',
+                render: (row) => formatDate(row.createdAt),
               },
               {
                 header: 'Clinician',
-                accessor: 'clinician_name',
+                accessor: 'clinician',
+                render: (row) => row.clinician.name,
               },
               {
                 header: 'Session Type',

@@ -100,6 +100,8 @@ model User {
   clinicianPatients ClinicianPatient[] @relation("ClinicianPatients")
   patientClinicians ClinicianPatient[] @relation("PatientClinicians")
   slots Slot[] @relation("UserSlots")
+  soaps Soap[] @relation("SoapClinician")
+  soapsAsPatient Soap[] @relation("SoapPatient")
 
   @@unique([email])
   @@map("user")
@@ -319,5 +321,25 @@ model Encounter {
   appointment Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
 
   @@index([appointmentId])
+}
+
+model Soap {
+  id             String   @id @default(uuid())
+  clinicianId    String
+  patientId      String
+  activity_plan  String
+  session_type   String?
+  subjective_notes String?
+  objective_notes  String?
+  assessment       String?
+  recommendation   String?
+  comments         String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  clinician User @relation("SoapClinician",fields: [clinicianId], references: [id])
+  patient   User @relation("SoapPatient", fields: [patientId], references: [id])
+
+  @@map("soaps")
 }
 

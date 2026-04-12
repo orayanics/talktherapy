@@ -19,5 +19,6 @@ export * from "./AvailabilityRule";
 export * from "./Slot";
 export * from "./ClinicianPatient";
 export * from "./Encounter";
+export * from "./Soap";
 export * from "./__nullable__";
 export * from "./__transformDate__";

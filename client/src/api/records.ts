@@ -24,9 +24,8 @@ export interface ClinicianPatientsResponse {
 
 export interface Soap {
   id: string
-  clinician_id: string
-  clinician_name?: string | null
-  patient_id: string
+  clinicianId: string
+  patientId: string
   activity_plan?: string | null
   session_type?: string | null
   subjective_notes?: string | null
@@ -34,8 +33,10 @@ export interface Soap {
   assessment?: string | null
   recommendation?: string | null
   comments?: string | null
-  created_at: string
-  updated_at: string
+  createdAt: string
+  updatedAt: string
+  clinician: Clinician
+  patient: Patient
 }
 
 export interface SoapsResponse {
@@ -79,7 +80,7 @@ export const fetchSoapsByPatient = (
   return queryOptions<SoapsResponse>({
     queryKey: ['soaps', patientId, query],
     queryFn: async () => {
-      const data = await api(`/patients/${patientId}/soaps`, {
+      const { data } = await api(`/soaps/patient/${patientId}`, {
         method: 'GET',
         params: query,
       })
@@ -108,7 +109,7 @@ export const mutateCreateSoap = (patientId: string) => {
 
   return useMutation({
     mutationFn: async (payload: Partial<Soap>) => {
-      const { data } = await api(`/patients/${patientId}/soaps`, {
+      const { data } = await api(`/soaps/${patientId}`, {
         method: 'POST',
         data: JSON.stringify(payload),
       })

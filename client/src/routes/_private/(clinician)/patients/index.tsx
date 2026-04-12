@@ -98,7 +98,7 @@ function RouteComponent() {
                 render: (row) => (
                   <Link
                     to="/patients/$patientId"
-                    params={{ patientId: row.patient.name }}
+                    params={{ patientId: row.patient.id }}
                   >
                     {row.patient.name}
                   </Link>
