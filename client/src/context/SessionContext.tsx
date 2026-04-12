@@ -2,7 +2,7 @@ import { createContext, useContext } from 'react'
 import type { ReactNode } from 'react'
 import type { UserResponse } from '@/api/session'
 
-interface SessionContextValue extends UserResponse {}
+export interface SessionContextValue extends UserResponse {}
 
 export const SessionContext = createContext<SessionContextValue | null>(null)
 

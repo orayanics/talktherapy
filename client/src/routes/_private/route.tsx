@@ -5,7 +5,10 @@ import Sidebar from '@/components/Page/Sidebar'
 import { authClient } from '@/utils/auth-client'
 
 import { SessionProvider } from '@/context/SessionContext'
+import type { SessionContextValue } from '@/context/SessionContext'
+
 import StateLoading from '@/components/State/StateLoading'
+import type { USER_ROLE } from '@/types/account'
 
 export const Route = createFileRoute('/_private')({
   ssr: false,
@@ -13,13 +16,32 @@ export const Route = createFileRoute('/_private')({
 })
 
 function RouteComponent() {
-  const { data, isPending, error } = authClient.useSession()
+  const { data, isPending } = authClient.useSession()
 
   if (isPending) return <StateLoading />
-  if (error) return <Navigate to="/login" />
+  if (!data) {
+    authClient.signOut()
+    return <Navigate to="/login" />
+  }
 
-  const session = data?.user
-  const role = data?.user.role
+  const user = data.user
+  const session: SessionContextValue = {
+    ...user,
+    image: user.image ?? null,
+    role: user.role as USER_ROLE,
+    banned: user.banned ?? false,
+    banExpires: user.banExpires ?? null,
+    banReason: user.banReason ?? null,
+    createdAt:
+      user.createdAt instanceof Date
+        ? user.createdAt.toISOString()
+        : user.createdAt,
+    updatedAt:
+      user.updatedAt instanceof Date
+        ? user.updatedAt.toISOString()
+        : user.updatedAt,
+  }
+  const role = data.user.role as USER_ROLE
 
   return (
     <SessionProvider value={session}>

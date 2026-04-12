@@ -13,7 +13,7 @@ export interface UsersCount {
 }
 
 export interface UsersResponse {
-  data: UserResponse[]
+  data: (UserResponse & { status: string; diagnosis?: string })[]
   meta: Meta
 }
 
