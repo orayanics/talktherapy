@@ -19,9 +19,7 @@ export default function useRegisterAdmin() {
   } = useForm<TRegisterAdmin>({
     resolver: zodResolver(RegisterAdminSchema),
     defaultValues: {
-      name: '',
       email: '',
-      password: '',
     },
   })
 

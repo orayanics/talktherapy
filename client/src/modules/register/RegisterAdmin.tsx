@@ -24,16 +24,6 @@ export default function RegisterAdmin(props: ModalProps) {
           )}
 
           <div className="flex flex-col">
-            <label className="label">Name</label>
-            <input
-              {...register('name')}
-              placeholder="Name"
-              className="input w-full"
-            />
-            <RowError message={errors.name?.message} />
-          </div>
-
-          <div className="flex flex-col">
             <label className="label">Email</label>
             <input
               {...register('email')}
@@ -41,17 +31,6 @@ export default function RegisterAdmin(props: ModalProps) {
               className="input w-full"
             />
             <RowError message={errors.email?.message} />
-          </div>
-
-          <div className="flex flex-col">
-            <label className="label">Password</label>
-            <input
-              {...register('password')}
-              placeholder="Password"
-              className="input w-full"
-              type="password"
-            />
-            <RowError message={errors.password?.message} />
           </div>
 
           <div className="space-x-2">

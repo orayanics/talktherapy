@@ -19,10 +19,7 @@ export default function useRegisterClinician() {
   } = useForm<TRegisterClinician>({
     resolver: zodResolver(RegisterClinicianSchema),
     defaultValues: {
-      name: '',
       email: '',
-      password: '',
-      diagnosis_id: '',
     },
   })
 

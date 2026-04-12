@@ -65,22 +65,47 @@ export async function activateAccount(body: TActivateAccountSchema) {
   if (!user) throw new Error("User not found");
   const diagnosisId = body.diagnosis_id?.trim();
 
-  if (user.role === "clinician" && !diagnosisId) {
-    throw new Error("Diagnosis is required for clinician account");
-  }
-
-  const hashedPassword = await Bun.password.hash(body.password);
-
   const userUpdateData: {
-    name: string;
+    name?: string;
     emailVerified: true;
     status: "active";
     diagnosis_id?: string;
   } = {
-    name: body.name,
     emailVerified: true,
     status: "active",
   };
+
+  if (user.role === "patient") {
+    await prisma.$transaction([
+      prisma.user.update({
+        where: { id: user.id },
+        data: userUpdateData,
+      }),
+      prisma.verification.delete({
+        where: { id: verification.id },
+      }),
+    ]);
+
+    return {
+      email,
+      role: toClientRole(user.role),
+      activated: true,
+    };
+  }
+
+  const name = body.name?.trim();
+  if (!name) throw new Error("Name is required");
+
+  const password = body.password?.trim();
+  if (!password) throw new Error("Password is required");
+
+  if (user.role === "clinician" && !diagnosisId) {
+    throw new Error("Diagnosis is required for clinician account");
+  }
+
+  const hashedPassword = await Bun.password.hash(password);
+
+  userUpdateData.name = name;
 
   if (user.role === "clinician" && diagnosisId) {
     userUpdateData.diagnosis_id = diagnosisId;

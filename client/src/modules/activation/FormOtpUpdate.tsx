@@ -2,6 +2,7 @@ import useOtpUpdateForm from './useOtpUpdateForm'
 import { useQuery } from '@tanstack/react-query'
 import { fetchDiagnoses } from '@/api/public'
 import type { DiagnosisItem } from '@/api/public'
+import { Link } from '@tanstack/react-router'
 
 export default function FormOtpUpdate({
   otp,
@@ -15,17 +16,33 @@ export default function FormOtpUpdate({
   const {
     apiError,
     errors,
+    isPatient,
     isLoading,
     isResending,
     onResend,
     onSubmit,
     register,
-  } = useOtpUpdateForm({ otp, initialEmail })
+  } = useOtpUpdateForm({ otp, initialEmail, role })
   const { data: diagnoses, isPending, isError } = useQuery(fetchDiagnoses)
   const shouldShowDiagnosis = role === 'CLINICIAN'
 
   if (isPending) return <div>Loading...</div>
   if (isError) return <div>Error loading diagnoses</div>
+
+  if (isPatient) {
+    return (
+      <div className="card">
+        <div className="card-body space-y-3">
+          <p className="text-sm text-slate-600">
+            Patient accounts are activated from the OTP screen.
+          </p>
+          <Link to="/activate/otp" className="btn btn-neutral">
+            Back to OTP Verification
+          </Link>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <form onSubmit={onSubmit} className="card">
@@ -69,7 +86,7 @@ export default function FormOtpUpdate({
           <p>{errors.password_confirmation.message}</p>
         )}
 
-        <button disabled={isLoading} className="btn">
+        <button type="submit" disabled={isLoading} className="btn">
           Update Account
         </button>
 

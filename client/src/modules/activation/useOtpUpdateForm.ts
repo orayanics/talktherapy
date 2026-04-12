@@ -10,9 +10,11 @@ import { useNavigate } from '@tanstack/react-router'
 export default function useOtpUpdateForm({
   otp,
   initialEmail,
+  role,
 }: {
   otp: string
   initialEmail?: string
+  role?: string
 }) {
   const [apiError, setApiError] = useState<string | null>(null)
   const navigate = useNavigate()
@@ -36,12 +38,19 @@ export default function useOtpUpdateForm({
 
   const activateAccountMutation = mutateActivateAccount()
   const resendOtpMutation = mutateResendOtp()
+  const isPatient = role === 'PATIENT'
 
   const onSubmit = handleSubmit(async (data) => {
     setApiError(null)
 
     try {
-      await activateAccountMutation.mutateAsync(data)
+      const payload = isPatient
+        ? {
+            email: data.email,
+            otp_code: data.otp_code,
+          }
+        : data
+      await activateAccountMutation.mutateAsync(payload as TActivateAccount)
     } catch (error: any) {
       if (isAxiosError(error)) {
         const message = error.response?.data?.error || 'OTP verification failed'
@@ -54,7 +63,7 @@ export default function useOtpUpdateForm({
 
   const onResend = async () => {
     setApiError(null)
-    const email = getValues('email')?.trim()
+    const email = getValues('email').trim()
 
     if (!email) {
       setApiError('Email is required to resend OTP')
@@ -87,5 +96,6 @@ export default function useOtpUpdateForm({
     apiError,
     isLoading: activateAccountMutation.isPending || isLoading,
     isResending: resendOtpMutation.isPending,
+    isPatient,
   }
 }

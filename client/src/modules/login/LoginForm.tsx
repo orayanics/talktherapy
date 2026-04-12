@@ -68,6 +68,10 @@ export default function LoginForm() {
           <Link to="/register" className="link link-hover">
             No account yet? Register
           </Link>
+
+          <Link to="/activate/otp" className="link link-hover">
+            Activate Account
+          </Link>
         </div>
       </div>
     </form>

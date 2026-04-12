@@ -23,7 +23,6 @@ export const registerModule = new Elysia({ prefix: "/register" })
         actorRole: user?.role ?? "unknown",
         action: "register.admin",
         details: {
-          name: body.name,
           email: body.email,
         },
       });
@@ -49,7 +48,6 @@ export const registerModule = new Elysia({ prefix: "/register" })
         actorRole: user?.role ?? "unknown",
         action: "register.clinician",
         details: {
-          name: body.name,
           email: body.email,
         },
       });

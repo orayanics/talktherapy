@@ -3,7 +3,11 @@ import { useForm } from 'react-hook-form'
 import { VerifyOtpSchema } from './schema'
 import type { TVerifyOtp } from './schema'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { mutateResendOtp, mutateVerifyOtp } from '@/api/activate'
+import {
+  mutateActivateAccount,
+  mutateResendOtp,
+  mutateVerifyOtp,
+} from '@/api/activate'
 import { isAxiosError } from 'axios'
 import { useNavigate } from '@tanstack/react-router'
 
@@ -29,6 +33,7 @@ export default function useOtpForm({
   })
 
   const verifyOtpMutation = mutateVerifyOtp()
+  const activateAccountMutation = mutateActivateAccount()
   const resendOtpMutation = mutateResendOtp()
 
   const onSubmit = handleSubmit(async (data) => {
@@ -37,6 +42,15 @@ export default function useOtpForm({
     try {
       // get role from response and navigate accordingly
       const result = await verifyOtpMutation.mutateAsync(data)
+
+      if (result?.role === 'PATIENT') {
+        await activateAccountMutation.mutateAsync({
+          email: data.email,
+          otp_code: data.otp_code,
+        })
+        return
+      }
+
       navigate({
         to: '/activate/otp/update',
         search: {
@@ -82,7 +96,10 @@ export default function useOtpForm({
     onResend,
     errors,
     apiError,
-    isLoading: verifyOtpMutation.isPending || isLoading,
+    isLoading:
+      verifyOtpMutation.isPending ||
+      activateAccountMutation.isPending ||
+      isLoading,
     isResending: resendOtpMutation.isPending,
   }
 }

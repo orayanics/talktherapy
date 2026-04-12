@@ -18,16 +18,11 @@ export const RegisterPatientSchema = z
   })
 
 export const RegisterClinicianSchema = z.object({
-  name: z.string().min(1, 'Name is required'),
   email: z.email('Invalid email address'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
-  diagnosis_id: z.string().min(1, 'Diagnosis is required'),
 })
 
 export const RegisterAdminSchema = z.object({
-  name: z.string().min(1, 'Name is required'),
   email: z.email('Invalid email address'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
 })
 
 export type TRegisterPatient = z.infer<typeof RegisterPatientSchema>
