@@ -5,16 +5,14 @@ import type { Meta, QueryParams, LogParams } from '@/types/params'
 
 export interface LogEntry {
   id: string
-  actor_id: string
-  actor_email: string
-  actor_role: string
+  actorId: string
+  actorEmail: string
+  actorRole: string
   action: string
-  entity: string
-  entity_id: string
   details: {
     [key: string]: unknown
   }
-  created_at: string
+  createdAt: string
 }
 
 export interface LogsResponse {
@@ -31,10 +29,6 @@ export const fetchLogs = (
     per_page: searchParams.per_page,
 
     search: searchParams.search,
-    action: searchParams.action,
-    entity: searchParams.entity,
-    actor_email: searchParams.actor_email,
-    actor_id: searchParams.actor_id,
     date_from: searchParams.date_from,
     date_to: searchParams.date_to,
     sort: searchParams.sort,
@@ -43,7 +37,7 @@ export const fetchLogs = (
   return queryOptions<LogsResponse>({
     queryKey: ['logs', query],
     queryFn: async () => {
-      const data = await api('/logs', {
+      const { data } = await api('/logs', {
         method: 'GET',
         params: query,
       })

@@ -8,5 +8,6 @@ export * from "./Verification";
 export * from "./Content";
 export * from "./Tag";
 export * from "./Bookmark";
+export * from "./AuditLog";
 export * from "./__nullable__";
 export * from "./__transformDate__";

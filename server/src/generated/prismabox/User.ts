@@ -131,6 +131,21 @@ export const UserRelations = t.Object(
       ),
       { additionalProperties: false },
     ),
+    auditLogs: t.Array(
+      t.Object(
+        {
+          id: t.String(),
+          actorId: __nullable__(t.String()),
+          actorEmail: __nullable__(t.String()),
+          actorRole: __nullable__(t.String()),
+          action: t.String(),
+          details: __nullable__(t.String()),
+          createdAt: t.Date(),
+        },
+        { additionalProperties: false },
+      ),
+      { additionalProperties: false },
+    ),
   },
   { additionalProperties: false },
 );
@@ -298,6 +313,22 @@ export const UserRelationsInputCreate = t.Object(
         { additionalProperties: false },
       ),
     ),
+    auditLogs: t.Optional(
+      t.Object(
+        {
+          connect: t.Array(
+            t.Object(
+              {
+                id: t.String({ additionalProperties: false }),
+              },
+              { additionalProperties: false },
+            ),
+            { additionalProperties: false },
+          ),
+        },
+        { additionalProperties: false },
+      ),
+    ),
   },
   { additionalProperties: false },
 );
@@ -420,6 +451,31 @@ export const UserRelationsInputUpdate = t.Partial(
         ),
       ),
       tags: t.Partial(
+        t.Object(
+          {
+            connect: t.Array(
+              t.Object(
+                {
+                  id: t.String({ additionalProperties: false }),
+                },
+                { additionalProperties: false },
+              ),
+              { additionalProperties: false },
+            ),
+            disconnect: t.Array(
+              t.Object(
+                {
+                  id: t.String({ additionalProperties: false }),
+                },
+                { additionalProperties: false },
+              ),
+              { additionalProperties: false },
+            ),
+          },
+          { additionalProperties: false },
+        ),
+      ),
+      auditLogs: t.Partial(
         t.Object(
           {
             connect: t.Array(
@@ -586,6 +642,7 @@ export const UserSelect = t.Partial(
       contents: t.Boolean(),
       bookmarks: t.Boolean(),
       tags: t.Boolean(),
+      auditLogs: t.Boolean(),
       _count: t.Boolean(),
     },
     { additionalProperties: false },
@@ -603,6 +660,7 @@ export const UserInclude = t.Partial(
       contents: t.Boolean(),
       bookmarks: t.Boolean(),
       tags: t.Boolean(),
+      auditLogs: t.Boolean(),
       _count: t.Boolean(),
     },
     { additionalProperties: false },

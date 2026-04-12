@@ -7,7 +7,6 @@ type UpdateSearch = (next: Partial<LogParams & QueryParams>) => void
 
 type Props = {
   searchTerm: string
-  actor_email: string
   date_from: string
   date_to: string
   per_page: number
@@ -16,7 +15,6 @@ type Props = {
 
 export default function LogsFilters({
   searchTerm,
-  actor_email,
   date_from,
   date_to,
   per_page = 10,
@@ -41,13 +39,6 @@ export default function LogsFilters({
           placeholder="Search action, entity, details"
         />
       </div>
-
-      <input
-        className="lg:w-100 w-full input shadow-sm"
-        placeholder="Actor email"
-        value={actor_email}
-        onChange={(e) => updateSearch({ page: 1, actor_email: e.target.value })}
-      />
 
       <div className="flex lg:flex-row flex-col gap-2 justify-end-safe lg:ms-auto">
         <div>
@@ -138,7 +129,6 @@ export default function LogsFilters({
                     exportLogs(
                       {
                         search: searchTerm,
-                        actor_email,
                         date_from,
                         date_to,
                       },
@@ -155,7 +145,6 @@ export default function LogsFilters({
                     exportLogs(
                       {
                         search: searchTerm,
-                        actor_email,
                         date_from,
                         date_to,
                       },

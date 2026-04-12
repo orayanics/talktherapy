@@ -4,14 +4,25 @@ import Elysia from "elysia";
 import { registerAdmin, registerClinician, registerPatient } from "./service";
 import { RegisterAdminSchema, RegisterUserSchema } from "./model";
 import { ApiSuccess, ApiError, tryOk, ok } from "@/lib/response";
+import { logAudit } from "@/lib/audit";
 
 export const registerModule = new Elysia({ prefix: "/register" })
   .use(betterAuthPlugin)
   .post(
     "/admin",
-    async ({ body, status }) => {
+    async ({ user, body, status }) => {
       const result = await tryOk(() => registerAdmin(body));
       if (!result.success) return status(400, result);
+      await logAudit({
+        actorId: user.id,
+        actorEmail: user.email,
+        actorRole: user?.role ?? "unknown",
+        action: "register.admin",
+        details: {
+          name: body.name,
+          email: body.email,
+        },
+      });
       return status(200, ok(result.data));
     },
     {
@@ -25,9 +36,19 @@ export const registerModule = new Elysia({ prefix: "/register" })
   )
   .post(
     "/clinician",
-    async ({ body, status }) => {
+    async ({ user, body, status }) => {
       const result = await tryOk(() => registerClinician(body));
       if (!result.success) return status(400, result);
+      await logAudit({
+        actorId: user.id,
+        actorEmail: user.email,
+        actorRole: user?.role ?? "unknown",
+        action: "register.clinician",
+        details: {
+          name: body.name,
+          email: body.email,
+        },
+      });
       return status(200, ok(result.data));
     },
     {
@@ -42,7 +63,7 @@ export const registerModule = new Elysia({ prefix: "/register" })
   .post(
     "/patient",
     async ({ body, status }) => {
-      const result = await tryOk(() => registerClinician(body));
+      const result = await tryOk(() => registerPatient(body));
       if (!result.success) return status(400, result);
       return status(200, ok(result.data));
     },

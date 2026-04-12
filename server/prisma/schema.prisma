@@ -67,6 +67,7 @@ model User {
   contents  Content[]
   bookmarks Bookmark[]
   tags      Tag[]
+  auditLogs AuditLog[] @relation("UserAuditLogs")
 
   @@unique([email])
   @@map("user")
@@ -164,4 +165,19 @@ model Bookmark {
 
   @@unique([userId, contentId])
   @@index([contentId])
+}
+
+model AuditLog {
+  id       String   @id @default(cuid())
+  actorId   String?
+  actorEmail String?
+  actorRole String?
+  action    String
+  details   String?
+  createdAt DateTime @default(now())
+
+  // relation to user for easier querying of logs by actor
+  // ooptional: decide if needs to be deleted later on
+  actor User? @relation("UserAuditLogs", fields: [actorId], references: [id], onDelete: Cascade)
+
 }

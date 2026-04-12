@@ -28,11 +28,6 @@ const searchSchema = z
       .optional()
       .transform((v) => (v ? v.trim() : '')),
 
-    actor_email: z
-      .string()
-      .optional()
-      .transform((v) => (v && v.trim() !== '' ? v.trim() : undefined)),
-
     date_from: z
       .string()
       .optional()
@@ -60,7 +55,6 @@ const searchSchema = z
   .transform((data) => ({
     ...(data.page !== 1 ? { page: data.page } : {}),
     ...(data.search ? { search: data.search } : {}),
-    ...(data.actor_email ? { actor_email: data.actor_email } : {}),
     ...(data.date_from ? { date_from: data.date_from } : {}),
     ...(data.date_to ? { date_to: data.date_to } : {}),
     ...(data.sort ? { sort: data.sort } : {}),
@@ -78,7 +72,6 @@ function RouteComponent() {
 
   const page = search.page ?? 1
   const searchTerm = search.search ?? ''
-  const actor_email = search.actor_email ?? ''
   const date_from = search.date_from ?? ''
   const date_to = search.date_to ?? ''
   const sort = search.sort ?? 'desc'
@@ -98,7 +91,6 @@ function RouteComponent() {
       { page },
       {
         search: searchTerm || undefined,
-        actor_email: actor_email || undefined,
         date_from: date_from || undefined,
         date_to: date_to || undefined,
         sort,
@@ -122,7 +114,6 @@ function RouteComponent() {
       <div className="mb-4">
         <LogsFilters
           searchTerm={searchTerm}
-          actor_email={actor_email}
           date_from={date_from}
           date_to={date_to}
           per_page={per_page}
@@ -148,21 +139,20 @@ function RouteComponent() {
             columns={[
               {
                 header: 'Actor Email',
-                accessor: 'actor_email',
+                accessor: 'actorEmail',
 
                 render: (row) => (
-                  <Link to="/users/$userId" params={{ userId: row.actor_id }}>
-                    {row.actor_email}
+                  <Link to="/users/$userId" params={{ userId: row.actorId }}>
+                    {row.actorEmail}
                   </Link>
                 ),
               },
               {
                 header: 'Actor Role',
-                accessor: 'actor_role',
-                render: (row) => <RolePill role={row.actor_role} />,
+                accessor: 'actorRole',
+                render: (row) => <RolePill role={row.actorRole} />,
               },
               { header: 'Action', accessor: 'action' },
-              { header: 'Entity', accessor: 'entity' },
               {
                 header: 'Details',
                 accessor: 'details',
@@ -191,9 +181,9 @@ function RouteComponent() {
                     )}
                   </div>
                 ),
-                accessor: 'created_at',
+                accessor: 'createdAt',
                 render: (row) =>
-                  formatDate(row.created_at, 'dd MMM yyyy, HH:mm'),
+                  formatDate(row.createdAt, 'dd MMM yyyy, HH:mm'),
               },
             ]}
           />
