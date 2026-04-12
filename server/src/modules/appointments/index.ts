@@ -28,12 +28,12 @@ export const appointmentsModule = new Elysia({ prefix: "/appointments" })
         acceptAppointment(params.id, clinicianId),
       );
       if (!result.success) return status(400, result);
-      return status(204, ok(result.data));
+      return status(200, ok(result.data));
     },
     {
       requireClinician: true,
       params: z.object({ id: z.string() }),
-      response: { 400: ApiError, 204: ApiSuccess() },
+      response: { 400: ApiError, 200: ApiSuccess() },
     },
   )
 
@@ -54,13 +54,13 @@ export const appointmentsModule = new Elysia({ prefix: "/appointments" })
         ),
       );
       if (!result.success) return status(400, result);
-      return status(204, ok(result.data));
+      return status(200, ok(result.data));
     },
     {
       requireClinician: true,
       params: z.object({ id: z.string() }),
       body: ClinicianDecisionSchema,
-      response: { 400: ApiError, 204: ApiSuccess() },
+      response: { 400: ApiError, 200: ApiSuccess() },
     },
   )
 
@@ -73,13 +73,13 @@ export const appointmentsModule = new Elysia({ prefix: "/appointments" })
         cancelAppointment(params.id, actorId, reason),
       );
       if (!result.success) return status(400, result);
-      return status(204, ok(result.data));
+      return status(200, ok(result.data));
     },
     {
       auth: true,
       params: z.object({ id: z.string() }),
       body: z.object({ reason: z.string().optional() }).optional(),
-      response: { 400: ApiError, 204: ApiSuccess() },
+      response: { 400: ApiError, 200: ApiSuccess() },
     },
   )
 
@@ -91,12 +91,12 @@ export const appointmentsModule = new Elysia({ prefix: "/appointments" })
         completeAppointment(params.id, clinicianId),
       );
       if (!result.success) return status(400, result);
-      return status(204, ok(result.data));
+      return status(200, ok(result.data));
     },
     {
       requireClinician: true,
       params: z.object({ id: z.string() }),
-      response: { 400: ApiError, 204: ApiSuccess() },
+      response: { 400: ApiError, 200: ApiSuccess() },
     },
   )
 

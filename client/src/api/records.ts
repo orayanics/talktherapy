@@ -7,13 +7,14 @@ import { useNavigate } from '@tanstack/react-router'
 import { api } from './client'
 import { useAlert } from '@/context/AlertContext'
 import type { QueryParams, ClinicianPatientsParams, Meta } from '@/types/params'
+import type { Clinician, Patient } from './schedule'
 
 export interface ClinicianPatient {
-  clinician_id: string
-  patient_id: string
-  clinician_name?: string | null
-  patient_name?: string | null
-  first_completed_at?: string
+  clinicianId: string
+  patientId: string
+  firstCompletedAt?: string
+  clinician: Clinician
+  patient: Patient
 }
 
 export interface ClinicianPatientsResponse {
@@ -55,7 +56,7 @@ export const fetchClinicianPatients = (
   return queryOptions<ClinicianPatientsResponse>({
     queryKey: ['clinician-patients', query],
     queryFn: async () => {
-      const data = await api('/clinician-patients', {
+      const { data } = await api('/clinician-patient', {
         method: 'GET',
         params: query,
       })
@@ -64,20 +65,6 @@ export const fetchClinicianPatients = (
     staleTime: 1000 * 60 * 5,
   })
 }
-
-// export const fetchClinicianPatientById = (id: string) => {
-//   return queryOptions<ClinicianPatient | undefined>({
-//     queryKey: ['clinician-patient', id],
-//     queryFn: async () => {
-//       const { data } = await api(`/clinician-patients/${id}`, {
-//         method: 'GET',
-//       })
-//       return data
-//     },
-//     staleTime: 1000 * 60 * 5,
-//     retry: false,
-//   })
-// }
 
 export const fetchSoapsByPatient = (
   patientId: string,

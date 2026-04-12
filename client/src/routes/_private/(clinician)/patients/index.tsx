@@ -94,13 +94,13 @@ function RouteComponent() {
             columns={[
               {
                 header: 'Patient',
-                accessor: 'patient_name',
+                accessor: 'patient',
                 render: (row) => (
                   <Link
                     to="/patients/$patientId"
-                    params={{ patientId: row.patient_id }}
+                    params={{ patientId: row.patient.name }}
                   >
-                    {row.patient_name}
+                    {row.patient.name}
                   </Link>
                 ),
               },
@@ -120,8 +120,8 @@ function RouteComponent() {
                     )}
                   </button>
                 ),
-                accessor: 'first_completed_at',
-                render: (row) => formatDate(row.first_completed_at),
+                accessor: 'firstCompletedAt',
+                render: (row) => formatDate(row.firstCompletedAt),
               },
             ]}
           />

@@ -18,8 +18,8 @@ export const clinicianPatientModule = new Elysia({
     {
       query: z
         .object({
-          per_page: z.number().optional(),
-          page: z.number().optional(),
+          per_page: z.coerce.number().optional(),
+          page: z.coerce.number().optional(),
           search: z.string().optional(),
           sort: z.enum(["asc", "desc"]).optional(),
         })
