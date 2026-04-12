@@ -120,7 +120,7 @@ export const fetchSlots = (
   return queryOptions<SlotsResponse>({
     queryKey: ['slots', query],
     queryFn: async () => {
-      const { data } = await api(`/appointments/slots`, {
+      const { data } = await api(`/appointments/me/slots`, {
         method: 'GET',
         params: query,
       })

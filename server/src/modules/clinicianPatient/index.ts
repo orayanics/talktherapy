@@ -10,8 +10,8 @@ export const clinicianPatientModule = new Elysia({
   .use(betterAuthPlugin)
   .get(
     "/",
-    async ({ query, status }) => {
-      const result = await tryOk(() => fetchClinicianPatients(query));
+    async ({ user, query, status }) => {
+      const result = await tryOk(() => fetchClinicianPatients(query, user.id));
       if (!result.success) return status(400, result);
       return status(200, ok(result.data));
     },
