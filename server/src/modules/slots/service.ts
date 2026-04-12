@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/client";
+import { createNotification } from "@/modules/notifications/service";
 
 export async function getSlotById(id: string) {
   const slot = await prisma.slot.findUnique({
@@ -64,6 +65,7 @@ export async function bookSlot(
         referralUrl: enc.referral_url,
       },
     });
+    // after successful booking, notify clinician and patient (best-effort outside tx)
     return appointment;
   });
 }

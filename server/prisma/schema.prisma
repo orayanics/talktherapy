@@ -61,12 +61,12 @@ enum ActorType {
 }
 
 model Diagnosis {
-  id          String   @id
-  label       String   @unique
-  value       String   @unique
-  createdAt   DateTime @default(now())
+  id        String   @id
+  label     String   @unique
+  value     String   @unique
+  createdAt DateTime @default(now())
 
-  users User[]
+  users             User[]
   diagnosisContents Content[]
 }
 
@@ -81,27 +81,28 @@ model User {
   sessions      Session[]
   accounts      Account[]
 
-  role       Role 
+  role       Role
   banned     Boolean?  @default(false)
   banReason  String?
   banExpires DateTime?
 
-  status AccountStatus @default(pending)
+  status       AccountStatus @default(pending)
   diagnosis_id String?
 
-  diagnosis Diagnosis? @relation(fields: [diagnosis_id], references: [id], onDelete: SetNull)
-  contents  Content[]
-  bookmarks Bookmark[]
-  tags      Tag[]
-  auditLogs AuditLog[] @relation("UserAuditLogs")
-  patientAppointments Appointment[] @relation("PatientAppointments")
-  clinicianAppointments Appointment[] @relation("ClinicianAppointments")
-  availabilityRules AvailabilityRule[] @relation("AvailabilityClinician")
-  clinicianPatients ClinicianPatient[] @relation("ClinicianPatients")
-  patientClinicians ClinicianPatient[] @relation("PatientClinicians")
-  slots Slot[] @relation("UserSlots")
-  soaps Soap[] @relation("SoapClinician")
-  soapsAsPatient Soap[] @relation("SoapPatient")
+  diagnosis             Diagnosis?         @relation(fields: [diagnosis_id], references: [id], onDelete: SetNull)
+  contents              Content[]
+  bookmarks             Bookmark[]
+  tags                  Tag[]
+  auditLogs             AuditLog[]         @relation("UserAuditLogs")
+  patientAppointments   Appointment[]      @relation("PatientAppointments")
+  clinicianAppointments Appointment[]      @relation("ClinicianAppointments")
+  availabilityRules     AvailabilityRule[] @relation("AvailabilityClinician")
+  clinicianPatients     ClinicianPatient[] @relation("ClinicianPatients")
+  patientClinicians     ClinicianPatient[] @relation("PatientClinicians")
+  slots                 Slot[]             @relation("UserSlots")
+  soaps                 Soap[]             @relation("SoapClinician")
+  soapsAsPatient        Soap[]             @relation("SoapPatient")
+  notifications         Notification[]
 
   @@unique([email])
   @@map("user")
@@ -175,9 +176,9 @@ model Content {
 }
 
 model Tag {
-  id       String @id @default(cuid())
-  name     String
-  slug     String
+  id   String @id @default(cuid())
+  name String
+  slug String
 
   authorId String
   author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
@@ -187,6 +188,7 @@ model Tag {
   @@unique([authorId, slug])
   @@index([authorId])
 }
+
 model Bookmark {
   id        String   @id @default(cuid())
   userId    String
@@ -202,41 +204,40 @@ model Bookmark {
 }
 
 model AuditLog {
-  id       String   @id @default(cuid())
-  actorId   String?
+  id         String   @id @default(cuid())
+  actorId    String?
   actorEmail String?
-  actorRole String?
-  action    String
-  details   String?
-  createdAt DateTime @default(now())
+  actorRole  String?
+  action     String
+  details    String?
+  createdAt  DateTime @default(now())
 
   // relation to user for easier querying of logs by actor
   // ooptional: decide if needs to be deleted later on
   actor User? @relation("UserAuditLogs", fields: [actorId], references: [id], onDelete: Cascade)
-
 }
 
 // Appointment-related models converted from Laravel Eloquent models
 model Appointment {
-  id           String   @id @default(uuid())
-  slotId       String?
-  patientId    String
-  clinicianId  String?
-  status       String?
-  bookedAt     DateTime?
-  confirmedAt  DateTime?
-  cancelledAt  DateTime?
-  completedAt  DateTime?
+  id            String    @id @default(uuid())
+  slotId        String?
+  patientId     String
+  clinicianId   String?
+  status        String?
+  bookedAt      DateTime?
+  confirmedAt   DateTime?
+  cancelledAt   DateTime?
+  completedAt   DateTime?
   rescheduledAt DateTime?
-  roomId       String?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  roomId        String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
-  patient  User     @relation("PatientAppointments", fields: [patientId], references: [id], onDelete: Cascade)
-  clinician User?   @relation("ClinicianAppointments", fields: [clinicianId], references: [id], onDelete: SetNull)
+  patient   User  @relation("PatientAppointments", fields: [patientId], references: [id], onDelete: Cascade)
+  clinician User? @relation("ClinicianAppointments", fields: [clinicianId], references: [id], onDelete: SetNull)
 
-  slot     Slot?    @relation(fields: [slotId], references: [id])
-  events   AppointmentEvent[]
+  slot      Slot?              @relation(fields: [slotId], references: [id])
+  events    AppointmentEvent[]
   encounter Encounter?
 
   @@index([patientId])
@@ -268,7 +269,7 @@ model AvailabilityRule {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
-  clinician User @relation("AvailabilityClinician", fields: [clinicianId], references: [id], onDelete: Cascade)
+  clinician User   @relation("AvailabilityClinician", fields: [clinicianId], references: [id], onDelete: Cascade)
   slots     Slot[]
 
   @@index([clinicianId])
@@ -276,19 +277,19 @@ model AvailabilityRule {
 }
 
 model Slot {
-  id                 String   @id @default(uuid())
+  id                 String     @id @default(uuid())
   availabilityRuleId String?
   clinicianId        String
   startAt            DateTime
   endAt              DateTime
   status             SlotStatus @default(FREE)
-  isHidden           Boolean  @default(false)
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
+  isHidden           Boolean    @default(false)
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt
 
   availabilityRule AvailabilityRule? @relation(fields: [availabilityRuleId], references: [id], onDelete: Cascade)
-  appointments Appointment[]
-  user User @relation("UserSlots",fields: [clinicianId], references: [id], onDelete: Cascade)
+  appointments     Appointment[]
+  user             User              @relation("UserSlots", fields: [clinicianId], references: [id], onDelete: Cascade)
 
   @@index([availabilityRuleId])
   @@index([clinicianId])
@@ -296,7 +297,7 @@ model Slot {
 }
 
 model ClinicianPatient {
-  id               String   @id @default(uuid())
+  id               String    @id @default(uuid())
   clinicianId      String
   patientId        String
   firstCompletedAt DateTime?
@@ -324,22 +325,39 @@ model Encounter {
 }
 
 model Soap {
-  id             String   @id @default(uuid())
-  clinicianId    String
-  patientId      String
-  activity_plan  String
-  session_type   String?
+  id               String   @id @default(uuid())
+  clinicianId      String
+  patientId        String
+  activity_plan    String
+  session_type     String?
   subjective_notes String?
   objective_notes  String?
   assessment       String?
   recommendation   String?
   comments         String?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 
-  clinician User @relation("SoapClinician",fields: [clinicianId], references: [id])
+  clinician User @relation("SoapClinician", fields: [clinicianId], references: [id])
   patient   User @relation("SoapPatient", fields: [patientId], references: [id])
 
   @@map("soaps")
 }
 
+model Notification {
+  id         String    @id @default(uuid())
+  userId     String    @map("user_id")
+  type       String
+  title      String
+  message    String
+  entityType String?   @map("entity_type")
+  entityId   String?   @map("entity_id")
+  readAt     DateTime? @map("read_at")
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("notification")
+}

@@ -1,12 +1,13 @@
 import { prisma } from "@/lib/client";
 import { differenceInHours, startOfDay, addDays } from "date-fns";
 import { buildMeta } from "@/lib/paginate";
+import { notifySafe, NotificationTemplates } from "../notifications/service";
 
 export async function acceptAppointment(
   appointmentId: string,
   clinicianId: string,
 ) {
-  return prisma.$transaction(async (tx) => {
+  const updated = await prisma.$transaction(async (tx) => {
     const appointment = await tx.appointment.findUnique({
       where: { id: appointmentId },
       include: { slot: true },
@@ -48,6 +49,41 @@ export async function acceptAppointment(
 
     return updated;
   });
+
+  // Notify patient and clinician about acceptance
+  try {
+    const full = await prisma.appointment.findUnique({
+      where: { id: updated.id },
+      include: { patient: true, clinician: true, slot: true },
+    });
+    const when = full?.slot?.startAt
+      ? new Date(full.slot.startAt).toLocaleString()
+      : "scheduled time";
+    if (full?.patient?.id) {
+      await notifySafe(
+        NotificationTemplates.appointmentAcceptedPatient({
+          userId: full.patient.id,
+          clinicianName: full.clinician?.name,
+          when,
+          id: full.id,
+        }),
+      );
+    }
+    if (full?.clinician?.id) {
+      await notifySafe(
+        NotificationTemplates.appointmentAcceptedClinician({
+          userId: full.clinician.id,
+          patientName: full.patient?.name,
+          when,
+          id: full.id,
+        }),
+      );
+    }
+  } catch (e) {
+    // best-effort notify
+  }
+
+  return updated;
 }
 
 export async function rejectAppointment(
@@ -56,7 +92,7 @@ export async function rejectAppointment(
   reason = "",
   isHidden = false,
 ) {
-  return prisma.$transaction(async (tx) => {
+  const updated = await prisma.$transaction(async (tx) => {
     const appointment = await tx.appointment.findUnique({
       where: { id: appointmentId },
       include: { slot: true },
@@ -106,6 +142,30 @@ export async function rejectAppointment(
 
     return updated;
   });
+
+  try {
+    const full = await prisma.appointment.findUnique({
+      where: { id: updated.id },
+      include: { patient: true, clinician: true, slot: true },
+    });
+    const when = full?.slot?.startAt
+      ? new Date(full.slot.startAt).toLocaleString()
+      : "scheduled time";
+    if (full?.patient?.id) {
+      await notifySafe(
+        NotificationTemplates.appointmentRejectedPatient({
+          userId: full.patient.id,
+          clinicianName: full.clinician?.name,
+          when,
+          id: full.id,
+        }),
+      );
+    }
+  } catch (e) {
+    // ignore
+  }
+
+  return updated;
 }
 
 export async function cancelAppointment(
@@ -113,7 +173,7 @@ export async function cancelAppointment(
   actorId: string,
   reason = "",
 ) {
-  return prisma.$transaction(async (tx) => {
+  const updated = await prisma.$transaction(async (tx) => {
     const appointment = await tx.appointment.findUnique({
       where: { id: appointmentId },
       include: { slot: true },
@@ -156,13 +216,47 @@ export async function cancelAppointment(
 
     return updated;
   });
+
+  try {
+    const full = await prisma.appointment.findUnique({
+      where: { id: updated.id },
+      include: { patient: true, clinician: true, slot: true },
+    });
+    const when = full?.slot?.startAt
+      ? new Date(full.slot.startAt).toLocaleString()
+      : "scheduled time";
+    // notify clinician and patient
+    if (full?.clinician?.id) {
+      await notifySafe(
+        NotificationTemplates.appointmentCancelledClinician({
+          userId: full.clinician.id,
+          patientName: full.patient?.name,
+          when,
+          id: full.id,
+        }),
+      );
+    }
+    if (full?.patient?.id) {
+      await notifySafe(
+        NotificationTemplates.appointmentCancelledPatient({
+          userId: full.patient.id,
+          when,
+          id: full.id,
+        }),
+      );
+    }
+  } catch (e) {
+    // ignore
+  }
+
+  return updated;
 }
 
 export async function completeAppointment(
   appointmentId: string,
   clinicianId: string,
 ) {
-  return prisma.$transaction(async (tx) => {
+  const updated = await prisma.$transaction(async (tx) => {
     const appointment = await tx.appointment.findUnique({
       where: { id: appointmentId },
       include: { slot: true, patient: true },
@@ -221,6 +315,39 @@ export async function completeAppointment(
 
     return updated;
   });
+
+  try {
+    const full = await prisma.appointment.findUnique({
+      where: { id: updated.id },
+      include: { patient: true, clinician: true, slot: true },
+    });
+    const when = full?.slot?.startAt
+      ? new Date(full.slot.startAt).toLocaleString()
+      : "scheduled time";
+    if (full?.patient?.id) {
+      await notifySafe(
+        NotificationTemplates.appointmentCompletedPatient({
+          userId: full.patient.id,
+          when,
+          id: full.id,
+        }),
+      );
+    }
+    if (full?.clinician?.id) {
+      await notifySafe(
+        NotificationTemplates.appointmentCompletedClinician({
+          userId: full.clinician.id,
+          patientName: full.patient?.name,
+          when,
+          id: full.id,
+        }),
+      );
+    }
+  } catch (e) {
+    // ignore
+  }
+
+  return updated;
 }
 
 export async function fetchAppointmentById(id: string) {

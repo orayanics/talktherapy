@@ -20,5 +20,6 @@ export * from "./Slot";
 export * from "./ClinicianPatient";
 export * from "./Encounter";
 export * from "./Soap";
+export * from "./Notification";
 export * from "./__nullable__";
 export * from "./__transformDate__";

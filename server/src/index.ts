@@ -16,6 +16,7 @@ import { slotsModule } from "./modules/slots";
 import { scheduleModule } from "./modules/schedule";
 import { clinicianPatientModule } from "./modules/clinicianPatient";
 import { sessionModule } from "./modules/session";
+import { notificationsModule } from "./modules/notifications";
 const cert = Bun.file("../certs/localhost.pem");
 const key = Bun.file("../certs/localhost-key.pem");
 
@@ -47,6 +48,7 @@ const app = new Elysia()
   .use(slotsModule)
   .use(scheduleModule)
   .use(clinicianPatientModule)
+  .use(notificationsModule)
   .use(sessionModule)
   .get("/", () => "Hello Elysia")
   .listen({

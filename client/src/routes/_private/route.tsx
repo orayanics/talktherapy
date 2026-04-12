@@ -1,5 +1,7 @@
 import { createFileRoute, Navigate, Outlet } from '@tanstack/react-router'
 import { Bell } from 'lucide-react'
+import { useState } from 'react'
+import NotificationList from '@/components/NotificationList'
 
 import Sidebar from '@/components/Page/Sidebar'
 import { authClient } from '@/utils/auth-client'
@@ -17,6 +19,7 @@ export const Route = createFileRoute('/_private')({
 
 function RouteComponent() {
   const { data, isPending } = authClient.useSession()
+  const [show, setShow] = useState(false)
 
   if (isPending) return <StateLoading />
   if (!data) {
@@ -53,10 +56,18 @@ function RouteComponent() {
             border-b border-slate-300
             bg-white"
             >
-              <div className="items-center justify-end px-4">
-                <button className="btn btn-square border border-slate-300">
+              <div className="items-center justify-end px-4 relative">
+                <button
+                  className="btn btn-square border border-slate-300"
+                  onClick={() => setShow((s) => !s)}
+                >
                   <Bell size={19} strokeWidth={2.2} />
                 </button>
+                {show && (
+                  <div className="absolute right-0 mt-2">
+                    <NotificationList />
+                  </div>
+                )}
               </div>
             </header>
 

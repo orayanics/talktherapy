@@ -1,5 +1,9 @@
 import { prisma } from "@/lib/client";
 import { buildMeta } from "@/lib/paginate";
+import {
+  notifySafe,
+  NotificationTemplates,
+} from "@/modules/notifications/service";
 
 export async function listSoapsByPatient(patientUserId: string, query: any) {
   const page = Number(query?.page ?? 1);
@@ -53,6 +57,21 @@ export async function createSoap(
       comments: payload.comments ?? null,
     },
   });
+  try {
+    const full = await prisma.soap.findUnique({
+      where: { id: created.id },
+      include: { clinician: { select: { id: true, name: true } } },
+    });
+    await notifySafe(
+      NotificationTemplates.soapCreatedPatient({
+        userId: created.patientId,
+        clinicianName: full?.clinician?.name,
+        id: created.id,
+      }),
+    );
+  } catch (e) {
+    // best-effort
+  }
   return created;
 }
 
@@ -77,6 +96,22 @@ export async function updateSoap(
       comments: payload.comments ?? soap.comments,
     },
   });
+
+  try {
+    const full = await prisma.soap.findUnique({
+      where: { id: updated.id },
+      include: { clinician: { select: { id: true, name: true } } },
+    });
+    await notifySafe(
+      NotificationTemplates.soapUpdatedPatient({
+        userId: updated.patientId,
+        clinicianName: full?.clinician?.name,
+        id: updated.id,
+      }),
+    );
+  } catch (e) {
+    // best-effort
+  }
 
   return updated;
 }

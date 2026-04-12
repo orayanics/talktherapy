@@ -294,6 +294,24 @@ export const UserRelations = t.Object(
       ),
       { additionalProperties: false },
     ),
+    notifications: t.Array(
+      t.Object(
+        {
+          id: t.String(),
+          userId: t.String(),
+          type: t.String(),
+          title: t.String(),
+          message: t.String(),
+          entityType: __nullable__(t.String()),
+          entityId: __nullable__(t.String()),
+          readAt: __nullable__(t.Date()),
+          createdAt: t.Date(),
+          updatedAt: t.Date(),
+        },
+        { additionalProperties: false },
+      ),
+      { additionalProperties: false },
+    ),
   },
   { additionalProperties: false },
 );
@@ -590,6 +608,22 @@ export const UserRelationsInputCreate = t.Object(
       ),
     ),
     soapsAsPatient: t.Optional(
+      t.Object(
+        {
+          connect: t.Array(
+            t.Object(
+              {
+                id: t.String({ additionalProperties: false }),
+              },
+              { additionalProperties: false },
+            ),
+            { additionalProperties: false },
+          ),
+        },
+        { additionalProperties: false },
+      ),
+    ),
+    notifications: t.Optional(
       t.Object(
         {
           connect: t.Array(
@@ -976,6 +1010,31 @@ export const UserRelationsInputUpdate = t.Partial(
           { additionalProperties: false },
         ),
       ),
+      notifications: t.Partial(
+        t.Object(
+          {
+            connect: t.Array(
+              t.Object(
+                {
+                  id: t.String({ additionalProperties: false }),
+                },
+                { additionalProperties: false },
+              ),
+              { additionalProperties: false },
+            ),
+            disconnect: t.Array(
+              t.Object(
+                {
+                  id: t.String({ additionalProperties: false }),
+                },
+                { additionalProperties: false },
+              ),
+              { additionalProperties: false },
+            ),
+          },
+          { additionalProperties: false },
+        ),
+      ),
     },
     { additionalProperties: false },
   ),
@@ -1127,6 +1186,7 @@ export const UserSelect = t.Partial(
       slots: t.Boolean(),
       soaps: t.Boolean(),
       soapsAsPatient: t.Boolean(),
+      notifications: t.Boolean(),
       _count: t.Boolean(),
     },
     { additionalProperties: false },
@@ -1153,6 +1213,7 @@ export const UserInclude = t.Partial(
       slots: t.Boolean(),
       soaps: t.Boolean(),
       soapsAsPatient: t.Boolean(),
+      notifications: t.Boolean(),
       _count: t.Boolean(),
     },
     { additionalProperties: false },

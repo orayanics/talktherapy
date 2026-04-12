@@ -3,7 +3,9 @@ import { betterAuthPlugin } from "@/plugin/better-auth";
 import { z } from "zod";
 import { ApiError, ApiSuccess, ok, tryOk } from "@/lib/response";
 import { getSlotById, bookSlot } from "./service";
+import { prisma } from "@/lib/client";
 import { StoreSlotBookingSchema } from "./model";
+import { notifySafe, NotificationTemplates } from "../notifications/service";
 
 import { logAudit } from "@/lib/audit";
 
@@ -32,6 +34,39 @@ export const slotsModule = new Elysia({ prefix: "/slots" })
 
       const result = await tryOk(() => bookSlot(params.id, patientId, body));
       if (!result.success) return status(400, result);
+
+      // Notify clinician and patient about new booking (best-effort)
+      try {
+        const apptShort: any = result.data;
+        const appt = await prisma.appointment.findUnique({
+          where: { id: apptShort.id },
+          include: { slot: true, patient: true, clinician: true },
+        });
+        const when = appt?.slot?.startAt
+          ? new Date(appt.slot.startAt).toLocaleString()
+          : "scheduled time";
+        if (appt?.clinician?.id) {
+          await notifySafe(
+            NotificationTemplates.bookingCreatedClinician({
+              userId: appt.clinician.id,
+              patientName: appt.patient?.name,
+              when,
+              id: appt.id,
+            }),
+          );
+        }
+        if (appt?.patient?.id) {
+          await notifySafe(
+            NotificationTemplates.bookingCreatedPatient({
+              userId: appt.patient.id,
+              when,
+              id: appt.id,
+            }),
+          );
+        }
+      } catch (e) {
+        // best-effort
+      }
 
       await logAudit({
         action: "book.slot",
