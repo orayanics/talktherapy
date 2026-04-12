@@ -21,7 +21,7 @@ export default function RolePill({ role }: { role?: string }) {
     : DEFAULT_STATUS_STYLE
 
   return (
-    <span className={`badge badge-sm font-bold border ${classes}`}>
+    <span className={`badge badge-sm font-bold border uppercase ${classes}`}>
       {role ?? 'UNKNOWN'}
     </span>
   )
