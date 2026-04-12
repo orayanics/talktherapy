@@ -271,6 +271,11 @@ export function useRoomSession(roomId: string) {
           },
         )
 
+        if (res.status === 403) {
+          window.location.assign('/unauthorized')
+          throw new Error('Forbidden')
+        }
+
         if (!res.ok) throw new Error(await res.text())
         const data = (await res.json()) as { token: string }
         return data.token
