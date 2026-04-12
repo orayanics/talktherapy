@@ -15,6 +15,7 @@ import { TableBase } from '@/components/Table/TableBase'
 import Pagination from '@/components/Page/Pagination'
 import { formatDate } from '@/utils/useDate'
 import { ChevronDown, ChevronUp } from 'lucide-react'
+import { useSession } from '@/context/SessionContext'
 
 const searchSchema = z
   .object({
@@ -32,13 +33,12 @@ const searchSchema = z
   }))
 
 export const Route = createFileRoute('/_private/(patient)/records/')({
-  loader: ({ context }) => context.session,
   validateSearch: (search) => searchSchema.parse(search),
   component: RouteComponent,
 })
 
 function RouteComponent() {
-  const session = Route.useLoaderData()
+  const session = useSession()
   const search = useSearch({ from: '/_private/(patient)/records/' })
   const navigate = useNavigate({ from: '/records/' })
 
@@ -56,7 +56,7 @@ function RouteComponent() {
     })
   }
 
-  const patientId = String(session.id)
+  const patientId = session.id
 
   const { data, isPending, isError } = useQuery(
     fetchSoapsByPatient(patientId, { page }, { sort }),
@@ -103,10 +103,14 @@ function RouteComponent() {
                     )}
                   </button>
                 ),
-                accessor: 'created_at',
-                render: (row) => formatDate(row.created_at),
+                accessor: 'createdAt',
+                render: (row) => formatDate(row.createdAt),
               },
-              { header: 'Clinician', accessor: 'clinician_name' },
+              {
+                header: 'Clinician',
+                accessor: 'clinician',
+                render: (row) => row.clinician.name,
+              },
               { header: 'Session Type', accessor: 'session_type' },
               { header: 'Activity Plan', accessor: 'activity_plan' },
               {

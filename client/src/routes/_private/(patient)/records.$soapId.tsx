@@ -42,8 +42,8 @@ function RouteComponent() {
           <h1 className="text-xl font-bold pb-2 mb-2 border-b border-slate-300">
             SOAP Details
           </h1>
-          <Row label="Date" value={formatDate(data.created_at)} />
-          <Row label="Clinician" value={data.clinician_name} />
+          <Row label="Date" value={formatDate(data.createdAt)} />
+          <Row label="Clinician" value={data.clinician.name} />
           <Row label="Activity Plan" value={data.activity_plan} />
           <Row label="Session Type" value={data.session_type} />
           <Row label="Subjective Notes" value={data.subjective_notes} />

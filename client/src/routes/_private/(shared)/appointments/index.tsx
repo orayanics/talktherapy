@@ -179,15 +179,18 @@ function RouteComponent() {
               {
                 header: 'Room',
                 accessor: 'roomId',
-                render: (row) => (
-                  <Link
-                    to="/$roomId"
-                    params={{ roomId: row.roomId ?? '' }}
-                    className="link link-primary"
-                  >
-                    Join
-                  </Link>
-                ),
+                render: (row) =>
+                  row.status === 'ACCEPTED' && row.roomId ? (
+                    <Link
+                      to="/$roomId"
+                      params={{ roomId: row.roomId }}
+                      className="text-blue-600 hover:underline"
+                    >
+                      {row.roomId}
+                    </Link>
+                  ) : (
+                    <span>N/A</span>
+                  ),
               },
               {
                 header: 'Patient',

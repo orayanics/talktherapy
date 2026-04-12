@@ -28,6 +28,8 @@ function RouteComponent() {
     : null
   const events = appointment?.events ?? []
 
+  const showRoom = appointment?.status !== 'COMPLETED'
+
   return (
     <>
       {isPending ? (
@@ -50,9 +52,7 @@ function RouteComponent() {
               Appointment Details
             </h1>
             <Row label="Status" value={appointment.status} />
-            {appointment.roomId && (
-              <Row label="Room ID" value={appointment.roomId} />
-            )}
+            {showRoom && <Row label="Room ID" value={appointment.roomId} />}
             <Row
               label="Appointment Time"
               value={
