@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 
 import RoomSession from '../../modules/session/room/RoomSession'
 
-export const Route = createFileRoute('/(room)/$roomId')({
+export const Route = createFileRoute('/room/$roomId')({
   component: RouteComponent,
 })
 
