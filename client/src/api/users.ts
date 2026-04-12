@@ -1,13 +1,6 @@
-import {
-  queryOptions,
-  useMutation,
-  useQueryClient,
-} from '@tanstack/react-query'
+import { queryOptions, useMutation } from '@tanstack/react-query'
 import { api } from './client'
 import type { QueryParams, UsersParams, Meta } from '@/types/params'
-import { useAlert } from '@/context/AlertContext'
-import { USER } from '@/constants/message'
-import { useNavigate } from '@tanstack/react-router'
 
 import type { UserResponse } from './session'
 
@@ -89,28 +82,6 @@ export const fetchUsersCount = (searchParams: UsersParams = {}) => {
     },
     staleTime: 1000 * 60 * 30,
     retry: false,
-  })
-}
-
-export const mutateUpdateProfile = (id: string) => {
-  const queryClient = useQueryClient()
-  const navigate = useNavigate()
-  const { showAlert } = useAlert()
-
-  return useMutation({
-    mutationKey: ['update-profile', id],
-    mutationFn: async (payload: Partial<UserResponse>) => {
-      const data = await api(`/users/${id}`, {
-        method: 'PATCH',
-        data: JSON.stringify(payload),
-      })
-      return data
-    },
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['session'] })
-      showAlert(USER.update.success, 'success')
-      navigate({ to: '/profile', replace: true })
-    },
   })
 }
 

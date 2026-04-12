@@ -10,7 +10,7 @@ const STATUS_STYLE_MAP: Partial<Record<ACCOUNT_STATUS, string>> = {
 const DEFAULT_STATUS_STYLE = 'bg-slate-50 text-slate-700 border-slate-200'
 
 export default function StatusPill({ status }: { status: string }) {
-  const normalized = status.toUpperCase() as ACCOUNT_STATUS
+  const normalized = status as ACCOUNT_STATUS
 
   const classes = STATUS_STYLE_MAP[normalized] ?? DEFAULT_STATUS_STYLE
 

@@ -6,14 +6,15 @@ import { useState } from 'react'
 import { ProfileSchema } from './schema'
 import type { TProfileUpdate } from './schema'
 
-import { mutateUpdateProfile } from '@/api/users'
 import { useAlert } from '@/context/AlertContext'
+import { authClient } from '@/utils/auth-client'
 
-export default function useUpdateProfileForm(
-  id: string,
-  defaultValues?: Partial<TProfileUpdate>,
-) {
+export default function useUpdateProfileForm(defaultValues?: {
+  name?: string
+  email?: string
+}) {
   const [apiError, setApiError] = useState<string | null>(null)
+  const { showAlert } = useAlert()
 
   const {
     register,
@@ -24,26 +25,46 @@ export default function useUpdateProfileForm(
     resolver: zodResolver(ProfileSchema),
     defaultValues: {
       name: defaultValues?.name ?? '',
+      email: '',
+      currentPassword: '',
+      newPassword: '',
+      confirmPassword: '',
     },
   })
-
-  const { showAlert } = useAlert()
-
-  const updateMutation = mutateUpdateProfile(id)
 
   const onSubmit = handleSubmit(async (data) => {
     setApiError(null)
 
     try {
-      await updateMutation.mutateAsync(data)
+      await authClient.updateUser({ name: data.name })
+
+      if (data.email && data.email !== defaultValues?.email) {
+        const { error } = await authClient.changeEmail({ newEmail: data.email })
+        if (error) throw new Error(error.message ?? 'Email update failed')
+      }
+
+      if (data.currentPassword && data.newPassword) {
+        const { error } = await authClient.changePassword({
+          currentPassword: data.currentPassword,
+          newPassword: data.newPassword,
+          revokeOtherSessions: false,
+        })
+        if (error) throw new Error(error.message ?? 'Password update failed')
+      }
+
       showAlert('Profile updated', 'success')
-      reset(data)
+      reset({
+        name: data.name,
+        email: '',
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: '',
+      })
     } catch (error: any) {
       if (isAxiosError(error)) {
-        const message = error.response?.data.message || 'Update failed'
-        setApiError(message)
+        setApiError(error.response?.data.message ?? 'Update failed')
       } else {
-        setApiError(error.message)
+        setApiError(error.message ?? 'An error occurred')
       }
     }
   })
@@ -53,7 +74,6 @@ export default function useUpdateProfileForm(
     onSubmit,
     errors,
     apiError,
-    isLoading: updateMutation.isPending || isSubmitting,
-    reset,
+    isLoading: isSubmitting,
   }
 }

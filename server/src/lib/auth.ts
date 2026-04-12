@@ -20,6 +20,12 @@ export const auth = betterAuth({
       verify: ({ password, hash }) => Bun.password.verify(password, hash),
     },
   },
+  user: {
+    changeEmail: {
+      enabled: true,
+    },
+  },
+  trustedOrigins: [process.env.CLIENT_URL ?? "http://localhost:3000"],
   session: {
     expiresIn: 60 * 60 * 24,
     secure: true,

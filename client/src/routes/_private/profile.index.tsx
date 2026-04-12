@@ -1,19 +1,15 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { useQuery } from '@tanstack/react-query'
-import { fetchSession } from '@/api/session'
-import type { UserSession } from '@/api/session'
-import StatusPill from '@/components/Decorator/StatusPill'
 import { Calendar, Mail, User, ShieldCheck } from 'lucide-react'
 import { formatDate } from '@/utils/useDate'
+import { useSession } from '@/context/SessionContext'
 
 export const Route = createFileRoute('/_private/profile/')({
   component: RouteComponent,
 })
 
 function RouteComponent() {
-  const { data } = useQuery(fetchSession)
-  const { name, email, account_status, created_at, diagnosis } =
-    data as UserSession
+  const session = useSession()
+  const { name, email, createdAt, diagnosis } = session
 
   return (
     <div className="space-y-6">
@@ -33,8 +29,6 @@ function RouteComponent() {
               </div>
               <h3 className="text-xl font-bold leading-tight">{name}</h3>
             </div>
-
-            <StatusPill status={account_status} />
           </div>
         </div>
 
@@ -60,7 +54,7 @@ function RouteComponent() {
                   <Calendar size={12} /> Member Since
                 </label>
                 <p className="text-slate-700 font-mono text-sm">
-                  {formatDate(created_at)}
+                  {formatDate(createdAt)}
                 </p>
               </div>
             </div>

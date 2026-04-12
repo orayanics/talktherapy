@@ -1,16 +1,15 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import FormProfile from '@/modules/profile/FormProfile'
 import { ArrowLeft } from 'lucide-react'
+import { useSession } from '@/context/SessionContext'
 
 export const Route = createFileRoute('/_private/profile/edit')({
-  loader: ({ context }) => context.session,
   component: RouteComponent,
 })
 
 function RouteComponent() {
-  const session = Route.useLoaderData()
-  const { id, name } = session
-
+  const session = useSession()
+  const { name, email } = session
   return (
     <div className="space-y-6">
       <Link
@@ -60,7 +59,7 @@ function RouteComponent() {
               </p>
             </div>
 
-            <FormProfile id={id} defaultName={name} />
+            <FormProfile defaultName={name} defaultEmail={email} />
           </div>
         </div>
       </div>
