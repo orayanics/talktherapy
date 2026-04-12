@@ -1,10 +1,19 @@
 import { useState } from 'react'
 import { useRoomSession } from './useRoomSession'
-import { MessageCircle, Mic, MicOff, Video, VideoOff, X } from 'lucide-react'
+import {
+  SquareArrowRight,
+  MessageCircle,
+  Mic,
+  MicOff,
+  Video,
+  VideoOff,
+  X,
+} from 'lucide-react'
 import RoomWaiting from './components/RoomWaiting'
 import RoomPrompt from './components/RoomPrompt'
 import RoomDenied from './components/RoomDenied'
 import RoomChat from './components/RoomChat'
+import { Link } from '@tanstack/react-router'
 
 interface RoomSessionProps {
   roomId: string
@@ -110,6 +119,14 @@ export default function RoomSession({ roomId }: RoomSessionProps) {
             >
               {cameraEnabled ? <Video /> : <VideoOff />}
             </button>
+
+            <Link
+              to="/dashboard"
+              className="btn btn-circle btn-lg border border-slate-200/60 shadow-lg shadow-slate-300"
+              title="Exit to Dashboard"
+            >
+              <SquareArrowRight size={20} />
+            </Link>
             <div className="w-px h-10 bg-base-content/20 mx-1"></div>
             <button
               onClick={() => setChatOpen((v) => !v)}
