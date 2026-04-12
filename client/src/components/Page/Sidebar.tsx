@@ -5,7 +5,7 @@ import type { USER_ROLE } from '@/types/account'
 import { NAV_BY_ROLE } from '@/constants/sidebar'
 
 import SidebarItem from './SidebarItem'
-import { mutateLogout } from '@/api/auth'
+import { authClient } from '@/utils/auth-client'
 
 export interface SidebarProps {
   children: React.ReactNode
@@ -17,10 +17,14 @@ export default function Sidebar(props: SidebarProps) {
 
   const navItems = NAV_BY_ROLE[role]
 
-  const { mutateAsync: logout } = mutateLogout()
-
   const handleLogout = async () => {
-    await logout()
+    await authClient.signOut({
+      fetchOptions: {
+        onSuccess: () => {
+          window.location.href = '/login'
+        },
+      },
+    })
   }
 
   return (

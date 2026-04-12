@@ -6,7 +6,6 @@ import { useState } from 'react'
 import { LoginSchema } from './schema'
 import type { TLogin } from './schema'
 
-import { mutateLogin } from '@/api/auth'
 import { authClient } from '@/utils/auth-client'
 
 export default function useLoginForm() {
@@ -24,13 +23,9 @@ export default function useLoginForm() {
     },
   })
 
-  const loginMutation = mutateLogin()
-
   const onSubmit = handleSubmit(async (data) => {
     setApiError(null)
-
     try {
-      // await loginMutation.mutateAsync(data)
       await authClient.signIn.email({
         email: data.email,
         password: data.password,
@@ -52,6 +47,6 @@ export default function useLoginForm() {
     onSubmit,
     errors,
     apiError,
-    isLoading: loginMutation.isPending || isSubmitting,
+    isLoading: isSubmitting,
   }
 }
