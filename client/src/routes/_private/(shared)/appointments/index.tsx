@@ -177,6 +177,19 @@ function RouteComponent() {
                 ),
               },
               {
+                header: 'Room',
+                accessor: 'roomId',
+                render: (row) => (
+                  <Link
+                    to="/$roomId"
+                    params={{ roomId: row.roomId ?? '' }}
+                    className="link link-primary"
+                  >
+                    Join
+                  </Link>
+                ),
+              },
+              {
                 header: 'Patient',
                 accessor: 'patient',
                 render: (row) => row.patient.name,

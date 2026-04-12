@@ -22,6 +22,7 @@ import { Route as PrivateclinicianRouteRouteImport } from './routes/_private/(cl
 import { Route as PrivateadmSharedRouteRouteImport } from './routes/_private/(adm-shared)/route'
 import { Route as PrivateProfileIndexRouteImport } from './routes/_private/profile.index'
 import { Route as PrivateProfileEditRouteImport } from './routes/_private/profile.edit'
+import { Route as PrivateroomRoomIdRouteImport } from './routes/_private/(room)/$roomId'
 import { Route as PrivatepatientBookRouteImport } from './routes/_private/(patient)/book'
 import { Route as PrivateadmSharedLogsRouteImport } from './routes/_private/(adm-shared)/logs'
 import { Route as PublicActivateOtpIndexRouteImport } from './routes/_public/activate/otp.index'
@@ -104,6 +105,11 @@ const PrivateProfileIndexRoute = PrivateProfileIndexRouteImport.update({
 const PrivateProfileEditRoute = PrivateProfileEditRouteImport.update({
   id: '/profile/edit',
   path: '/profile/edit',
+  getParentRoute: () => PrivateRouteRoute,
+} as any)
+const PrivateroomRoomIdRoute = PrivateroomRoomIdRouteImport.update({
+  id: '/(room)/$roomId',
+  path: '/$roomId',
   getParentRoute: () => PrivateRouteRoute,
 } as any)
 const PrivatepatientBookRoute = PrivatepatientBookRouteImport.update({
@@ -250,6 +256,7 @@ export interface FileRoutesByFullPath {
   '/register': typeof PublicRegisterRoute
   '/logs': typeof PrivateadmSharedLogsRoute
   '/book': typeof PrivatepatientBookRoute
+  '/$roomId': typeof PrivateroomRoomIdRoute
   '/profile/edit': typeof PrivateProfileEditRoute
   '/profile/': typeof PrivateProfileIndexRoute
   '/content': typeof PrivatesharedContentAdmRouteRouteWithChildren
@@ -283,6 +290,7 @@ export interface FileRoutesByTo {
   '/register': typeof PublicRegisterRoute
   '/logs': typeof PrivateadmSharedLogsRoute
   '/book': typeof PrivatepatientBookRoute
+  '/$roomId': typeof PrivateroomRoomIdRoute
   '/profile/edit': typeof PrivateProfileEditRoute
   '/profile': typeof PrivateProfileIndexRoute
   '/content': typeof PrivatesharedContentIndexRoute
@@ -321,6 +329,7 @@ export interface FileRoutesById {
   '/_public/': typeof PublicIndexRoute
   '/_private/(adm-shared)/logs': typeof PrivateadmSharedLogsRoute
   '/_private/(patient)/book': typeof PrivatepatientBookRoute
+  '/_private/(room)/$roomId': typeof PrivateroomRoomIdRoute
   '/_private/profile/edit': typeof PrivateProfileEditRoute
   '/_private/profile/': typeof PrivateProfileIndexRoute
   '/_private/(shared)/content/_adm': typeof PrivatesharedContentAdmRouteRouteWithChildren
@@ -356,6 +365,7 @@ export interface FileRouteTypes {
     | '/register'
     | '/logs'
     | '/book'
+    | '/$roomId'
     | '/profile/edit'
     | '/profile/'
     | '/content'
@@ -389,6 +399,7 @@ export interface FileRouteTypes {
     | '/register'
     | '/logs'
     | '/book'
+    | '/$roomId'
     | '/profile/edit'
     | '/profile'
     | '/content'
@@ -426,6 +437,7 @@ export interface FileRouteTypes {
     | '/_public/'
     | '/_private/(adm-shared)/logs'
     | '/_private/(patient)/book'
+    | '/_private/(room)/$roomId'
     | '/_private/profile/edit'
     | '/_private/profile/'
     | '/_private/(shared)/content/_adm'
@@ -549,6 +561,13 @@ declare module '@tanstack/react-router' {
       path: '/profile/edit'
       fullPath: '/profile/edit'
       preLoaderRoute: typeof PrivateProfileEditRouteImport
+      parentRoute: typeof PrivateRouteRoute
+    }
+    '/_private/(room)/$roomId': {
+      id: '/_private/(room)/$roomId'
+      path: '/$roomId'
+      fullPath: '/$roomId'
+      preLoaderRoute: typeof PrivateroomRoomIdRouteImport
       parentRoute: typeof PrivateRouteRoute
     }
     '/_private/(patient)/book': {
@@ -800,6 +819,7 @@ interface PrivateRouteRouteChildren {
   PrivateclinicianRouteRoute: typeof PrivateclinicianRouteRouteWithChildren
   PrivatepatientRouteRoute: typeof PrivatepatientRouteRouteWithChildren
   PrivateDashboardRoute: typeof PrivateDashboardRoute
+  PrivateroomRoomIdRoute: typeof PrivateroomRoomIdRoute
   PrivateProfileEditRoute: typeof PrivateProfileEditRoute
   PrivateProfileIndexRoute: typeof PrivateProfileIndexRoute
   PrivatesharedContentAdmRouteRoute: typeof PrivatesharedContentAdmRouteRouteWithChildren
@@ -814,6 +834,7 @@ const PrivateRouteRouteChildren: PrivateRouteRouteChildren = {
   PrivateclinicianRouteRoute: PrivateclinicianRouteRouteWithChildren,
   PrivatepatientRouteRoute: PrivatepatientRouteRouteWithChildren,
   PrivateDashboardRoute: PrivateDashboardRoute,
+  PrivateroomRoomIdRoute: PrivateroomRoomIdRoute,
   PrivateProfileEditRoute: PrivateProfileEditRoute,
   PrivateProfileIndexRoute: PrivateProfileIndexRoute,
   PrivatesharedContentAdmRouteRoute:

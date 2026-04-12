@@ -98,7 +98,7 @@ export interface Appointment {
   completedAt: string | null
   events: Event[]
   encounter: Encounter[]
-  room_id?: string | null
+  roomId?: string | null
 }
 
 export interface AppointmentsResponse {
