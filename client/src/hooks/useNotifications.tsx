@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { notificationClient } from '@/lib/notificationClient'
+import { fetchNotifications } from '@/api/notification'
 
 export type NotificationItem = {
   id: string
@@ -12,19 +14,28 @@ export type NotificationItem = {
 
 export function useNotifications() {
   const [notifications, setNotifications] = useState<NotificationItem[]>([])
+  const queryClient = useQueryClient()
+
+  const { data } = useQuery(fetchNotifications())
+  useEffect(() => {
+    if (data) {
+      setNotifications(data)
+      notificationClient.init(data)
+    }
+  }, [data])
 
   useEffect(() => {
-    const unsub = notificationClient.subscribe((items) =>
-      setNotifications(items),
-    )
+    const unsub = notificationClient.subscribe((items) => {
+      setNotifications(items)
+      queryClient.setQueryData(['notifications'], items)
+    })
 
-    notificationClient.fetchList()
     notificationClient.connectOnce()
 
     return () => {
       unsub()
     }
-  }, [])
+  }, [queryClient])
 
   const markRead = async (id: string) => {
     await notificationClient.markRead(id)

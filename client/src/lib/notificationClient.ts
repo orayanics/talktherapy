@@ -7,8 +7,11 @@ class NotificationClient {
   private notifications: any[] = []
   private subs = new Set<Subscriber>()
   private connected = false
+  private fetching = false
 
   async fetchList() {
+    if (this.fetching) return
+    this.fetching = true
     try {
       const res = await fetch(`${API_URL}/notifications/list`, {
         credentials: 'include',
@@ -18,8 +21,14 @@ class NotificationClient {
       this.notifications = json.data ?? []
       this.notify()
     } catch (e) {
-      // ignore
+    } finally {
+      this.fetching = false
     }
+  }
+
+  init(items: any[]) {
+    this.notifications = items
+    this.notify()
   }
 
   async connectOnce() {
