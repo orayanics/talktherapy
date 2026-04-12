@@ -1,19 +1,10 @@
-import { showAlertGlobal } from '@/context/AlertContext'
 import axios from 'axios'
 import type { AxiosInstance, AxiosRequestConfig, AxiosError } from 'axios'
-
-export async function csrf() {
-  await fetch(`${import.meta.env.VITE_APP_API_URL}/sanctum/csrf-cookie`, {
-    credentials: 'include',
-  })
-}
+import { API_URL } from '@/constants/application'
 
 const apiClient: AxiosInstance = axios.create({
-  baseURL: `${import.meta.env.VITE_APP_API_URL}`,
+  baseURL: `${API_URL ?? 'https://127.0.0.1:8080'}`,
   withCredentials: true,
-  withXSRFToken: true,
-  xsrfCookieName: 'XSRF-TOKEN',
-  xsrfHeaderName: 'X-XSRF-TOKEN',
   headers: {
     'Content-Type': 'application/json',
     Accept: 'application/json',
@@ -22,7 +13,6 @@ const apiClient: AxiosInstance = axios.create({
 
 // optional: request interceptor (runs before every request)
 apiClient.interceptors.request.use(async (config) => {
-  // await csrf()
   return config
 })
 
@@ -39,19 +29,7 @@ apiClient.interceptors.response.use(
 
     if (status === 419 && config && !config._csrfRetry) {
       config._csrfRetry = true
-      await csrf()
       return apiClient.request(config)
-    }
-
-    if (status === 401) {
-      showAlertGlobal('Session expired. Please log in again.', 'error')
-      window.location.href = '/login'
-      return Promise.reject(error)
-    }
-
-    if (status === 403) {
-      window.location.href = '/login'
-      return Promise.reject(error)
     }
 
     return Promise.reject(error)

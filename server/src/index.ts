@@ -16,6 +16,9 @@ import { slotsModule } from "./modules/slots";
 import { scheduleModule } from "./modules/schedule";
 import { clinicianPatientModule } from "./modules/clinicianPatient";
 
+const cert = Bun.file("../certs/localhost.pem");
+const key = Bun.file("../certs/localhost-key.pem");
+
 const app = new Elysia()
   .use(
     openapi({
@@ -27,7 +30,11 @@ const app = new Elysia()
   )
   .use(
     cors({
-      origin: "http://localhost:3000",
+      origin: [
+        "https://127.0.0.1:3000",
+        "https://localhost:3000",
+        "http://localhost:3000",
+      ],
       methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
       credentials: true,
       allowedHeaders: ["Content-Type", "Authorization"],
@@ -45,11 +52,18 @@ const app = new Elysia()
   .use(scheduleModule)
   .use(clinicianPatientModule)
   .get("/", () => "Hello Elysia")
-  .listen(process.env.SERVER_PORT || 8000);
+  .listen({
+    port: process.env.PORT ? parseInt(process.env.PORT) : 8080,
+    hostname: "127.0.0.1",
+    tls: {
+      cert,
+      key,
+    },
+  });
 
 console.log(
-  `🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`,
+  `🦊 Elysia is running at ${app.server?.protocol}://${app.server?.hostname}:${app.server?.port}`,
 );
 console.log(
-  `📖 API docs available at http://${app.server?.hostname}:${app.server?.port}/openapi`,
+  `📖 API docs available at ${app.server?.protocol}://${app.server?.hostname}:${app.server?.port}/openapi`,
 );

@@ -1,9 +1,9 @@
 import { createAuthClient } from 'better-auth/react'
 import { adminClient } from 'better-auth/client/plugins'
+import { API_URL } from '@/constants/application'
 
-// export const { signIn, signUp, useSession } = createAuthClient()
 export const authClient = createAuthClient({
-  baseURL: 'http://localhost:8000', // The base URL of your auth server
-  basePath: '/auth/api', // The base path for auth-related API endpoints
+  baseURL: `${API_URL ?? 'https://127.0.0.1:8080'}`,
+  basePath: '/auth/api',
   plugins: [adminClient()],
 })

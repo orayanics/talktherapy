@@ -10,6 +10,7 @@ import {
 } from "./better-auth/permissions";
 
 import { prisma } from "./client";
+import { CLIENT_URL } from "@/constant";
 
 export const auth = betterAuth({
   basePath: "/api",
@@ -25,7 +26,7 @@ export const auth = betterAuth({
       enabled: true,
     },
   },
-  trustedOrigins: [process.env.CLIENT_URL ?? "http://localhost:3000"],
+  trustedOrigins: [CLIENT_URL || "http://localhost:3000"],
   session: {
     expiresIn: 60 * 60 * 24,
     secure: true,
