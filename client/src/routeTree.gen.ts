@@ -17,12 +17,12 @@ import { Route as PublicIndexRouteImport } from './routes/_public/index'
 import { Route as PublicRegisterRouteImport } from './routes/_public/register'
 import { Route as PublicLoginRouteImport } from './routes/_public/login'
 import { Route as PrivateDashboardRouteImport } from './routes/_private/dashboard'
+import { Route as roomRoomIdRouteImport } from './routes/(room)/$roomId'
 import { Route as PrivatepatientRouteRouteImport } from './routes/_private/(patient)/route'
 import { Route as PrivateclinicianRouteRouteImport } from './routes/_private/(clinician)/route'
 import { Route as PrivateadmSharedRouteRouteImport } from './routes/_private/(adm-shared)/route'
 import { Route as PrivateProfileIndexRouteImport } from './routes/_private/profile.index'
 import { Route as PrivateProfileEditRouteImport } from './routes/_private/profile.edit'
-import { Route as PrivateroomRoomIdRouteImport } from './routes/_private/(room)/$roomId'
 import { Route as PrivatepatientBookRouteImport } from './routes/_private/(patient)/book'
 import { Route as PrivateadmSharedLogsRouteImport } from './routes/_private/(adm-shared)/logs'
 import { Route as PublicActivateOtpIndexRouteImport } from './routes/_public/activate/otp.index'
@@ -85,6 +85,11 @@ const PrivateDashboardRoute = PrivateDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => PrivateRouteRoute,
 } as any)
+const roomRoomIdRoute = roomRoomIdRouteImport.update({
+  id: '/(room)/$roomId',
+  path: '/$roomId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PrivatepatientRouteRoute = PrivatepatientRouteRouteImport.update({
   id: '/(patient)',
   getParentRoute: () => PrivateRouteRoute,
@@ -105,11 +110,6 @@ const PrivateProfileIndexRoute = PrivateProfileIndexRouteImport.update({
 const PrivateProfileEditRoute = PrivateProfileEditRouteImport.update({
   id: '/profile/edit',
   path: '/profile/edit',
-  getParentRoute: () => PrivateRouteRoute,
-} as any)
-const PrivateroomRoomIdRoute = PrivateroomRoomIdRouteImport.update({
-  id: '/(room)/$roomId',
-  path: '/$roomId',
   getParentRoute: () => PrivateRouteRoute,
 } as any)
 const PrivatepatientBookRoute = PrivatepatientBookRouteImport.update({
@@ -251,12 +251,12 @@ export interface FileRoutesByFullPath {
   '/': typeof PublicIndexRoute
   '/forbidden': typeof ForbiddenRoute
   '/unauthorized': typeof UnauthorizedRoute
+  '/$roomId': typeof roomRoomIdRoute
   '/dashboard': typeof PrivateDashboardRoute
   '/login': typeof PublicLoginRoute
   '/register': typeof PublicRegisterRoute
   '/logs': typeof PrivateadmSharedLogsRoute
   '/book': typeof PrivatepatientBookRoute
-  '/$roomId': typeof PrivateroomRoomIdRoute
   '/profile/edit': typeof PrivateProfileEditRoute
   '/profile/': typeof PrivateProfileIndexRoute
   '/content': typeof PrivatesharedContentAdmRouteRouteWithChildren
@@ -285,12 +285,12 @@ export interface FileRoutesByTo {
   '/': typeof PublicIndexRoute
   '/forbidden': typeof ForbiddenRoute
   '/unauthorized': typeof UnauthorizedRoute
+  '/$roomId': typeof roomRoomIdRoute
   '/dashboard': typeof PrivateDashboardRoute
   '/login': typeof PublicLoginRoute
   '/register': typeof PublicRegisterRoute
   '/logs': typeof PrivateadmSharedLogsRoute
   '/book': typeof PrivatepatientBookRoute
-  '/$roomId': typeof PrivateroomRoomIdRoute
   '/profile/edit': typeof PrivateProfileEditRoute
   '/profile': typeof PrivateProfileIndexRoute
   '/content': typeof PrivatesharedContentIndexRoute
@@ -323,13 +323,13 @@ export interface FileRoutesById {
   '/_private/(adm-shared)': typeof PrivateadmSharedRouteRouteWithChildren
   '/_private/(clinician)': typeof PrivateclinicianRouteRouteWithChildren
   '/_private/(patient)': typeof PrivatepatientRouteRouteWithChildren
+  '/(room)/$roomId': typeof roomRoomIdRoute
   '/_private/dashboard': typeof PrivateDashboardRoute
   '/_public/login': typeof PublicLoginRoute
   '/_public/register': typeof PublicRegisterRoute
   '/_public/': typeof PublicIndexRoute
   '/_private/(adm-shared)/logs': typeof PrivateadmSharedLogsRoute
   '/_private/(patient)/book': typeof PrivatepatientBookRoute
-  '/_private/(room)/$roomId': typeof PrivateroomRoomIdRoute
   '/_private/profile/edit': typeof PrivateProfileEditRoute
   '/_private/profile/': typeof PrivateProfileIndexRoute
   '/_private/(shared)/content/_adm': typeof PrivatesharedContentAdmRouteRouteWithChildren
@@ -360,12 +360,12 @@ export interface FileRouteTypes {
     | '/'
     | '/forbidden'
     | '/unauthorized'
+    | '/$roomId'
     | '/dashboard'
     | '/login'
     | '/register'
     | '/logs'
     | '/book'
-    | '/$roomId'
     | '/profile/edit'
     | '/profile/'
     | '/content'
@@ -394,12 +394,12 @@ export interface FileRouteTypes {
     | '/'
     | '/forbidden'
     | '/unauthorized'
+    | '/$roomId'
     | '/dashboard'
     | '/login'
     | '/register'
     | '/logs'
     | '/book'
-    | '/$roomId'
     | '/profile/edit'
     | '/profile'
     | '/content'
@@ -431,13 +431,13 @@ export interface FileRouteTypes {
     | '/_private/(adm-shared)'
     | '/_private/(clinician)'
     | '/_private/(patient)'
+    | '/(room)/$roomId'
     | '/_private/dashboard'
     | '/_public/login'
     | '/_public/register'
     | '/_public/'
     | '/_private/(adm-shared)/logs'
     | '/_private/(patient)/book'
-    | '/_private/(room)/$roomId'
     | '/_private/profile/edit'
     | '/_private/profile/'
     | '/_private/(shared)/content/_adm'
@@ -468,6 +468,7 @@ export interface RootRouteChildren {
   PublicRouteRoute: typeof PublicRouteRouteWithChildren
   ForbiddenRoute: typeof ForbiddenRoute
   UnauthorizedRoute: typeof UnauthorizedRoute
+  roomRoomIdRoute: typeof roomRoomIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -528,6 +529,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivateDashboardRouteImport
       parentRoute: typeof PrivateRouteRoute
     }
+    '/(room)/$roomId': {
+      id: '/(room)/$roomId'
+      path: '/$roomId'
+      fullPath: '/$roomId'
+      preLoaderRoute: typeof roomRoomIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_private/(patient)': {
       id: '/_private/(patient)'
       path: ''
@@ -561,13 +569,6 @@ declare module '@tanstack/react-router' {
       path: '/profile/edit'
       fullPath: '/profile/edit'
       preLoaderRoute: typeof PrivateProfileEditRouteImport
-      parentRoute: typeof PrivateRouteRoute
-    }
-    '/_private/(room)/$roomId': {
-      id: '/_private/(room)/$roomId'
-      path: '/$roomId'
-      fullPath: '/$roomId'
-      preLoaderRoute: typeof PrivateroomRoomIdRouteImport
       parentRoute: typeof PrivateRouteRoute
     }
     '/_private/(patient)/book': {
@@ -819,7 +820,6 @@ interface PrivateRouteRouteChildren {
   PrivateclinicianRouteRoute: typeof PrivateclinicianRouteRouteWithChildren
   PrivatepatientRouteRoute: typeof PrivatepatientRouteRouteWithChildren
   PrivateDashboardRoute: typeof PrivateDashboardRoute
-  PrivateroomRoomIdRoute: typeof PrivateroomRoomIdRoute
   PrivateProfileEditRoute: typeof PrivateProfileEditRoute
   PrivateProfileIndexRoute: typeof PrivateProfileIndexRoute
   PrivatesharedContentAdmRouteRoute: typeof PrivatesharedContentAdmRouteRouteWithChildren
@@ -834,7 +834,6 @@ const PrivateRouteRouteChildren: PrivateRouteRouteChildren = {
   PrivateclinicianRouteRoute: PrivateclinicianRouteRouteWithChildren,
   PrivatepatientRouteRoute: PrivatepatientRouteRouteWithChildren,
   PrivateDashboardRoute: PrivateDashboardRoute,
-  PrivateroomRoomIdRoute: PrivateroomRoomIdRoute,
   PrivateProfileEditRoute: PrivateProfileEditRoute,
   PrivateProfileIndexRoute: PrivateProfileIndexRoute,
   PrivatesharedContentAdmRouteRoute:
@@ -875,6 +874,7 @@ const rootRouteChildren: RootRouteChildren = {
   PublicRouteRoute: PublicRouteRouteWithChildren,
   ForbiddenRoute: ForbiddenRoute,
   UnauthorizedRoute: UnauthorizedRoute,
+  roomRoomIdRoute: roomRoomIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
