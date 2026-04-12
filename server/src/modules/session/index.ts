@@ -1,172 +1,222 @@
-import Elysia from "elysia";
+import { Elysia, t } from "elysia";
+import { verifyJoinToken } from "@/lib/joinToken";
+import { InboundMessage } from "./model";
+import type { ElysiaWS, InboundMessageType, SocketMeta } from "./model";
+import { SessionService } from "./service";
 
-type WS = any;
+const META = Symbol("ws-meta");
 
-const rooms = new Map<string, Set<WS>>();
-
-function broadcastToRoom(roomId: string, sender: WS, data: any) {
-  const peers = rooms.get(roomId);
-  if (!peers) return;
-  for (const peer of peers) {
-    if (peer !== sender) {
-      try {
-        peer.send(JSON.stringify(data));
-      } catch (e) {
-        // ignore
-      }
-    }
+const getMeta = (ws: ElysiaWS): SocketMeta => {
+  if (!ws.data[META]) {
+    ws.data[META] = {
+      roomId: null,
+      peerId: crypto.randomUUID(),
+      user: null,
+      auth: null,
+    } satisfies SocketMeta;
   }
-}
+  return ws.data[META] as SocketMeta;
+};
 
-function logRoom(roomId: string) {
-  const peers = rooms.get(roomId);
-  if (!peers) {
-    console.log(`room=${roomId} peers=0`);
-    return;
-  }
-  const list = Array.from(peers).map((p: WS) => ({
-    peerId: (p as any).data?.peerId,
-    user: (p as any).data?.user,
-  }));
-  console.log(`room=${roomId} peers=${peers.size}`, list);
-}
+const leaveRoom = (ws: ElysiaWS) => {
+  const meta = getMeta(ws);
+  if (!meta.roomId) return;
+
+  SessionService.leave(meta.roomId, meta.peerId);
+  SessionService.broadcast(meta.roomId, {
+    type: "room:peer-left",
+    peerId: meta.peerId,
+  });
+
+  meta.roomId = null;
+};
+
+const requireJoinedAndAuthorized = async (meta: SocketMeta) => {
+  if (!meta.roomId || !meta.auth) return false;
+  return SessionService.authorizeRoom(meta.roomId, meta.auth.userId);
+};
 
 export const sessionModule = new Elysia({ prefix: "/session" })
   .get("/ws", () => "WebSocket endpoint")
   .ws("/ws", {
-    // Elysia provides a simple ws router where handlers receive the socket
-    open: (socket: WS) => {
-      // attach metadata
-      const data = (socket as any).data ?? ((socket as any).data = {});
-      data.roomId = null;
-      data.peerId = `${Math.random().toString(36).slice(2, 9)}`;
-      data.user = null;
-      console.log("ws open peerId=" + data.peerId);
+    query: t.Object({
+      token: t.String(),
+    }),
+    body: InboundMessage,
+
+    open: (ws) => {
+      const meta = getMeta(ws);
+      try {
+        const claims = verifyJoinToken(ws.data.query.token);
+        meta.auth = claims;
+      } catch {
+        ws.close(4001, "Unauthorized");
+        return;
+      }
+      console.log("ws open:", meta.peerId);
     },
 
-    message: (socket: WS, raw: unknown) => {
-      let msg: any;
-      try {
-        if (typeof raw === "object" && raw !== null) {
-          // Elysia auto-parses JSON messages before passing them to the handler
-          msg = raw;
-        } else if (typeof raw === "string") {
-          msg = JSON.parse(raw);
-        } else if (raw instanceof ArrayBuffer) {
-          msg = JSON.parse(new TextDecoder().decode(raw));
-        } else {
-          return;
-        }
-      } catch (e) {
+    message: async (ws, body: InboundMessageType) => {
+      const meta = getMeta(ws as unknown as ElysiaWS);
+
+      if (!meta.auth) {
+        ws.close(4001, "Unauthorized");
         return;
       }
 
-      const type = msg.type;
-      switch (type) {
+      switch (body.type) {
         case "join": {
-          const { room, user } = msg;
-          const roomId = String(room);
-          const data = (socket as any).data ?? ((socket as any).data = {});
-          data.roomId = roomId;
-          data.user = user || null;
+          if (body.room !== meta.auth.roomId) {
+            SessionService.send(ws.raw, {
+              type: "room:error",
+              message: "Room mismatch",
+            });
+            ws.close(4003, "Forbidden");
+            return;
+          }
 
-          const existingPeers = Array.from(rooms.get(roomId) ?? []).map(
-            (peer: WS) => ({
-              peerId: (peer as any).data?.peerId,
-              user: (peer as any).data?.user,
-            }),
+          const allowed = await SessionService.authorizeRoom(
+            body.room,
+            meta.auth.userId,
           );
+          if (!allowed) {
+            SessionService.send(ws.raw, {
+              type: "room:error",
+              message: "Not allowed",
+            });
+            ws.close(4003, "Forbidden");
+            return;
+          }
 
-          if (!rooms.has(roomId)) rooms.set(roomId, new Set());
-          rooms.get(roomId)!.add(socket);
-
-          // log current room state
-          logRoom(roomId);
-
-          // notify existing peers about the new peer
-          broadcastToRoom(roomId, socket, {
-            type: "peer-joined",
-            peerId: (socket as any).data?.peerId,
-            user: (socket as any).data?.user,
-          });
-
-          // send ack with assigned peerId and current peers count
-          try {
-            socket.send(
-              JSON.stringify({
-                type: "joined",
-                peerId: (socket as any).data?.peerId,
-                existingPeers,
-              }),
-            );
-          } catch {}
-          break;
-        }
-
-        case "offer":
-        case "answer":
-        case "candidate": {
-          const roomId = (socket as any).data?.roomId;
-          if (!roomId) return;
-          // relay to other peers
-          broadcastToRoom(roomId, socket, {
-            type,
-            from: (socket as any).data?.peerId,
-            payload: msg.payload,
-          });
-          break;
-        }
-
-        case "chat": {
-          const roomId = (socket as any).data?.roomId;
-          if (!roomId) return;
-          const payload = {
-            type: "chat",
-            from: (socket as any).data?.peerId,
-            user: (socket as any).data?.user,
-            message: msg.message,
-            ts: Date.now(),
+          if (meta.roomId) leaveRoom(ws as unknown as ElysiaWS);
+          meta.roomId = body.room;
+          meta.user = {
+            ...(typeof body.user === "object" && body.user ? body.user : {}),
+            id: meta.auth.userId,
           };
-          broadcastToRoom(roomId, socket, payload);
+
+          const { existingPeers } = SessionService.join(body.room, {
+            ws: ws.raw,
+            peerId: meta.peerId,
+            userId: meta.auth.userId,
+            user: meta.user,
+          });
+
+          SessionService.broadcastExcept(body.room, meta.peerId, {
+            type: "room:peer-joined",
+            peerId: meta.peerId,
+            user: meta.user,
+          });
+
+          SessionService.send(ws.raw, {
+            type: "room:joined",
+            peerId: meta.peerId,
+            existingPeers,
+          });
           break;
         }
 
         case "leave": {
-          const roomId = (socket as any).data?.roomId;
-          if (!roomId) return;
-          const peers = rooms.get(roomId);
-          if (peers) {
-            peers.delete(socket);
-            broadcastToRoom(roomId, socket, {
-              type: "peer-left",
-              peerId: (socket as any).data?.peerId,
-            });
-            if (peers.size === 0) rooms.delete(roomId);
-            // log current room state
-            logRoom(roomId);
-          }
+          leaveRoom(ws as unknown as ElysiaWS);
           break;
         }
 
-        default:
-          // unknown message
+        case "webrtc:offer": {
+          if (!(await requireJoinedAndAuthorized(meta))) {
+            ws.close(4003, "Forbidden");
+            return;
+          }
+          const peer = SessionService.getPeer(meta.roomId!, meta.peerId);
+          if (!peer) return;
+          SessionService.send(peer.ws, {
+            type: "webrtc:offer",
+            from: meta.peerId,
+            sdp: body.sdp,
+          });
           break;
+        }
+
+        case "webrtc:answer": {
+          if (!(await requireJoinedAndAuthorized(meta))) {
+            ws.close(4003, "Forbidden");
+            return;
+          }
+          const peer = SessionService.getPeer(meta.roomId!, meta.peerId);
+          if (!peer) return;
+          SessionService.send(peer.ws, {
+            type: "webrtc:answer",
+            from: meta.peerId,
+            sdp: body.sdp,
+          });
+          break;
+        }
+
+        case "webrtc:ice-candidate": {
+          if (!(await requireJoinedAndAuthorized(meta))) {
+            ws.close(4003, "Forbidden");
+            return;
+          }
+          const peer = SessionService.getPeer(meta.roomId!, meta.peerId);
+          if (!peer) return;
+          SessionService.send(peer.ws, {
+            type: "webrtc:ice-candidate",
+            from: meta.peerId,
+            candidate: {
+              candidate: body.candidate.candidate,
+              sdpMid: body.candidate.sdpMid ?? null,
+              sdpMLineIndex: body.candidate.sdpMLineIndex ?? null,
+              usernameFragment: body.candidate.usernameFragment ?? null,
+            },
+          });
+          break;
+        }
+
+        case "chat:message": {
+          if (!(await requireJoinedAndAuthorized(meta))) {
+            ws.close(4003, "Forbidden");
+            return;
+          }
+          SessionService.broadcastExcept(meta.roomId!, meta.peerId, {
+            type: "chat:message",
+            from: meta.peerId,
+            user: meta.user,
+            text: body.text,
+            timestamp: new Date().toISOString(),
+          });
+          break;
+        }
+
+        case "media:toggle": {
+          if (!(await requireJoinedAndAuthorized(meta))) {
+            ws.close(4003, "Forbidden");
+            return;
+          }
+          SessionService.broadcastExcept(meta.roomId!, meta.peerId, {
+            type: "media:toggle",
+            from: meta.peerId,
+            kind: body.kind,
+            enabled: body.enabled,
+          });
+          break;
+        }
+
+        case "peer:ready": {
+          if (!(await requireJoinedAndAuthorized(meta))) {
+            ws.close(4003, "Forbidden");
+            return;
+          }
+          const peer = SessionService.getPeer(meta.roomId!, meta.peerId);
+          if (!peer) return;
+          SessionService.send(peer.ws, {
+            type: "peer:ready",
+            from: meta.peerId,
+          });
+          break;
+        }
       }
     },
 
-    close: (socket: WS) => {
-      const roomId = (socket as any).data?.roomId;
-      if (!roomId) return;
-      const peers = rooms.get(roomId);
-      if (peers) {
-        peers.delete(socket);
-        broadcastToRoom(roomId, socket, {
-          type: "peer-left",
-          peerId: (socket as any).data?.peerId,
-        });
-        if (peers.size === 0) rooms.delete(roomId);
-        // log current room state
-        logRoom(roomId);
-      }
+    close: (ws) => {
+      leaveRoom(ws as unknown as ElysiaWS);
     },
   });
