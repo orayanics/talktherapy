@@ -17,8 +17,8 @@ export const buildMeta = (
 
   return {
     current_page: page,
-    from: total === 0 ? null : (page - 1) * per_page + 1,
-    to: total === 0 ? null : (page - 1) * per_page + count,
+    from: total === 0 ? 0 : (page - 1) * per_page + 1,
+    to: total === 0 ? 0 : (page - 1) * per_page + count,
     last_page,
     per_page,
     total,

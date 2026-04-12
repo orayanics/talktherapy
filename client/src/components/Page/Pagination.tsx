@@ -24,7 +24,9 @@ export default function Pagination({ meta, page, updateSearch }: Props) {
         </button>
 
         <button
-          disabled={meta.current_page === meta.last_page}
+          disabled={
+            meta.current_page === meta.last_page || meta.last_page === 0
+          }
           onClick={() => updateSearch({ page: page + 1 })}
           className="btn btn-square shadow-sm"
         >
