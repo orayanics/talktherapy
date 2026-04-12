@@ -64,7 +64,7 @@ function RouteComponent() {
                   <Bell size={19} strokeWidth={2.2} />
                 </button>
                 {show && (
-                  <div className="absolute right-0 mt-2">
+                  <div className="absolute z-20 right-0 mt-2">
                     <NotificationList />
                   </div>
                 )}
