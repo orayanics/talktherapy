@@ -15,7 +15,7 @@ import { appointmentsModule } from "./modules/appointments";
 import { slotsModule } from "./modules/slots";
 import { scheduleModule } from "./modules/schedule";
 import { clinicianPatientModule } from "./modules/clinicianPatient";
-
+import { sessionModule } from "./modules/session";
 const cert = Bun.file("../certs/localhost.pem");
 const key = Bun.file("../certs/localhost-key.pem");
 
@@ -30,11 +30,7 @@ const app = new Elysia()
   )
   .use(
     cors({
-      origin: [
-        "https://127.0.0.1:3000",
-        "https://localhost:3000",
-        "http://localhost:3000",
-      ],
+      origin: true,
       methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
       credentials: true,
       allowedHeaders: ["Content-Type", "Authorization"],
@@ -51,10 +47,11 @@ const app = new Elysia()
   .use(slotsModule)
   .use(scheduleModule)
   .use(clinicianPatientModule)
+  .use(sessionModule)
   .get("/", () => "Hello Elysia")
   .listen({
     port: process.env.PORT ? parseInt(process.env.PORT) : 8080,
-    hostname: "127.0.0.1",
+    hostname: process.env.HOSTNAME ? process.env.HOSTNAME : "0.0.0.0",
     tls: {
       cert,
       key,

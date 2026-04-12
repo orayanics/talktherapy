@@ -26,7 +26,11 @@ export const auth = betterAuth({
       enabled: true,
     },
   },
-  trustedOrigins: [CLIENT_URL || "http://localhost:3000"],
+  trustedOrigins: [
+    "https://0.0.0.0:3000",
+    "https://192.168.1.10:3000",
+    "https://localhost:3000",
+  ],
   session: {
     expiresIn: 60 * 60 * 24,
     secure: true,

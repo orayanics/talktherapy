@@ -180,3 +180,53 @@ appointmentsModule.get(
     },
   },
 );
+
+// POST /:id/join-token - issue short-lived join token for WebRTC signaling
+appointmentsModule.post(
+  "/:id/join-token",
+  async ({ params, status, user }) => {
+    try {
+      // try fetch by appointment id, fall back to roomId lookup
+      let appointment;
+      try {
+        appointment = await fetchAppointmentById(params.id);
+      } catch (e: any) {
+        // not found by id - try find by roomId
+        const { prisma } = await import("@/lib/client");
+        appointment = await prisma.appointment.findFirst({
+          where: { roomId: params.id },
+        });
+        if (!appointment) throw new Error("Not found");
+      }
+      const uid = user.id;
+
+      const isParticipant =
+        appointment.patientId === uid || appointment.clinicianId === uid;
+      if (!isParticipant) return status(403, { error: "Not allowed" });
+
+      if (!appointment.roomId)
+        return status(400, { error: "No room configured for appointment" });
+
+      // only allow when appointment is ACCEPTED
+      if (appointment.status !== "ACCEPTED")
+        return status(400, { error: "Appointment not active" });
+
+      // lazy import to avoid circular deps
+      const { signJoinToken } = await import("@/lib/joinToken");
+
+      const token = signJoinToken({
+        appointmentId: appointment.id,
+        roomId: appointment.roomId,
+        userId: uid,
+      });
+
+      return status(200, { token });
+    } catch (err: any) {
+      return status(400, { error: err.message ?? String(err) });
+    }
+  },
+  {
+    auth: true,
+    params: z.object({ id: z.string() }),
+  },
+);
