@@ -108,6 +108,13 @@ export const sessionModule = new Elysia({ prefix: "/session" })
             user: meta.user,
           });
 
+          // Safeguard for stale client-side RTC state after refresh/rejoin.
+          SessionService.broadcastExcept(body.room, meta.peerId, {
+            type: "room:resync",
+            peerId: meta.peerId,
+            reason: existingPeers.length > 0 ? "peer-rejoined" : "peer-joined",
+          });
+
           SessionService.send(ws.raw, {
             type: "room:joined",
             peerId: meta.peerId,

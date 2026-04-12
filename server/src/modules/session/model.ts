@@ -118,6 +118,11 @@ export type OutboundMessage =
       peerId: string;
     }
   | {
+      type: "room:resync";
+      peerId: string;
+      reason: "peer-joined" | "peer-rejoined";
+    }
+  | {
       type: "room:error";
       message: string;
     }

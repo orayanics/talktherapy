@@ -369,6 +369,20 @@ function RouteComponent() {
                 break
               }
 
+              case 'room:resync': {
+                if (msg.peerId) {
+                  remotePeerId = msg.peerId as string
+                  patchDiag({ remotePeerId })
+                }
+                console.log('[ws] resync requested:', msg.reason)
+                if (polite) {
+                  maybeSendPeerReady()
+                } else {
+                  await negotiate()
+                }
+                break
+              }
+
               case 'room:peer-left': {
                 if (msg.peerId === remotePeerId) {
                   remotePeerId = null
