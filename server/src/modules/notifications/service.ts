@@ -145,11 +145,14 @@ export const listNotifications = async (
 ) => {
   const where: any = { userId };
   if (opts.unreadOnly) where.readAt = null;
-  const take = opts.limit ?? 50;
+  // Ensure `take` is an integer Prisma expects (JS number -> Int)
+  const take = Number.isFinite(opts.limit)
+    ? Math.max(1, Math.trunc(opts.limit!))
+    : 50;
   return prisma.notification.findMany({
     where,
     orderBy: { createdAt: "desc" },
-    take,
+    take: take,
   });
 };
 
