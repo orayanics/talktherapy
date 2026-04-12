@@ -29,8 +29,8 @@ export type SLOT_STATUS =
 
 export interface Slot {
   id: string
-  schedule_id: string
-  clinician_id: string
+  scheduleId: string
+  clinicianId: string
   startAt: string
   endAt: string
   status: SLOT_STATUS
@@ -63,27 +63,27 @@ export interface Patient {
 export interface Clinician {
   id: string
   name: string
-  diagnosis: string
+  diagnosis: DiagnosisItem
 }
 
 export interface Encounter {
   id: string
-  appointment_id: string
+  appointmentId: string
   diagnosis: string
-  chief_complaint: string
-  referral_source: string
-  referral_url: string
-  created_at: string
-  updated_at: string
+  chiefComplaint: string
+  referralSource: string
+  referralUrl: string
+  createdAt: string
+  updatedAt: string
 }
 
 export interface Event {
   id: string
   type: string
-  actor_type: string
-  actor_id: string
+  actorType: string
+  actorId: string
   reason: string | null
-  created_at: string
+  createdAt: string
 }
 
 export interface Appointment {
@@ -92,10 +92,10 @@ export interface Appointment {
   patient: Patient
   clinician: Clinician
   status: APPOINTMENT_STATUS
-  booked_at: string
-  confirmed_at: string | null
-  cancelled_at: string | null
-  completed_at: string | null
+  bookedAt: string
+  confirmedAt: string | null
+  cancelledAt: string | null
+  completedAt: string | null
   events: Event[]
   encounter: Encounter[]
   room_id?: string | null

@@ -273,7 +273,21 @@ export async function fetchAppointmentsByClinician(
     orderBy,
     skip: (page - 1) * per_page,
     take: per_page,
-    include: { slot: true, patient: true, events: true, encounter: true },
+    include: {
+      slot: true,
+      patient: {
+        select: {
+          name: true,
+        },
+      },
+      clinician: {
+        select: {
+          name: true,
+        },
+      },
+      events: true,
+      encounter: true,
+    },
   });
 
   return { data, meta: buildMeta(total, page, per_page, data.length) };
@@ -302,6 +316,11 @@ export async function fetchAppointmentsByPatient(
     take: per_page,
     include: {
       slot: true,
+      patient: {
+        select: {
+          name: true,
+        },
+      },
       clinician: {
         select: {
           name: true,

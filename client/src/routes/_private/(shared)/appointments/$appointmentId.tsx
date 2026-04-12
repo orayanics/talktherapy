@@ -66,10 +66,10 @@ function RouteComponent() {
             <Row label="Patient Name" value={appointment.patient.name} />
             <Row label="Patient Email" value={appointment.patient.email} />
             <Row label="Clinician Name" value={appointment.clinician.name} />
-            {/* <Row
+            <Row
               label="Clinician Specialization"
-              value={appointment.clinician.diagnosis}
-            /> */}
+              value={appointment.clinician.diagnosis.label}
+            />
           </div>
 
           {encounterObj && (
@@ -80,18 +80,18 @@ function RouteComponent() {
               <Row label="Diagnosis" value={encounterObj.diagnosis} />
               <Row
                 label="Chief Complaint"
-                value={encounterObj.chief_complaint}
+                value={encounterObj.chiefComplaint}
               />
               <Row
                 label="Referral Source"
-                value={encounterObj.referral_source}
+                value={encounterObj.referralSource}
               />
               <Row
                 label="Referral Document"
                 value={
-                  encounterObj.referral_url ? (
+                  encounterObj.referralUrl ? (
                     <a
-                      href={encounterObj.referral_url}
+                      href={encounterObj.referralUrl}
                       className="text-sm text-primary hover:underline flex items-center gap-1"
                     >
                       View Referral Document
@@ -129,7 +129,7 @@ function RouteComponent() {
 
                   <div className="flex flex-col gap-1">
                     <time className="text-xs font-medium uppercase text-slate-500">
-                      {formatDate(ev.created_at)}
+                      {formatDate(ev.createdAt)}
                     </time>
 
                     <div className="flex items-center gap-2">
@@ -137,7 +137,7 @@ function RouteComponent() {
                         {ev.type.replace('_', ' ')}
                       </h3>
                       <span className="text-slate-300">•</span>
-                      <RolePill role={ev.actor_type} />
+                      <RolePill role={ev.actorType} />
                     </div>
 
                     {ev.reason && (

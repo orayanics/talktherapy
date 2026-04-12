@@ -177,15 +177,15 @@ function RouteComponent() {
                 ),
               },
               {
+                header: 'Patient',
+                accessor: 'patient',
+                render: (row) => row.patient.name,
+              },
+              {
                 header: 'Clinician',
                 accessor: 'clinician',
                 render: (row) => row.clinician.name,
               },
-              // {
-              //   header: 'Patient',
-              //   accessor: 'patient',
-              //   render: (row) => row.patient.name,
-              // },
               {
                 header: 'Status',
                 accessor: 'status',
