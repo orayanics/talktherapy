@@ -1,7 +1,15 @@
 import useOtpForm from './useOtpForm'
 
-export default function FormOtp() {
-  const { apiError, errors, isLoading, onSubmit, register } = useOtpForm()
+export default function FormOtp({ initialEmail }: { initialEmail?: string }) {
+  const {
+    apiError,
+    errors,
+    isLoading,
+    isResending,
+    onResend,
+    onSubmit,
+    register,
+  } = useOtpForm({ initialEmail })
   return (
     <form onSubmit={onSubmit} className="card">
       <div className="card-body">
@@ -22,6 +30,15 @@ export default function FormOtp() {
 
         <button disabled={isLoading} className="btn">
           Verify
+        </button>
+
+        <button
+          type="button"
+          disabled={isResending}
+          className="btn btn-ghost"
+          onClick={onResend}
+        >
+          {isResending ? 'Resending...' : 'Resend OTP'}
         </button>
       </div>
     </form>

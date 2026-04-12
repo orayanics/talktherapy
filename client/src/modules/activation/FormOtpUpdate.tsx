@@ -6,15 +6,23 @@ import type { DiagnosisItem } from '@/api/public'
 export default function FormOtpUpdate({
   otp,
   role,
+  initialEmail,
 }: {
   otp: string
   role?: string
+  initialEmail?: string
 }) {
-  const { apiError, errors, isLoading, onSubmit, register } = useOtpUpdateForm({
-    otp,
-  })
+  const {
+    apiError,
+    errors,
+    isLoading,
+    isResending,
+    onResend,
+    onSubmit,
+    register,
+  } = useOtpUpdateForm({ otp, initialEmail })
   const { data: diagnoses, isPending, isError } = useQuery(fetchDiagnoses)
-  const isHide = role === 'ADMIN' || role === undefined
+  const shouldShowDiagnosis = role === 'CLINICIAN'
 
   if (isPending) return <div>Loading...</div>
   if (isError) return <div>Error loading diagnoses</div>
@@ -32,7 +40,7 @@ export default function FormOtpUpdate({
         <input {...register('email')} placeholder="Email" className="input" />
         {errors.email && <p>{errors.email.message}</p>}
 
-        {!isHide && (
+        {shouldShowDiagnosis && (
           <select className="select" {...register('diagnosis_id')}>
             <option value="">Select Diagnosis</option>
             {diagnoses.map((item: DiagnosisItem) => (
@@ -63,6 +71,15 @@ export default function FormOtpUpdate({
 
         <button disabled={isLoading} className="btn">
           Update Account
+        </button>
+
+        <button
+          type="button"
+          disabled={isResending}
+          className="btn btn-ghost"
+          onClick={onResend}
+        >
+          {isResending ? 'Resending...' : 'Resend OTP'}
         </button>
       </div>
     </form>

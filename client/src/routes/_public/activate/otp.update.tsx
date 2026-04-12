@@ -6,20 +6,21 @@ import FormOtpUpdate from '@/modules/activation/FormOtpUpdate'
 export const Route = createFileRoute('/_public/activate/otp/update')({
   validateSearch: z.object({
     otp: z.coerce.string(),
-    role: z.enum(['CLINICIAN', 'ADMIN']).optional(),
+    email: z.string().optional(),
+    role: z.enum(['CLINICIAN', 'ADMIN', 'PATIENT']).optional(),
   }),
   component: RouteComponent,
 })
 
 function RouteComponent() {
-  const { otp, role } = useSearch({
+  const { otp, role, email } = useSearch({
     from: '/_public/activate/otp/update',
   })
 
   if (!otp) return null
   return (
     <div>
-      <FormOtpUpdate otp={otp} role={role} />
+      <FormOtpUpdate otp={otp} role={role} initialEmail={email} />
     </div>
   )
 }

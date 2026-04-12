@@ -9,7 +9,6 @@ import type {
 } from '@/modules/register/schema'
 
 import { useAlert } from '@/context/AlertContext'
-import { USER } from '@/constants/message'
 
 export const mutateRegisterPatient = () => {
   const navigate = useNavigate()
@@ -23,8 +22,10 @@ export const mutateRegisterPatient = () => {
       return data
     },
     onSuccess: async () => {
-      showAlert(USER.create.success, 'success')
-      navigate({ to: '/login' })
+      showAlert('Registration successful. OTP sent to your email.', 'success')
+      navigate({
+        to: '/activate/otp',
+      })
     },
   })
 }
@@ -46,7 +47,7 @@ export const mutateRegisterClinician = () => {
 
       await queryClient.invalidateQueries({ queryKey: ['logs'] })
 
-      showAlert(USER.create.success, 'success')
+      showAlert('User created. OTP sent to the user email.', 'success')
     },
   })
 }
@@ -67,7 +68,7 @@ export const mutateRegisterAdmin = () => {
       await queryClient.invalidateQueries({ queryKey: ['users-count'] })
       await queryClient.invalidateQueries({ queryKey: ['logs'] })
 
-      showAlert(USER.create.success, 'success')
+      showAlert('User created. OTP sent to the user email.', 'success')
     },
   })
 }

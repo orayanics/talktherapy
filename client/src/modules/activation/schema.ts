@@ -26,5 +26,10 @@ export const VerifyOtpSchema = z.object({
   otp_code: z.string().length(6),
 })
 
+export const ResendOtpSchema = z.object({
+  email: z.email(),
+})
+
 export type TVerifyOtp = z.infer<typeof VerifyOtpSchema>
+export type TResendOtp = z.infer<typeof ResendOtpSchema>
 export type TActivateAccount = z.infer<typeof ActivateAccountSchema>

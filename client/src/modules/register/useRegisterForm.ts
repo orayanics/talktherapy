@@ -36,7 +36,7 @@ export default function useRegisterForm() {
       await registerMutation.mutateAsync(data)
     } catch (error: any) {
       if (isAxiosError(error)) {
-        const message = error.response?.data || 'Login failed'
+        const message = error.response?.data?.error || 'Registration failed'
         setApiError(message)
       } else {
         setApiError(error.message)

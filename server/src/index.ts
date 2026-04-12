@@ -17,6 +17,7 @@ import { scheduleModule } from "./modules/schedule";
 import { clinicianPatientModule } from "./modules/clinicianPatient";
 import { sessionModule } from "./modules/session";
 import { notificationsModule } from "./modules/notifications";
+import { activateModule } from "./modules/activate";
 const cert = Bun.file("../certs/localhost.pem");
 const key = Bun.file("../certs/localhost-key.pem");
 
@@ -39,6 +40,7 @@ const app = new Elysia()
   )
   .use(betterAuthPlugin)
   .use(publicModule)
+  .use(activateModule)
   .use(registerModule)
   .use(usersModule)
   .use(contentModule)

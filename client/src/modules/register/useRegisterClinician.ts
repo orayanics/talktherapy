@@ -35,7 +35,8 @@ export default function useRegisterClinician() {
       await registerMutation.mutateAsync(data)
     } catch (error: any) {
       if (isAxiosError(error)) {
-        const message = error.response?.data.message || 'Register admin failed'
+        const message =
+          error.response?.data?.error || 'Register clinician failed'
         setApiError(message)
       } else {
         setApiError(error.message)

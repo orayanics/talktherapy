@@ -34,7 +34,7 @@ export default function useRegisterAdmin() {
       await registerMutation.mutateAsync(data)
     } catch (error: any) {
       if (isAxiosError(error)) {
-        const message = error.response?.data.message || 'Register admin failed'
+        const message = error.response?.data?.error || 'Register admin failed'
         setApiError(message)
       } else {
         setApiError(error.message)

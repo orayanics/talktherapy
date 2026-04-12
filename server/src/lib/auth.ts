@@ -11,11 +11,93 @@ import {
 
 import { prisma } from "./client";
 import { CLIENT_URL } from "@/constant";
+import {
+  sendResetPasswordEmail,
+  sendVerificationLinkEmail,
+  sendVerificationOtpEmail,
+} from "./mail";
+
+const EMAIL_OTP_TTL_SECONDS = 60 * 10;
+const EMAIL_OTP_NAMESPACE = "email-verification";
+
+const getEmailOtpIdentifier = (email: string) =>
+  `${EMAIL_OTP_NAMESPACE}:${email.toLowerCase()}`;
+
+const createOtpCode = () => `${Math.floor(100000 + Math.random() * 900000)}`;
+
+export async function issueEmailVerificationOtp(email: string) {
+  const normalizedEmail = email.trim().toLowerCase();
+  const otp = createOtpCode();
+  const expiresAt = new Date(Date.now() + EMAIL_OTP_TTL_SECONDS * 1000);
+  const identifier = getEmailOtpIdentifier(normalizedEmail);
+
+  await prisma.verification.deleteMany({
+    where: { identifier },
+  });
+
+  await prisma.verification.create({
+    data: {
+      id: crypto.randomUUID(),
+      identifier,
+      value: otp,
+      expiresAt,
+    },
+  });
+
+  await sendVerificationOtpEmail({
+    email: normalizedEmail,
+    otp,
+  });
+
+  return { expiresAt };
+}
+
+export async function verifyEmailVerificationOtp(email: string, otp: string) {
+  const normalizedEmail = email.trim().toLowerCase();
+  const identifier = getEmailOtpIdentifier(normalizedEmail);
+
+  const verification = await prisma.verification.findFirst({
+    where: {
+      identifier,
+      value: otp,
+      expiresAt: {
+        gt: new Date(),
+      },
+    },
+  });
+
+  if (!verification) {
+    throw new Error("Invalid or expired OTP code");
+  }
+
+  return verification;
+}
+
+export async function consumeEmailVerificationOtp(email: string, otp: string) {
+  const verification = await verifyEmailVerificationOtp(email, otp);
+  await prisma.verification.delete({ where: { id: verification.id } });
+  return verification;
+}
 
 export const auth = betterAuth({
   basePath: "/api",
+  emailVerification: {
+    sendVerificationEmail: async ({ user, url }) => {
+      await sendVerificationLinkEmail({
+        email: user.email,
+        url,
+      });
+    },
+  },
   emailAndPassword: {
     enabled: true,
+    requireEmailVerification: true,
+    sendResetPassword: async ({ user, url }) => {
+      await sendResetPasswordEmail({
+        email: user.email,
+        url,
+      });
+    },
     password: {
       hash: (password: string) => Bun.password.hash(password),
       verify: ({ password, hash }) => Bun.password.verify(password, hash),
@@ -61,15 +143,13 @@ export const auth = betterAuth({
       adminRoles: ["admin", "superadmin"],
     }),
     emailOTP({
-      // TODO: Implement email logic, GMAIL SMTP
       async sendVerificationOTP({ email, otp, type }) {
-        if (type === "sign-in") {
-          // Send the OTP for sign in
-        } else if (type === "email-verification") {
-          // Send the OTP for email verification
-        } else {
-          // Send the OTP for password reset
-        }
+        await sendVerificationOtpEmail({
+          email,
+          otp,
+        });
+
+        console.info(`[auth] OTP type=${type} sent to ${email}`);
       },
     }),
   ],
