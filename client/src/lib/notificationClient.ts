@@ -8,6 +8,38 @@ class NotificationClient {
   private subs = new Set<Subscriber>()
   private connected = false
   private fetching = false
+  private pendingRefresh: ReturnType<typeof setTimeout> | null = null
+  private reconnectTimer: ReturnType<typeof setTimeout> | null = null
+  private reconnectAttempts = 0
+
+  private scheduleRefresh(delay = 120) {
+    if (this.pendingRefresh) return
+    this.pendingRefresh = setTimeout(() => {
+      this.pendingRefresh = null
+      void this.fetchList()
+    }, delay)
+  }
+
+  private scheduleReconnect() {
+    if (this.reconnectTimer) return
+    if (this.subs.size === 0) return
+    const attempt = Math.min(this.reconnectAttempts, 6)
+    const baseDelay = 1000
+    const delay = baseDelay * 2 ** attempt
+    this.reconnectAttempts += 1
+    this.reconnectTimer = setTimeout(() => {
+      this.reconnectTimer = null
+      void this.connectOnce()
+    }, delay)
+  }
+
+  private resetReconnectState() {
+    this.reconnectAttempts = 0
+    if (this.reconnectTimer) {
+      clearTimeout(this.reconnectTimer)
+      this.reconnectTimer = null
+    }
+  }
 
   async fetchList() {
     if (this.fetching) return
@@ -39,12 +71,17 @@ class NotificationClient {
         method: 'POST',
         credentials: 'include',
       })
-      if (!r.ok) return
+      if (!r.ok) {
+        this.connected = false
+        this.scheduleReconnect()
+        return
+      }
       const body = await r.json()
       const token = body.token
       const ws = new WebSocket(
         `${API_URL.replace(/^http/, 'ws')}/notifications/ws?token=${encodeURIComponent(token)}`,
       )
+      this.ws = ws
       ws.onmessage = (ev) => {
         try {
           const data = JSON.parse(ev.data)
@@ -52,16 +89,24 @@ class NotificationClient {
             this.notifications = [data.notification, ...this.notifications]
             this.notify()
           }
-        } catch {}
+          this.scheduleRefresh()
+        } catch {
+          this.scheduleRefresh()
+        }
       }
       ws.onclose = () => {
         this.ws = null
         this.connected = false
-        // no auto-reconnect for now
+        this.scheduleReconnect()
       }
-      this.ws = ws
+      ws.onopen = () => {
+        this.resetReconnectState()
+        this.scheduleRefresh(0)
+      }
     } catch (e) {
+      this.ws = null
       this.connected = false
+      this.scheduleReconnect()
     }
   }
 
@@ -73,7 +118,17 @@ class NotificationClient {
   subscribe(fn: Subscriber) {
     this.subs.add(fn)
     fn([...this.notifications])
-    return () => this.subs.delete(fn)
+    return () => {
+      this.subs.delete(fn)
+      if (this.subs.size === 0) {
+        this.resetReconnectState()
+        if (this.ws) {
+          this.ws.close()
+          this.ws = null
+        }
+        this.connected = false
+      }
+    }
   }
 
   async markRead(id: string) {
