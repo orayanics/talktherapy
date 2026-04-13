@@ -4,6 +4,7 @@ import { fetchDiagnoses } from '@/api/public'
 import type { DiagnosisItem } from '@/api/public'
 import RowError from '@/components/Table/RowError'
 import { Link } from '@tanstack/react-router'
+import FormLabel from '@/components/Form/FormLabel'
 
 export default function RegisterForm() {
   const { register, onSubmit, errors, apiError, isLoading } = useRegisterForm()
@@ -36,8 +37,8 @@ export default function RegisterForm() {
         </div>
 
         <div>
-          <p className="text-slate-800">Welcome back!</p>
-          <p className="text-slate-500">Ready to join the session?</p>
+          <p className="text-slate-800 font-medium">Welcome back!</p>
+          <p className="text-slate-500 text-sm">Ready to join the session?</p>
         </div>
 
         {apiError && (
@@ -45,7 +46,7 @@ export default function RegisterForm() {
         )}
 
         <div className="flex flex-col">
-          <label className="label">Name</label>
+          <FormLabel title="Name" />
           <input
             {...register('name')}
             placeholder="Name"
@@ -55,7 +56,7 @@ export default function RegisterForm() {
         </div>
 
         <div className="flex flex-col">
-          <label className="label">Email</label>
+          <FormLabel title="Email" />
           <input
             {...register('email')}
             placeholder="Email"
@@ -66,7 +67,7 @@ export default function RegisterForm() {
         </div>
 
         <div className="flex flex-col">
-          <label className="label">Diagnosis</label>
+          <FormLabel title="Diagnosis Group" />
           <select className="select w-full" {...register('diagnosis_id')}>
             <option value="">Select Diagnosis</option>
             {diagnoses.map((item: DiagnosisItem) => (
@@ -79,7 +80,7 @@ export default function RegisterForm() {
         </div>
 
         <div className="flex flex-col">
-          <label className="label">Password</label>
+          <FormLabel title="Password" />
           <input
             {...register('password')}
             placeholder="Password"
@@ -90,7 +91,7 @@ export default function RegisterForm() {
         </div>
 
         <div className="flex flex-col">
-          <label className="label">Confirm Password</label>
+          <FormLabel title="Confirm Password" />
           <input
             {...register('password_confirmation')}
             placeholder="Confirm Password"
@@ -119,7 +120,10 @@ export default function RegisterForm() {
             Register
           </button>
 
-          <Link to="/login" className="link link-hover">
+          <Link
+            to="/login"
+            className="link link-hover link-neutral text-sm text-center"
+          >
             Alreay have an account? Login
           </Link>
         </div>

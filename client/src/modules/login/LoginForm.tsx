@@ -1,6 +1,7 @@
 import RowError from '@/components/Table/RowError'
 import useLoginForm from './useLoginForm'
 import { Link } from '@tanstack/react-router'
+import FormLabel from '@/components/Form/FormLabel'
 
 export default function LoginForm() {
   const { register, onSubmit, errors, apiError, isLoading } = useLoginForm()
@@ -28,8 +29,8 @@ export default function LoginForm() {
         </div>
 
         <div>
-          <p className="text-slate-800">Welcome back!</p>
-          <p className="text-slate-500">
+          <p className="text-slate-800 font-medium">Welcome back!</p>
+          <p className="text-slate-500 text-sm">
             Ready to continue where you left off?
           </p>
         </div>
@@ -39,7 +40,7 @@ export default function LoginForm() {
         )}
 
         <div className="flex flex-col">
-          <label className="label">Email</label>
+          <FormLabel title="Email" />
           <input
             {...register('email')}
             placeholder="Email"
@@ -50,7 +51,7 @@ export default function LoginForm() {
         </div>
 
         <div className="flex flex-col">
-          <label className="label">Password</label>
+          <FormLabel title="Password" />
           <input
             {...register('password')}
             placeholder="Password"
@@ -65,11 +66,17 @@ export default function LoginForm() {
             Login
           </button>
 
-          <Link to="/register" className="link link-hover">
+          <Link
+            to="/register"
+            className="link link-hover link-neutral text-sm text-center"
+          >
             No account yet? Register
           </Link>
 
-          <Link to="/activate/otp" className="link link-hover">
+          <Link
+            to="/activate/otp"
+            className="link link-hover text-sm  text-center"
+          >
             Activate Account
           </Link>
         </div>
