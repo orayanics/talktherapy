@@ -31,7 +31,6 @@ enum AccountStatus {
   pending
   active
   suspended
-  inactive
 }
 
 enum SlotStatus {

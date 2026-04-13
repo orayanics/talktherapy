@@ -5,6 +5,7 @@ import { betterAuthPlugin } from "@/plugin/better-auth";
 import { auth } from "@/lib/auth";
 import { logAudit } from "@/lib/audit";
 import { ApiError, ApiSuccess, ok, tryOk } from "@/lib/response";
+import { prisma } from "@/lib/client";
 
 const BanUserSchema = z.object({
   userId: z.string(),
@@ -25,6 +26,11 @@ export const authModule = new Elysia({ prefix: "/auth" })
       );
 
       if (!result.success) return status(400, result);
+
+      await prisma.user.update({
+        where: { id: body.userId },
+        data: { status: "suspended" },
+      });
 
       await logAudit({
         actorId: user.id,
@@ -60,6 +66,11 @@ export const authModule = new Elysia({ prefix: "/auth" })
       );
 
       if (!result.success) return status(400, result);
+
+      await prisma.user.update({
+        where: { id: body.userId },
+        data: { status: "active" },
+      });
 
       await logAudit({
         actorId: user.id,

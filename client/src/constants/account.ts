@@ -4,9 +4,4 @@ export const ROLE_VALUES = [
   'patient',
   'superadmin',
 ] as const
-export const STATUS_VALUES = [
-  'pending',
-  'active',
-  'suspended',
-  'inactive',
-] as const
+export const STATUS_VALUES = ['pending', 'active', 'suspended'] as const

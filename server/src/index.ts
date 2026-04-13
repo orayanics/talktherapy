@@ -10,6 +10,7 @@ import { registerModule } from "./modules/register";
 import { publicModule } from "./modules/public";
 import { contentModule } from "./modules/content";
 import { logsModule } from "./modules/logs";
+import { adminModule } from "./modules/admin";
 import { soapsModule } from "./modules/soaps";
 import { appointmentsModule } from "./modules/appointments";
 import { slotsModule } from "./modules/slots";
@@ -46,6 +47,7 @@ const app = new Elysia()
   .use(registerModule)
   .use(usersModule)
   .use(contentModule)
+  .use(adminModule)
   .use(logsModule)
   .use(soapsModule)
   .use(appointmentsModule)

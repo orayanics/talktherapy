@@ -19,7 +19,7 @@ export default function ScheduleList() {
 
   const page = search.page ?? 1
   const from = search.from
-  const sort = search.sort ?? 'desc'
+  const sort = search.sort ?? 'asc'
 
   const updateSearch = (next: Record<string, unknown>) => {
     navigate({

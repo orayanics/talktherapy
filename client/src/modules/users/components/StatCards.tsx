@@ -2,13 +2,7 @@ import type { UsersCount } from '@/api/users'
 import { UserPlus, Users, UserX, UserMinus } from 'lucide-react'
 
 export default function StatCards(props: UsersCount) {
-  const {
-    active_users,
-    inactive_users,
-    total,
-    suspended_users,
-    pending_users,
-  } = props
+  const { active_users, total, suspended_users, pending_users } = props
 
   return (
     <>
@@ -26,15 +20,9 @@ export default function StatCards(props: UsersCount) {
           trendColor: 'text-green-600',
         },
         {
-          label: 'Inactive users',
-          count: inactive_users,
-          icon: <UserMinus size={18} className="text-slate-900" />,
-          trendColor: 'text-rose-500',
-        },
-        {
           label: 'Pending users',
           count: pending_users,
-          icon: <UserX size={18} className="text-slate-900" />,
+          icon: <UserMinus size={18} className="text-slate-900" />,
           trendColor: 'text-green-600',
         },
         {

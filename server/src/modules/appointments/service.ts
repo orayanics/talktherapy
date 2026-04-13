@@ -1,5 +1,11 @@
 import { prisma } from "@/lib/client";
-import { differenceInHours, startOfDay, addDays } from "date-fns";
+import {
+  differenceInHours,
+  startOfDay,
+  addDays,
+  parseISO,
+  isValid,
+} from "date-fns";
 import { buildMeta } from "@/lib/paginate";
 import { notifySafe, NotificationTemplates } from "../notifications/service";
 
@@ -389,6 +395,27 @@ export async function fetchAppointmentsByClinician(
 
   const where: any = { clinicianId };
 
+  if (query?.date_from || query?.date_to) {
+    const startAtFilter: any = {};
+
+    if (query?.date_from) {
+      const parsedDateFrom = parseISO(String(query.date_from));
+      if (!isValid(parsedDateFrom)) throw new Error("Invalid date_from query");
+      startAtFilter.gte = startOfDay(parsedDateFrom);
+      if (!query?.date_to) {
+        startAtFilter.lt = addDays(startAtFilter.gte, 1);
+      }
+    }
+
+    if (query?.date_to) {
+      const parsedDateTo = parseISO(String(query.date_to));
+      if (!isValid(parsedDateTo)) throw new Error("Invalid date_to query");
+      startAtFilter.lt = addDays(startOfDay(parsedDateTo), 1);
+    }
+
+    where.slot = { is: { startAt: startAtFilter } };
+  }
+
   const total = await prisma.appointment.count({ where });
 
   const orderBy: any = query?.sort
@@ -430,6 +457,27 @@ export async function fetchAppointmentsByPatient(
 
   const where: any = { patientId };
 
+  if (query?.date_from || query?.date_to) {
+    const startAtFilter: any = {};
+
+    if (query?.date_from) {
+      const parsedDateFrom = parseISO(String(query.date_from));
+      if (!isValid(parsedDateFrom)) throw new Error("Invalid date_from query");
+      startAtFilter.gte = startOfDay(parsedDateFrom);
+      if (!query?.date_to) {
+        startAtFilter.lt = addDays(startAtFilter.gte, 1);
+      }
+    }
+
+    if (query?.date_to) {
+      const parsedDateTo = parseISO(String(query.date_to));
+      if (!isValid(parsedDateTo)) throw new Error("Invalid date_to query");
+      startAtFilter.lt = addDays(startOfDay(parsedDateTo), 1);
+    }
+
+    where.slot = { is: { startAt: startAtFilter } };
+  }
+
   const total = await prisma.appointment.count({ where });
 
   const orderBy: any = query?.sort
@@ -468,7 +516,11 @@ export async function listSlotsByClinician(clinicianId: string, query: any) {
 
   const where: any = { clinicianId };
   if (query?.date_from) {
-    const start = startOfDay(new Date(query.date_from));
+    const parsedDateFrom = parseISO(String(query.date_from));
+    if (!isValid(parsedDateFrom)) {
+      throw new Error("Invalid date_from query");
+    }
+    const start = startOfDay(parsedDateFrom);
     const end = addDays(start, 1);
     where.startAt = { gte: start, lt: end };
   }
@@ -481,7 +533,6 @@ export async function listSlotsByClinician(clinicianId: string, query: any) {
     take: per_page,
     include: {
       availabilityRule: true,
-      //   clinician: { select: { id: true, name: true, email: true } },
     },
   });
 
@@ -495,10 +546,23 @@ export async function slotsForPatients(query: any) {
 
   const where: any = { isHidden: false, status: "FREE" };
   if (query?.clinician_id) where.clinicianId = query.clinician_id;
-  if (query?.date_from) {
-    const start = startOfDay(new Date(query.date_from));
-    const end = addDays(start, 1);
-    where.startAt = { gte: start, lt: end };
+  if (query?.date_from || query?.date_to) {
+    const startAtFilter: any = {};
+
+    if (query?.date_from) {
+      const parsedDateFrom = parseISO(String(query.date_from));
+      if (!isValid(parsedDateFrom)) throw new Error("Invalid date_from query");
+      startAtFilter.gte = startOfDay(parsedDateFrom);
+      if (!query?.date_to) startAtFilter.lt = addDays(startAtFilter.gte, 1);
+    }
+
+    if (query?.date_to) {
+      const parsedDateTo = parseISO(String(query.date_to));
+      if (!isValid(parsedDateTo)) throw new Error("Invalid date_to query");
+      startAtFilter.lt = addDays(startOfDay(parsedDateTo), 1);
+    }
+
+    where.startAt = startAtFilter;
   }
 
   if (query?.diagnosis) {

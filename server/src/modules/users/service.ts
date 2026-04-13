@@ -63,11 +63,10 @@ export async function fetchUserById(id: string) {
 export async function fetchUsersCounts(params: TUsersListSchema) {
   const where = buildUsersWhere(params);
 
-  const [total, active_users, inactive_users, suspended_users, pending_users] =
+  const [total, active_users, suspended_users, pending_users] =
     await Promise.all([
       prisma.user.count({ where }),
       prisma.user.count({ where: { ...where, status: "active" } }),
-      prisma.user.count({ where: { ...where, status: "inactive" } }),
       prisma.user.count({ where: { ...where, status: "suspended" } }),
       prisma.user.count({ where: { ...where, status: "pending" } }),
     ]);
@@ -76,7 +75,6 @@ export async function fetchUsersCounts(params: TUsersListSchema) {
     counts: {
       total,
       active_users,
-      inactive_users,
       suspended_users,
       pending_users,
     },

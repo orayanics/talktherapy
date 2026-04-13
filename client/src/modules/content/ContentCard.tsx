@@ -67,7 +67,7 @@ export default function ContentCard({ content }: { content: Content }) {
 
       <p className="inline-flex gap-2 text-xs text-slate-500 mt-2">
         <Calendar size={14} />
-        {formatDate(content.created_at)}
+        {formatDate(content.createdAt)}
       </p>
     </div>
   )

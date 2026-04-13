@@ -26,12 +26,7 @@ export const UserPlain = t.Object(
     banReason: __nullable__(t.String()),
     banExpires: __nullable__(t.Date()),
     status: t.Union(
-      [
-        t.Literal("pending"),
-        t.Literal("active"),
-        t.Literal("suspended"),
-        t.Literal("inactive"),
-      ],
+      [t.Literal("pending"), t.Literal("active"), t.Literal("suspended")],
       { additionalProperties: false },
     ),
     diagnosis_id: __nullable__(t.String()),
@@ -336,12 +331,7 @@ export const UserPlainInputCreate = t.Object(
     banExpires: t.Optional(__nullable__(t.Date())),
     status: t.Optional(
       t.Union(
-        [
-          t.Literal("pending"),
-          t.Literal("active"),
-          t.Literal("suspended"),
-          t.Literal("inactive"),
-        ],
+        [t.Literal("pending"), t.Literal("active"), t.Literal("suspended")],
         { additionalProperties: false },
       ),
     ),
@@ -371,12 +361,7 @@ export const UserPlainInputUpdate = t.Object(
     banExpires: t.Optional(__nullable__(t.Date())),
     status: t.Optional(
       t.Union(
-        [
-          t.Literal("pending"),
-          t.Literal("active"),
-          t.Literal("suspended"),
-          t.Literal("inactive"),
-        ],
+        [t.Literal("pending"), t.Literal("active"), t.Literal("suspended")],
         { additionalProperties: false },
       ),
     ),
@@ -1068,12 +1053,7 @@ export const UserWhere = t.Partial(
           banReason: t.String(),
           banExpires: t.Date(),
           status: t.Union(
-            [
-              t.Literal("pending"),
-              t.Literal("active"),
-              t.Literal("suspended"),
-              t.Literal("inactive"),
-            ],
+            [t.Literal("pending"), t.Literal("active"), t.Literal("suspended")],
             { additionalProperties: false },
           ),
           diagnosis_id: t.String(),
@@ -1140,7 +1120,6 @@ export const UserWhereUnique = t.Recursive(
                   t.Literal("pending"),
                   t.Literal("active"),
                   t.Literal("suspended"),
-                  t.Literal("inactive"),
                 ],
                 { additionalProperties: false },
               ),

@@ -39,12 +39,7 @@ export const BookmarkRelations = t.Object(
         banReason: __nullable__(t.String()),
         banExpires: __nullable__(t.Date()),
         status: t.Union(
-          [
-            t.Literal("pending"),
-            t.Literal("active"),
-            t.Literal("suspended"),
-            t.Literal("inactive"),
-          ],
+          [t.Literal("pending"), t.Literal("active"), t.Literal("suspended")],
           { additionalProperties: false },
         ),
         diagnosis_id: __nullable__(t.String()),

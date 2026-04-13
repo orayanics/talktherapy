@@ -14,6 +14,7 @@ import type {
 } from '@/modules/content/schema'
 
 import { CONTENT } from '@/constants/message'
+import type { DiagnosisItem } from './public'
 
 export interface Tag {
   id: string
@@ -23,13 +24,13 @@ export interface Tag {
 
 export interface Content {
   id: string
-  author_id: string
-  diagnosis_id: string
+  authorId: string
+  diagnosisId: string
   title: string
   description: string
   body: string
   is_bookmarked: boolean
-  created_at: string
+  createdAt: string
   updated_at: string
 
   author: {
@@ -38,11 +39,7 @@ export interface Content {
     email: string
   }
 
-  diagnosis: {
-    id: string
-    value: string
-    label: string
-  }
+  diagnosis: DiagnosisItem
 
   tags: Tag[]
 }
