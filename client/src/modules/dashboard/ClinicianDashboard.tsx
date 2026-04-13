@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
+import { useState } from 'react'
 import {
   startOfDay,
   endOfDay,
@@ -7,12 +8,7 @@ import {
   format,
 } from 'date-fns'
 
-import {
-  fetchAppointments,
-  mutateAcceptAppointment,
-  mutateRejectAppointment,
-  mutateCompleteAppointment,
-} from '@/api/schedule'
+import { fetchAppointments } from '@/api/schedule'
 
 import StateLoading from '@/components/State/StateLoading'
 import StateError from '@/components/State/StateError'
@@ -22,6 +18,12 @@ import { Link } from '@tanstack/react-router'
 import StateNull from '@/components/State/StateNull'
 import { TableBase } from '@/components/Table/TableBase'
 import AppointmentPill from '@/components/Decorator/AppointmentPill'
+import AppointmentActionModal from '@/modules/appointments/AppointmentActionModal'
+import useAppointmentAction from '@/modules/appointments/useAppointmentAction'
+import AcceptAppointmentModal from '@/modules/appointments/AcceptAppointmentModal'
+import useAcceptAppointment from '@/modules/appointments/useAcceptAppointment'
+import CompleteAppointmentModal from '@/modules/appointments/CompleteAppointmentModal'
+import useCompleteAppointment from '@/modules/appointments/useCompleteAppointment'
 
 function todayRange() {
   const now = new Date()
@@ -35,6 +37,11 @@ function todayRange() {
 }
 
 export default function ClinicianDashboard() {
+  const [selected, setSelected] = useState<string | null>(null)
+  const [openReject, setOpenReject] = useState(false)
+  const [openAccept, setOpenAccept] = useState(false)
+  const [openComplete, setOpenComplete] = useState(false)
+
   const { from, to } = todayRange()
 
   const q = useQuery(fetchAppointments({}, { from, to }))
@@ -61,9 +68,39 @@ export default function ClinicianDashboard() {
     countsByDay[key] = (countsByDay[key] ?? 0) + 1
   }
 
-  const accept = mutateAcceptAppointment()
-  const reject = mutateRejectAppointment()
-  const complete = mutateCompleteAppointment()
+  const { submit: submitReject, apiError } = useAppointmentAction(true)
+  const acceptAction = useAcceptAppointment()
+  const completeAction = useCompleteAppointment()
+
+  const openRejectAction = (id: string) => {
+    setSelected(id)
+    setOpenReject(true)
+  }
+
+  const openAcceptAction = (id: string) => {
+    setSelected(id)
+    setOpenAccept(true)
+  }
+
+  const openCompleteAction = (id: string) => {
+    setSelected(id)
+    setOpenComplete(true)
+  }
+
+  const handleRejectSubmit = async (payload: any) => {
+    if (!selected) return
+    await submitReject(selected, payload)
+  }
+
+  const handleAcceptSubmit = async (payload?: any) => {
+    if (!selected) return
+    await acceptAction.submit(selected, payload)
+  }
+
+  const handleCompleteSubmit = async (payload?: any) => {
+    if (!selected) return
+    await completeAction.submit(selected, payload)
+  }
 
   if (q.isLoading) return <StateLoading />
   if (q.isError) return <StateError />
@@ -172,13 +209,13 @@ export default function ClinicianDashboard() {
                         <div className="flex gap-2">
                           <button
                             className="btn btn-neutral"
-                            onClick={() => accept.mutate(row.id)}
+                            onClick={() => openAcceptAction(row.id)}
                           >
                             Accept
                           </button>
                           <button
                             className="btn btn-error"
-                            onClick={() => reject.mutate(row.id)}
+                            onClick={() => openRejectAction(row.id)}
                           >
                             Reject
                           </button>
@@ -191,7 +228,7 @@ export default function ClinicianDashboard() {
                         <div className="flex gap-2">
                           <button
                             className="btn btn-success"
-                            onClick={() => complete.mutate(row.id)}
+                            onClick={() => openCompleteAction(row.id)}
                           >
                             Complete
                           </button>
@@ -207,6 +244,26 @@ export default function ClinicianDashboard() {
           </div>
         )}
       </section>
+
+      <AppointmentActionModal
+        isOpen={openReject}
+        onClose={() => setOpenReject(false)}
+        onSubmit={handleRejectSubmit}
+        isClinician={true}
+        apiError={apiError}
+      />
+      <AcceptAppointmentModal
+        isOpen={openAccept}
+        onClose={() => setOpenAccept(false)}
+        onSubmit={handleAcceptSubmit}
+        isClinician={true}
+      />
+      <CompleteAppointmentModal
+        isOpen={openComplete}
+        onClose={() => setOpenComplete(false)}
+        onSubmit={handleCompleteSubmit}
+        isClinician={true}
+      />
     </div>
   )
 }
