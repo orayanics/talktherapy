@@ -6,6 +6,8 @@ import { fetchSoapById } from '@/api/records'
 import StateLoading from '@/components/State/StateLoading'
 import StateError from '@/components/State/StateError'
 import StateNull from '@/components/State/StateNull'
+import { Row } from '@/components/Table/Row'
+import { formatDate } from '@/utils/useDate'
 
 export const Route = createFileRoute(
   '/_private/(clinician)/patients/$patientId/soap/$soapId/',
@@ -21,10 +23,6 @@ function RouteComponent() {
     enabled: !!soapId,
   })
 
-  if (isPending) return <StateLoading />
-  if (isError) return <StateError />
-  if (!data) return <StateNull />
-
   return (
     <div className="space-y-6">
       <Link
@@ -36,39 +34,28 @@ function RouteComponent() {
         Patient
       </Link>
 
-      <div className="w-full bg-white">
-        <div className="rounded-lg border border-slate-300 shadow-sm flex flex-col gap-4 p-6">
-          <div className="space-y-2">
-            <div>
-              <strong>Date:</strong> {data.createdAt}
-            </div>
-            <div>
-              <strong>Clinician:</strong> {data.clinician.name}
-            </div>
-            <div>
-              <strong>Activity Plan:</strong> {data.activity_plan}
-            </div>
-            <div>
-              <strong>Session Type:</strong> {data.session_type}
-            </div>
-            <div>
-              <strong>Subjective:</strong> {data.subjective_notes}
-            </div>
-            <div>
-              <strong>Objective:</strong> {data.objective_notes}
-            </div>
-            <div>
-              <strong>Assessment:</strong> {data.assessment}
-            </div>
-            <div>
-              <strong>Recommendation:</strong> {data.recommendation}
-            </div>
-            <div>
-              <strong>Comments:</strong> {data.comments}
-            </div>
-          </div>
+      {isPending ? (
+        <StateLoading />
+      ) : isError ? (
+        <StateError />
+      ) : !data ? (
+        <StateNull />
+      ) : (
+        <div className="bg-white border border-slate-300 rounded-lg shadow-sm p-6 space-y-2">
+          <h1 className="text-xl font-bold pb-2 mb-2 border-b border-slate-300">
+            SOAP Details
+          </h1>
+          <Row label="Date" value={formatDate(data.createdAt)} />
+          <Row label="Clinician" value={data.clinician.name} />
+          <Row label="Activity Plan" value={data.activity_plan} />
+          <Row label="Session Type" value={data.session_type} />
+          <Row label="Subjective Notes" value={data.subjective_notes} />
+          <Row label="Objective Notes" value={data.objective_notes} />
+          <Row label="Assessment" value={data.assessment} />
+          <Row label="Recommendation" value={data.recommendation} />
+          <Row label="Comments" value={data.comments} />
         </div>
-      </div>
+      )}
     </div>
   )
 }

@@ -22,7 +22,7 @@ function RouteComponent() {
   })
 
   return (
-    <div className="space-y-6 p-4">
+    <div className="space-y-6">
       <Link
         to="/records"
         className="flex gap-2 items-center link link-hover text-slate-600"
