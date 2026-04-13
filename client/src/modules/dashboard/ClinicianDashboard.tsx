@@ -125,7 +125,7 @@ export default function ClinicianDashboard() {
               day: 'numeric',
             })
             const count = countsByDay[format(d, 'EEE MMM dd yyyy')] ?? 0
-            const dateStr = d.toISOString().split('T')[0]
+            const dateStr = format(d, 'yyyy-MM-dd')
             return (
               <Link
                 key={d.toDateString()}
@@ -166,7 +166,15 @@ export default function ClinicianDashboard() {
                 {
                   header: 'Patient',
                   accessor: 'patient',
-                  render: (row) => row.patient.name,
+                  render: (row) => (
+                    <Link
+                      to="/appointments/$appointmentId"
+                      params={{ appointmentId: row.id }}
+                      className="link link-hover"
+                    >
+                      {row.patient.name}
+                    </Link>
+                  ),
                 },
                 {
                   header: 'Time',
