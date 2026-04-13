@@ -2,24 +2,34 @@ import { Link } from '@tanstack/react-router'
 
 export function NotFound({ children }: { children?: any }) {
   return (
-    <div className="h-screen px-2 lg:p-0 pattern-boxes pattern-color-primary pattern-bg-white pattern-size-8">
-      <div className="fixed inset-0 z-10 m-auto space-y-4 p-6 border rounded-lg w-100 h-fit bg-white shadow-lg/10">
-        <div className="text-center flex flex-col">
-          <h1 className="text-2xl font-bold">Oops!</h1>
-          {children || <p>The page you are looking for does not exist.</p>}
+    <div className="flex h-screen w-screen flex-col items-center justify-center bg-white px-6">
+      <div className="absolute inset-0 flex items-center justify-center overflow-hidden pointer-events-none">
+        <span className="text-[25vw] font-black uppercase tracking-tighter text-neutral-50/80 select-none">
+          Lost
+        </span>
+      </div>
+
+      <div className="relative z-10 flex flex-col items-center text-center space-y-4">
+        <h1 className="text-8xl font-black uppercase tracking-tighter text-slate-900 md:text-9xl">
+          Oops!
+        </h1>
+
+        <div className="max-w-sm">
+          <div className="text-lg font-medium leading-tight text-slate-900">
+            {children || <p>The page you are looking for does not exist.</p>}
+          </div>
         </div>
-        <div className="flex items-center justify-center gap-2 flex-wrap">
+
+        <div className="flex flex-col items-center gap-4 sm:flex-row">
           <button
             onClick={() => window.history.back()}
-            className="btn btn-success text-white rounded-sm uppercase font-black text-sm"
+            className="btn btn-neutral"
           >
-            Go back
+            Go Back
           </button>
-          <Link
-            to="/"
-            className="btn btn-primary text-white rounded-sm uppercase font-black text-sm"
-          >
-            Start Over
+
+          <Link to="/" className="btn btn-neutral">
+            Take Me Home
           </Link>
         </div>
       </div>
