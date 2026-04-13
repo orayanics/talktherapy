@@ -11,9 +11,5 @@ export const Route = createFileRoute('/_public/activate/otp/')({
 
 function RouteComponent() {
   const { email } = Route.useSearch()
-  return (
-    <div>
-      <FormOtp initialEmail={email} />
-    </div>
-  )
+  return <FormOtp initialEmail={email} />
 }

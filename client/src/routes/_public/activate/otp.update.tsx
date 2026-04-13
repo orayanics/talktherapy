@@ -16,11 +16,6 @@ function RouteComponent() {
   const { otp, role, email } = useSearch({
     from: '/_public/activate/otp/update',
   })
-
   if (!otp) return null
-  return (
-    <div>
-      <FormOtpUpdate otp={otp} role={role} initialEmail={email} />
-    </div>
-  )
+  return <FormOtpUpdate otp={otp} role={role} initialEmail={email} />
 }
