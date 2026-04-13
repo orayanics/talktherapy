@@ -9,9 +9,6 @@ export default function NotificationList() {
         <h3 className="text-sm font-semibold text-slate-900 tracking-tight">
           Activity
         </h3>
-        <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
-          {notifications.length} New
-        </span>
       </div>
 
       <ul className="divide-y divide-slate-50 max-h-95 overflow-auto">
@@ -28,7 +25,6 @@ export default function NotificationList() {
                   <p className="text-xs font-semibold text-slate-800 leading-none">
                     {n.title}
                   </p>
-                  <span className="text-[10px] text-slate-400">2m ago</span>
                 </div>
                 <p className="text-xs text-slate-500 leading-relaxed">
                   {n.message}

@@ -1,6 +1,7 @@
 import { Elysia } from "elysia";
 import { cors } from "@elysiajs/cors";
 import { openapi } from "@elysiajs/openapi";
+import { rateLimit } from "elysia-rate-limit";
 
 import { betterAuthPlugin } from "./plugin/better-auth";
 import { OpenAPI } from "./lib/auth";
@@ -24,6 +25,37 @@ import { authModule } from "./modules/auth";
 const cert = Bun.file("../certs/localhost.pem");
 const key = Bun.file("../certs/localhost-key.pem");
 
+const publicRoutes = new Elysia()
+  .use(
+    rateLimit({
+      duration: 60_000,
+      max: 10,
+    }),
+  )
+  .use(publicModule)
+  .use(activateModule)
+  .use(registerModule)
+  .use(authModule);
+
+const authenticatedRoutes = new Elysia()
+  .use(
+    rateLimit({
+      duration: 60_000,
+      max: 100,
+    }),
+  )
+  .use(usersModule)
+  .use(contentModule)
+  .use(adminModule)
+  .use(logsModule)
+  .use(soapsModule)
+  .use(appointmentsModule)
+  .use(slotsModule)
+  .use(scheduleModule)
+  .use(clinicianPatientModule)
+  .use(notificationsModule)
+  .use(sessionModule);
+
 const app = new Elysia()
   .use(
     openapi({
@@ -42,21 +74,8 @@ const app = new Elysia()
     }),
   )
   .use(betterAuthPlugin)
-  .use(publicModule)
-  .use(activateModule)
-  .use(registerModule)
-  .use(usersModule)
-  .use(contentModule)
-  .use(adminModule)
-  .use(logsModule)
-  .use(soapsModule)
-  .use(appointmentsModule)
-  .use(slotsModule)
-  .use(scheduleModule)
-  .use(clinicianPatientModule)
-  .use(notificationsModule)
-  .use(sessionModule)
-  .use(authModule)
+  .use(publicRoutes)
+  .use(authenticatedRoutes)
   .get("/", () => "Hello Elysia")
   .listen({
     port: process.env.PORT ? parseInt(process.env.PORT) : 8080,
