@@ -18,7 +18,7 @@ export default function useAppointmentAction(isClinician = false) {
       await mutation.mutateAsync({ id: appointmentId, body: data })
     } catch (err: any) {
       if (isAxiosError(err)) {
-        setApiError(err.response?.data?.message ?? 'Action failed')
+        setApiError(err.response?.data.error ?? 'Action failed')
       } else {
         setApiError(err.message)
       }
