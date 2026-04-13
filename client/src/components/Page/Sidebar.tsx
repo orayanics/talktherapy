@@ -1,11 +1,12 @@
-import React from 'react'
-import { Menu } from 'lucide-react'
+import React, { useState } from 'react'
+import { Bell, Menu } from 'lucide-react'
 
 import type { USER_ROLE } from '@/types/account'
 import { NAV_BY_ROLE } from '@/constants/sidebar'
 
 import SidebarItem from './SidebarItem'
 import { authClient } from '@/utils/auth-client'
+import NotificationList from '../NotificationList'
 
 export interface SidebarProps {
   children: React.ReactNode
@@ -14,6 +15,7 @@ export interface SidebarProps {
 
 export default function Sidebar(props: SidebarProps) {
   const { children, role } = props
+  const [show, setShow] = useState(false)
 
   const navItems = NAV_BY_ROLE[role]
 
@@ -39,6 +41,20 @@ export default function Sidebar(props: SidebarProps) {
           >
             <Menu className="h-5 w-5 text-black" />
           </label>
+
+          <div className="items-center justify-end px-4 relative">
+            <button
+              className="btn btn-square border border-slate-300"
+              onClick={() => setShow((s) => !s)}
+            >
+              <Bell size={19} strokeWidth={2.2} />
+            </button>
+            {show && (
+              <div className="absolute z-20 right-0 mt-2">
+                <NotificationList />
+              </div>
+            )}
+          </div>
         </div>
         <div className="flex-1 w-full bg-slate-50 lg:z-10 relative overflow-auto">
           {children}
