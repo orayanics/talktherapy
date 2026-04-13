@@ -1,180 +1,165 @@
-import { prisma } from "prisma/db";
-import {
-  buildMessage,
-  NOTIFICATION_TEMPLATES,
-  type NotificationType,
-} from "@/config/notifications";
-import type { WSSender } from "@/modules/session/service";
-import { format } from "date-fns";
+import { prisma } from "@/lib/client";
+import { NotificationHub } from "./ws";
+import type { CreateNotification } from "./model";
 
-const connections = new Map<string, WSSender>();
+export const createNotification = async (payload: CreateNotification) => {
+  const notification = await prisma.notification.create({
+    data: {
+      userId: payload.userId,
+      type: payload.type,
+      title: payload.title,
+      message: payload.message,
+      entityType: payload.entityType ?? null,
+      entityId: payload.entityId ?? null,
+    },
+  });
 
-export interface NotifyContext {
-  starts_at?: string;
-  entity_id?: string;
-  [key: string]: string | undefined;
-}
-
-interface NotificationPayload {
-  id: string;
-  type: string;
-  title: string;
-  message: string;
-  entity_type: string | null;
-  entity_id: string | null;
-  read_at: string | null;
-  created_at: string;
-}
-
-export abstract class NotificationService {
-  static register(userId: string, ws: WSSender): void {
-    connections.set(userId, ws);
-  }
-
-  static unregister(userId: string): void {
-    connections.delete(userId);
-  }
-
-  static unregisterByWs(ws: WSSender): void {
-    for (const [uid, sock] of connections) {
-      if (sock === ws) {
-        connections.delete(uid);
-        break;
-      }
-    }
-  }
-
-  static isConnected(userId: string): boolean {
-    return connections.has(userId);
-  }
-
-  /**
-   * Creates a persisted notification for `userId` and pushes it via WS if
-   * the user has an active connection.
-   */
-  static async notify(
-    userId: string,
-    type: NotificationType,
-    context: NotifyContext = {},
-  ): Promise<void> {
-    const template = NOTIFICATION_TEMPLATES[type];
-
-    // Build context tokens
-    const tokenCtx: Record<string, string> = {};
-    if (context.starts_at) {
-      const d = new Date(context.starts_at);
-      tokenCtx.date = format(d, "MMM d, yyyy");
-      tokenCtx.time = format(d, "h:mm a");
-    }
-    // Pass through any extra string tokens
-    for (const [k, v] of Object.entries(context)) {
-      if (k !== "starts_at" && k !== "entity_id" && v !== undefined) {
-        tokenCtx[k] = v;
-      }
-    }
-
-    const message = buildMessage(template.message, tokenCtx);
-
-    const notification = await prisma.notification.create({
-      data: {
-        user_id: userId,
-        type,
-        title: template.title,
-        message,
-        entity_type: template.entity_type,
-        entity_id: context.entity_id ?? null,
-      },
+  try {
+    NotificationHub.broadcastToUser(notification.userId, {
+      type: "notification",
+      notification,
     });
-
-    // Push over WS if the user is currently connected
-    const ws = connections.get(userId);
-    if (ws) {
-      ws.send(
-        JSON.stringify({
-          type: "notification",
-          payload: NotificationService.toPayload(notification),
-        }),
-      );
-    }
+  } catch (e) {
+    // best-effort broadcast
   }
 
-  static async notifyMany(
-    userIds: Array<string>,
-    type: NotificationType,
-    context: NotifyContext = {},
-  ): Promise<void> {
-    await Promise.all(
-      userIds.map((userId) =>
-        NotificationService.notify(userId, type, context),
-      ),
-    );
-  }
+  return notification;
+};
 
-  static async list(userId: string, page: number, per_page: number) {
-    const skip = (page - 1) * per_page;
-    const [data, total] = await prisma.$transaction([
-      prisma.notification.findMany({
-        where: { user_id: userId },
-        orderBy: { created_at: "desc" },
-        skip,
-        take: per_page,
-      }),
-      prisma.notification.count({ where: { user_id: userId } }),
-    ]);
-
-    return {
-      data: data.map(NotificationService.toPayload),
-      meta: {
-        total,
-        page,
-        per_page,
-        last_page: Math.ceil(total / per_page),
-        unread: await prisma.notification.count({
-          where: { user_id: userId, read_at: null },
-        }),
-      },
-    };
+export const notifySafe = async (payload: CreateNotification) => {
+  try {
+    await createNotification(payload);
+  } catch (e) {
+    // swallow errors - best-effort notify
   }
+};
 
-  static async unreadCount(userId: string): Promise<number> {
-    return prisma.notification.count({
-      where: { user_id: userId, read_at: null },
-    });
-  }
+export const notifyManySafe = async (items: CreateNotification[]) => {
+  await Promise.all(items.map((it) => notifySafe(it)));
+};
 
-  static async markAllRead(userId: string): Promise<void> {
-    await prisma.notification.updateMany({
-      where: { user_id: userId, read_at: null },
-      data: { read_at: new Date() },
-    });
-  }
+export const NotificationTemplates = {
+  appointmentAcceptedPatient: ({ userId, clinicianName, when, id }: any) => ({
+    userId,
+    type: "appointment",
+    title: "Appointment accepted",
+    message: `Your appointment has been accepted by ${clinicianName ?? "clinician"} for ${when}`,
+    entityType: "appointment",
+    entityId: id,
+  }),
 
-  static async markRead(userId: string, notificationId: string): Promise<void> {
-    await prisma.notification.updateMany({
-      where: { id: notificationId, user_id: userId },
-      data: { read_at: new Date() },
-    });
-  }
+  appointmentAcceptedClinician: ({ userId, patientName, when, id }: any) => ({
+    userId,
+    type: "appointment",
+    title: "You accepted an appointment",
+    message: `You accepted an appointment with ${patientName ?? "patient"} for ${when}`,
+    entityType: "appointment",
+    entityId: id,
+  }),
 
-  private static toPayload(n: {
-    id: string;
-    type: string;
-    title: string;
-    message: string;
-    entity_type: string | null;
-    entity_id: string | null;
-    read_at: Date | null;
-    created_at: Date;
-  }): NotificationPayload {
-    return {
-      id: n.id,
-      type: n.type,
-      title: n.title,
-      message: n.message,
-      entity_type: n.entity_type,
-      entity_id: n.entity_id,
-      read_at: n.read_at?.toISOString() ?? null,
-      created_at: n.created_at.toISOString(),
-    };
-  }
-}
+  appointmentRejectedPatient: ({ userId, clinicianName, when, id }: any) => ({
+    userId,
+    type: "appointment",
+    title: "Appointment rejected",
+    message: `Your appointment scheduled for ${when} was rejected by ${clinicianName ?? "clinician"}`,
+    entityType: "appointment",
+    entityId: id,
+  }),
+
+  appointmentCancelledClinician: ({ userId, patientName, when, id }: any) => ({
+    userId,
+    type: "appointment",
+    title: "Appointment cancelled",
+    message: `Appointment for ${when} was cancelled by ${patientName ?? "patient"}`,
+    entityType: "appointment",
+    entityId: id,
+  }),
+
+  appointmentCancelledPatient: ({ userId, when, id }: any) => ({
+    userId,
+    type: "appointment",
+    title: "Appointment cancelled",
+    message: `Your appointment for ${when} was cancelled.`,
+    entityType: "appointment",
+    entityId: id,
+  }),
+
+  appointmentCompletedPatient: ({ userId, when, id }: any) => ({
+    userId,
+    type: "appointment",
+    title: "Appointment completed",
+    message: `Your appointment on ${when} was marked as completed.`,
+    entityType: "appointment",
+    entityId: id,
+  }),
+
+  appointmentCompletedClinician: ({ userId, patientName, when, id }: any) => ({
+    userId,
+    type: "appointment",
+    title: "You completed an appointment",
+    message: `You marked the appointment with ${patientName ?? "patient"} as completed.`,
+    entityType: "appointment",
+    entityId: id,
+  }),
+
+  bookingCreatedClinician: ({ userId, patientName, when, id }: any) => ({
+    userId,
+    type: "appointment",
+    title: "New booking",
+    message: `A new appointment was booked by ${patientName ?? "patient"} for ${when}`,
+    entityType: "appointment",
+    entityId: id,
+  }),
+
+  bookingCreatedPatient: ({ userId, when, id }: any) => ({
+    userId,
+    type: "appointment",
+    title: "Booking created",
+    message: `Your appointment request was created for ${when}`,
+    entityType: "appointment",
+    entityId: id,
+  }),
+
+  soapCreatedPatient: ({ userId, clinicianName, id }: any) => ({
+    userId,
+    type: "soap",
+    title: "New session notes",
+    message: `New session notes were added by ${clinicianName ?? "clinician"}.`,
+    entityType: "soap",
+    entityId: id,
+  }),
+
+  soapUpdatedPatient: ({ userId, clinicianName, id }: any) => ({
+    userId,
+    type: "soap",
+    title: "Session notes updated",
+    message: `Session notes were updated by ${clinicianName ?? "clinician"}.`,
+    entityType: "soap",
+    entityId: id,
+  }),
+} as const;
+
+export const listNotifications = async (
+  userId: string,
+  opts: { limit?: number; unreadOnly?: boolean } = {},
+) => {
+  const where: any = { userId };
+  if (opts.unreadOnly) where.readAt = null;
+  // Ensure `take` is an integer Prisma expects (JS number -> Int)
+  const take = Number.isFinite(opts.limit)
+    ? Math.max(1, Math.trunc(opts.limit!))
+    : 50;
+  return prisma.notification.findMany({
+    where,
+    orderBy: { createdAt: "desc" },
+    take: take,
+  });
+};
+
+export const markAsRead = async (id: string, userId: string) => {
+  const res = await prisma.notification.updateMany({
+    where: { id, userId },
+    data: { readAt: new Date() },
+  });
+  return res.count > 0;
+};

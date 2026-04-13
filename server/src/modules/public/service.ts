@@ -1,10 +1,6 @@
-import { prisma } from "prisma/db";
+import { prisma } from "@/lib/client";
 
-export abstract class Public {
-  static async getDiagnoses() {
-    const diagnoses = await prisma.diagnosis.findMany({
-      select: { id: true, value: true, label: true },
-    });
-    return { data: diagnoses };
-  }
+export async function fetchAllDiagnoses() {
+  const diagnoses = await prisma.diagnosis.findMany();
+  return diagnoses;
 }

@@ -1,0 +1,92 @@
+@import 'tailwindcss';
+@plugin "@tailwindcss/typography";
+@plugin "daisyui";
+
+@plugin "daisyui/theme" {
+  name: 'light';
+  default: true;
+  prefersdark: true;
+  color-scheme: 'light';
+  --color-base-100: oklch(100% 0 0);
+  --color-base-200: oklch(98% 0 0);
+  --color-base-300: oklch(95% 0 0);
+  --color-base-content: oklch(21% 0.006 285.885);
+  --color-primary: oklch(74% 0.16 232.661);
+  --color-primary-content: oklch(97% 0.013 236.62);
+  --color-secondary: oklch(65% 0.241 354.308);
+  --color-secondary-content: oklch(94% 0.028 342.258);
+  --color-accent: oklch(77% 0.152 181.912);
+  --color-accent-content: oklch(38% 0.063 188.416);
+  --color-neutral: oklch(27% 0.006 286.033);
+  --color-neutral-content: oklch(92% 0.004 286.32);
+  --color-info: oklch(74% 0.16 232.661);
+  --color-info-content: oklch(29% 0.066 243.157);
+  --color-success: oklch(69% 0.17 162.48);
+  --color-success-content: oklch(37% 0.077 168.94);
+  --color-warning: oklch(82% 0.189 84.429);
+  --color-warning-content: oklch(41% 0.112 45.904);
+  --color-error: oklch(64% 0.246 16.439);
+  --color-error-content: oklch(100% 0 0);
+  --radius-selector: 0.5rem;
+  --radius-field: 0.5rem;
+  --radius-box: 0.5rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 1;
+  --noise: 0;
+}
+
+@theme {
+  --font-sans: 'Inter Variable', sans-serif;
+  --font-serif: 'Crimson Text', serif;
+  --font-mono: 'JetBrains Mono Variable', monospace;
+}
+
+body {
+  @apply font-sans bg-base-200 text-base-content antialiased;
+}
+
+.input.input:focus,
+.input.input:focus-within {
+  --input-color: var(--color-neutral);
+  outline: none;
+}
+
+.select.select:focus,
+.select.select:focus-within {
+  --input-color: var(--color-neutral);
+  outline: none;
+}
+
+.textarea.textarea:focus,
+.textarea.textarea:focus-within {
+  --input-color: var(--color-neutral);
+  outline: none;
+}
+
+@layer components {
+  .border-slate {
+    @apply border-slate-300 hover:border-slate-400;
+  }
+}
+
+/* Fix MDEditor textarea height when highlightEnable={false} */
+.w-md-editor-input {
+  flex: 1;
+  height: 100% !important;
+}
+
+.w-md-editor-input textarea {
+  height: 100% !important;
+  min-height: 100% !important;
+}
+
+.w-md-editor-text {
+  height: 100% !important;
+}
+
+/* Native calendar icon color */
+.input::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}

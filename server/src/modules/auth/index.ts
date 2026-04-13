@@ -1,253 +1,95 @@
-import { Elysia, status } from "elysia";
-import { Auth } from "./service";
-import { AuthModel } from "./model";
-import { jwtPlugin } from "@/plugins/jwt";
-import {
-  createRefreshToken,
-  findAndMatchRefreshToken,
-  revokeExpiredTokensForUser,
-  revokeRefreshToken,
-  rotateRefreshToken,
-} from "./helper";
-import { type JwtSignPayload, getCookieOptions } from "@/utils/jwt";
+import Elysia, { t } from "elysia";
+import { z } from "zod";
+
+import { betterAuthPlugin } from "@/plugin/better-auth";
+import { auth } from "@/lib/auth";
+import { logAudit } from "@/lib/audit";
+import { ApiError, ApiSuccess, ok, tryOk } from "@/lib/response";
+import { prisma } from "@/lib/client";
+
+const BanUserSchema = z.object({
+  userId: z.string(),
+});
 
 export const authModule = new Elysia({ prefix: "/auth" })
-  .use(jwtPlugin)
-  .decorate("isProd", process.env.NODE_ENV === "production")
-  // POST: /auth/login
+  .use(betterAuthPlugin)
   .post(
-    "/login",
-    async ({ body, cookie: { session, refresh }, jwt, jwtRefresh, isProd }) => {
-      const response = await Auth.signIn(body);
-      const signPayload: JwtSignPayload = {
-        userId: response.payload.userId,
-        email: response.payload.email,
-        role: response.payload.role,
-      };
+    "/ban",
+    async ({ user, body, request, status }) => {
+      const result = await tryOk(() =>
+        auth.api.banUser({
+          headers: request.headers,
+          body: {
+            userId: body.userId,
+          },
+        }),
+      );
 
-      const [accessToken, refreshToken] = await Promise.all([
-        jwt.sign(signPayload),
-        jwtRefresh.sign(signPayload),
-      ]);
+      if (!result.success) return status(400, result);
 
-      const cookieOpts = getCookieOptions(isProd);
-      session.set({ ...cookieOpts, value: accessToken });
-      refresh.set({ ...cookieOpts, value: refreshToken });
+      await prisma.user.update({
+        where: { id: body.userId },
+        data: { status: "suspended" },
+      });
 
-      await createRefreshToken(response.payload.userId, refreshToken);
+      await logAudit({
+        actorId: user.id,
+        actorEmail: user.email,
+        actorRole: user.role ?? "unknown",
+        action: "auth.ban-user",
+        details: {
+          userId: body.userId,
+        },
+      });
 
-      return { email: response.email, token: accessToken };
+      return status(200, ok(result.data));
     },
     {
-      body: AuthModel.signInBody,
+      requireAdmin: true,
+      body: BanUserSchema,
       response: {
-        200: AuthModel.signInResponse,
-        400: AuthModel.signInInvalid,
-        403: AuthModel.accountPending,
+        200: ApiSuccess(t.Any()),
+        400: ApiError,
       },
     },
   )
-  // POST: /auth/logout
-  .post("/logout", async ({ jwtRefresh, cookie: { session, refresh } }) => {
-    const rawToken = typeof refresh?.value === "string" ? refresh.value : null;
-
-    if (rawToken) {
-      const payload = await jwtRefresh.verify(rawToken);
-      if (
-        payload &&
-        typeof payload === "object" &&
-        typeof payload.userId === "string"
-      ) {
-        const matched = await findAndMatchRefreshToken(
-          payload.userId,
-          rawToken,
-        );
-        if (matched) await revokeRefreshToken(matched.id);
-      }
-    }
-
-    session.remove();
-    refresh.remove();
-
-    return { message: "Logged out successfully" };
-  })
-  // POST: /auth/refresh
   .post(
-    "/refresh",
-    async ({ jwt, jwtRefresh, cookie: { session, refresh }, isProd }) => {
-      const rawToken =
-        typeof refresh?.value === "string" ? refresh.value : null;
-      if (!rawToken) return status(401, "Unauthorized");
+    "/unban",
+    async ({ user, body, request, status }) => {
+      const result = await tryOk(() =>
+        auth.api.unbanUser({
+          headers: request.headers,
+          body: {
+            userId: body.userId,
+          },
+        }),
+      );
 
-      const payload = await jwtRefresh.verify(rawToken);
-      if (!payload || typeof payload !== "object") {
-        // token expired or invalid — clear cookies so frontend redirects
-        session.remove();
-        refresh.remove();
-        return status(401, "Unauthorized");
-      }
+      if (!result.success) return status(400, result);
 
-      const data = payload as {
-        userId?: string;
-        email?: string;
-        role?: string;
-      };
+      await prisma.user.update({
+        where: { id: body.userId },
+        data: { status: "active" },
+      });
 
-      if (
-        typeof data.userId !== "string" ||
-        typeof data.email !== "string" ||
-        typeof data.role !== "string"
-      ) {
-        return status(401, "Unauthorized");
-      }
-
-      // remove stale tokens without blocking the response
-      revokeExpiredTokensForUser(data.userId);
-
-      const matched = await findAndMatchRefreshToken(data.userId, rawToken);
-      if (!matched) {
-        session.remove();
-        refresh.remove();
-        return status(401, "Unauthorized");
-      }
-
-      const nextPayload: JwtSignPayload = {
-        userId: data.userId,
-        email: data.email,
-        role: data.role,
-      };
-
-      const [accessToken, nextRefreshToken] = await Promise.all([
-        jwt.sign(nextPayload),
-        jwtRefresh.sign(nextPayload),
-      ]);
-
-      await rotateRefreshToken(matched.id, data.userId, nextRefreshToken);
-
-      const cookieOpts = getCookieOptions(isProd);
-      session.set({ ...cookieOpts, value: accessToken });
-      refresh.set({ ...cookieOpts, value: nextRefreshToken });
-
-      return { token: accessToken };
-    },
-  )
-  // POST: /auth/signup/patient
-  .post("/signup/patient", async ({ body }) => Auth.signUpPatient(body), {
-    body: AuthModel.signUpPatientBody,
-    response: {
-      200: AuthModel.MessageResponse,
-      400: AuthModel.InvalidInput,
-    },
-  })
-  // POST: /auth/resend-otp
-  .post("/resend-otp", ({ body }) => Auth.resendOtp(body), {
-    body: AuthModel.resendOtpBody,
-    response: {
-      200: AuthModel.MessageResponse,
-      400: AuthModel.resendOtpInvalid,
-    },
-  })
-  // POST: /auth/verify-otp
-  .post("/verify-otp", ({ body }) => Auth.verifyOtp(body), {
-    body: AuthModel.verifyOtpBody,
-    response: {
-      200: AuthModel.MessageResponse,
-      400: AuthModel.verifyOtpInvalid,
-    },
-  })
-  // POST: /auth/activate
-  .post("/activate", ({ body }) => Auth.activateAccount(body), {
-    body: AuthModel.activateBody,
-    response: {
-      200: AuthModel.MessageResponse,
-      400: AuthModel.activateInvalid,
-    },
-  })
-  // PROCTED ROUTES: admin & sudo only
-  .guard({ isAuth: true, hasRole: ["admin", "sudo"] }, (app) =>
-    // POST: /auth/signup/clinician
-    app.post(
-      "/signup/clinician",
-      async ({ body, auth }) => Auth.signUpClinician(body, auth!.userId),
-      {
-        body: AuthModel.signUpClinicianBody,
-        response: {
-          200: AuthModel.MessageResponse,
-          400: AuthModel.InvalidInput,
+      await logAudit({
+        actorId: user.id,
+        actorEmail: user.email,
+        actorRole: user.role ?? "unknown",
+        action: "auth.unban-user",
+        details: {
+          userId: body.userId,
         },
+      });
+
+      return status(200, ok(result.data));
+    },
+    {
+      requireAdmin: true,
+      body: BanUserSchema,
+      response: {
+        200: ApiSuccess(t.Any()),
+        400: ApiError,
       },
-    ),
-  )
-  // PROTECTED ROUTES: sudo only
-  .guard({ isAuth: true, hasRole: ["sudo"] }, (app) =>
-    // POST: /auth/signup/admin
-    app
-      .post(
-        "/signup/admin",
-        async ({ body, auth }) => Auth.signUpAdmin(body, auth!.userId),
-        {
-          body: AuthModel.signUpAdminBody,
-          response: {
-            200: AuthModel.MessageResponse,
-            400: AuthModel.InvalidInput,
-          },
-        },
-      )
-      // POST: /auth/deactivate
-      .post("/deactivate", async ({ body }) => Auth.deactivateAccount(body), {
-        body: AuthModel.deactivateBody,
-        response: {
-          200: AuthModel.MessageResponse,
-          400: AuthModel.InvalidInput,
-          403: AuthModel.deactivateInvalid,
-        },
-      })
-      // POST: /auth/reactivate
-      .post("/reactivate", async ({ body }) => Auth.reactivateAccount(body), {
-        body: AuthModel.deactivateBody,
-        response: {
-          200: AuthModel.MessageResponse,
-          400: AuthModel.InvalidInput,
-          403: AuthModel.deactivateInvalid,
-        },
-      })
-      // POST: /auth/suspend
-      .post("/suspend", async ({ body }) => Auth.suspendAccount(body), {
-        body: AuthModel.suspendBody,
-        response: {
-          200: AuthModel.MessageResponse,
-          400: AuthModel.InvalidInput,
-          403: AuthModel.suspendInvalid,
-        },
-      }),
-  )
-  // PROTECTED ROUTES: any auth user
-  .guard({ isAuth: true }, (app) =>
-    app
-      // GET: /auth/session
-      .get("/session", async ({ auth }) => Auth.getSession(auth!))
-      // PUT: /auth/profile/update
-      .put(
-        "/profile/update",
-        async ({ body, auth }) => Auth.updateUserInfo(auth!.userId, body),
-        {
-          body: AuthModel.updateProfileBody,
-          response: {
-            200: AuthModel.MessageResponse,
-            400: AuthModel.InvalidInput,
-          },
-        },
-      )
-      // PUT: /auth/profile/password
-      .put(
-        "/profile/password",
-        async ({ body, auth }) => Auth.changePassword(auth!.userId, body),
-        {
-          body: AuthModel.changePasswordBody,
-          response: {
-            200: AuthModel.MessageResponse,
-            400: AuthModel.InvalidInput,
-          },
-        },
-      ),
+    },
   );

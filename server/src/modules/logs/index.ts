@@ -1,101 +1,62 @@
-import { Elysia } from "elysia";
-import { jwtPlugin } from "@/plugins/jwt";
-import { LogsModel } from "./model";
-import { LogsService } from "./service";
-import { NotificationService } from "@/modules/notifications/service";
-import { NOTIFICATION_TYPE } from "@/config/notifications";
+import Elysia from "elysia";
+import { betterAuthPlugin } from "@/plugin/better-auth";
+import { tryOk, ok, error } from "@/lib/response";
+import { ApiError, ApiSuccess } from "@/lib/response";
+
+import { LogsListSchema, LogsExportSchema } from "./model";
+import { fetchAllLogs } from "./service";
+import { logAudit } from "@/lib/audit";
 
 export const logsModule = new Elysia({ prefix: "/logs" })
-  .use(jwtPlugin)
-  .guard({ isAuth: true, hasRole: ["sudo"] }, (app) =>
-    // GET: /logs
-    app.get("/", ({ query }) => LogsService.getLogs(query), {
-      query: LogsModel.listQuery,
+  .use(betterAuthPlugin)
+  .get(
+    "/",
+    async ({ query, status }) => {
+      const result = await tryOk(() => fetchAllLogs(query));
+      if (!result.success) return status(400, result);
+      return status(200, ok(result.data));
+    },
+    {
+      requireAdmin: true,
+      query: LogsListSchema,
       response: {
-        200: LogsModel.paginatedLogs,
+        200: ApiSuccess(),
+        400: ApiError,
       },
-    }),
+    },
   )
-  // WS: /logs/export
-  // uses jwt for verification for access
-  // client sends { type: "start", date?: "YYYY-MM-DD" }
-  // server responds with progress updates and final data (base64-encoded JSON or ZIP)
-  // { type: "progress", current: N, total: N }   (every 100 logs queued)
-  // { type: "done", filename: "logs-YYYY-MM-DD.json|.zip", contentType: "...", data: "<base64>" }
-  // { type: "error", message: "..." }
 
-  .ws("/export", {
-    query: LogsModel.exportQuery,
-    body: LogsModel.wsInbound,
-
-    // Verify JWT (cookie preferred; query-param token as fallback)
-    async beforeHandle({ auth, jwt, query, set }) {
-      let resolved = auth;
-
-      if (!resolved && query?.token) {
-        const payload = await jwt.verify(query.token);
-        if (payload && typeof payload === "object") {
-          const p = payload as Record<string, unknown>;
-          if (typeof p.userId === "string" && typeof p.role === "string") {
-            resolved = {
-              userId: p.userId,
-              email: typeof p.email === "string" ? p.email : "",
-              role: p.role,
-              iat: typeof p.iat === "number" ? p.iat : undefined,
-              exp: typeof p.exp === "number" ? p.exp : undefined,
-            };
-          }
-        }
-      }
-
-      if (!resolved) {
-        set.status = 401;
-        return "Unauthorized";
-      }
-      if (resolved.role !== "sudo") {
-        set.status = 403;
-        return "Forbidden";
-      }
-    },
-
-    async message(ws, msg) {
-      if (msg.type !== "start") return;
-
+  // export endpoint
+  .get(
+    "/export",
+    async ({ user, query, status }) => {
       try {
-        // Progress: signal start
-        ws.send(JSON.stringify({ type: "progress", current: 0, total: null }));
-
-        const result = await LogsService.exportLogs(msg.date);
-
-        // Base64-encode the buffer for safe wire transfer
-        const base64 = result.buffer.toString("base64");
-
-        ws.send(
-          JSON.stringify({
-            type: "done",
+        const { exportLogs } = await import("./service");
+        const result = await exportLogs(query);
+        await logAudit({
+          actorId: user.id,
+          actorEmail: user.email,
+          actorRole: user?.role ?? "unknown",
+          action: "system.audit",
+          details: {
             filename: result.filename,
-            contentType: result.contentType,
-            data: base64,
-          }),
+          },
+        });
+        return new Response(result.content, {
+          headers: {
+            "Content-Type": result.contentType,
+            "Content-Disposition": `attachment; filename="${result.filename}"`,
+          },
+        });
+      } catch (err: unknown) {
+        return status(
+          400,
+          error(err instanceof Error ? err.message : String(err)),
         );
-
-        // Notify the requesting admin that the export is ready
-        const userId = ws.data.auth?.userId;
-        if (userId) {
-          NotificationService.notify(
-            userId,
-            NOTIFICATION_TYPE.EXPORT_COMPLETE,
-          ).catch(console.error);
-        }
-      } catch (err) {
-        ws.send(
-          JSON.stringify({
-            type: "error",
-            message: err instanceof Error ? err.message : "Export failed",
-          }),
-        );
-      } finally {
-        ws.close();
       }
     },
-  });
+    {
+      requireAdmin: true,
+      query: LogsExportSchema,
+    },
+  );

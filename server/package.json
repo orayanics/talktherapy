@@ -1,32 +1,30 @@
 {
-  "name": "talktherapy-server",
+  "name": "server",
   "version": "1.0.50",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "bun run --watch src/index.ts",
-    "seed": "bun run prisma/seed.ts"
+    "seed": "bun prisma/seed.ts"
   },
   "dependencies": {
-    "@elysiajs/cookie": "^0.8.0",
     "@elysiajs/cors": "^1.4.1",
-    "@elysiajs/jwt": "^1.4.0",
-    "@prisma/adapter-libsql": "^7.4.0",
-    "@prisma/client": "^7.4.0",
-    "better-auth": "^1.4.18",
+    "@elysiajs/openapi": "^1.4.14",
+    "@prisma/adapter-libsql": "^7.7.0",
+    "@prisma/client": "^7.7.0",
+    "better-auth": "^1.6.2",
     "date-fns": "^4.1.0",
-    "dotenv": "^17.3.1",
+    "dotenv": "^17.4.1",
     "elysia": "latest",
-    "fflate": "^0.8.2",
-    "nodemailer": "^8.0.1",
-    "rrule": "^2.8.1"
+    "elysia-rate-limit": "^4.5.1",
+    "nodemailer": "^8.0.5",
+    "prismabox": "^1.1.26",
+    "rrule": "^2.8.1",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
-    "@types/nodemailer": "^7.0.11",
+    "@types/nodemailer": "^8.0.0",
     "bun-types": "latest",
-    "prisma": "^7.4.0"
+    "prisma": "^7.7.0"
   },
-  "module": "src/index.js",
-  "prisma": {
-    "seed": "bun run prisma/seed.ts"
-  }
+  "module": "src/index.js"
 }
