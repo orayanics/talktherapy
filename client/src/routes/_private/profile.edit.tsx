@@ -49,8 +49,8 @@ function RouteComponent() {
         </div>
 
         <div className="lg:col-span-8">
-          <div className="bg-white border border-slate-300 rounded-lg shadow-sm">
-            <div className="p-7">
+          <div className="bg-white border border-slate-300 rounded-lg shadow-sm p-7 space-y-4">
+            <div>
               <h2 className="text-lg font-bold text-slate-800">
                 Account Settings
               </h2>
