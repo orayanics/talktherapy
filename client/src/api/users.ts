@@ -50,7 +50,7 @@ export const fetchUsers = (
 }
 
 export const fetchUser = (id: string) => {
-  return queryOptions<UserResponse>({
+  return queryOptions<UserResponse & { status: string }>({
     queryKey: ['user', id],
     queryFn: async () => {
       const { data } = await api(`/users/${id}`, {

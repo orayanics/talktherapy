@@ -11,7 +11,7 @@ export interface UserResponse {
   image?: string | null | undefined // never undefined at your app boundary
   banned: boolean | null | undefined // never undefined at your app boundary
 
-  role: USER_ROLE | null | undefined
+  role: USER_ROLE
   banReason: string | null | undefined
   banExpires: Date | null | undefined
 }

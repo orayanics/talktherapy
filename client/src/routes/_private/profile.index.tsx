@@ -9,7 +9,7 @@ export const Route = createFileRoute('/_private/profile/')({
 
 function RouteComponent() {
   const session = useSession()
-  const { name, email, createdAt, diagnosis } = session
+  const { name, email, createdAt } = session
 
   return (
     <div className="space-y-6">
@@ -58,15 +58,6 @@ function RouteComponent() {
                 </p>
               </div>
             </div>
-
-            {diagnosis && (
-              <div className="p-4 border-b border-slate-200 flex items-center gap-2">
-                <label className="text-xs font-bold text-slate-400 uppercase flex items-center gap-2">
-                  Specialty
-                </label>
-                <p className="text-slate-700 font-mono text-sm">{diagnosis}</p>
-              </div>
-            )}
           </div>
 
           <Link to="/profile/edit" className="btn btn-neutral btn-block">

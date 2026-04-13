@@ -10,7 +10,7 @@ import {
 } from "./better-auth/permissions";
 
 import { prisma } from "./client";
-import { CLIENT_URL } from "@/constant";
+import { TRUSTED_ORIGINS } from "@/constant";
 import {
   sendResetPasswordEmail,
   sendVerificationLinkEmail,
@@ -108,11 +108,7 @@ export const auth = betterAuth({
       enabled: true,
     },
   },
-  trustedOrigins: [
-    "https://0.0.0.0:3000",
-    "https://192.168.1.10:3000",
-    "https://localhost:3000",
-  ],
+  trustedOrigins: TRUSTED_ORIGINS,
   session: {
     expiresIn: 60 * 60 * 24,
     secure: true,

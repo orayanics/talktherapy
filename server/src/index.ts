@@ -18,6 +18,8 @@ import { clinicianPatientModule } from "./modules/clinicianPatient";
 import { sessionModule } from "./modules/session";
 import { notificationsModule } from "./modules/notifications";
 import { activateModule } from "./modules/activate";
+import { authModule } from "./modules/auth";
+
 const cert = Bun.file("../certs/localhost.pem");
 const key = Bun.file("../certs/localhost-key.pem");
 
@@ -52,6 +54,7 @@ const app = new Elysia()
   .use(clinicianPatientModule)
   .use(notificationsModule)
   .use(sessionModule)
+  .use(authModule)
   .get("/", () => "Hello Elysia")
   .listen({
     port: process.env.PORT ? parseInt(process.env.PORT) : 8080,

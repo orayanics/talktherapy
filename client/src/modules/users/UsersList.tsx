@@ -18,6 +18,8 @@ import Dropdown from '@/components/Dropdown'
 import RegisterClinician from '../register/RegisterClinician'
 import { ChevronDown, ChevronUp } from 'lucide-react'
 
+import useActions from './useActions'
+
 export default function UsersList() {
   const search = useSearch({ from: '/_private/(adm-shared)/users/' })
   const navigate = useNavigate({ from: '/users/' })
@@ -69,6 +71,8 @@ export default function UsersList() {
   const [isClinicianModalOpen, setClinicianModalOpen] = useState(false)
   const [isAdminModalOpen, setAdminModalOpen] = useState(false)
   const isAsc = sort === 'asc'
+
+  const { handleBanUser, handleUnbanUser } = useActions()
 
   return (
     <div className="flex flex-col gap-4">
@@ -179,7 +183,37 @@ export default function UsersList() {
                 },
                 {
                   header: 'Status',
-                  render: (user) => <StatusPill status={user.status} />,
+                  render: (user) => (
+                    <>
+                      {user.banned ? (
+                        <StatusPill status="banned" />
+                      ) : (
+                        <StatusPill status={user.status} />
+                      )}
+                    </>
+                  ),
+                },
+                {
+                  header: 'Actions',
+                  render: (user) => (
+                    <div className="space-x-2">
+                      {user.banned ? (
+                        <button
+                          className="btn btn-sm btn-neutral"
+                          onClick={() => handleUnbanUser(user.id)}
+                        >
+                          Unban
+                        </button>
+                      ) : (
+                        <button
+                          className="btn btn-sm btn-neutral"
+                          onClick={() => handleBanUser(user.id)}
+                        >
+                          Ban
+                        </button>
+                      )}
+                    </div>
+                  ),
                 },
               ]}
             />

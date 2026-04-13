@@ -9,7 +9,6 @@
         "@elysiajs/openapi": "^1.4.14",
         "@prisma/adapter-libsql": "^7.7.0",
         "@prisma/client": "^7.7.0",
-        "@types/nodemailer": "^8.0.0",
         "better-auth": "^1.6.2",
         "date-fns": "^4.1.0",
         "dotenv": "^17.4.1",
@@ -20,6 +19,7 @@
         "zod": "^4.3.6",
       },
       "devDependencies": {
+        "@types/nodemailer": "^8.0.0",
         "bun-types": "latest",
         "prisma": "^7.7.0",
       },

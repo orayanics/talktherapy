@@ -1,9 +1,6 @@
 import { createHmac, randomBytes } from "crypto";
 
-const SECRET =
-  process.env.JOIN_TOKEN_SECRET ||
-  process.env.BETTER_AUTH_SECRET ||
-  "dev_join_secret";
+const SECRET = process.env.BETTER_AUTH_SECRET || "dev_join_secret";
 const DEFAULT_TTL = 60 * 5; // 5 minutes
 
 function base64url(input: Buffer | string) {

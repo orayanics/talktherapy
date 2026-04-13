@@ -56,20 +56,6 @@ function RouteComponent() {
 
           <div className="space-y-2">
             <RolePill role={data.role} />
-
-            {/* {data.diagnosis && (
-              <p className="text-slate-500 font-medium text-sm flex items-center gap-1.5">
-                {data.diagnosis.label}
-              </p>
-            )} */}
-
-            {/* user permissions */}
-
-            {/* <div>
-              {data.permissions.map((permission) => (
-                <p>{permission}</p>
-              ))}
-            </div> */}
           </div>
         </div>
       )}
