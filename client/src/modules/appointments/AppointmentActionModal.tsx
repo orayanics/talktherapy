@@ -77,7 +77,9 @@ export default function AppointmentActionModal({
         </div>
 
         <div className="p-8 space-y-6">
-          {apiError && <div className="text-error">{apiError}</div>}
+          {apiError && (
+            <div className="alert alert-soft alert-error">{apiError}</div>
+          )}
 
           <div className="text-center">
             <p className="text-slate-600 leading-relaxed">
