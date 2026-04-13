@@ -21,7 +21,7 @@ function RouteComponent() {
   const { data, isPending } = authClient.useSession()
   const [show, setShow] = useState(false)
 
-  if (isPending) return <StateLoading />
+  if (isPending) return <StateLoading fullpage />
   if (!data) {
     authClient.signOut()
     return <Navigate to="/login" />

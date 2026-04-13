@@ -9,7 +9,7 @@ export const Route = createFileRoute('/_public')({
 
 function RouteComponent() {
   const { data, isPending } = authClient.useSession()
-  if (isPending) return <StateLoading />
+  if (isPending) return <StateLoading fullpage />
   if (data) {
     return <Navigate to="/dashboard" />
   }

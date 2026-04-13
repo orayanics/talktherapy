@@ -59,7 +59,7 @@ export default function ContentDetail({ contentId }: { contentId: string }) {
               <p className="text-sm text-slate-500">{data.description}</p>
               <p className="inline-flex gap-2 text-xs text-slate-500 mt-2">
                 <Calendar size={14} />
-                {formatDate(data.created_at)}
+                {formatDate(data.createdAt)}
               </p>
               {data.tags.length > 0 && (
                 <div className="space-x-1">

@@ -40,10 +40,10 @@ function RouteComponent() {
         <div className="rounded-lg border border-slate-300 shadow-sm flex flex-col gap-4 p-6">
           <div className="space-y-2">
             <div>
-              <strong>Date:</strong> {data.created_at}
+              <strong>Date:</strong> {data.createdAt}
             </div>
             <div>
-              <strong>Clinician:</strong> {data.clinician_name}
+              <strong>Clinician:</strong> {data.clinician.name}
             </div>
             <div>
               <strong>Activity Plan:</strong> {data.activity_plan}

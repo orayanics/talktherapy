@@ -5,13 +5,15 @@ import type { DiagnosisItem } from '@/api/public'
 import RowError from '@/components/Table/RowError'
 import { Link } from '@tanstack/react-router'
 import FormLabel from '@/components/Form/FormLabel'
+import StateLoading from '@/components/State/StateLoading'
+import StateError from '@/components/State/StateError'
 
 export default function RegisterForm() {
   const { register, onSubmit, errors, apiError, isLoading } = useRegisterForm()
   const { data: diagnoses, isPending, isError } = useQuery(fetchDiagnoses)
 
-  if (isPending) return <div>Loading...</div>
-  if (isError) return <div>Error loading diagnoses</div>
+  if (isPending) return <StateLoading />
+  if (isError) return <StateError />
 
   return (
     <form onSubmit={onSubmit} className="w-full max-w-md lg:max-w-xl mx-auto">
