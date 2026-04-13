@@ -18,3 +18,13 @@ export const UsersListSchema = z.preprocess(
 );
 
 export type TUsersListSchema = z.infer<typeof UsersListSchema>;
+
+export const UsersCountSchema = z.object({
+  counts: z.object({
+    active_users: z.number(),
+    inactive_users: z.number(),
+    total: z.number(),
+    suspended_users: z.number(),
+    pending_users: z.number(),
+  }),
+});

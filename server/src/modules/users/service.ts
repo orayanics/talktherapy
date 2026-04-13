@@ -3,17 +3,8 @@ import { buildMeta } from "@/lib/paginate";
 
 import { type TUsersListSchema } from "./model";
 
-export async function fetchAllUsers(params: TUsersListSchema) {
-  const {
-    page = 1,
-    per_page = 20,
-    search,
-    sort_by = "createdAt",
-    sort = "desc",
-    role,
-    account_status,
-  } = params;
-
+function buildUsersWhere(params: TUsersListSchema) {
+  const { search, role, account_status } = params;
   const where: Record<string, unknown> = {};
 
   if (search) {
@@ -32,6 +23,18 @@ export async function fetchAllUsers(params: TUsersListSchema) {
       in: account_status.map((s) => String(s).trim().toLowerCase()),
     };
   }
+
+  return where;
+}
+
+export async function fetchAllUsers(params: TUsersListSchema) {
+  const {
+    page = 1,
+    per_page = 20,
+    sort_by = "createdAt",
+    sort = "desc",
+  } = params;
+  const where = buildUsersWhere(params);
 
   const [data, total] = await Promise.all([
     prisma.user.findMany({
@@ -55,4 +58,27 @@ export async function fetchUserById(id: string) {
   });
 
   return user ?? undefined;
+}
+
+export async function fetchUsersCounts(params: TUsersListSchema) {
+  const where = buildUsersWhere(params);
+
+  const [total, active_users, inactive_users, suspended_users, pending_users] =
+    await Promise.all([
+      prisma.user.count({ where }),
+      prisma.user.count({ where: { ...where, status: "active" } }),
+      prisma.user.count({ where: { ...where, status: "inactive" } }),
+      prisma.user.count({ where: { ...where, status: "suspended" } }),
+      prisma.user.count({ where: { ...where, status: "pending" } }),
+    ]);
+
+  return {
+    counts: {
+      total,
+      active_users,
+      inactive_users,
+      suspended_users,
+      pending_users,
+    },
+  };
 }

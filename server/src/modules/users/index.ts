@@ -2,8 +2,8 @@ import Elysia from "elysia";
 import { betterAuthPlugin } from "@/plugin/better-auth";
 
 import { z } from "zod";
-import { fetchAllUsers, fetchUserById } from "./service";
-import { UsersListSchema } from "./model";
+import { fetchAllUsers, fetchUserById, fetchUsersCounts } from "./service";
+import { UsersCountSchema, UsersListSchema } from "./model";
 import { ApiError, ApiSuccess, ok, tryOk } from "@/lib/response";
 
 export const usersModule = new Elysia({ prefix: "/users" })
@@ -20,6 +20,22 @@ export const usersModule = new Elysia({ prefix: "/users" })
       query: UsersListSchema,
       response: {
         200: ApiSuccess(),
+        400: ApiError,
+      },
+    },
+  )
+  .get(
+    "/counts",
+    async ({ query, status }) => {
+      const result = await tryOk(() => fetchUsersCounts(query));
+      if (!result.success) return status(400, result);
+      return status(200, result.data);
+    },
+    {
+      requireAdmin: true,
+      query: UsersListSchema,
+      response: {
+        200: UsersCountSchema,
         400: ApiError,
       },
     },
