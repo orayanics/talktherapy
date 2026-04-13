@@ -1,53 +1,29 @@
-import { t } from "elysia";
+import { z } from "zod";
+import { normalizeKeys } from "@/lib/params";
 
-export namespace LogsModel {
-  const _logShape = t.Object({
-    id: t.String(),
-    actor_id: t.Nullable(t.String()),
-    actor_email: t.Nullable(t.String()),
-    actor_role: t.Nullable(t.String()),
-    action: t.String(),
-    entity: t.Nullable(t.String()),
-    entity_id: t.Nullable(t.String()),
-    details: t.Nullable(t.String()),
-    created_at: t.String(),
-  });
+const LogsListBaseSchema = z.object({
+  page: z.coerce.number().min(1).default(1),
+  per_page: z.coerce.number().min(1).max(100).default(20),
 
-  export const listQuery = t.Object({
-    page: t.Optional(t.Numeric({ minimum: 1, default: 1 })),
-    per_page: t.Optional(t.Numeric({ minimum: 1, maximum: 100, default: 10 })),
-    search: t.Optional(t.String()),
-    action: t.Optional(t.String()),
-    date_from: t.Optional(t.String()),
-    date_to: t.Optional(t.String()),
-  });
-  export type listQuery = typeof listQuery.static;
+  search: z.string().optional(),
 
-  export const log = _logShape;
-  export type log = typeof log.static;
+  date_from: z.string().optional(),
+  date_to: z.string().optional(),
 
-  export const paginatedLogs = t.Object({
-    data: t.Array(_logShape),
-    meta: t.Object({
-      total: t.Number(),
-      page: t.Number(),
-      per_page: t.Number(),
-      last_page: t.Number(),
-      from: t.Number(),
-      to: t.Number(),
-    }),
-  });
-  export type paginatedLogs = typeof paginatedLogs.static;
+  sort_by: z.string().default("createdAt"),
+  sort: z.enum(["asc", "desc"]).default("desc"),
+});
 
-  export const exportQuery = t.Object({
-    token: t.Optional(t.String()),
-    date: t.Optional(t.String()),
-  });
-  export type exportQuery = typeof exportQuery.static;
+export const LogsListSchema = z.preprocess(normalizeKeys, LogsListBaseSchema);
 
-  export const wsInbound = t.Object({
-    type: t.Literal("start"),
-    date: t.Optional(t.String()),
-  });
-  export type wsInbound = typeof wsInbound.static;
-}
+export type TLogsListSchema = z.infer<typeof LogsListSchema>;
+
+export const LogsExportSchema = z.preprocess(
+  normalizeKeys,
+  LogsListBaseSchema.extend({
+    format: z.enum(["csv", "jsonl"]).default("csv"),
+    batch_size: z.coerce.number().min(1).default(1000),
+  }),
+);
+
+export type TLogsExportSchema = z.infer<typeof LogsExportSchema>;

@@ -1,136 +1,185 @@
-import { Elysia } from "elysia";
-import { jwtPlugin } from "@/plugins/jwt";
-import { ContentModel } from "./model";
-import { ContentService } from "./service";
-import { logAction, AUDIT_ACTION, AUDIT_ENTITY } from "@/utils/audit";
+import Elysia from "elysia";
+import { betterAuthPlugin } from "@/plugin/better-auth";
+import { z } from "zod";
+import { ApiError, ApiSuccess, error, ok, tryOk } from "@/lib/response";
+import { auth } from "@/lib/auth";
+import {
+  ListContentSchema,
+  StoreContentSchema,
+  UpdateContentSchema,
+  ListBookmarksSchema,
+} from "./model";
+import {
+  listContent,
+  getContent,
+  createContent,
+  updateContent,
+  deleteContent,
+  addBookmark,
+  removeBookmark,
+  listBookmarks,
+} from "./service";
+import { logAudit } from "@/lib/audit";
 
 export const contentModule = new Elysia({ prefix: "/content" })
-  .use(jwtPlugin)
-  .guard({ isAuth: true }, (app) =>
-    app
-      // GET: /content
-      .get("/", ({ query }) => ContentService.listContent(query), {
-        query: ContentModel.listQuery,
-        response: {
-          200: ContentModel.contentList,
-        },
-      })
-      // GET: /content/:content_id
-      .get(
-        "/:content_id",
-        ({ params }) => ContentService.getContentById(params.content_id),
-        {
-          params: ContentModel.contentParams,
-          response: {
-            200: ContentModel.content,
-            404: ContentModel.notFound,
-          },
-        },
-      ),
+  .use(betterAuthPlugin)
+  .get(
+    "/",
+    async ({ query, request, status }) => {
+      const session = await auth.api.getSession({ headers: request.headers });
+      const userId = session?.user?.id;
+      const result = await tryOk(() => listContent(query, userId));
+      if (!result.success) return status(400, result);
+      return status(200, ok(result.data));
+    },
+    {
+      query: ListContentSchema,
+      response: { 200: ApiSuccess(), 400: ApiError },
+    },
   )
-  .guard({ isAuth: true, hasRole: ["admin", "sudo"] }, (app) =>
-    app
-      // POST: /content
-      .post(
-        "/",
-        async ({ auth, body }) => {
-          const content = await ContentService.createContent(
-            auth!.userId,
-            body,
-          );
-          logAction({
-            actorId: auth!.userId,
-            actorRole: auth!.role,
-            action: AUDIT_ACTION.CONTENT_CREATED,
-            entity: AUDIT_ENTITY.CONTENT,
-            entityId: content.id,
-            details: `Content created: ${body.title}`,
-          });
-          return content;
-        },
-        {
-          body: ContentModel.createBody,
-          response: {
-            200: ContentModel.content,
-          },
-        },
-      )
-      // PATCH: /content/:content_id
-      .patch(
-        "/:content_id",
-        ({ params, body }) =>
-          ContentService.updateContent(params.content_id, body),
-        {
-          params: ContentModel.contentParams,
-          body: ContentModel.updateBody,
-          response: {
-            200: ContentModel.content,
-            404: ContentModel.notFound,
-          },
-        },
-      )
-      // DELETE: /content/:content_id
-      .delete(
-        "/:content_id",
-        async ({ auth, params }) => {
-          const result = await ContentService.deleteContent(params.content_id);
-          logAction({
-            actorId: auth!.userId,
-            actorRole: auth!.role,
-            action: AUDIT_ACTION.CONTENT_DELETED,
-            entity: AUDIT_ENTITY.CONTENT,
-            entityId: params.content_id,
-            details: `Content deleted: ${params.content_id}`,
-          });
-          return result;
-        },
-        {
-          params: ContentModel.contentParams,
-          response: {
-            200: ContentModel.deleteResponse,
-            404: ContentModel.notFound,
-          },
-        },
-      ),
+  .get(
+    "/:id",
+    async ({ params, request, status }) => {
+      const session = await auth.api.getSession({ headers: request.headers });
+      const userId = session?.user?.id;
+      const result = await tryOk(() => getContent(params.id, userId));
+      if (!result.success) return status(404, result);
+      return status(200, ok(result.data));
+    },
+    {
+      params: z.object({ id: z.string() }),
+      response: { 200: ApiSuccess(), 404: ApiError },
+    },
   )
-  .guard({ isAuth: true }, (app) =>
-    app
-      // GET: /content/bookmarks
-      .get(
-        "/bookmarks",
-        ({ auth, query }) => ContentService.listBookmarks(auth!.userId, query),
-        {
-          query: ContentModel.bookmarkListQuery,
-          response: {
-            200: ContentModel.bookmarkList,
-          },
+  .post(
+    "/",
+    async ({ user, body, request, status }) => {
+      const session = await auth.api.getSession({ headers: request.headers });
+      if (!session) return status(401, error("Unauthorized"));
+      const userId = session.user.id;
+      const result = await tryOk(() => createContent(body, userId));
+      if (!result.success) return status(400, result);
+      await logAudit({
+        actorId: user.id,
+        actorEmail: user.email,
+        actorRole: user?.role ?? "unknown",
+        action: "content.create",
+        details: {
+          title: body.title,
         },
-      )
-      // POST: /content/:content_id/bookmark
-      .post(
-        "/:content_id/bookmark",
-        ({ auth, params }) =>
-          ContentService.addBookmark(auth!.userId, params.content_id),
-        {
-          params: ContentModel.bookmarkParams,
-          response: {
-            200: ContentModel.bookmarkResponse,
-            404: ContentModel.notFound,
-            409: ContentModel.bookmarkAlreadyExists,
-          },
+      });
+
+      return status(201, ok(result.data));
+    },
+    {
+      auth: true,
+      body: StoreContentSchema,
+      response: { 201: ApiSuccess(), 400: ApiError, 401: ApiError },
+    },
+  )
+  .patch(
+    "/:id",
+    async ({ user, params, body, request, status }) => {
+      const session = await auth.api.getSession({ headers: request.headers });
+      if (!session) return status(401, error("Unauthorized"));
+      const userId = session.user.id;
+      const result = await tryOk(() => updateContent(params.id, body, userId));
+      if (!result.success) return status(400, result);
+      await logAudit({
+        actorId: user.id,
+        actorEmail: user.email,
+        actorRole: user?.role ?? "unknown",
+        action: "content.update",
+        details: {
+          title: body.title,
         },
-      )
-      // DELETE: /content/:content_id/bookmark
-      .delete(
-        "/:content_id/bookmark",
-        ({ auth, params }) =>
-          ContentService.removeBookmark(auth!.userId, params.content_id),
-        {
-          params: ContentModel.bookmarkParams,
-          response: {
-            200: ContentModel.unbookmarkResponse,
-            404: ContentModel.bookmarkNotFound,
-          },
+      });
+      return status(200, ok(result.data));
+    },
+    {
+      auth: true,
+      params: z.object({ id: z.string() }),
+      body: UpdateContentSchema,
+      response: { 200: ApiSuccess(), 400: ApiError, 401: ApiError },
+    },
+  )
+  .delete(
+    "/:id",
+    async ({ user, params, status, request }) => {
+      const session = await auth.api.getSession({ headers: request.headers });
+      if (!session) return status(401, error("Unauthorized"));
+      await deleteContent(params.id);
+      await logAudit({
+        actorId: user.id,
+        actorEmail: user.email,
+        actorRole: user?.role ?? "unknown",
+        action: "content.delete",
+        details: {
+          id: params.id,
         },
-      ),
+      });
+      return status(200, ok({ message: "Content deleted" }));
+    },
+    {
+      auth: true,
+      params: z.object({ id: z.string() }),
+      response: { 200: ApiSuccess(), 401: ApiError },
+    },
+  )
+  .post(
+    "/:id/bookmark",
+    async ({ params, request, status }) => {
+      const session = await auth.api.getSession({ headers: request.headers });
+      if (!session) return status(401, error("Unauthorized"));
+      const userId = session.user.id;
+      const result = await tryOk(() => addBookmark(params.id, userId));
+      if (!result.success) {
+        if ((result as any).error === "Content already bookmarked")
+          return status(409, result);
+        return status(400, result);
+      }
+      return status(201, ok(result.data));
+    },
+    {
+      auth: true,
+      params: z.object({ id: z.string() }),
+      response: {
+        201: ApiSuccess(),
+        400: ApiError,
+        401: ApiError,
+        409: ApiError,
+      },
+    },
+  )
+  .delete(
+    "/:id/bookmark",
+    async ({ params, request, status }) => {
+      const session = await auth.api.getSession({ headers: request.headers });
+      if (!session) return status(401, error("Unauthorized"));
+      const userId = session.user.id;
+      const result = await tryOk(() => removeBookmark(params.id, userId));
+      if (!result.success) return status(404, result);
+      return status(200, ok({ message: "Bookmark removed" }));
+    },
+    {
+      auth: true,
+      params: z.object({ id: z.string() }),
+      response: { 200: ApiSuccess(), 401: ApiError, 404: ApiError },
+    },
+  )
+  .get(
+    "/bookmarks",
+    async ({ query, request, status }) => {
+      const session = await auth.api.getSession({ headers: request.headers });
+      if (!session) return status(401, error("Unauthorized"));
+      const userId = session.user.id;
+      const result = await tryOk(() => listBookmarks(query, userId));
+      if (!result.success) return status(400, result);
+      return status(200, ok(result.data));
+    },
+    {
+      auth: true,
+      query: ListBookmarksSchema,
+      response: { 200: ApiSuccess(), 400: ApiError, 401: ApiError },
+    },
   );

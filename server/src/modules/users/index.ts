@@ -1,43 +1,58 @@
-import { Elysia } from "elysia";
-import { Users } from "./service";
-import { UserModel } from "./model";
-import { jwtPlugin } from "@/plugins/jwt";
+import Elysia from "elysia";
+import { betterAuthPlugin } from "@/plugin/better-auth";
+
+import { z } from "zod";
+import { fetchAllUsers, fetchUserById, fetchUsersCounts } from "./service";
+import { UsersCountSchema, UsersListSchema } from "./model";
+import { ApiError, ApiSuccess, ok, tryOk } from "@/lib/response";
 
 export const usersModule = new Elysia({ prefix: "/users" })
-  .use(jwtPlugin)
-  .guard({ isAuth: true, hasRole: ["admin", "sudo"] }, (app) =>
-    app
-      // GET: /users
-      .get(
-        "/",
-        async ({ auth, query }) =>
-          Users.getAllUsers(auth!.role, {
-            search: query.search,
-            account_status: query.account_status,
-            account_role: query.account_role,
-            page: query.page,
-            perPage: query.per_page,
-          }),
-        {
-          query: UserModel.userQueryParams,
-          response: {
-            200: UserModel.userPaginatedResponse,
-            400: UserModel.userInvalid,
-          },
-        },
-      )
-      // GET: /users/count
-      .get("/count", () => Users.getUserCounts(), {
-        response: {
-          200: UserModel.userCounts,
-          400: UserModel.userCountsInvalid,
-        },
-      })
-      // GET: /users/:id
-      .get("/:id", ({ params }) => Users.getUserById(params.id), {
-        response: {
-          200: UserModel.user,
-          404: UserModel.userNotFound,
-        },
-      }),
+  .use(betterAuthPlugin)
+  .get(
+    "/",
+    async ({ query, status }) => {
+      const result = await tryOk(() => fetchAllUsers(query));
+      if (!result.success) return status(400, result);
+      return status(200, ok(result.data));
+    },
+    {
+      requireAdmin: true,
+      query: UsersListSchema,
+      response: {
+        200: ApiSuccess(),
+        400: ApiError,
+      },
+    },
+  )
+  .get(
+    "/counts",
+    async ({ query, status }) => {
+      const result = await tryOk(() => fetchUsersCounts(query));
+      if (!result.success) return status(400, result);
+      return status(200, result.data);
+    },
+    {
+      requireAdmin: true,
+      query: UsersListSchema,
+      response: {
+        200: UsersCountSchema,
+        400: ApiError,
+      },
+    },
+  )
+  .get(
+    "/:id",
+    async ({ params, status }) => {
+      const result = await tryOk(() => fetchUserById(params.id));
+      if (!result.success) return status(404, result);
+      return status(200, ok(result.data));
+    },
+    {
+      requireAdmin: true,
+      params: z.object({ id: z.string() }),
+      response: {
+        200: ApiSuccess(),
+        404: ApiError,
+      },
+    },
   );

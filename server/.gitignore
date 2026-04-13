@@ -8,6 +8,10 @@
 # testing
 /coverage
 
+# next.js
+/.next/
+/out/
+
 # production
 /build
 
@@ -36,9 +40,7 @@ yarn-error.log*
 **/*.log
 package-lock.json
 **/*.bun
+/src/generated/prisma
 
-*.sqlite
-*.db
-
-# prisma/generated  ← remove this if you want generated types in source control
-prisma/generated
+dev.db
+.env

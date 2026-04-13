@@ -1,113 +1,156 @@
 import { Elysia } from "elysia";
 import { cors } from "@elysiajs/cors";
-import { jwtPlugin } from "@/plugins/jwt";
+import { openapi } from "@elysiajs/openapi";
+import { rateLimit } from "elysia-rate-limit";
 
-import { authModule } from "@/modules/auth";
-import { publicModule } from "@/modules/public";
-import { usersModule } from "@/modules/users";
-import { schedulingModule } from "./modules/scheduling";
+import { betterAuthPlugin } from "./plugin/better-auth";
+import { OpenAPI } from "./lib/auth";
+
+import { usersModule } from "./modules/users";
+import { registerModule } from "./modules/register";
+import { publicModule } from "./modules/public";
 import { contentModule } from "./modules/content";
-import { sessionModule } from "./modules/session";
 import { logsModule } from "./modules/logs";
+import { adminModule } from "./modules/admin";
+import { soapsModule } from "./modules/soaps";
+import { appointmentsModule } from "./modules/appointments";
+import { slotsModule } from "./modules/slots";
+import { scheduleModule } from "./modules/schedule";
+import { clinicianPatientModule } from "./modules/clinicianPatient";
+import { sessionModule } from "./modules/session";
 import { notificationsModule } from "./modules/notifications";
-import { customMessages } from "./utils/errors";
+import { activateModule } from "./modules/activate";
+import { authModule } from "./modules/auth";
 
-const corsOrigins = (process.env.APP_CORS_ORIGINS ?? "")
-  .split(",")
-  .map((origin) => origin.trim())
-  .filter(Boolean);
+class RateLimitError extends Error {
+  status = 429;
 
-const isDev = process.env.NODE_ENV !== "production";
+  constructor(message: string = "Too many requests") {
+    super(message);
+  }
+}
 
-export const app = new Elysia()
+const generateRateLimitKey = (request: Request) =>
+  request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+  request.headers.get("x-real-ip") ||
+  "unknown";
+
+const cert = Bun.file("../certs/localhost.pem");
+const key = Bun.file("../certs/localhost-key.pem");
+
+const publicRoutes = new Elysia()
   .use(
-    cors({
-      // In dev with no explicit origins set, allow any origin so LAN / network
-      // access works without having to hardcode IPs.  In production, always
-      // require APP_CORS_ORIGINS to be set explicitly.
-      origin: corsOrigins.length ? corsOrigins : isDev ? true : false,
-      credentials: true,
-      allowedHeaders: ["authorization", "content-type"],
-      methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    rateLimit({
+      scoping: "scoped",
+      duration: 60_000,
+      max: 10,
+      generator: generateRateLimitKey,
+      errorResponse: new RateLimitError(
+        "Too many requests. Please try again in a minute.",
+      ),
     }),
   )
+  .use(publicModule)
+  .use(activateModule)
+  .use(registerModule)
+  .use(authModule);
 
-  // Global error handler
-  .onError(({ code, error, set }) => {
-    console.error("Error:", error);
-
-    if (code === "VALIDATION") {
-      set.status = 400;
-      const errors: Record<string, string[]> = {};
-      for (const err of error.all) {
-        const field = err.path?.replace(/^\//, "") ?? "unknown";
-        if (!errors[field]) errors[field] = [];
-
-        if (!errors[field].length) {
-          errors[field].push(
-            customMessages[field] ?? err.message ?? "Invalid value",
-          );
-        }
-      }
-      return {
-        message: "Validation failed.",
-        errors,
-      };
-    }
-
-    if (code === "NOT_FOUND") {
-      set.status = 404;
-      return {
-        error: "Not Found",
-        message: "The requested resource was not found",
-      };
-    }
-
-    // Internal server error
-    set.status = 500;
-    return {
-      error: "Internal Server Error",
-      message:
-        process.env.NODE_ENV === "production" ? "An error occurred" : error,
-    };
-  })
-
-  // Health check
-  .get("/", () => ({
-    message: "Healthcare Appointment System API",
-    version: "1.0.0",
-    status: "healthy",
-    timestamp: new Date().toISOString(),
-  }))
-
-  .group("/api/v1", (app) =>
-    app
-      .use(jwtPlugin)
-      .use(authModule)
-      .use(publicModule)
-      .use(usersModule)
-      .use(schedulingModule)
-      .use(contentModule)
-      .use(sessionModule)
-      .use(logsModule)
-      .use(notificationsModule),
+const authenticatedRoutes = new Elysia()
+  .use(
+    rateLimit({
+      scoping: "scoped",
+      duration: 60_000,
+      max: 100,
+      generator: generateRateLimitKey,
+      errorResponse: new RateLimitError(
+        "Too many requests. Please try again in a minute.",
+      ),
+    }),
   )
+  .use(usersModule)
+  .use(contentModule)
+  .use(adminModule)
+  .use(logsModule)
+  .use(soapsModule)
+  .use(appointmentsModule)
+  .use(slotsModule)
+  .use(scheduleModule)
+  .use(clinicianPatientModule)
+  .use(notificationsModule)
+  .use(sessionModule);
 
+const app = new Elysia()
+  .use(
+    openapi({
+      documentation: {
+        components: await OpenAPI.components,
+        paths: await OpenAPI.getPaths(),
+      },
+    }),
+  )
+  .use(
+    cors({
+      origin: true,
+      methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+      credentials: true,
+      allowedHeaders: ["Content-Type", "Authorization"],
+    }),
+  )
+  .error({
+    RateLimitError,
+  })
+  .onError(({ code, error, set, path }) => {
+    switch (code) {
+      case "RateLimitError": {
+        set.status = 429;
+        return {
+          success: false,
+          error: error.message,
+        };
+      }
+      case "VALIDATION": {
+        set.status = 400;
+        return {
+          success: false,
+          error: error.message,
+        };
+      }
+      case "NOT_FOUND": {
+        set.status = 404;
+        return {
+          success: false,
+          error: `Route not found: ${path}`,
+        };
+      }
+      default: {
+        console.error("Unhandled server error", error);
+        set.status =
+          typeof (error as { status?: unknown })?.status === "number"
+            ? (error as { status: number }).status
+            : 500;
+        return {
+          success: false,
+          error: "Internal server error",
+        };
+      }
+    }
+  })
+  .use(betterAuthPlugin)
+  .use(publicRoutes)
+  .use(authenticatedRoutes)
+  .get("/", () => "Hello Elysia")
   .listen({
-    port: 8000,
-    hostname: "0.0.0.0",
+    port: process.env.PORT ? parseInt(process.env.PORT) : 8080,
+    hostname: process.env.HOSTNAME ? process.env.HOSTNAME : "0.0.0.0",
     tls: {
-      // Self-signed cert at monorepo root — generated once for dev.
-      // Both Vite (3000) and Elysia (8000) use the same cert so the browser
-      // only needs to accept the untrusted cert once per host.
-      cert: Bun.file(new URL("../../certs/cert.pem", import.meta.url)),
-      key: Bun.file(new URL("../../certs/key.pem", import.meta.url)),
+      cert,
+      key,
     },
   });
 
 console.log(
-  `🦊 Healthcare API running at ${app.server?.hostname}:${app.server?.port}`,
+  `🦊 Elysia is running at ${app.server?.protocol}://${app.server?.hostname}:${app.server?.port}`,
 );
-
-// Export type for Eden Treaty
-export type App = typeof app;
+console.log(
+  `📖 API docs available at ${app.server?.protocol}://${app.server?.hostname}:${app.server?.port}/openapi`,
+);

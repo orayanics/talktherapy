@@ -1,117 +1,137 @@
 import { Elysia, t } from "elysia";
-import { jwtPlugin } from "@/plugins/jwt";
-import { NotificationService } from "./service";
+import { betterAuthPlugin } from "@/plugin/better-auth";
+import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/client";
+import { ApiError, ApiSuccess, error, ok, tryOk } from "@/lib/response";
+import { ListNotificationsSchema, CreateNotificationSchema } from "./model";
+import { createNotification, listNotifications, markAsRead } from "./service";
+import NotificationHub from "./ws";
+import { verifyJoinToken, signJoinToken } from "@/lib/joinToken";
+import { z } from "zod";
+import type { ElysiaWS } from "../session/model";
 
-export const notificationsModule = new Elysia({
-  prefix: "/notifications",
-  detail: { tags: ["Notifications"] },
-})
-  .use(jwtPlugin)
-  .guard({ isAuth: true }, (app) =>
-    app
-      // GET /notifications — paginated list
-      .get(
-        "/",
-        ({ auth, query }) =>
-          NotificationService.list(
-            auth!.userId,
-            query.page ?? 1,
-            query.per_page ?? 20,
-          ),
-        {
-          query: t.Object({
-            page: t.Optional(t.Numeric({ minimum: 1, default: 1 })),
-            per_page: t.Optional(
-              t.Numeric({ minimum: 1, maximum: 50, default: 20 }),
-            ),
-          }),
-        },
-      )
+const META = Symbol("notif-ws-meta");
 
-      // GET /notifications/unread — unread count only
-      .get("/unread", ({ auth }) =>
-        NotificationService.unreadCount(auth!.userId),
-      )
+type NotifMeta = { userId: string | null };
 
-      // PATCH /notifications/read — mark all unread as read
-      .patch("/read", ({ auth }) =>
-        NotificationService.markAllRead(auth!.userId),
-      )
+const getMeta = (ws: ElysiaWS) => {
+  if (!ws.data[META]) ws.data[META] = { userId: null } as NotifMeta;
+  return ws.data[META] as NotifMeta;
+};
 
-      // PATCH /notifications/:id/read — mark single notification as read
-      .patch(
-        "/:id/read",
-        ({ auth, params }) =>
-          NotificationService.markRead(auth!.userId, params.id),
-        {
-          params: t.Object({ id: t.String() }),
-        },
-      ),
-  )
+export const notificationsModule = new Elysia({ prefix: "/notifications" })
+  .use(betterAuthPlugin)
+  .get("/", () => "Notifications endpoint")
+
+  // WebSocket endpoint for receiving live notifications
+  .get("/ws", () => "WebSocket endpoint")
   .ws("/ws", {
-    query: t.Optional(
-      t.Object({
-        token: t.Optional(t.String()),
-      }),
-    ),
+    query: t.Object({ token: t.String() }),
 
-    async beforeHandle({ auth, jwt, query, set }) {
-      // Cookie-based auth (jwtPlugin derive) is the primary path.
-      // Query-param token is the fallback for environments that can't send
-      // the httpOnly cookie on the WS upgrade (e.g. token expired and
-      // client passes a fresh bearer token as ?token=).
-      if (auth) return; // fast path — cookie auth OK
-
-      if (query?.token) {
-        const payload = await jwt.verify(query.token);
-        if (
-          payload &&
-          typeof payload === "object" &&
-          typeof (payload as Record<string, unknown>).userId === "string"
-        ) {
-          return; // token auth OK — open() will re-verify
-        }
-      }
-
-      set.status = 401;
-      return "Unauthorized";
-    },
-
-    async open(ws) {
-      // Resolve userId — prefer cookie-derived auth, fall back to query token.
-      let userId = ws.data.auth?.userId;
-
-      if (!userId && ws.data.query?.token) {
-        const payload = await ws.data.jwt.verify(ws.data.query.token);
-        if (payload && typeof payload === "object") {
-          const p = payload as Record<string, unknown>;
-          if (typeof p.userId === "string") userId = p.userId;
-        }
-      }
-
-      if (!userId) {
+    open: async (ws: ElysiaWS) => {
+      const meta = getMeta(ws);
+      const token = (ws.data.query as Record<string, any>)?.token;
+      if (!token) {
         ws.close(4001, "Unauthorized");
         return;
       }
 
-      NotificationService.register(userId, ws);
-
-      // Send unread count immediately on connect
-      const unread = await NotificationService.unreadCount(userId);
-      ws.send(JSON.stringify({ type: "unread_count", count: unread }));
-    },
-
-    close(ws) {
-      // Cookie path: auth is populated by jwtPlugin derive.
-      // Token path: auth is null — fall back to lookup by WS reference.
-      const userId = ws.data.auth?.userId;
-      if (userId) {
-        NotificationService.unregister(userId);
-      } else {
-        NotificationService.unregisterByWs(ws);
+      // Accept either a signed join token or a raw session token
+      try {
+        if (token.includes(".")) {
+          const claims = verifyJoinToken(token);
+          meta.userId = (claims as any).userId;
+        } else {
+          // Validate session token by looking up session record
+          const session = await prisma.session.findUnique({
+            where: { token },
+            include: { user: true },
+          });
+          if (!session) throw new Error("Unauthorized");
+          meta.userId = session.user.id;
+        }
+      } catch (err) {
+        ws.close(4001, "Unauthorized");
+        return;
       }
+
+      NotificationHub.add(meta.userId as string, ws.raw);
     },
 
-    // No inbound messages needed — this is server-push only
-    message() {},
-  });
+    message: (ws: ElysiaWS) => {
+      // notifications WS is receive-less for now; keep for extensibility
+    },
+
+    close: (ws: ElysiaWS) => {
+      const meta = getMeta(ws);
+      if (meta.userId) NotificationHub.remove(meta.userId, ws.raw);
+    },
+  })
+
+  // List notifications for authenticated user
+  .get(
+    "/list",
+    async ({ request, status, query }) => {
+      const session = await auth.api.getSession({ headers: request.headers });
+      if (!session) return status(401, error("Unauthorized"));
+      const data = await listNotifications(session.user.id, {
+        limit: Number(query.limit),
+        unreadOnly: (query as any).unreadOnly as boolean | undefined,
+      });
+      return status(200, ok(data));
+    },
+    {
+      auth: true,
+      query: ListNotificationsSchema as unknown as any,
+      response: { 200: ApiSuccess(), 401: ApiError },
+    },
+  )
+
+  // Admin/system endpoint to send a notification to a user
+  .post(
+    "/send",
+    async ({ body, status }) => {
+      // require admin via macro on route options
+      const result = await tryOk(() => createNotification(body));
+      if (!result.success) return status(400, result);
+      return status(201, ok(result.data));
+    },
+    {
+      requireAdmin: true,
+      body: CreateNotificationSchema,
+      response: { 201: ApiSuccess(), 400: ApiError, 401: ApiError },
+    },
+  )
+
+  .post(
+    "/join-token",
+    async ({ user, status }) => {
+      if (!user) return status(401, error("Unauthorized"));
+      // Use signJoinToken to mint a short-lived token containing userId
+      const token = signJoinToken(
+        { appointmentId: user.id, roomId: user.id, userId: user.id } as any,
+        60 * 5,
+      );
+      return status(200, { token });
+    },
+    {
+      auth: true,
+      response: { 200: t.Object({ token: t.String() }), 401: ApiError },
+    },
+  )
+
+  .post(
+    "/:id/read",
+    async ({ params, request, status }) => {
+      const session = await auth.api.getSession({ headers: request.headers });
+      if (!session) return status(401, error("Unauthorized"));
+      const okMarked = await markAsRead(params.id, session.user.id);
+      if (!okMarked) return status(404, error("Not found"));
+      return status(200, ok({ message: "Marked as read" }));
+    },
+    {
+      auth: true,
+      params: z.object({ id: z.string() }),
+      response: { 200: ApiSuccess(), 401: ApiError, 404: ApiError },
+    },
+  );

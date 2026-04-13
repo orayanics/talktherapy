@@ -12,6 +12,8 @@ To migrate sql:
 
 ```bash
 cd server
+# If prisma is not yet setup,
+bunx --bun prisma init
 # Generate Prisma Client
 bunx --bun prisma generate
 # Migrate the DB
@@ -20,6 +22,16 @@ bunx --bun prisma migrate dev
 bunx --bun prisma migrate reset
 # Seed the DB
 bun run seed
+```
+
+Setting up Better-Auth
+https://better-auth.com/docs/installation
+
+```bash
+# Generate table
+bun x auth@latest generate
+# Migrate the DB
+bun x auth@latest migrate
 ```
 
 To start the development server run:

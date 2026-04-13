@@ -1,15 +1,18 @@
-import { Elysia } from "elysia";
-import { Public } from "./service";
-import { DiagnosisModel } from "./model";
+import Elysia from "elysia";
+import { fetchAllDiagnoses } from "./service";
+import { ApiSuccess, ApiError, tryOk, ok } from "@/lib/response";
 
-// all public routes and resources
 export const publicModule = new Elysia({ prefix: "/public" }).get(
   "/diagnoses",
-  () => Public.getDiagnoses(),
+  async ({ status }) => {
+    const result = await tryOk(() => fetchAllDiagnoses());
+    if (!result.success) return status(500, result);
+    return status(200, ok(result.data));
+  },
   {
     response: {
-      200: DiagnosisModel.diagnosisArray,
-      500: DiagnosisModel.diagnosisInvalid,
+      200: ApiSuccess(),
+      500: ApiError,
     },
   },
 );
