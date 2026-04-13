@@ -31,6 +31,12 @@ export default function useLoginForm() {
         password: data.password,
         callbackURL: '/dashboard',
         rememberMe: false,
+        fetchOptions: {
+          onError: (error) => {
+            console.log('error')
+            setApiError(error.error.message || 'Login failed')
+          },
+        },
       })
     } catch (error: any) {
       if (isAxiosError(error)) {
