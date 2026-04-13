@@ -1,7 +1,7 @@
 import Elysia from "elysia";
 import { betterAuthPlugin } from "@/plugin/better-auth";
 import { z } from "zod";
-import { ApiError, ApiSuccess, ok, tryOk } from "@/lib/response";
+import { ApiError, ApiSuccess, error, ok, tryOk } from "@/lib/response";
 import { auth } from "@/lib/auth";
 import {
   ListContentSchema,
@@ -55,8 +55,7 @@ export const contentModule = new Elysia({ prefix: "/content" })
     "/",
     async ({ user, body, request, status }) => {
       const session = await auth.api.getSession({ headers: request.headers });
-      if (!session)
-        return status(401, { success: false, error: "Unauthorized" });
+      if (!session) return status(401, error("Unauthorized"));
       const userId = session.user.id;
       const result = await tryOk(() => createContent(body, userId));
       if (!result.success) return status(400, result);
@@ -82,8 +81,7 @@ export const contentModule = new Elysia({ prefix: "/content" })
     "/:id",
     async ({ user, params, body, request, status }) => {
       const session = await auth.api.getSession({ headers: request.headers });
-      if (!session)
-        return status(401, { success: false, error: "Unauthorized" });
+      if (!session) return status(401, error("Unauthorized"));
       const userId = session.user.id;
       const result = await tryOk(() => updateContent(params.id, body, userId));
       if (!result.success) return status(400, result);
@@ -109,8 +107,7 @@ export const contentModule = new Elysia({ prefix: "/content" })
     "/:id",
     async ({ user, params, status, request }) => {
       const session = await auth.api.getSession({ headers: request.headers });
-      if (!session)
-        return status(401, { success: false, error: "Unauthorized" });
+      if (!session) return status(401, error("Unauthorized"));
       await deleteContent(params.id);
       await logAudit({
         actorId: user.id,
@@ -133,8 +130,7 @@ export const contentModule = new Elysia({ prefix: "/content" })
     "/:id/bookmark",
     async ({ params, request, status }) => {
       const session = await auth.api.getSession({ headers: request.headers });
-      if (!session)
-        return status(401, { success: false, error: "Unauthorized" });
+      if (!session) return status(401, error("Unauthorized"));
       const userId = session.user.id;
       const result = await tryOk(() => addBookmark(params.id, userId));
       if (!result.success) {
@@ -159,8 +155,7 @@ export const contentModule = new Elysia({ prefix: "/content" })
     "/:id/bookmark",
     async ({ params, request, status }) => {
       const session = await auth.api.getSession({ headers: request.headers });
-      if (!session)
-        return status(401, { success: false, error: "Unauthorized" });
+      if (!session) return status(401, error("Unauthorized"));
       const userId = session.user.id;
       const result = await tryOk(() => removeBookmark(params.id, userId));
       if (!result.success) return status(404, result);
@@ -176,8 +171,7 @@ export const contentModule = new Elysia({ prefix: "/content" })
     "/bookmarks",
     async ({ query, request, status }) => {
       const session = await auth.api.getSession({ headers: request.headers });
-      if (!session)
-        return status(401, { success: false, error: "Unauthorized" });
+      if (!session) return status(401, error("Unauthorized"));
       const userId = session.user.id;
       const result = await tryOk(() => listBookmarks(query, userId));
       if (!result.success) return status(400, result);

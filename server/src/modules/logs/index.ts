@@ -1,6 +1,6 @@
 import Elysia from "elysia";
 import { betterAuthPlugin } from "@/plugin/better-auth";
-import { tryOk, ok } from "@/lib/response";
+import { tryOk, ok, error } from "@/lib/response";
 import { ApiError, ApiSuccess } from "@/lib/response";
 
 import { LogsListSchema, LogsExportSchema } from "./model";
@@ -49,10 +49,10 @@ export const logsModule = new Elysia({ prefix: "/logs" })
           },
         });
       } catch (err: unknown) {
-        return status(400, {
-          success: false,
-          error: err instanceof Error ? err.message : String(err),
-        });
+        return status(
+          400,
+          error(err instanceof Error ? err.message : String(err)),
+        );
       }
     },
     {

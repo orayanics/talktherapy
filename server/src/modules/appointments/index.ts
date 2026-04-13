@@ -1,7 +1,7 @@
 import Elysia from "elysia";
 import { betterAuthPlugin } from "@/plugin/better-auth";
 import { z } from "zod";
-import { ApiError, ApiSuccess, ok, tryOk } from "@/lib/response";
+import { ApiError, ApiSuccess, error, ok, tryOk } from "@/lib/response";
 import {
   acceptAppointment,
   rejectAppointment,
@@ -194,14 +194,14 @@ export const appointmentsModule = new Elysia({ prefix: "/appointments" })
 
         const isParticipant =
           appointment.patientId === uid || appointment.clinicianId === uid;
-        if (!isParticipant) return status(403, { error: "Not allowed" });
+        if (!isParticipant) return status(403, error("Not allowed"));
 
         if (!appointment.roomId)
-          return status(400, { error: "No room configured for appointment" });
+          return status(400, error("No room configured for appointment"));
 
         // only allow when appointment is ACCEPTED
         if (appointment.status !== "ACCEPTED")
-          return status(400, { error: "Appointment not active" });
+          return status(400, error("Appointment not active"));
 
         // lazy import to avoid circular deps
         const { signJoinToken } = await import("@/lib/joinToken");
@@ -214,7 +214,7 @@ export const appointmentsModule = new Elysia({ prefix: "/appointments" })
 
         return status(200, { token });
       } catch (err: any) {
-        return status(400, { error: err.message ?? String(err) });
+        return status(400, error(err.message ?? String(err)));
       }
     },
     {

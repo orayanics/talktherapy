@@ -1,7 +1,7 @@
 import Elysia from "elysia";
 import { betterAuthPlugin } from "@/plugin/better-auth";
 import { prisma } from "@/lib/client";
-import { ApiError, ApiSuccess, ok } from "@/lib/response";
+import { ApiError, ApiSuccess, error, ok } from "@/lib/response";
 
 export const adminModule = new Elysia({ prefix: "/admin" })
   .use(betterAuthPlugin)
@@ -74,10 +74,10 @@ export const adminModule = new Elysia({ prefix: "/admin" })
           }),
         );
       } catch (err: unknown) {
-        return status(500, {
-          success: false,
-          error: err instanceof Error ? err.message : String(err),
-        });
+        return status(
+          500,
+          error(err instanceof Error ? err.message : String(err)),
+        );
       }
     },
     {

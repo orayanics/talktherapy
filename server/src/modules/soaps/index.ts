@@ -1,7 +1,7 @@
 import Elysia from "elysia";
 import { betterAuthPlugin } from "@/plugin/better-auth";
 import { z } from "zod";
-import { ApiError, ApiSuccess, ok, tryOk } from "@/lib/response";
+import { ApiError, ApiSuccess, error, ok, tryOk } from "@/lib/response";
 import {
   listSoapsByPatient,
   fetchSoapById,
@@ -20,8 +20,7 @@ export const soapsModule = new Elysia({ prefix: "/soaps" })
       const patientId = params.patientId as string;
 
       if (role === "patient") {
-        if (user.id !== patientId)
-          return status(403, { error: "Forbidden", success: false });
+        if (user.id !== patientId) return status(403, error("Forbidden"));
       }
 
       const result = await tryOk(() => listSoapsByPatient(patientId, query));
@@ -80,7 +79,7 @@ export const soapsModule = new Elysia({ prefix: "/soaps" })
       // if patient role, ensure ownership
       if (user.role === "patient") {
         if (result.data.patientId !== user.id)
-          return status(403, { error: "Forbidden", success: false });
+          return status(403, error("Forbidden"));
       }
 
       return status(200, ok(result.data));

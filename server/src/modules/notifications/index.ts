@@ -2,7 +2,7 @@ import { Elysia, t } from "elysia";
 import { betterAuthPlugin } from "@/plugin/better-auth";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/client";
-import { ApiError, ApiSuccess, ok, tryOk } from "@/lib/response";
+import { ApiError, ApiSuccess, error, ok, tryOk } from "@/lib/response";
 import { ListNotificationsSchema, CreateNotificationSchema } from "./model";
 import { createNotification, listNotifications, markAsRead } from "./service";
 import NotificationHub from "./ws";
@@ -73,8 +73,7 @@ export const notificationsModule = new Elysia({ prefix: "/notifications" })
     "/list",
     async ({ request, status, query }) => {
       const session = await auth.api.getSession({ headers: request.headers });
-      if (!session)
-        return status(401, { success: false, error: "Unauthorized" });
+      if (!session) return status(401, error("Unauthorized"));
       const data = await listNotifications(session.user.id, {
         limit: Number(query.limit),
         unreadOnly: (query as any).unreadOnly as boolean | undefined,
@@ -107,7 +106,7 @@ export const notificationsModule = new Elysia({ prefix: "/notifications" })
   .post(
     "/join-token",
     async ({ user, status }) => {
-      if (!user) return status(401, { error: "Unauthorized", success: false });
+      if (!user) return status(401, error("Unauthorized"));
       // Use signJoinToken to mint a short-lived token containing userId
       const token = signJoinToken(
         { appointmentId: user.id, roomId: user.id, userId: user.id } as any,
@@ -125,10 +124,9 @@ export const notificationsModule = new Elysia({ prefix: "/notifications" })
     "/:id/read",
     async ({ params, request, status }) => {
       const session = await auth.api.getSession({ headers: request.headers });
-      if (!session)
-        return status(401, { success: false, error: "Unauthorized" });
+      if (!session) return status(401, error("Unauthorized"));
       const okMarked = await markAsRead(params.id, session.user.id);
-      if (!okMarked) return status(404, { success: false, error: "Not found" });
+      if (!okMarked) return status(404, error("Not found"));
       return status(200, ok({ message: "Marked as read" }));
     },
     {

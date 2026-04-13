@@ -1,7 +1,7 @@
 import Elysia from "elysia";
 import { betterAuthPlugin } from "@/plugin/better-auth";
 import { z } from "zod";
-import { ApiError, ApiSuccess, ok, tryOk } from "@/lib/response";
+import { ApiError, ApiSuccess, error, ok, tryOk } from "@/lib/response";
 import { getSlotById, bookSlot } from "./service";
 import { prisma } from "@/lib/client";
 import { StoreSlotBookingSchema } from "./model";
@@ -29,8 +29,7 @@ export const slotsModule = new Elysia({ prefix: "/slots" })
     async ({ user, params, body, status }) => {
       const patientId = user.id;
 
-      if (!patientId)
-        return status(403, { success: false, error: "patient_id required" });
+      if (!patientId) return status(403, error("patient_id required"));
 
       const result = await tryOk(() => bookSlot(params.id, patientId, body));
       if (!result.success) return status(400, result);
