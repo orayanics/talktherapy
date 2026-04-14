@@ -1,3 +1,4 @@
+import { API_URL, WSS_TOKEN_URL } from '@/constants/application'
 import { useEffect, useRef, useState } from 'react'
 
 export interface DiagState {
@@ -71,8 +72,8 @@ export function useRoomSession(roomId: string) {
     async function start() {
       if (!roomId) return
 
-      const API_BASE = `${location.protocol}//${location.hostname}:8080`
-      const wsProto = location.protocol === 'https:' ? 'wss' : 'ws'
+      const API_BASE = API_URL
+      const wsProto = WSS_TOKEN_URL
 
       const bindDataChannel = (channel: RTCDataChannel) => {
         dcRef.current = channel
@@ -286,7 +287,7 @@ export function useRoomSession(roomId: string) {
 
         try {
           const token = await getJoinToken()
-          const wssUrl = `${wsProto}://${location.hostname}:8080/session/ws?token=${encodeURIComponent(token)}`
+          const wssUrl = `${wsProto}${encodeURIComponent(token)}`
           const ws = new WebSocket(wssUrl)
           wsRef.current = ws
 

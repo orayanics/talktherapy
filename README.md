@@ -1,5 +1,42 @@
 # TalkTherapy
 
+## Overview
+
+**TalkTherapy** is a telehealth platform designed for Speech-Language Pathology (SLP) clinicians and patients.
+
+Originally developed for **UST-CRS** to meet academic requirements, the platform addresses two primary needs:
+
+- Assisting clinicians with diagnosis and assessment workflows
+- Providing patients with a streamlined way to book appointments based on availability and convenience
+
+## Core Features
+
+- Clinician scheduling system
+- Appointment booking system
+- Admin user management
+- Content management system (CMS)
+- One-on-one video conferencing with integrated chat
+
+## Technology Stack
+
+### Backend
+
+- **Bun\***
+- **ElysiaJS**
+- **Prisma**
+- **SQLite**
+- **NodeMailer**
+- **Zod**
+
+### Frontend
+
+- **TanStack Start** (Query, Router)
+- **Axios**
+- **Tailwind CSS**
+- **Zod**
+- **React Hook Form**
+- **Better Auth**
+
 ## Starting in local
 
 To install both web and server dependencies:
