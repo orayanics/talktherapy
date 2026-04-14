@@ -184,9 +184,9 @@ function RouteComponent() {
                     <Link
                       to="/room/$roomId"
                       params={{ roomId: row.roomId }}
-                      className="text-blue-600 hover:underline"
+                      className="btn btn-neutral"
                     >
-                      {row.roomId}
+                      Join Session
                     </Link>
                   ) : (
                     <span>N/A</span>

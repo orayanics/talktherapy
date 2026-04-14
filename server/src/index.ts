@@ -140,8 +140,8 @@ const app = new Elysia()
   .use(authenticatedRoutes)
   .get("/", () => "Hello Elysia")
   .listen({
-    port: process.env.PORT ? parseInt(process.env.PORT) : 8080,
-    hostname: process.env.HOSTNAME ? process.env.HOSTNAME : "0.0.0.0",
+    port: process.env.SERVER_PORT,
+    hostname: process.env.SERVER_HOST,
     tls: {
       cert,
       key,

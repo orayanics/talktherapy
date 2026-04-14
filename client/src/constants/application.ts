@@ -1,6 +1,6 @@
 export const isDevelopment = import.meta.env.VITE_STAGE === 'development'
-export const isProduction = import.meta.env.VITE_STAGE === 'production'
 
-export const API_URL = isDevelopment
-  ? import.meta.env.VITE_APP_API_URL
-  : import.meta.env.VITE_HTTPS_API_URL
+export const API_URL = import.meta.env.VITE_APP_API_URL
+export const WSS_URL = import.meta.env.VITE_APP_WSS_URL
+
+export const WSS_TOKEN_URL = `wss://${location.hostname}:8080/session/ws?token=`
