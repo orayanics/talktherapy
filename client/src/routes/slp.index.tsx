@@ -45,14 +45,87 @@ type FeedbackStructured = {
     overallSummary?: string
     nextPractice?: string[]
   }
+  llmError?: string
+  llmRaw?: string
 }
 
 type AssessResponse = {
   transcript: string
-  phonemeScores: PhonemeScore[]
   lowScoring: PhonemeScore[]
   feedback: string
   feedbackStructured?: FeedbackStructured | null
+}
+
+type AssessResponseV2 = {
+  meta?: {
+    alignmentSource?: string
+    cer?: number
+  }
+  analysis?: {
+    transcript?: string
+    lowScoring?: PhonemeScore[]
+    structured?: Omit<FeedbackStructured, 'llm' | 'llmError' | 'llmRaw'>
+  }
+  feedback?: {
+    text?: string
+    structured?: {
+      overallSummary?: string
+      nextPractice?: string[]
+    }
+    llmError?: string | null
+  }
+}
+
+function isObject(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null
+}
+
+function normalizeResponse(raw: unknown): AssessResponse {
+  if (!isObject(raw)) {
+    return {
+      transcript: '',
+      lowScoring: [],
+      feedback: '',
+      feedbackStructured: null,
+    }
+  }
+
+  const maybeLegacy = raw as Partial<AssessResponse>
+  if (Array.isArray(maybeLegacy.lowScoring)) {
+    return {
+      transcript: maybeLegacy.transcript ?? '',
+
+      lowScoring: maybeLegacy.lowScoring,
+      feedback: maybeLegacy.feedback ?? '',
+      feedbackStructured: maybeLegacy.feedbackStructured ?? null,
+    }
+  }
+
+  const v2 = raw as AssessResponseV2
+  const transcript = v2.analysis?.transcript ?? ''
+  const lowScoring = Array.isArray(v2.analysis?.lowScoring)
+    ? v2.analysis?.lowScoring
+    : []
+  const feedback = v2.feedback?.text ?? ''
+
+  const structuredCore = v2.analysis?.structured
+  const llm = v2.feedback?.structured
+  const llmError = v2.feedback?.llmError ?? undefined
+
+  const feedbackStructured = structuredCore
+    ? {
+        ...structuredCore,
+        llm,
+        llmError,
+      }
+    : null
+
+  return {
+    transcript,
+    lowScoring,
+    feedback,
+    feedbackStructured,
+  }
 }
 
 const API_BASE = import.meta.env.VITE_SLP_API_URL ?? 'http://localhost:8000'
@@ -71,11 +144,9 @@ function RouteComponent() {
   const recorderRef = useRef<MediaRecorder | null>(null)
   const chunksRef = useRef<Blob[]>([])
 
-  console.log(result)
-
   const sortedLowScores = useMemo(() => {
     if (!result) return []
-    return [...result.lowScoring].sort((a, b) => a.score - b.score)
+    return [...(result.lowScoring ?? [])].sort((a, b) => a.score - b.score)
   }, [result])
 
   const startRecording = async () => {
@@ -151,22 +222,7 @@ function RouteComponent() {
       }
 
       const data = await response.json()
-
-      // Backend returns `{ error: null }` on success, so only treat it as a failure
-      // when `error` is a non-empty string.
-      if (
-        data &&
-        typeof data === 'object' &&
-        'error' in data &&
-        typeof (data as { error?: unknown }).error === 'string' &&
-        (data as { error: string }).error.trim().length > 0
-      ) {
-        setError((data as { error: string }).error)
-        setResult(null)
-        return
-      }
-
-      setResult(data as AssessResponse)
+      setResult(normalizeResponse(data))
     } catch (submitError) {
       setError(
         submitError instanceof Error
@@ -177,8 +233,6 @@ function RouteComponent() {
       setIsSubmitting(false)
     }
   }
-
-  console.log(result)
 
   const renderStatusBadge = (
     status: FeedbackStructured['overall']['status'],
@@ -203,6 +257,8 @@ function RouteComponent() {
 
     return <span className={className}>{label}</span>
   }
+
+  const NEEDS_WORK_THRESHOLD = 65
 
   return (
     <div className="mx-auto flex w-full max-w-4xl flex-col gap-5 p-6">
@@ -313,7 +369,8 @@ function RouteComponent() {
                     {result.feedbackStructured.overall.percentAboveNeedsWork.toFixed(
                       1,
                     )}
-                    % of units ≥ 70%
+                    %{' of units ≥ '}
+                    {NEEDS_WORK_THRESHOLD}%
                   </span>
                 </div>
 
@@ -323,6 +380,20 @@ function RouteComponent() {
                     <div className="mt-1 whitespace-pre-wrap text-base-content/80">
                       {result.feedbackStructured.llm.overallSummary}
                     </div>
+                  </div>
+                ) : null}
+
+                {result.feedbackStructured.llmError ? (
+                  <div className="rounded-md border border-base-300 bg-base-100 px-3 py-2">
+                    <div className="font-medium">LLM error</div>
+                    <div className="mt-1 text-sm text-error">
+                      {result.feedbackStructured.llmError}
+                    </div>
+                    {result.feedbackStructured.llmRaw ? (
+                      <pre className="mt-2 max-h-40 overflow-auto whitespace-pre-wrap text-xs text-base-content/70">
+                        {result.feedbackStructured.llmRaw}
+                      </pre>
+                    ) : null}
                   </div>
                 ) : null}
 
@@ -402,7 +473,7 @@ function RouteComponent() {
                         <thead>
                           <tr>
                             <th>Word</th>
-                            <th className="text-right">Avg</th>
+                            <th className="text-right">Avg (%)</th>
                             <th>Status</th>
                             <th>Focus (lowest units)</th>
                           </tr>
