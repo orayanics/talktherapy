@@ -40,18 +40,6 @@ export type StructuredAssessment = {
   needsWorkUnits: UnitAssessment[]
 }
 
-export type LLMFeedbackNote = {
-  unit: string
-  note: string
-}
-
-export type LLMFeedback = {
-  overallSummary: string
-  needsWork: LLMFeedbackNote[]
-  accurate: LLMFeedbackNote[]
-  nextPractice: string[]
-}
-
 export type AssessMeta = {
   alignmentSource: string
   cer: number
@@ -65,8 +53,6 @@ export type AssessAnalysis = {
 
 export type AssessFeedback = {
   text: string
-  structured?: LLMFeedback
-  llmError?: string
 }
 
 export type AssessResponse = {

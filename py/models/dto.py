@@ -45,18 +45,6 @@ class StructuredAssessment(BaseModel):
     needsWorkUnits: list[UnitAssessment] = Field(default_factory=list)
 
 
-class LLMFeedbackNote(BaseModel):
-    unit: str
-    note: str
-
-
-class LLMFeedback(BaseModel):
-    overallSummary: str
-    needsWork: list[LLMFeedbackNote] = Field(default_factory=list)
-    accurate: list[LLMFeedbackNote] = Field(default_factory=list)
-    nextPractice: list[str] = Field(default_factory=list)
-
-
 class AssessMeta(BaseModel):
     alignmentSource: str
     cer: float = Field(ge=0.0)
@@ -71,8 +59,6 @@ class AssessAnalysis(BaseModel):
 
 class AssessFeedback(BaseModel):
     text: str
-    structured: Optional[LLMFeedback] = None
-    llmError: Optional[str] = None
 
 
 class AssessResponse(BaseModel):

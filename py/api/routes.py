@@ -17,7 +17,6 @@ from core.phonemization import configure_allowed_alignment_chars
 from core.scoring import SCORING_CONFIG
 from models.dto import AssessAnalysis, AssessFeedback, AssessMeta, AssessResponse
 from services.asr import transcribe
-from services.llm import fetch_llm_feedback
 
 router = APIRouter()
 log = logging.getLogger("phoneme_service")
@@ -73,8 +72,6 @@ async def assess(audio: UploadFile, referenceText: str = Form(..., min_length=1,
         )
         feedback_text = format_feedback_from_structured(structured_assessment)
 
-        llm_feedback, llm_error = await fetch_llm_feedback(structured_assessment)
-
         low_scoring = [
             p
             for p in alignment.phoneme_scores
@@ -93,8 +90,6 @@ async def assess(audio: UploadFile, referenceText: str = Form(..., min_length=1,
             ),
             feedback=AssessFeedback(
                 text=feedback_text,
-                structured=llm_feedback,
-                llmError=llm_error,
             ),
         )
 

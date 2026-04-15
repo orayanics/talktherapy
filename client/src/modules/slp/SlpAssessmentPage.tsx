@@ -165,48 +165,12 @@ export default function SlpAssessmentPage() {
               <SlpAccurate result={result} />
               <SlpBreakdown result={result} />
 
-              {result.feedback.structured?.needsWork.length ? (
+              {result.feedback.text ? (
                 <div>
-                  <div className="font-medium">Coach notes: needs work</div>
-                  <ul className="mt-2 space-y-1 text-base-content/80">
-                    {result.feedback.structured.needsWork
-                      .slice(0, 8)
-                      .map((item) => (
-                        <li key={`coach-needs-${item.unit}`}>
-                          <span className="font-mono">{item.unit}</span>:{' '}
-                          {item.note}
-                        </li>
-                      ))}
-                  </ul>
-                </div>
-              ) : null}
-
-              {result.feedback.structured?.accurate.length ? (
-                <div>
-                  <div className="font-medium">Coach notes: accurate</div>
-                  <ul className="mt-2 space-y-1 text-base-content/80">
-                    {result.feedback.structured.accurate
-                      .slice(0, 8)
-                      .map((item) => (
-                        <li key={`coach-accurate-${item.unit}`}>
-                          <span className="font-mono">{item.unit}</span>:{' '}
-                          {item.note}
-                        </li>
-                      ))}
-                  </ul>
-                </div>
-              ) : null}
-
-              {result.feedback.structured?.nextPractice.length ? (
-                <div>
-                  <div className="font-medium">Next practice</div>
-                  <ul className="mt-2 list-disc space-y-1 pl-5 text-base-content/80">
-                    {result.feedback.structured.nextPractice
-                      .slice(0, 5)
-                      .map((item, idx) => (
-                        <li key={`next-${idx}`}>{item}</li>
-                      ))}
-                  </ul>
+                  <div className="font-medium">Feedback</div>
+                  <p className="mt-1 whitespace-pre-wrap text-sm text-slate-700">
+                    {result.feedback.text}
+                  </p>
                 </div>
               ) : null}
             </div>
