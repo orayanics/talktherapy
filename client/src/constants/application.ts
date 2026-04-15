@@ -3,5 +3,3 @@ export const SERVER_PORT = import.meta.env.VITE_SERVER_PORT
 
 export const API_URL = import.meta.env.VITE_APP_API_URL
 export const WSS_URL = import.meta.env.VITE_APP_WSS_URL
-
-export const WSS_TOKEN_URL = `wss://${location.hostname}:${SERVER_PORT}/session/ws?token=`

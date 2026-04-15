@@ -72,9 +72,6 @@ export const assessPronunciation = async (
   const { data } = await api<{ data: AssessResponse }>('/slp/assess', {
     method: 'POST',
     data: formData,
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
   })
   return data
 }

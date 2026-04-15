@@ -21,7 +21,7 @@ export default function SlpPill({ status }: Props) {
   const label = STATUS_LABEL_MAP[status]
 
   return (
-    <div className={`badge badge-sm font-bold border uppercae ${classes}`}>
+    <div className={`badge badge-sm font-bold border uppercase ${classes}`}>
       {label}
     </div>
   )
