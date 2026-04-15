@@ -110,6 +110,11 @@ export const PATIENT_NAV_ITEMS = [
     icon: <LayoutDashboard size={16} />,
   },
   {
+    label: 'Practice',
+    to: '/slp',
+    icon: <ClipboardPlus size={16} />,
+  },
+  {
     label: 'Book',
     to: '/book',
     icon: <Calendar size={16} />,

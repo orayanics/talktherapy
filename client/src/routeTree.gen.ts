@@ -13,7 +13,6 @@ import { Route as UnauthorizedRouteImport } from './routes/unauthorized'
 import { Route as ForbiddenRouteImport } from './routes/forbidden'
 import { Route as PublicRouteRouteImport } from './routes/_public/route'
 import { Route as PrivateRouteRouteImport } from './routes/_private/route'
-import { Route as SlpIndexRouteImport } from './routes/slp.index'
 import { Route as PublicIndexRouteImport } from './routes/_public/index'
 import { Route as PublicRegisterRouteImport } from './routes/_public/register'
 import { Route as PublicLoginRouteImport } from './routes/_public/login'
@@ -30,6 +29,7 @@ import { Route as PrivateadmSharedLogsRouteImport } from './routes/_private/(adm
 import { Route as PublicActivateOtpIndexRouteImport } from './routes/_public/activate/otp.index'
 import { Route as PrivatesharedContentIndexRouteImport } from './routes/_private/(shared)/content/index'
 import { Route as PrivatesharedAppointmentsIndexRouteImport } from './routes/_private/(shared)/appointments/index'
+import { Route as PrivatepatientSlpIndexRouteImport } from './routes/_private/(patient)/slp.index'
 import { Route as PrivatepatientRecordsIndexRouteImport } from './routes/_private/(patient)/records.index'
 import { Route as PrivateclinicianSchedulesIndexRouteImport } from './routes/_private/(clinician)/schedules/index'
 import { Route as PrivateclinicianPatientsIndexRouteImport } from './routes/_private/(clinician)/patients/index'
@@ -65,11 +65,6 @@ const PublicRouteRoute = PublicRouteRouteImport.update({
 } as any)
 const PrivateRouteRoute = PrivateRouteRouteImport.update({
   id: '/_private',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SlpIndexRoute = SlpIndexRouteImport.update({
-  id: '/slp/',
-  path: '/slp/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PublicIndexRoute = PublicIndexRouteImport.update({
@@ -151,6 +146,11 @@ const PrivatesharedAppointmentsIndexRoute =
     path: '/appointments/',
     getParentRoute: () => PrivateRouteRoute,
   } as any)
+const PrivatepatientSlpIndexRoute = PrivatepatientSlpIndexRouteImport.update({
+  id: '/slp/',
+  path: '/slp/',
+  getParentRoute: () => PrivatepatientRouteRoute,
+} as any)
 const PrivatepatientRecordsIndexRoute =
   PrivatepatientRecordsIndexRouteImport.update({
     id: '/records/',
@@ -267,7 +267,6 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof PrivateDashboardRoute
   '/login': typeof PublicLoginRoute
   '/register': typeof PublicRegisterRoute
-  '/slp/': typeof SlpIndexRoute
   '/logs': typeof PrivateadmSharedLogsRoute
   '/book': typeof PrivatepatientBookRoute
   '/profile/edit': typeof PrivateProfileEditRoute
@@ -285,6 +284,7 @@ export interface FileRoutesByFullPath {
   '/patients/': typeof PrivateclinicianPatientsIndexRoute
   '/schedules/': typeof PrivateclinicianSchedulesIndexRoute
   '/records/': typeof PrivatepatientRecordsIndexRoute
+  '/slp/': typeof PrivatepatientSlpIndexRoute
   '/appointments/': typeof PrivatesharedAppointmentsIndexRoute
   '/content/': typeof PrivatesharedContentIndexRoute
   '/activate/otp/': typeof PublicActivateOtpIndexRoute
@@ -303,7 +303,6 @@ export interface FileRoutesByTo {
   '/dashboard': typeof PrivateDashboardRoute
   '/login': typeof PublicLoginRoute
   '/register': typeof PublicRegisterRoute
-  '/slp': typeof SlpIndexRoute
   '/logs': typeof PrivateadmSharedLogsRoute
   '/book': typeof PrivatepatientBookRoute
   '/profile/edit': typeof PrivateProfileEditRoute
@@ -321,6 +320,7 @@ export interface FileRoutesByTo {
   '/patients': typeof PrivateclinicianPatientsIndexRoute
   '/schedules': typeof PrivateclinicianSchedulesIndexRoute
   '/records': typeof PrivatepatientRecordsIndexRoute
+  '/slp': typeof PrivatepatientSlpIndexRoute
   '/appointments': typeof PrivatesharedAppointmentsIndexRoute
   '/activate/otp': typeof PublicActivateOtpIndexRoute
   '/patients/$patientId/create': typeof PrivateclinicianPatientsPatientIdCreateRoute
@@ -344,7 +344,6 @@ export interface FileRoutesById {
   '/_public/login': typeof PublicLoginRoute
   '/_public/register': typeof PublicRegisterRoute
   '/_public/': typeof PublicIndexRoute
-  '/slp/': typeof SlpIndexRoute
   '/_private/(adm-shared)/logs': typeof PrivateadmSharedLogsRoute
   '/_private/(patient)/book': typeof PrivatepatientBookRoute
   '/_private/profile/edit': typeof PrivateProfileEditRoute
@@ -362,6 +361,7 @@ export interface FileRoutesById {
   '/_private/(clinician)/patients/': typeof PrivateclinicianPatientsIndexRoute
   '/_private/(clinician)/schedules/': typeof PrivateclinicianSchedulesIndexRoute
   '/_private/(patient)/records/': typeof PrivatepatientRecordsIndexRoute
+  '/_private/(patient)/slp/': typeof PrivatepatientSlpIndexRoute
   '/_private/(shared)/appointments/': typeof PrivatesharedAppointmentsIndexRoute
   '/_private/(shared)/content/': typeof PrivatesharedContentIndexRoute
   '/_public/activate/otp/': typeof PublicActivateOtpIndexRoute
@@ -382,7 +382,6 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/login'
     | '/register'
-    | '/slp/'
     | '/logs'
     | '/book'
     | '/profile/edit'
@@ -400,6 +399,7 @@ export interface FileRouteTypes {
     | '/patients/'
     | '/schedules/'
     | '/records/'
+    | '/slp/'
     | '/appointments/'
     | '/content/'
     | '/activate/otp/'
@@ -418,7 +418,6 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/login'
     | '/register'
-    | '/slp'
     | '/logs'
     | '/book'
     | '/profile/edit'
@@ -436,6 +435,7 @@ export interface FileRouteTypes {
     | '/patients'
     | '/schedules'
     | '/records'
+    | '/slp'
     | '/appointments'
     | '/activate/otp'
     | '/patients/$patientId/create'
@@ -458,7 +458,6 @@ export interface FileRouteTypes {
     | '/_public/login'
     | '/_public/register'
     | '/_public/'
-    | '/slp/'
     | '/_private/(adm-shared)/logs'
     | '/_private/(patient)/book'
     | '/_private/profile/edit'
@@ -476,6 +475,7 @@ export interface FileRouteTypes {
     | '/_private/(clinician)/patients/'
     | '/_private/(clinician)/schedules/'
     | '/_private/(patient)/records/'
+    | '/_private/(patient)/slp/'
     | '/_private/(shared)/appointments/'
     | '/_private/(shared)/content/'
     | '/_public/activate/otp/'
@@ -493,7 +493,6 @@ export interface RootRouteChildren {
   ForbiddenRoute: typeof ForbiddenRoute
   UnauthorizedRoute: typeof UnauthorizedRoute
   SessionRoomRouteRoute: typeof SessionRoomRouteRouteWithChildren
-  SlpIndexRoute: typeof SlpIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -524,13 +523,6 @@ declare module '@tanstack/react-router' {
       path: ''
       fullPath: '/'
       preLoaderRoute: typeof PrivateRouteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/slp/': {
-      id: '/slp/'
-      path: '/slp'
-      fullPath: '/slp/'
-      preLoaderRoute: typeof SlpIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_public/': {
@@ -644,6 +636,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/appointments/'
       preLoaderRoute: typeof PrivatesharedAppointmentsIndexRouteImport
       parentRoute: typeof PrivateRouteRoute
+    }
+    '/_private/(patient)/slp/': {
+      id: '/_private/(patient)/slp/'
+      path: '/slp'
+      fullPath: '/slp/'
+      preLoaderRoute: typeof PrivatepatientSlpIndexRouteImport
+      parentRoute: typeof PrivatepatientRouteRoute
     }
     '/_private/(patient)/records/': {
       id: '/_private/(patient)/records/'
@@ -826,12 +825,14 @@ interface PrivatepatientRouteRouteChildren {
   PrivatepatientBookRoute: typeof PrivatepatientBookRoute
   PrivatepatientRecordsSoapIdRoute: typeof PrivatepatientRecordsSoapIdRoute
   PrivatepatientRecordsIndexRoute: typeof PrivatepatientRecordsIndexRoute
+  PrivatepatientSlpIndexRoute: typeof PrivatepatientSlpIndexRoute
 }
 
 const PrivatepatientRouteRouteChildren: PrivatepatientRouteRouteChildren = {
   PrivatepatientBookRoute: PrivatepatientBookRoute,
   PrivatepatientRecordsSoapIdRoute: PrivatepatientRecordsSoapIdRoute,
   PrivatepatientRecordsIndexRoute: PrivatepatientRecordsIndexRoute,
+  PrivatepatientSlpIndexRoute: PrivatepatientSlpIndexRoute,
 }
 
 const PrivatepatientRouteRouteWithChildren =
@@ -925,7 +926,6 @@ const rootRouteChildren: RootRouteChildren = {
   ForbiddenRoute: ForbiddenRoute,
   UnauthorizedRoute: UnauthorizedRoute,
   SessionRoomRouteRoute: SessionRoomRouteRouteWithChildren,
-  SlpIndexRoute: SlpIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
