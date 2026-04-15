@@ -86,3 +86,14 @@ mkcert localhost
 # Generate certs
 mkcert -key-file key.pem -cert-file cert.pem localhost
 ```
+
+To run the Python script for phoneme analysis:
+
+```bash
+python3 -m venv slp-env
+source slp-env/bin/activate
+```
+
+```bash
+uvicorn service:app --host 0.0.0.0 --port 8000 --reload
+```

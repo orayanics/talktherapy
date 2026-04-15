@@ -13,6 +13,7 @@ import { Route as UnauthorizedRouteImport } from './routes/unauthorized'
 import { Route as ForbiddenRouteImport } from './routes/forbidden'
 import { Route as PublicRouteRouteImport } from './routes/_public/route'
 import { Route as PrivateRouteRouteImport } from './routes/_private/route'
+import { Route as SlpIndexRouteImport } from './routes/slp.index'
 import { Route as PublicIndexRouteImport } from './routes/_public/index'
 import { Route as PublicRegisterRouteImport } from './routes/_public/register'
 import { Route as PublicLoginRouteImport } from './routes/_public/login'
@@ -64,6 +65,11 @@ const PublicRouteRoute = PublicRouteRouteImport.update({
 } as any)
 const PrivateRouteRoute = PrivateRouteRouteImport.update({
   id: '/_private',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SlpIndexRoute = SlpIndexRouteImport.update({
+  id: '/slp/',
+  path: '/slp/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PublicIndexRoute = PublicIndexRouteImport.update({
@@ -261,6 +267,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof PrivateDashboardRoute
   '/login': typeof PublicLoginRoute
   '/register': typeof PublicRegisterRoute
+  '/slp/': typeof SlpIndexRoute
   '/logs': typeof PrivateadmSharedLogsRoute
   '/book': typeof PrivatepatientBookRoute
   '/profile/edit': typeof PrivateProfileEditRoute
@@ -296,6 +303,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof PrivateDashboardRoute
   '/login': typeof PublicLoginRoute
   '/register': typeof PublicRegisterRoute
+  '/slp': typeof SlpIndexRoute
   '/logs': typeof PrivateadmSharedLogsRoute
   '/book': typeof PrivatepatientBookRoute
   '/profile/edit': typeof PrivateProfileEditRoute
@@ -336,6 +344,7 @@ export interface FileRoutesById {
   '/_public/login': typeof PublicLoginRoute
   '/_public/register': typeof PublicRegisterRoute
   '/_public/': typeof PublicIndexRoute
+  '/slp/': typeof SlpIndexRoute
   '/_private/(adm-shared)/logs': typeof PrivateadmSharedLogsRoute
   '/_private/(patient)/book': typeof PrivatepatientBookRoute
   '/_private/profile/edit': typeof PrivateProfileEditRoute
@@ -373,6 +382,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/login'
     | '/register'
+    | '/slp/'
     | '/logs'
     | '/book'
     | '/profile/edit'
@@ -408,6 +418,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/login'
     | '/register'
+    | '/slp'
     | '/logs'
     | '/book'
     | '/profile/edit'
@@ -447,6 +458,7 @@ export interface FileRouteTypes {
     | '/_public/login'
     | '/_public/register'
     | '/_public/'
+    | '/slp/'
     | '/_private/(adm-shared)/logs'
     | '/_private/(patient)/book'
     | '/_private/profile/edit'
@@ -481,6 +493,7 @@ export interface RootRouteChildren {
   ForbiddenRoute: typeof ForbiddenRoute
   UnauthorizedRoute: typeof UnauthorizedRoute
   SessionRoomRouteRoute: typeof SessionRoomRouteRouteWithChildren
+  SlpIndexRoute: typeof SlpIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -511,6 +524,13 @@ declare module '@tanstack/react-router' {
       path: ''
       fullPath: '/'
       preLoaderRoute: typeof PrivateRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/slp/': {
+      id: '/slp/'
+      path: '/slp'
+      fullPath: '/slp/'
+      preLoaderRoute: typeof SlpIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_public/': {
@@ -905,6 +925,7 @@ const rootRouteChildren: RootRouteChildren = {
   ForbiddenRoute: ForbiddenRoute,
   UnauthorizedRoute: UnauthorizedRoute,
   SessionRoomRouteRoute: SessionRoomRouteRouteWithChildren,
+  SlpIndexRoute: SlpIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
