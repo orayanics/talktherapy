@@ -1,0 +1,9 @@
+sigmoid:
+  k: 0.85
+  x0: -3.4
+thresholds:
+  accurate: 72.0
+  needs_work: 65.0
+alignment:
+  min_reliable_frames: 3
+  transcript_cer_threshold: 0.25

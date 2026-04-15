@@ -1,5 +1,42 @@
 # TalkTherapy
 
+## Overview
+
+**TalkTherapy** is a telehealth platform designed for Speech-Language Pathology (SLP) clinicians and patients.
+
+Originally developed for **UST-CRS** to meet academic requirements, the platform addresses two primary needs:
+
+- Assisting clinicians with diagnosis and assessment workflows
+- Providing patients with a streamlined way to book appointments based on availability and convenience
+
+## Core Features
+
+- Clinician scheduling system
+- Appointment booking system
+- Admin user management
+- Content management system (CMS)
+- One-on-one video conferencing with integrated chat
+
+## Technology Stack
+
+### Backend
+
+- **Bun\***
+- **ElysiaJS**
+- **Prisma**
+- **SQLite**
+- **NodeMailer**
+- **Zod**
+
+### Frontend
+
+- **TanStack Start** (Query, Router)
+- **Axios**
+- **Tailwind CSS**
+- **Zod**
+- **React Hook Form**
+- **Better Auth**
+
 ## Starting in local
 
 To install both web and server dependencies:
@@ -48,4 +85,34 @@ mkcert localhost
 
 # Generate certs
 mkcert -key-file key.pem -cert-file cert.pem localhost
+```
+
+## Setting Up the Python Environment for Phoneme Analysis
+
+```bash
+sudo apt update
+sudo apt install espeak-ng espeak-ng-data libespeak-ng-dev ffmpeg python3-pip python3-venv
+```
+
+Create a virtual environment and install the required Python packages:
+
+```bash
+python3 -m venv slp-env
+source slp-env/bin/activate
+pip install torch torchaudio --index-url https://download.pytorch.org/whl/cpu
+pip install faster-whisper phonemizer fastapi uvicorn httpx python-multipart torchcodec
+```
+
+Verify the core packages:
+
+```bash
+python3 -c "import torchaudio; print(torchaudio.__version__)"
+python3 -c "from phonemizer import phonemize; print(phonemize('hello world', backend='espeak', language='en-us'))"
+python3 -c "from faster_whisper import WhisperModel; print('ok')"
+```
+
+To run the FastAPI server for phoneme analysis:
+
+```bash
+uvicorn service:app --host 0.0.0.0 --port 8000 --reload
 ```

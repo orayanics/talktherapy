@@ -21,6 +21,7 @@ import { sessionModule } from "./modules/session";
 import { notificationsModule } from "./modules/notifications";
 import { activateModule } from "./modules/activate";
 import { authModule } from "./modules/auth";
+import { slpModule } from "./modules/slp";
 
 class RateLimitError extends Error {
   status = 429;
@@ -77,7 +78,8 @@ const authenticatedRoutes = new Elysia()
   .use(scheduleModule)
   .use(clinicianPatientModule)
   .use(notificationsModule)
-  .use(sessionModule);
+  .use(sessionModule)
+  .use(slpModule);
 
 const app = new Elysia()
   .use(
@@ -140,8 +142,8 @@ const app = new Elysia()
   .use(authenticatedRoutes)
   .get("/", () => "Hello Elysia")
   .listen({
-    port: process.env.PORT ? parseInt(process.env.PORT) : 8080,
-    hostname: process.env.HOSTNAME ? process.env.HOSTNAME : "0.0.0.0",
+    port: process.env.SERVER_PORT,
+    hostname: process.env.SERVER_HOST,
     tls: {
       cert,
       key,

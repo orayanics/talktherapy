@@ -1,4 +1,14 @@
+import { API_URL } from '@/constants/application'
 import { useEffect, useRef, useState } from 'react'
+
+//`wss://${location.hostname}:${SERVER_PORT}/session/ws?token=`
+
+export function buildWssUrl() {
+  const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:'
+  const host = location.hostname
+  const port = location.port ? `:${location.port}` : ''
+  return `${protocol}//${host}${port}/session/ws?token=`
+}
 
 export interface DiagState {
   iceConnection: RTCIceConnectionState | '—'
@@ -71,8 +81,8 @@ export function useRoomSession(roomId: string) {
     async function start() {
       if (!roomId) return
 
-      const API_BASE = `${location.protocol}//${location.hostname}:8080`
-      const wsProto = location.protocol === 'https:' ? 'wss' : 'ws'
+      const API_BASE = API_URL
+      const wsProto = buildWssUrl()
 
       const bindDataChannel = (channel: RTCDataChannel) => {
         dcRef.current = channel
@@ -286,7 +296,7 @@ export function useRoomSession(roomId: string) {
 
         try {
           const token = await getJoinToken()
-          const wssUrl = `${wsProto}://${location.hostname}:8080/session/ws?token=${encodeURIComponent(token)}`
+          const wssUrl = `${wsProto}${encodeURIComponent(token)}`
           const ws = new WebSocket(wssUrl)
           wsRef.current = ws
 
