@@ -164,15 +164,6 @@ export default function SlpAssessmentPage() {
               <SlpImprovement result={result} />
               <SlpAccurate result={result} />
               <SlpBreakdown result={result} />
-
-              {result.feedback.text ? (
-                <div>
-                  <div className="font-medium">Feedback</div>
-                  <p className="mt-1 whitespace-pre-wrap text-sm text-slate-700">
-                    {result.feedback.text}
-                  </p>
-                </div>
-              ) : null}
             </div>
           )}
         </div>
