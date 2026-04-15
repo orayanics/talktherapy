@@ -1,4 +1,4 @@
-import axios from 'axios'
+import { api } from './client'
 
 export type PhonemeScore = {
   phoneme: string
@@ -61,15 +61,6 @@ export type AssessResponse = {
   feedback: AssessFeedback
 }
 
-const SLP_API_BASE = import.meta.env.VITE_SLP_API_URL ?? 'http://localhost:8000'
-
-const slpApi = axios.create({
-  baseURL: SLP_API_BASE,
-  headers: {
-    Accept: 'application/json',
-  },
-})
-
 export const assessPronunciation = async (
   audioBlob: Blob,
   referenceText: string,
@@ -78,6 +69,12 @@ export const assessPronunciation = async (
   formData.append('audio', audioBlob, 'recording.webm')
   formData.append('referenceText', referenceText)
 
-  const { data } = await slpApi.post<AssessResponse>('/assess', formData)
+  const { data } = await api<{ data: AssessResponse }>('/slp/assess', {
+    method: 'POST',
+    data: formData,
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  })
   return data
 }
