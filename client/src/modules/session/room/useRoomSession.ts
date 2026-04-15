@@ -1,5 +1,14 @@
-import { API_URL, WSS_TOKEN_URL } from '@/constants/application'
+import { API_URL } from '@/constants/application'
 import { useEffect, useRef, useState } from 'react'
+
+//`wss://${location.hostname}:${SERVER_PORT}/session/ws?token=`
+
+export function buildWssUrl() {
+  const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:'
+  const host = location.hostname
+  const port = location.port ? `:${location.port}` : ''
+  return `${protocol}//${host}${port}/session/ws?token=`
+}
 
 export interface DiagState {
   iceConnection: RTCIceConnectionState | '—'
@@ -73,7 +82,7 @@ export function useRoomSession(roomId: string) {
       if (!roomId) return
 
       const API_BASE = API_URL
-      const wsProto = WSS_TOKEN_URL
+      const wsProto = buildWssUrl()
 
       const bindDataChannel = (channel: RTCDataChannel) => {
         dcRef.current = channel

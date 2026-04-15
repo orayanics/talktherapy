@@ -87,12 +87,31 @@ mkcert localhost
 mkcert -key-file key.pem -cert-file cert.pem localhost
 ```
 
-To run the Python script for phoneme analysis:
+## Setting Up the Python Environment for Phoneme Analysis
+
+```bash
+sudo apt update
+sudo apt install espeak-ng espeak-ng-data libespeak-ng-dev ffmpeg python3-pip python3-venv
+```
+
+Create a virtual environment and install the required Python packages:
 
 ```bash
 python3 -m venv slp-env
 source slp-env/bin/activate
+pip install torch torchaudio --index-url https://download.pytorch.org/whl/cpu
+pip install faster-whisper phonemizer fastapi uvicorn httpx python-multipart torchcodec
 ```
+
+Verify the core packages:
+
+```bash
+python3 -c "import torchaudio; print(torchaudio.__version__)"
+python3 -c "from phonemizer import phonemize; print(phonemize('hello world', backend='espeak', language='en-us'))"
+python3 -c "from faster_whisper import WhisperModel; print('ok')"
+```
+
+To run the FastAPI server for phoneme analysis:
 
 ```bash
 uvicorn service:app --host 0.0.0.0 --port 8000 --reload
