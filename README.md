@@ -114,5 +114,6 @@ python3 -c "from faster_whisper import WhisperModel; print('ok')"
 To run the FastAPI server for phoneme analysis:
 
 ```bash
+cd py
 uvicorn service:app --host 0.0.0.0 --port 8000 --reload
 ```

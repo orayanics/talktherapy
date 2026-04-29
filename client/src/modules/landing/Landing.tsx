@@ -2,9 +2,9 @@ import { Link } from '@tanstack/react-router'
 
 export default function Landing() {
   return (
-    <div className="bg-white min-h-screen flex flex-col items-center justify-center">
-      <div className="flex flex-col items-center lg:max-w-7xl max-w-sm w-full gap-6 lg:p-0">
-        <div className="max-w-2xl text-4xl lg:text-6xl text-center mx-auto my-12">
+    <div className="bg-circular min-h-screen flex flex-col items-center justify-center">
+      <div className="flex flex-col items-center lg:max-w-7xl max-w-sm w-full gap-4 lg:p-0">
+        <div className="max-w-3xl text-4xl lg:text-8xl text-center mx-auto my-8">
           <div
             className="badge bg-primary/20 shadow-primary/40 shadow-sm
           px-6 py-4 text-primary rounded-full"
@@ -15,7 +15,7 @@ export default function Landing() {
           <p className="font-serif text-primary/60">Every word, yours.</p>
         </div>
 
-        <div className="max-w-2xl mx-auto text-center">
+        <div className="max-w-3xl mx-auto text-center">
           <p className="text-slate-500 text-md lg:text-xl">
             Don't let anything hold you back. With{' '}
             <span className="font-serif text-2xl text-primary">
