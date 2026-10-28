@@ -1,5 +1,9 @@
 # TalkTherapy
 
+## Laravel backend migration
+
+The [migration review and specifications](docs/migration/README.md) cover the current `client`, `server`, and `py` code, the Laravel 13 API design, each module's migration tasks, API/data contracts, and cutover/rollback requirements. Start with the [audit](docs/migration/AUDIT.md) and [implementation plan](tasks/plan.md). These are proposed documents; the existing runtime has not been migrated yet.
+
 ## Overview
 
 **TalkTherapy** is a telehealth platform designed for Speech-Language Pathology (SLP) clinicians and patients.

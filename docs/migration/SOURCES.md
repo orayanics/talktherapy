@@ -1,0 +1,27 @@
+# Official sources and version baseline
+
+Checked 2026-10-28. Links are implementation references; recheck package compatibility and security advisories when implementation starts. Documentation does not establish this application's deployment readiness.
+
+| Source | Verified point used in the design |
+|---|---|
+| [Requested master documentation](https://laravel.com/framework/docs/master) | Displays an upcoming-version warning; do not treat master as the Laravel 13 contract. |
+| [Laravel 13 releases](https://laravel.com/framework/docs/13.x/releases) | Laravel 13 released March 17, 2026; minimum PHP 8.3. Proposal selects PHP 8.4 and locks a current compatible 13.x patch during scaffolding. |
+| [Directory structure](https://laravel.com/framework/docs/13.x/structure) | Use the normal application directories and bootstrap configuration. |
+| [Routing](https://laravel.com/framework/docs/13.x/routing) | `install:api` creates API routing; `/api` is the default prefix. |
+| [Sanctum](https://laravel.com/framework/docs/13.x/sanctum) | First-party SPA cookie authentication, stateful middleware, domain and CSRF setup. |
+| [CSRF](https://laravel.com/framework/docs/13.x/csrf) | Laravel 13 uses `PreventRequestForgery`; retain default token fallback. Test browser requests because CSRF middleware is disabled in ordinary framework tests. |
+| [Authorization](https://laravel.com/framework/docs/13.x/authorization) | Policies/gates enforce actions, including record-level access. |
+| [Validation](https://laravel.com/framework/docs/13.x/validation) | Form Requests validate/authorize input; JSON validation errors use 422. |
+| [Hashing](https://laravel.com/framework/docs/13.x/hashing) | Native hashing checks algorithm compatibility; a Bun hash cannot be assumed compatible with the selected Laravel driver. |
+| [Database](https://laravel.com/framework/docs/13.x/database) and [query builder](https://laravel.com/framework/docs/13.x/queries) | Transactions and row locking underpin booking/state changes. |
+| [API resources](https://laravel.com/framework/docs/13.x/eloquent-resources) | Explicit serialization and paginated resource collections. |
+| [HTTP client](https://laravel.com/framework/docs/13.x/http-client) | Multipart uploads, bounded upstream requests, and HTTP fakes for tests. |
+| [Queues](https://laravel.com/framework/docs/13.x/queues) | Jobs can wait for commit. A durable outbox is still needed to recover a process failure between commit and dispatch. |
+| [Broadcasting](https://laravel.com/framework/docs/13.x/broadcasting) | Private/presence channels require authorization; Echo is a different client protocol from the current raw WebSockets. |
+| [Reverb](https://laravel.com/framework/docs/13.x/reverb) | Allowed origins and Redis-backed horizontal scaling. Reverb transports events; it does not relay WebRTC media. |
+| [TorchAudio MMS_FA 2.8](https://docs.pytorch.org/audio/2.8.0/generated/torchaudio.pipelines.MMS_FA.html) | Model documentation identifies a CC-BY-NC 4.0 license; deployment use must be checked against the actual model artifact. |
+| [Wav2Vec2 forced-alignment bundle 2.8](https://docs.pytorch.org/audio/2.8.0/generated/torchaudio.pipelines.Wav2Vec2FABundle.html) | Token dictionary/model contract; ordinary text alignment is not evidence of phoneme-diagnosis accuracy. |
+| [TorchAudio forced alignment tutorial](https://docs.pytorch.org/audio/stable/tutorials/forced_alignment_for_multilingual_data_tutorial.html) | Warns about deprecation in 2.8/removal in 2.9. Unpinned installation is unsafe for the current service. |
+| [Token spans](https://docs.pytorch.org/audio/stable/generated/torchaudio.functional.merge_tokens.html) | Token scores summarize a time span; counting span objects is not counting audio frames. |
+
+Recommendations about PostgreSQL, same-origin deployment, outbox delivery, and workflow limits are project design proposals based on the code audit. They are not Laravel requirements. No legal/compliance certification or clinical validation is claimed.
