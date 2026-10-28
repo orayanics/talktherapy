@@ -16,7 +16,17 @@ class EnsureAccountIsActive
      */
     public function handle(Request $request, Closure $next): Response
     {
-        abort_unless($request->user()?->profile?->status === UserStatus::Active, 403);
+        $user = $request->user()?->refresh();
+
+        abort_unless($user?->profile?->status === UserStatus::Active, 403);
+        $sessionVersion = $request->hasSession()
+            ? $request->session()->get('auth_session_version')
+            : null;
+        abort_if(
+            $user->session_version > 0
+                && $sessionVersion !== $user->session_version,
+            403,
+        );
 
         return $next($request);
     }

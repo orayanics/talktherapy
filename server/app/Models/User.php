@@ -46,6 +46,7 @@ class User extends Authenticatable implements MustVerifyEmailContract
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'session_version' => 'integer',
         ];
     }
 }

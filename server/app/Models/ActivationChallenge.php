@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-#[Fillable(['user_id', 'email', 'purpose', 'code_digest', 'attempts', 'max_attempts', 'expires_at', 'consumed_at', 'new_email'])]
+#[Fillable(['user_id', 'email', 'purpose', 'code_digest', 'attempts', 'max_attempts', 'expires_at', 'consumed_at', 'new_email', 'requires_credentials'])]
 class ActivationChallenge extends Model
 {
     /** @use HasFactory<ActivationChallengeFactory> */
@@ -30,6 +30,7 @@ class ActivationChallenge extends Model
         return [
             'attempts' => 'integer',
             'max_attempts' => 'integer',
+            'requires_credentials' => 'boolean',
             'expires_at' => 'immutable_datetime',
             'consumed_at' => 'immutable_datetime',
         ];

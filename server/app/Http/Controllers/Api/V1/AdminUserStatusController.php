@@ -11,24 +11,34 @@ use App\Models\AuditLog;
 use App\Models\User;
 use App\Models\UserProfile;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 
 class AdminUserStatusController extends Controller
 {
-    public function __invoke(ChangeUserStatusRequest $request, User $user): UserResource
+    public function __invoke(ChangeUserStatusRequest $request, string $user): UserResource
     {
-        DB::transaction(function () use ($request, $user): void {
-            $lockedUser = User::query()->with('profile')->lockForUpdate()->findOrFail($user->id);
+        $target = User::query()->with('profile')->findOrFail($user);
+        $status = UserStatus::from($request->string('status')->toString());
+        Gate::authorize('changeStatus', [$target, $status->value]);
+
+        DB::transaction(function () use ($request, $target, $status): void {
+            $lockedUser = User::query()->with('profile')->lockForUpdate()->findOrFail($target->id);
             abort_if($request->user()->is($lockedUser), 403);
 
-            $status = UserStatus::from($request->string('status')->toString());
+            $currentStatus = $lockedUser->profile->status;
+            $isValidTransition = ($currentStatus === UserStatus::Active && $status === UserStatus::Suspended)
+                || ($currentStatus === UserStatus::Suspended && $status === UserStatus::Active);
+            abort_unless($isValidTransition, 409, 'The account status cannot be changed from its current state.');
+
             if ($status === UserStatus::Suspended && $lockedUser->profile->role === UserRole::Superadmin) {
                 $activeSuperadmins = UserProfile::query()->where('role', UserRole::Superadmin)
-                    ->where('status', UserStatus::Active)->lockForUpdate()->count();
+                    ->where('status', UserStatus::Active)->orderBy('user_id')->lockForUpdate()->get()->count();
                 abort_if($activeSuperadmins <= 1, 422, 'The last active superadmin cannot be suspended.');
             }
 
             $lockedUser->profile->update(['status' => $status]);
             if ($status === UserStatus::Suspended) {
+                $lockedUser->increment('session_version');
                 DB::table('sessions')->where('user_id', $lockedUser->id)->delete();
             }
 
@@ -43,6 +53,6 @@ class AdminUserStatusController extends Controller
             ]);
         });
 
-        return UserResource::make($user->fresh()->load('profile'));
+        return UserResource::make($target->fresh()->load('profile'));
     }
 }

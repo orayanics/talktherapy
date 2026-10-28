@@ -18,6 +18,7 @@ class AdminUserProvisionController extends Controller
     public function __invoke(ProvisionUserRequest $request, IssueActivationChallenge $issuer): UserResource
     {
         $user = DB::transaction(function () use ($request, $issuer): User {
+            $role = UserRole::from($request->string('role')->toString());
             $user = User::query()->create([
                 'name' => $request->string('name')->toString(),
                 'email' => $request->string('email')->toString(),
@@ -25,12 +26,12 @@ class AdminUserProvisionController extends Controller
             ]);
             UserProfile::query()->create([
                 'user_id' => $user->id,
-                'role' => UserRole::from($request->string('role')->toString()),
+                'role' => $role,
                 'status' => UserStatus::Pending,
             ]);
             $user->load('profile');
 
-            $issuer->handle($user, $user->email);
+            $issuer->handle($user, $user->email, requiresCredentials: $role === UserRole::Patient);
             AuditLog::query()->create([
                 'actor_id' => $request->user()->id,
                 'actor_role' => $request->user()->profile->role->value,

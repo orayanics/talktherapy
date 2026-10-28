@@ -16,7 +16,11 @@ class UserAdminReadRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return $this->user()?->can('viewAny', User::class) ?? false;
+        $actor = $this->user();
+        $targetId = $this->route('user');
+
+        return $actor !== null && ($actor->can('viewAny', User::class)
+            || (is_string($targetId) && $actor->getKey() === $targetId));
     }
 
     /**

@@ -90,6 +90,17 @@ class UserAdminReadTest extends TestCase
             ->assertJsonMissingPath('data.remember_token');
     }
 
+    public function test_user_can_read_their_own_safe_detail(): void
+    {
+        $user = $this->createUser('patient', name: 'Own Patient');
+
+        $this->actingAs($user)->getJson("/api/v1/users/{$user->id}")
+            ->assertOk()
+            ->assertJsonPath('data.id', $user->id)
+            ->assertJsonPath('data.name', 'Own Patient')
+            ->assertJsonMissingPath('data.password');
+    }
+
     public function test_returns_404_for_an_unknown_user(): void
     {
         $actor = $this->createUser('admin');

@@ -15,9 +15,7 @@ class ChangeUserStatusRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        $user = $this->route('user');
-
-        return $user instanceof User && ($this->user()?->can('changeStatus', [$user, $this->input('status')]) ?? false);
+        return $this->user()?->can('viewAny', User::class) ?? false;
     }
 
     /**

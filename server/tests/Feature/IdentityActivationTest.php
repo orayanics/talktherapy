@@ -19,7 +19,7 @@ class IdentityActivationTest extends TestCase
         [$user, $code] = $this->registerPatient();
 
         $this->postJson('/api/v1/activation/otp/verify', ['email' => $user->email, 'otp_code' => $code])
-            ->assertOk()->assertExactJson(['data' => ['role' => 'patient']]);
+            ->assertOk()->assertExactJson(['data' => ['role' => 'patient', 'requires_credentials' => false]]);
         $this->assertNull($user->fresh()->email_verified_at);
 
         $this->postJson('/api/v1/activation', ['email' => $user->email, 'otp_code' => $code])

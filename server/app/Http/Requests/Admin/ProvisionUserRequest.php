@@ -31,7 +31,7 @@ class ProvisionUserRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email:rfc', 'max:255', Rule::unique('users', 'email')],
-            'role' => ['required', Rule::enum(UserRole::class)->only([UserRole::Admin, UserRole::Clinician])],
+            'role' => ['required', Rule::enum(UserRole::class)->only([UserRole::Admin, UserRole::Clinician, UserRole::Patient])],
         ];
     }
 

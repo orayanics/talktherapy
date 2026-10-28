@@ -27,6 +27,11 @@ export const RegisterAdminSchema = z.object({
   email: z.email('Invalid email address'),
 })
 
+export const RegisterPatientInvitationSchema = RegisterAdminSchema
+
 export type TRegisterPatient = z.infer<typeof RegisterPatientSchema>
 export type TRegisterClinician = z.infer<typeof RegisterClinicianSchema>
 export type TRegisterAdmin = z.infer<typeof RegisterAdminSchema>
+export type TRegisterPatientInvitation = z.infer<
+  typeof RegisterPatientInvitationSchema
+>

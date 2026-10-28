@@ -6,6 +6,7 @@ import type {
   TRegisterPatient,
   TRegisterAdmin,
   TRegisterClinician,
+  TRegisterPatientInvitation,
 } from '#/modules/register/types/schema'
 
 import { useAlert } from '#/context/AlertContext'
@@ -69,6 +70,26 @@ export const mutateRegisterAdmin = () => {
       await queryClient.invalidateQueries({ queryKey: ['logs'] })
 
       showAlert('User created. OTP sent to the user email.', 'success')
+    },
+  })
+}
+
+export const mutateRegisterPatientInvitation = () => {
+  const queryClient = useQueryClient()
+  const { showAlert } = useAlert()
+  return useMutation({
+    mutationFn: async (payload: TRegisterPatientInvitation) => {
+      const { data } = await api('/api/v1/users', {
+        method: 'POST',
+        data: JSON.stringify({ ...payload, role: 'patient' }),
+      })
+      return data
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['users'] })
+      await queryClient.invalidateQueries({ queryKey: ['users-count'] })
+      await queryClient.invalidateQueries({ queryKey: ['logs'] })
+      showAlert('Patient invited. OTP sent to the user email.', 'success')
     },
   })
 }

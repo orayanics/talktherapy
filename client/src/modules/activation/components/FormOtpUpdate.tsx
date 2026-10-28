@@ -12,10 +12,12 @@ export default function FormOtpUpdate({
   otp,
   role,
   initialEmail,
+  requiresCredentials,
 }: {
   otp: string
   role?: string
   initialEmail?: string
+  requiresCredentials?: boolean
 }) {
   const {
     apiError,
@@ -26,11 +28,11 @@ export default function FormOtpUpdate({
     onResend,
     onSubmit,
     register,
-  } = useOtpUpdateForm({ otp, initialEmail, role })
+  } = useOtpUpdateForm({ otp, initialEmail, role, requiresCredentials })
 
   const { data: diagnoses, isPending, isError } = useQuery(fetchDiagnoses)
 
-  const shouldShowDiagnosis = role === 'CLINICIAN'
+  const shouldShowDiagnosis = role === 'clinician' || requiresCredentials
 
   if (isPending || isError) {
     return (

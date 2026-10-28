@@ -37,10 +37,10 @@ Status: implementation in phases. The Laravel platform foundation was completed 
 
 [Spec and task details](../docs/migration/modules/SPEC-user-admin.md#task-plan)
 
-- [ ] U1 Implement safe user list/detail/counts.
-- [ ] U2 Provision privileged invitations with hierarchy.
-- [ ] U3 Suspend/reactivate and revoke sessions safely.
-- [ ] U4 Connect administration consumers.
+- [x] U1 Implement safe user list/detail/counts.
+- [x] U2 Provision privileged invitations with hierarchy, including first-superadmin bootstrap.
+- [ ] U3 Suspend/reactivate and revoke sessions safely. HTTP session revocation and last-superadmin protection are implemented; realtime invalidation remains pending.
+- [ ] U4 Connect administration consumers. Client flows are integrated and lint/typecheck/tests/build pass; browser workflow evidence remains pending.
 
 ### Checkpoint: foundation and identity
 

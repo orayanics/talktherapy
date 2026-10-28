@@ -8,8 +8,13 @@ use App\Models\User;
 
 class IssueActivationChallenge
 {
-    public function handle(User $user, string $email, string $purpose = 'activation', ?string $newEmail = null): string
-    {
+    public function handle(
+        User $user,
+        string $email,
+        string $purpose = 'activation',
+        ?string $newEmail = null,
+        bool $requiresCredentials = false,
+    ): string {
         $code = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
         $expiresAt = now()->addMinutes(10);
 
@@ -26,6 +31,7 @@ class IssueActivationChallenge
             'code_digest' => hash_hmac('sha256', $code, (string) config('app.key')),
             'expires_at' => $expiresAt,
             'new_email' => $newEmail,
+            'requires_credentials' => $requiresCredentials,
         ]);
 
         OutboxMessage::query()->create([

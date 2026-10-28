@@ -35,6 +35,7 @@ class SessionController extends Controller
         RateLimiter::clear($key);
         Auth::guard('web')->login($user);
         $request->session()->regenerate();
+        $request->session()->put('auth_session_version', $user->session_version);
 
         return UserResource::make($user);
     }

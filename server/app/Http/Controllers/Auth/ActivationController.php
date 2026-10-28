@@ -24,9 +24,12 @@ class ActivationController extends Controller
     public function verify(VerifyOtpRequest $request): JsonResponse
     {
         $user = User::query()->with('profile')->where('email', $request->string('email'))->first();
-        $this->validChallenge($user, $request->string('otp_code')->toString());
+        $challenge = $this->validChallenge($user, $request->string('otp_code')->toString());
 
-        return new JsonResponse(['data' => ['role' => $user->profile->role->value]]);
+        return new JsonResponse(['data' => [
+            'role' => $user->profile->role->value,
+            'requires_credentials' => $challenge?->requires_credentials ?? false,
+        ]]);
     }
 
     public function resend(ResendActivationRequest $request, IssueActivationChallenge $issuer): JsonResponse
@@ -42,7 +45,13 @@ class ActivationController extends Controller
             return new JsonResponse(null, 202);
         }
 
-        $code = DB::transaction(fn (): string => $issuer->handle($user, $user->email));
+        $requiresCredentials = ActivationChallenge::query()->whereBelongsTo($user)
+            ->where('purpose', 'activation')->latest()->value('requires_credentials') ?? false;
+        $code = DB::transaction(fn (): string => $issuer->handle(
+            $user,
+            $user->email,
+            requiresCredentials: (bool) $requiresCredentials,
+        ));
         try {
             $user->notify(new ActivationCodeNotification($code));
         } catch (Throwable $exception) {
@@ -61,7 +70,7 @@ class ActivationController extends Controller
                 throw ValidationException::withMessages(['email' => 'This account cannot be activated.']);
             }
 
-            if ($user->profile->role !== UserRole::Patient) {
+            if ($challenge->requires_credentials || $user->profile->role !== UserRole::Patient) {
                 $request->validate(['name' => ['required'], 'password' => ['required', 'confirmed']]);
                 $user->forceFill([
                     'name' => trim($request->string('name')->toString()),
@@ -69,6 +78,9 @@ class ActivationController extends Controller
                 ])->save();
             }
             if ($user->profile->role === UserRole::Clinician) {
+                $request->validate(['diagnosis_id' => ['required', 'exists:diagnoses,id']]);
+                $user->profile->update(['diagnosis_id' => $request->string('diagnosis_id')]);
+            } elseif ($challenge->requires_credentials) {
                 $request->validate(['diagnosis_id' => ['required', 'exists:diagnoses,id']]);
                 $user->profile->update(['diagnosis_id' => $request->string('diagnosis_id')]);
             }

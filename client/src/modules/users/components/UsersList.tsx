@@ -16,6 +16,7 @@ import { TableBase } from '#/components/Table/TableBase'
 import RegisterAdmin from '#/modules/register/components/RegisterAdmin'
 import Dropdown from '#/components/Dropdown'
 import RegisterClinician from '#/modules/register/components/RegisterClinician'
+import RegisterPatientInvitation from '#/modules/register/components/RegisterPatientInvitation'
 import { ChevronDown, ChevronUp } from 'lucide-react'
 
 import useActions from '#/modules/users/hooks/useActions'
@@ -71,6 +72,7 @@ export default function UsersList() {
 
   const [isClinicianModalOpen, setClinicianModalOpen] = useState(false)
   const [isAdminModalOpen, setAdminModalOpen] = useState(false)
+  const [isPatientModalOpen, setPatientModalOpen] = useState(false)
   const isAsc = sort === 'asc'
 
   const { suspendUser, reactivateUser } = useActions()
@@ -90,12 +92,20 @@ export default function UsersList() {
         <Dropdown label="Add User" btnClassName="lg:w-auto w-full btn-neutral">
           <div className="flex flex-col gap-2">
             {canInviteAdmin && (
-              <button
-                className="btn btn-neutral shadow-sm"
-                onClick={() => setAdminModalOpen(true)}
-              >
-                Admin
-              </button>
+              <>
+                <button
+                  className="btn btn-neutral shadow-sm"
+                  onClick={() => setAdminModalOpen(true)}
+                >
+                  Admin
+                </button>
+                <button
+                  className="btn btn-neutral shadow-sm"
+                  onClick={() => setPatientModalOpen(true)}
+                >
+                  Patient
+                </button>
+              </>
             )}
             <button
               className="btn btn-neutral shadow-sm"
@@ -115,6 +125,11 @@ export default function UsersList() {
       <RegisterClinician
         isOpen={isClinicianModalOpen}
         onClose={() => setClinicianModalOpen(false)}
+      />
+
+      <RegisterPatientInvitation
+        isOpen={isPatientModalOpen}
+        onClose={() => setPatientModalOpen(false)}
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -209,14 +224,14 @@ export default function UsersList() {
                           >
                             Reactivate
                           </button>
-                        ) : (
+                        ) : user.status === 'active' ? (
                           <button
                             className="btn btn-sm btn-neutral"
                             onClick={() => suspendUser(user.id)}
                           >
                             Suspend
                           </button>
-                        )
+                        ) : null
                       ) : null}
                     </div>
                   ),

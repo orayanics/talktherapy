@@ -15,10 +15,12 @@ export default function useOtpUpdateForm({
   otp,
   initialEmail,
   role,
+  requiresCredentials = false,
 }: {
   otp: string
   initialEmail?: string
   role?: string
+  requiresCredentials?: boolean
 }) {
   const [apiError, setApiError] = useState<string | null>(null)
   const navigate = useNavigate()
@@ -48,12 +50,13 @@ export default function useOtpUpdateForm({
     setApiError(null)
 
     try {
-      const payload = isPatient
-        ? {
-            email: data.email,
-            otp_code: data.otp_code,
-          }
-        : data
+      const payload =
+        isPatient && !requiresCredentials
+          ? {
+              email: data.email,
+              otp_code: data.otp_code,
+            }
+          : data
       await activateAccountMutation.mutateAsync(payload)
     } catch (error: unknown) {
       setApiError(errMsg(error, 'OTP verification failed'))
@@ -90,6 +93,6 @@ export default function useOtpUpdateForm({
     apiError,
     isLoading: activateAccountMutation.isPending || isLoading,
     isResending: resendOtpMutation.isPending,
-    isPatient,
+    isPatient: isPatient && !requiresCredentials,
   }
 }
