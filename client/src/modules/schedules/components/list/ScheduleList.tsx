@@ -89,26 +89,26 @@ export default function ScheduleList() {
                     )}
                   </button>
                 ),
-                accessor: 'startAt',
+                accessor: 'start_at',
                 render: (row) => (
                   <Link to="/schedules/$slotId" params={{ slotId: row.id }}>
-                    {formatDate(row.startAt)}
+                    {formatDate(row.start_at)}
                   </Link>
                 ),
               },
 
               {
                 header: 'Time Schedule',
-                accessor: 'startAt',
+                accessor: 'start_at',
                 render: (row) => (
                   <Link
                     to="/schedules/$slotId"
                     params={{ slotId: row.id }}
                     className="flex gap-2"
                   >
-                    <div>{formatDate(row.startAt, 'p')}</div>
+                    <div>{formatDate(row.start_at, 'p')}</div>
                     <div>to</div>
-                    <div>{formatDate(row.endAt, 'p')}</div>
+                    <div>{formatDate(row.end_at, 'p')}</div>
                   </Link>
                 ),
               },
@@ -119,9 +119,9 @@ export default function ScheduleList() {
               },
               {
                 header: 'Hidden',
-                accessor: 'isHidden',
+                accessor: 'is_hidden',
                 render: (row) =>
-                  row.isHidden ? (
+                  row.is_hidden ? (
                     <CircleCheck className="text-emerald-600" />
                   ) : (
                     <CircleX className="text-rose-600" />

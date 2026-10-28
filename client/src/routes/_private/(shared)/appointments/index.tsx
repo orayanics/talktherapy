@@ -161,7 +161,7 @@ function RouteComponent() {
                     to="/appointments/$appointmentId"
                     params={{ appointmentId: row.id }}
                   >
-                    {formatDate(row.slot.startAt)}
+                    {formatDate(row.slot.start_at)}
                   </Link>
                 ),
               },
@@ -170,9 +170,9 @@ function RouteComponent() {
                 accessor: 'slot',
                 render: (row) => (
                   <div className="flex gap-2">
-                    <div>{formatDate(row.slot.startAt, 'p')}</div>
+                    <div>{formatDate(row.slot.start_at, 'p')}</div>
                     <div>to</div>
-                    <div>{formatDate(row.slot.endAt, 'p')}</div>
+                    <div>{formatDate(row.slot.end_at, 'p')}</div>
                   </div>
                 ),
               },

@@ -64,7 +64,7 @@ export default function ClinicianDashboard() {
 
   // count
   for (const appt of weekAppointments) {
-    const key = format(new Date(appt.slot.startAt), 'EEE MMM dd yyyy')
+    const key = format(new Date(appt.slot.start_at), 'EEE MMM dd yyyy')
     countsByDay[key] = (countsByDay[key] ?? 0) + 1
   }
 
@@ -181,9 +181,9 @@ export default function ClinicianDashboard() {
                   accessor: 'slot',
                   render: (row) => (
                     <div className="flex gap-2">
-                      <div>{formatDate(row.slot.startAt, 'p')}</div>
+                      <div>{formatDate(row.slot.start_at, 'p')}</div>
                       <div>to</div>
-                      <div>{formatDate(row.slot.endAt, 'p')}</div>
+                      <div>{formatDate(row.slot.end_at, 'p')}</div>
                     </div>
                   ),
                 },

@@ -6,6 +6,8 @@ use App\Http\Controllers\Api\V1\BookmarkController;
 use App\Http\Controllers\Api\V1\ContentController;
 use App\Http\Controllers\Api\V1\DiagnosisController;
 use App\Http\Controllers\Api\V1\ProfileController;
+use App\Http\Controllers\Api\V1\ScheduleController;
+use App\Http\Controllers\Api\V1\SlotController;
 use App\Http\Controllers\Api\V1\UserController;
 use App\Http\Controllers\Auth\ActivationController;
 use App\Http\Controllers\Auth\EmailChangeController;
@@ -42,4 +44,7 @@ Route::middleware(['auth:sanctum', 'account.active', 'verified'])->group(functio
     Route::patch('/content/{content}', [ContentController::class, 'update'])->name('content.update');
     Route::delete('/content/{content}', [ContentController::class, 'destroy'])->name('content.destroy');
     Route::get('/content/{content}', [ContentController::class, 'show'])->name('content.show');
+    Route::post('/schedules', [ScheduleController::class, 'store'])->name('schedules.store');
+    Route::get('/slots', [SlotController::class, 'index'])->name('slots.index');
+    Route::get('/slots/{slot}', [SlotController::class, 'show'])->name('slots.show');
 });

@@ -50,19 +50,19 @@ Status: implementation in phases. The Laravel platform foundation was completed 
 
 [Spec and task details](../docs/migration/modules/SPEC-content.md#task-plan)
 
-- [ ] C1 Migrate content schema/read contract.
-- [ ] C2 Authorize transactional content/tag writes.
-- [ ] C3 Implement personal idempotent bookmarks.
-- [ ] C4 Connect and safely render content.
+- [x] C1 Migrate content schema/read contract.
+- [x] C2 Authorize transactional content/tag writes.
+- [ ] C3 Implement personal idempotent bookmarks. SQLite idempotence/ownership tests pass; PostgreSQL concurrency evidence remains pending.
+- [ ] C4 Connect and safely render content. Client typecheck, lint, tests and build pass; real-browser content workflow evidence remains pending.
 
 ## Scheduling
 
 [Spec and task details](../docs/migration/modules/SPEC-scheduling.md#task-plan)
 
-- [ ] S1 Prove bounded recurrence/timezone semantics.
-- [ ] S2 Create validated nonoverlapping schedules.
-- [ ] S3 List/view slots by actor and availability.
-- [ ] S4 Align client preview and consumers.
+- [x] S1 Prove bounded recurrence/timezone semantics. UTC is fixed, so DST gap/fold times are inapplicable. Accept only DAILY/WEEKLY/MONTHLY with optional weekly BYDAY and INTERVAL, COUNT <=365 or UTC UNTIL within one year. Recurrence fixtures pass in PHP and client.
+- [ ] S2 Create validated nonoverlapping schedules. Transactional creation, audit, checks and SQLite overlap tests pass; PostgreSQL concurrency evidence remains pending.
+- [x] S3 List/view slots by actor and availability. Role projection, diagnosis/date filters, active/verified clinician visibility and safe Resource tests pass.
+- [ ] S4 Align client preview and consumers. Client recurrence fixtures, lint, typecheck and build pass; real-browser scheduling workflow evidence remains pending.
 
 ### Checkpoint: content and availability
 

@@ -39,7 +39,7 @@ export function useRecurrenceBuilder(
   const [selectedDays, setSelectedDays] = useState<Set<TDayCode>>(new Set())
   const [count, setCount] = useState<number>(12)
   const [rruleRaw, setRruleRaw] = useState('')
-  const rruleErr = validateRRule(rruleRaw)
+  const rruleErr = validateRRule(rruleRaw, startAt)
 
   useEffect(() => {
     setRruleRaw(buildRRule(freq, selectedDays, count))
@@ -61,8 +61,8 @@ export function useRecurrenceBuilder(
   const setSafeCount = (next: number) => setCount(clampCount(next))
 
   const occurrences = useMemo(
-    () => expandOccurrences(startAt ?? '', rruleRaw, 365),
-    [startAt, rruleRaw],
+    () => (rruleErr ? [] : expandOccurrences(startAt ?? '', rruleRaw, 365)),
+    [startAt, rruleRaw, rruleErr],
   )
 
   const occurrencesPreview = occurrences.slice(0, 10)

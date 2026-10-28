@@ -1,5 +1,7 @@
 import type { TDayCode, TFrequency } from '#/modules/schedules/types/schema'
 
+export { validateRRule } from './expandOccurrences'
+
 export function buildRRule(
   freq: TFrequency,
   days: Set<TDayCode>,
@@ -12,12 +14,4 @@ export function buildRRule(
   }
   rule += `;COUNT=${count}`
   return rule
-}
-
-const RRULE_PATTERN = /^[A-Z]+=.+(?:;[A-Z]+=.+)*$/
-
-export function validateRRule(raw: string): string | null {
-  if (!raw) return null
-  if (!RRULE_PATTERN.test(raw)) return 'Invalid RRULE format'
-  return null
 }

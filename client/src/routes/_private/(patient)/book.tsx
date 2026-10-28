@@ -36,7 +36,7 @@ const searchSchema = z
       .optional()
       .transform((v) =>
         toArray(v)
-          .map((val) => String(val).toLowerCase())
+          .map((val) => String(val))
           .filter((val) => val.length > 0),
       ),
   })
@@ -131,24 +131,25 @@ function RouteComponent() {
               },
               {
                 header: 'Date',
-                accessor: 'startAt',
-                render: (row) => formatDate(row.startAt, 'PP'),
+                accessor: 'start_at',
+                render: (row) => formatDate(row.start_at, 'PP'),
               },
               {
                 header: 'Time',
-                accessor: 'startAt',
+                accessor: 'start_at',
                 render: (row) => (
                   <div className="flex gap-2">
-                    <div>{formatDate(row.startAt, 'p')}</div>
+                    <div>{formatDate(row.start_at, 'p')}</div>
                     <div>to</div>
-                    <div>{formatDate(row.endAt, 'p')}</div>
+                    <div>{formatDate(row.end_at, 'p')}</div>
                   </div>
                 ),
               },
               {
                 header: 'Specialization',
-                accessor: 'user',
-                render: (row) => row.user.diagnosis.label,
+                accessor: 'clinician',
+                render: (row) =>
+                  row.clinician.diagnosis?.label ?? 'Not specified',
               },
               { header: 'Status', accessor: 'status' },
               {

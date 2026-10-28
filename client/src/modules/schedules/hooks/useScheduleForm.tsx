@@ -33,7 +33,12 @@ export default function useScheduleForm() {
     setApiError(null)
 
     try {
-      await scheduleMutation.mutateAsync(data)
+      await scheduleMutation.mutateAsync({
+        start_at: new Date(`${data.start_at}:00Z`).toISOString(),
+        end_at: new Date(`${data.end_at}:00Z`).toISOString(),
+        recurrence_rule: data.recurrence_rule ?? null,
+        timezone: 'UTC',
+      })
     } catch (error: unknown) {
       setApiError(errMsg(error, 'Schedule creation failed'))
     }

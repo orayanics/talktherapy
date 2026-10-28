@@ -54,9 +54,14 @@ export default function ScheduleForm() {
               Date &amp; Time
             </h1>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+              <p className="text-xs text-slate-500 lg:col-span-2">
+                Schedule times and previews use UTC.
+              </p>
               <div>
                 <label>
-                  <span className="text-xs font-mono text-gray-400">Start</span>
+                  <span className="text-xs font-mono text-gray-400">
+                    Start (UTC)
+                  </span>
                   <input
                     {...register('start_at')}
                     type="datetime-local"
@@ -69,7 +74,9 @@ export default function ScheduleForm() {
 
               <div>
                 <label>
-                  <span className="text-xs font-mono text-gray-400">End</span>
+                  <span className="text-xs font-mono text-gray-400">
+                    End (UTC)
+                  </span>
                   <input
                     {...register('end_at')}
                     type="datetime-local"

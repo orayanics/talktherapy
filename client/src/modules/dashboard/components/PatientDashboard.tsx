@@ -62,10 +62,10 @@ export default function PatientDashboard() {
                 <div className="flex items-center gap-4">
                   <div className="flex flex-col items-center justify-center w-12 h-12 bg-slate-50 rounded-xl border border-slate-200">
                     <span className="text-xs font-bold text-slate-500 uppercase leading-none ">
-                      {formatDate(a.slot.startAt, 'MMM')}
+                      {formatDate(a.slot.start_at, 'MMM')}
                     </span>
                     <span className="text-xs font-bold text-slate-900">
-                      {formatDate(a.slot.startAt, 'dd')}
+                      {formatDate(a.slot.start_at, 'dd')}
                     </span>
                   </div>
 
@@ -76,7 +76,7 @@ export default function PatientDashboard() {
                     </div>
                     <div className="flex items-center gap-2 mt-1">
                       <span className="text-xs font-mono text-slate-500 tracking-tight">
-                        {formatDate(a.slot.startAt, 'p')}
+                        {formatDate(a.slot.start_at, 'p')}
                       </span>
                       <span className="w-1 h-1 rounded-full bg-slate-300" />
                       <AppointmentPill status={a.status} />

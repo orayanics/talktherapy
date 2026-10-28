@@ -1,25 +1,36 @@
 import { z } from 'zod'
 
-const isoDatetime = z.string().refine((s) => !Number.isNaN(Date.parse(s)), {
-  message: 'Must be a valid ISO datetime string',
-})
+const utcDateTimeLocal = z
+  .string()
+  .regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/)
+  .refine((value) => !Number.isNaN(Date.parse(`${value}:00Z`)), {
+    message: 'Enter a valid UTC date and time',
+  })
 
 export const ScheduleSchema = z
   .object({
-    start_at: isoDatetime,
-    end_at: isoDatetime,
-    recurrence_rule: z
-      .string()
-      .regex(/^[A-Z]+=.+(?:;[A-Z]+=.+)*$/)
-      .nullable()
-      .optional(), // RFC RRULE-like string (basic shape)
+    start_at: utcDateTimeLocal,
+    end_at: utcDateTimeLocal,
+    recurrence_rule: z.string().nullable().optional(),
   })
-  .refine((d) => Date.parse(d.end_at) >= Date.parse(d.start_at), {
-    message: 'end_at must be the same or after start_at',
-    path: ['end_at'],
-  })
+  .refine(
+    (schedule) =>
+      Date.parse(`${schedule.end_at}:00Z`) >
+      Date.parse(`${schedule.start_at}:00Z`),
+    {
+      message: 'End time must be after start time',
+      path: ['end_at'],
+    },
+  )
 
 export type TSchedule = z.infer<typeof ScheduleSchema>
+
+export interface CreateSchedulePayload {
+  start_at: string
+  end_at: string
+  recurrence_rule: string | null | undefined
+  timezone: 'UTC'
+}
 
 export const Frequency = z.enum(['none', 'daily', 'weekly', 'monthly'])
 export type TFrequency = z.infer<typeof Frequency>

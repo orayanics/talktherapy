@@ -57,9 +57,9 @@ function RouteComponent() {
               label="Appointment Time"
               value={
                 <div className="flex gap-4">
-                  <p>{formatDate(appointment.slot.startAt, 'p')}</p>
+                  <p>{formatDate(appointment.slot.start_at, 'p')}</p>
                   <span>to</span>
-                  <p>{formatDate(appointment.slot.endAt, 'p')}</p>
+                  <p>{formatDate(appointment.slot.end_at, 'p')}</p>
                 </div>
               }
             />
