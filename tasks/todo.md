@@ -84,15 +84,15 @@ Status: implementation in phases. The Laravel platform foundation was completed 
 
 [Spec and task details](../docs/migration/modules/SPEC-clinical-records.md#task-plan)
 
-- [ ] R1 Scope completed-care roster.
-- [ ] R2 Implement authorized SOAP reads.
-- [ ] R3 Create related-patient SOAP transactionally.
-- [ ] R4 Update with null semantics/conflict protection.
-- [ ] R5 Connect clinical consumers.
+- [x] R1 Scope completed-care roster. Clinician-only care-pair list, trimmed search and bounded pagination; SQLite tests pass.
+- [x] R2 Implement authorized SOAP reads. Patient-own/author reads only; clinical denial matrix covered on SQLite.
+- [x] R3 Create related-patient SOAP transactionally. Validation, metadata-only audit/outbox, PHI preservation and rollback tests pass on SQLite.
+- [x] R4 Update with null semantics/conflict protection. Optional null clearing, author-only access and version conflict tests pass on SQLite.
+- [ ] R5 Connect clinical consumers. Client APIs, optional SOAP fields and stale-edit recovery are integrated; typecheck, lint, tests and build pass; real-browser workflow remains pending.
 
 ### Checkpoint: clinical workflows
 
-- [ ] PostgreSQL races, clinical denial matrix, state cutoffs, history, audit rollback and client workflows pass.
+- [ ] SQLite clinical denial matrix and audit/outbox rollback pass. PostgreSQL concurrency evidence and real-browser clinical workflows remain pending.
 
 ## Notifications
 

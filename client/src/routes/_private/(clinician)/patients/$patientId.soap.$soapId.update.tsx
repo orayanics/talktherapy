@@ -35,6 +35,11 @@ function RouteComponent() {
             {updateHook.apiError && (
               <div className="alert alert-soft alert-error">
                 {updateHook.apiError}
+                {updateHook.isConflict && (
+                  <button type="button" className="btn btn-sm" onClick={updateHook.reloadLatest}>
+                    Load latest note (discard unsaved edits)
+                  </button>
+                )}
               </div>
             )}
 

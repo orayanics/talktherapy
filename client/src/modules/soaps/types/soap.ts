@@ -12,6 +12,7 @@ export interface Soap {
   assessment?: string | null
   recommendation?: string | null
   comments?: string | null
+  version: number
   createdAt: string
   updatedAt: string
   clinician: Clinician

@@ -16,7 +16,10 @@ export const fetchClinicianPatients = (
   return queryOptions<ClinicianPatientsResponse>({
     queryKey: ['clinician-patients', query],
     queryFn: async () =>
-      (await api('/clinician-patient', { method: 'GET', params: query })).data,
+      api<ClinicianPatientsResponse>('/api/v1/patients', {
+        method: 'GET',
+        params: query,
+      }),
     staleTime: 1000 * 60 * 5,
   })
 }

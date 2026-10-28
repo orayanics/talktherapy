@@ -25,6 +25,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->prepend(RequestContext::class);
+        $middleware->trimStrings(except: [fn (Request $request): bool => $request->is('api/v1/soaps/*')]);
         $middleware->statefulApi();
         $middleware->redirectGuestsTo(fn (): ?string => null);
         $middleware->alias(['account.active' => EnsureAccountIsActive::class]);
