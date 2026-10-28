@@ -19,6 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
         apiPrefix: 'api/v1',
         commands: __DIR__.'/../routes/console.php',
         then: function (): void {
+            require __DIR__.'/../routes/channels.php';
             Route::get('/up', [HealthController::class, 'live'])->name('health.live');
             Route::get('/ready', [HealthController::class, 'ready'])->name('health.ready');
         },

@@ -41,6 +41,11 @@ class User extends Authenticatable implements MustVerifyEmailContract
         return $this->hasMany(Bookmark::class);
     }
 
+    public function inboxNotifications(): HasMany
+    {
+        return $this->hasMany(UserNotification::class);
+    }
+
     public function patientSoaps(): HasMany
     {
         return $this->hasMany(Soap::class, 'patient_id');

@@ -3,6 +3,17 @@ export type NotificationItem = {
   type: string
   title: string
   message: string
-  readAt: string | null
-  createdAt: string
+  entity_type: string | null
+  entity_id: string | null
+  read_at: string | null
+  created_at: string
+}
+
+export type NotificationPage = {
+  data: NotificationItem[]
+  links: Record<string, string | null>
+  meta: {
+    current_page: number
+    last_page: number
+  }
 }

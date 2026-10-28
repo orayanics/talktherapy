@@ -1,44 +1,46 @@
-import { useEffect, useState } from 'react'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { notificationClient } from '#/modules/notifications/api/notificationClient'
-import { fetchNotifications } from '#/modules/notifications/api/notification'
-import type { NotificationItem } from '#/modules/notifications/types/notification'
+import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query'
+import { useSession } from '#/modules/auth/context/SessionContext'
+import { api } from '#/lib/api/client'
+import type { NotificationPage } from '#/modules/notifications/types/notification'
 
 export function useNotifications() {
-  const [notifications, setNotifications] = useState<NotificationItem[]>([])
+  const { id: userId } = useSession()
   const queryClient = useQueryClient()
-
-  const { data } = useQuery(fetchNotifications())
-  useEffect(() => {
-    if (data) {
-      setNotifications(data)
-      notificationClient.init(data)
-    }
-  }, [data])
-
-  useEffect(() => {
-    const unsub = notificationClient.subscribe((items) => {
-      setNotifications(items)
-      queryClient.setQueryData(['notifications'], items)
-    })
-
-    notificationClient.connectOnce()
-
-    return () => {
-      unsub()
-    }
-  }, [queryClient])
+  const queryKey = ['notifications', userId] as const
+  const query = useInfiniteQuery({
+    queryKey,
+    initialPageParam: 1,
+    queryFn: async ({ pageParam }) =>
+      api<NotificationPage>(`/api/v1/notifications?page=${pageParam}`),
+    getNextPageParam: ({ meta }) =>
+      meta.current_page < meta.last_page ? meta.current_page + 1 : undefined,
+  })
+  const notifications = [
+    ...new Map(
+      (query.data?.pages ?? [])
+        .flatMap(({ data }) => data)
+        .map((notification) => [notification.id, notification] as const),
+    ).values(),
+  ]
 
   const markRead = async (id: string) => {
-    await notificationClient.markRead(id)
+    await api(`/api/v1/notifications/${id}/read`, { method: 'PATCH' })
+    await queryClient.invalidateQueries({ queryKey })
   }
 
-  const unreadCount = notifications.filter((n) => !n.readAt).length
+  const unreadCount = notifications.filter(
+    (notification) => !notification.read_at,
+  ).length
 
   return {
     notifications,
     unreadCount,
     markRead,
-    refresh: () => notificationClient.fetchList(),
+    refresh: () => queryClient.invalidateQueries({ queryKey }),
+    isPending: query.isPending,
+    isError: query.isError,
+    hasNextPage: query.hasNextPage,
+    isFetchingNextPage: query.isFetchingNextPage,
+    loadNextPage: () => query.fetchNextPage(),
   }
 }

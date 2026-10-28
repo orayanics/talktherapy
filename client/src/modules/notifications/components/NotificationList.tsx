@@ -1,7 +1,15 @@
 import { useNotifications } from '#/modules/notifications/hooks/useNotifications'
 
 export default function NotificationList() {
-  const { notifications, markRead } = useNotifications()
+  const {
+    notifications,
+    markRead,
+    isPending,
+    isError,
+    hasNextPage,
+    isFetchingNextPage,
+    loadNextPage,
+  } = useNotifications()
 
   return (
     <div className="w-100 bg-white border border-slate-200 rounded-xl shadow-xl shadow-slate-200/50 overflow-hidden">
@@ -12,10 +20,21 @@ export default function NotificationList() {
       </div>
 
       <ul className="divide-y divide-slate-50 max-h-95 overflow-auto">
-        {notifications.map((n: any) => (
+        {isPending && (
+          <li className="p-4 text-xs text-slate-500">Loading notifications…</li>
+        )}
+        {isError && (
+          <li className="p-4 text-xs text-red-600">
+            Notifications could not be loaded.
+          </li>
+        )}
+        {!isPending && !isError && notifications.length === 0 && (
+          <li className="p-4 text-xs text-slate-500">No notifications yet.</li>
+        )}
+        {notifications.map((n) => (
           <li
             key={n.id}
-            className={`group transition-colors p-4 hover:bg-slate-50/80 ${!n.readAt ? 'bg-blue-50/30' : ''}`}
+            className={`group transition-colors p-4 hover:bg-slate-50/80 ${!n.read_at ? 'bg-blue-50/30' : ''}`}
           >
             <div className="flex gap-3">
               <div aria-label="status" className="status status-primary"></div>
@@ -30,7 +49,7 @@ export default function NotificationList() {
                   {n.message}
                 </p>
 
-                {!n.readAt && (
+                {!n.read_at && (
                   <button
                     onClick={() => markRead(n.id)}
                     className="link link-primary link-hover mt-2 text-xs"
@@ -42,6 +61,17 @@ export default function NotificationList() {
             </div>
           </li>
         ))}
+        {hasNextPage && (
+          <li className="p-3 text-center">
+            <button
+              className="link link-primary text-xs"
+              disabled={isFetchingNextPage}
+              onClick={() => void loadNextPage()}
+            >
+              {isFetchingNextPage ? 'Loading…' : 'Load more'}
+            </button>
+          </li>
+        )}
       </ul>
     </div>
   )

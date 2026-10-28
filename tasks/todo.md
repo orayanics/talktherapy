@@ -98,10 +98,10 @@ Status: implementation in phases. The Laravel platform foundation was completed 
 
 [Spec and task details](../docs/migration/modules/SPEC-notifications.md#task-plan)
 
-- [ ] N1 Implement durable owner-scoped inbox API.
-- [ ] N2 Implement recoverable outbox delivery.
-- [ ] N3 Authorize private realtime notifications.
-- [ ] N4 Connect client inbox/reconnect/account reset.
+- [x] N1 Implement durable owner-scoped inbox API; owner isolation, idempotent read, admin send, and audit tests pass on SQLite.
+- [x] N2 Implement recoverable outbox delivery with leased claims, idempotent inbox writes, retries, expiry and a minute scanner. SQLite delivery tests pass; queue outage/restart and multi-worker recovery evidence remains pending.
+- [x] N3 Authorize private Reverb channels with the authenticated user, active/verified state and session epoch; callback denial tests pass. Real Reverb auth/revocation checks remain pending.
+- [x] N4 Replace raw notification sockets with Echo/Reverb, CSRF-aware channel auth, user-scoped REST queries, event deduplication and reconnect refetch. Client build passes; real-browser reconnect/account-switch checks remain pending.
 
 ## Realtime sessions
 
@@ -112,6 +112,8 @@ Status: implementation in phases. The Laravel platform foundation was completed 
 - [ ] W3 Coordinate presence and revocation.
 - [ ] W4 Migrate browser transport.
 - [ ] W5 Verify TURN/network/media cleanup.
+
+To run realtime locally, start php artisan reverb:start and php artisan schedule:work.
 
 ## Phoneme analysis
 

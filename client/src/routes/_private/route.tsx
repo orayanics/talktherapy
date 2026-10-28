@@ -2,6 +2,7 @@ import { createFileRoute, Navigate, Outlet } from '@tanstack/react-router'
 import { Bell } from 'lucide-react'
 import { useState } from 'react'
 import NotificationList from '#/modules/notifications/components/NotificationList'
+import NotificationRealtime from '#/modules/notifications/components/NotificationRealtime'
 
 import Sidebar from '#/components/Page/Sidebar'
 import { authClient } from '#/modules/auth/api/auth-client'
@@ -40,6 +41,7 @@ function RouteComponent() {
 
   return (
     <SessionProvider value={session}>
+      <NotificationRealtime key={session.id} />
       <div className="bg-white flex w-screen h-screen font-sans antialiased">
         <Sidebar role={role}>
           <div className="min-h-screen w-full flex-1 overflow-auto relative">

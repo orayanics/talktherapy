@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\V1\AppointmentController;
 use App\Http\Controllers\Api\V1\BookmarkController;
 use App\Http\Controllers\Api\V1\ContentController;
 use App\Http\Controllers\Api\V1\DiagnosisController;
+use App\Http\Controllers\Api\V1\NotificationController;
 use App\Http\Controllers\Api\V1\PatientController;
 use App\Http\Controllers\Api\V1\ProfileController;
 use App\Http\Controllers\Api\V1\ScheduleController;
@@ -17,6 +18,7 @@ use App\Http\Controllers\Auth\EmailChangeController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\RegistrationController;
 use App\Http\Controllers\Auth\SessionController;
+use Illuminate\Broadcasting\BroadcastController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/diagnoses', DiagnosisController::class)->name('diagnoses.index');
@@ -29,7 +31,12 @@ Route::post('/forgot-password', [PasswordController::class, 'forgot'])->middlewa
 Route::post('/reset-password', [PasswordController::class, 'reset'])->middleware('throttle:5,1');
 
 Route::middleware(['auth:sanctum', 'account.active', 'verified'])->group(function (): void {
+    Route::post('/broadcasting/auth', [BroadcastController::class, 'authenticate'])->name('broadcasting.auth');
     Route::get('/me', [SessionController::class, 'show'])->name('me.show');
+    Route::get('/notifications/channel', [NotificationController::class, 'channel'])->name('notifications.channel');
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications', [NotificationController::class, 'store'])->name('notifications.store');
+    Route::patch('/notifications/{notification}/read', [NotificationController::class, 'read'])->name('notifications.read');
     Route::patch('/me', [ProfileController::class, 'update']);
     Route::post('/me/password', [PasswordController::class, 'change']);
     Route::post('/me/email-change', [EmailChangeController::class, 'request'])->middleware('throttle:3,1');
