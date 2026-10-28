@@ -11,12 +11,14 @@ export default function ContentCard({ content }: { content: Content }) {
     <div className="bg-white p-6 border border-slate-300 rounded-lg shadow-sm col-span-12 md:col-span-6 lg:col-span-4">
       <div className="flex items-center justify-between mb-2">
         <p className="text-xs font-bold uppercase truncate">
-          {content.diagnosis.label}
+          {content.diagnosis?.label ?? 'General'}
         </p>
 
         <button
           onClick={() => toggle(content.is_bookmarked)}
-          aria-label="bookmark"
+          aria-label={
+            content.is_bookmarked ? 'Remove bookmark' : 'Add bookmark'
+          }
           className={`btn btn-sm btn-square ${
             content.is_bookmarked
               ? 'btn-primary'
@@ -47,14 +49,11 @@ export default function ContentCard({ content }: { content: Content }) {
         <>
           <div className="divider h-px" />
           <div className="space-x-1">
-            {content.tags.slice(0, 2).map((item) => {
-              const tag = (item as any).tag ?? (item as any)
-              return (
-                <p key={tag.id} className="badge badge-neutral badge-soft">
-                  {tag.name}
-                </p>
-              )
-            })}
+            {content.tags.slice(0, 2).map((tag) => (
+              <p key={tag.id} className="badge badge-neutral badge-soft">
+                {tag.name}
+              </p>
+            ))}
 
             {content.tags.length > 2 && (
               <p className="badge badge-neutral badge-soft">
@@ -67,7 +66,7 @@ export default function ContentCard({ content }: { content: Content }) {
 
       <p className="inline-flex gap-2 text-xs text-slate-500 mt-2">
         <Calendar size={14} />
-        {formatDate(content.createdAt)}
+        {formatDate(content.created_at)}
       </p>
     </div>
   )

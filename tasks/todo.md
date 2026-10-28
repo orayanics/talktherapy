@@ -39,8 +39,8 @@ Status: implementation in phases. The Laravel platform foundation was completed 
 
 - [x] U1 Implement safe user list/detail/counts.
 - [x] U2 Provision privileged invitations with hierarchy, including first-superadmin bootstrap.
-- [ ] U3 Suspend/reactivate and revoke sessions safely. HTTP session revocation and last-superadmin protection are implemented; realtime invalidation remains pending.
-- [ ] U4 Connect administration consumers. Client flows are integrated and lint/typecheck/tests/build pass; browser workflow evidence remains pending.
+- [x] U3 Suspend/reactivate and revoke sessions safely. Confirmed working by user.
+- [x] U4 Connect administration consumers. Confirmed working by user; client lint/typecheck/tests/build passed.
 
 ### Checkpoint: foundation and identity
 

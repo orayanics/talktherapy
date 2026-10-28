@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\Api\V1\AdminUserProvisionController;
 use App\Http\Controllers\Api\V1\AdminUserStatusController;
+use App\Http\Controllers\Api\V1\BookmarkController;
+use App\Http\Controllers\Api\V1\ContentController;
 use App\Http\Controllers\Api\V1\DiagnosisController;
 use App\Http\Controllers\Api\V1\ProfileController;
 use App\Http\Controllers\Api\V1\UserController;
@@ -32,4 +34,12 @@ Route::middleware(['auth:sanctum', 'account.active', 'verified'])->group(functio
     Route::get('/users', [UserController::class, 'index']);
     Route::patch('/users/{user}/status', AdminUserStatusController::class);
     Route::get('/users/{user}', [UserController::class, 'show']);
+    Route::get('/content', [ContentController::class, 'index'])->name('content.index');
+    Route::put('/content/{content}/bookmark', [BookmarkController::class, 'store'])->name('content.bookmark.store');
+    Route::delete('/content/{content}/bookmark', [BookmarkController::class, 'destroy'])->name('content.bookmark.destroy');
+    Route::get('/bookmarks', [ContentController::class, 'bookmarks'])->name('bookmarks.index');
+    Route::post('/content', [ContentController::class, 'store'])->name('content.store');
+    Route::patch('/content/{content}', [ContentController::class, 'update'])->name('content.update');
+    Route::delete('/content/{content}', [ContentController::class, 'destroy'])->name('content.destroy');
+    Route::get('/content/{content}', [ContentController::class, 'show'])->name('content.show');
 });

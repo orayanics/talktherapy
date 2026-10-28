@@ -30,7 +30,7 @@ const searchSchema = z
       .refine((v) => !v || v === 'asc' || v === 'desc')
       .transform((v) => (v === 'asc' || v === 'desc' ? v : undefined)),
 
-    is_bookmarked: z.boolean().optional().default(false),
+    is_bookmarked: z.boolean().optional(),
   })
   .transform((data) => ({
     ...(data.page !== 1 ? { page: data.page } : {}),

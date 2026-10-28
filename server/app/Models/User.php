@@ -36,6 +36,11 @@ class User extends Authenticatable implements MustVerifyEmailContract
         return $this->hasMany(ConsentEvidence::class);
     }
 
+    public function bookmarks(): HasMany
+    {
+        return $this->hasMany(Bookmark::class);
+    }
+
     /**
      * Get the attributes that should be cast.
      *

@@ -25,42 +25,21 @@ export interface Tag {
 
 export interface Content {
   id: string
-  authorId: string
-  diagnosisId: string
   title: string
   description: string
   body: string
   is_bookmarked: boolean
-  createdAt: string
+  created_at: string
   updated_at: string
 
   author: {
     id: string
     name: string
-    email: string
   }
 
-  diagnosis: DiagnosisItem
+  diagnosis: DiagnosisItem | null
 
   tags: Tag[]
-}
-
-export interface ContentTag {
-  content_id: string
-  tag_id: string
-}
-
-export interface Tag {
-  id: string
-  name: string
-  slug: string
-}
-
-export interface Bookmark {
-  id: string
-  user_id: string
-  content_id: string
-  created_at: string
 }
 
 export const fetchContentList = (
@@ -70,23 +49,23 @@ export const fetchContentList = (
   const query = {
     page: params.page,
     search: searchParams.search,
-    diagnosis_id: searchParams.diagnosis,
+    diagnosis: searchParams.diagnosis,
     sort: searchParams.sort,
-    is_bookmarked: searchParams.is_bookmarked,
   }
+  const path = searchParams.is_bookmarked
+    ? '/api/v1/bookmarks'
+    : '/api/v1/content'
 
   return queryOptions<{
     data: Content[]
     meta: Meta
   }>({
-    queryKey: ['content', query],
-    queryFn: async () => {
-      const { data } = await api('/content', {
+    queryKey: ['content', path, query],
+    queryFn: () =>
+      api<{ data: Content[]; meta: Meta }>(path, {
         method: 'GET',
         params: query,
-      })
-      return data
-    },
+      }),
     staleTime: 1000 * 60 * 30,
   })
 }
@@ -95,10 +74,13 @@ export const fetchContentById = (contentId: string) => {
   return queryOptions<Content>({
     queryKey: ['content', contentId],
     queryFn: async () => {
-      const { data } = await api(`/content/${contentId}`, {
-        method: 'GET',
-      })
-      return data
+      const response = await api<{ data: Content }>(
+        `/api/v1/content/${contentId}`,
+        {
+          method: 'GET',
+        },
+      )
+      return response.data
     },
     staleTime: 1000 * 60 * 30,
   })
@@ -111,7 +93,7 @@ export const mutateCreateContent = () => {
 
   return useMutation({
     mutationFn: async (payload: TContentSchema) => {
-      const { data } = await api('/content', {
+      const { data } = await api('/api/v1/content', {
         method: 'POST',
         data: JSON.stringify(payload),
       })
@@ -133,7 +115,7 @@ export const mutateUpdateContent = (contentId: string) => {
 
   return useMutation({
     mutationFn: async (payload: TUpdateContentSchema) => {
-      const { data } = await api(`/content/${contentId}`, {
+      const { data } = await api(`/api/v1/content/${contentId}`, {
         method: 'PATCH',
         data: JSON.stringify(payload),
       })
@@ -155,7 +137,7 @@ export const mutateDeleteContent = (contentId: string) => {
 
   return useMutation({
     mutationFn: async () => {
-      await api(`/content/${contentId}`, {
+      await api(`/api/v1/content/${contentId}`, {
         method: 'DELETE',
       })
     },
@@ -169,39 +151,35 @@ export const mutateDeleteContent = (contentId: string) => {
 }
 
 export const mutateBookmarkContent = (contentId: string) => {
-  const navigate = useNavigate()
   const queryClient = useQueryClient()
   const { showAlert } = useAlert()
 
   return useMutation({
     mutationFn: async () => {
-      await api(`/content/${contentId}/bookmark`, {
-        method: 'POST',
+      await api(`/api/v1/content/${contentId}/bookmark`, {
+        method: 'PUT',
       })
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['content'] })
       showAlert(CONTENT.bookmark.add.success, 'success')
-      navigate({ to: '/content' })
     },
   })
 }
 
 export const mutateRemoveBookmark = (contentId: string) => {
-  const navigate = useNavigate()
   const queryClient = useQueryClient()
   const { showAlert } = useAlert()
 
   return useMutation({
     mutationFn: async () => {
-      await api(`/content/${contentId}/bookmark`, {
+      await api(`/api/v1/content/${contentId}/bookmark`, {
         method: 'DELETE',
       })
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['content'] })
       showAlert(CONTENT.bookmark.remove.success, 'success')
-      navigate({ to: '/content' })
     },
   })
 }

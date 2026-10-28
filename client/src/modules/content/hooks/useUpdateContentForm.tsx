@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
 
 import { UpdateContentSchema } from '../types/schema'
-import type { TUpdateContentSchema } from '../types/schema'
+import type { TUpdateContentInput, TUpdateContentSchema } from '../types/schema'
 
 import {
   mutateUpdateContent,
@@ -31,7 +31,7 @@ export default function useUpdateContentForm({
     control,
     watch,
     reset,
-  } = useForm<TUpdateContentSchema>({
+  } = useForm<TUpdateContentInput, unknown, TUpdateContentSchema>({
     resolver: zodResolver(UpdateContentSchema),
     defaultValues: {
       title: '',
@@ -60,12 +60,8 @@ export default function useUpdateContentForm({
       title: content.title,
       description: content.description,
       body: content.body,
-      diagnosis_id:
-        (content as any).diagnosis_id ?? (content as any).diagnosisId ?? '',
-      tag_names: content.tags.map((t) => {
-        const tag = (t as any).tag ?? (t as any)
-        return tag.name
-      }),
+      diagnosis_id: content.diagnosis?.id ?? '',
+      tag_names: content.tags.map((tag) => tag.name),
     })
   }, [content, reset])
 

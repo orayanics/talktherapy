@@ -2,8 +2,7 @@ import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
 
-import rehypeRaw from 'rehype-raw'
-import MDEditor from '@uiw/react-md-editor'
+import ContentBody from './ContentBody'
 
 import StateError from '#/components/State/StateError'
 import StateLoading from '#/components/State/StateLoading'
@@ -59,21 +58,15 @@ export default function ContentDetail({ contentId }: { contentId: string }) {
               <p className="text-sm text-slate-500">{data.description}</p>
               <p className="inline-flex gap-2 text-xs text-slate-500 mt-2">
                 <Calendar size={14} />
-                {formatDate(data.createdAt)}
+                {formatDate(data.created_at)}
               </p>
               {data.tags.length > 0 && (
                 <div className="space-x-1">
-                  {data.tags.map((item) => {
-                    const tag = (item as any).tag ?? (item as any)
-                    return (
-                      <p
-                        key={tag.id}
-                        className="badge badge-neutral badge-soft"
-                      >
-                        {tag.name}
-                      </p>
-                    )
-                  })}
+                  {data.tags.map((tag) => (
+                    <p key={tag.id} className="badge badge-neutral badge-soft">
+                      {tag.name}
+                    </p>
+                  ))}
                 </div>
               )}
             </div>
@@ -99,10 +92,7 @@ export default function ContentDetail({ contentId }: { contentId: string }) {
           </div>
           <div className="prose max-w-none p-10 bg-white border border-slate-300 border-dashed rounded-lg">
             <div data-color-mode="light">
-              <MDEditor.Markdown
-                rehypePlugins={[rehypeRaw]}
-                source={data.body}
-              />
+              <ContentBody source={data.body} />
             </div>
           </div>
         </div>
