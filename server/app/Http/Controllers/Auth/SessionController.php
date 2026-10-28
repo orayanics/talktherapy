@@ -10,6 +10,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
@@ -40,6 +41,8 @@ class SessionController extends Controller
 
     public function show(Request $request): UserResource
     {
+        Gate::authorize('view', $request->user());
+
         return UserResource::make($request->user()->loadMissing('profile'));
     }
 

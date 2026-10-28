@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\DiagnosisResource;
 use App\Models\Diagnosis;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Support\Facades\Gate;
 
 class DiagnosisController extends Controller
 {
@@ -14,6 +15,8 @@ class DiagnosisController extends Controller
      */
     public function __invoke(): AnonymousResourceCollection
     {
+        Gate::authorize('viewAny', Diagnosis::class);
+
         return DiagnosisResource::collection(Diagnosis::query()->orderBy('label')->orderBy('id')->get());
     }
 }
