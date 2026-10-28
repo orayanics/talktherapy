@@ -1,6 +1,8 @@
 # Spec: identity
 
-Status: proposed. Depends on: platform, taxonomy. Inherits [common conventions](../ARCHITECTURE.md). Addresses audit 5, 11, 13, 17, 18. Decisions D2, D4, D8.
+Status: implemented and locally verified on 2026-10-28; deployed-browser cookie/CSRF verification remains a release gate. Depends on: platform, taxonomy. Inherits [common conventions](../ARCHITECTURE.md). Addresses audit 5, 11, 13, 17, 18. Decisions D2, D4, D8.
+
+Confirmed amendment (2026-10-28): email verification is mandatory for every role. Patient, clinician, admin, and superadmin accounts all begin unverified and may not access protected application routes until their address is verified. No seeder or privileged provisioning path may bypass this rule.
 
 ## Objective and current scope
 
@@ -8,7 +10,7 @@ Replace Better Auth with Laravel session authentication while preserving registr
 
 ## Specification
 
-- `users` retains string ID, name/email/image, role/status, diagnosis, timestamps and a private password hash. Lowercase/trim email before uniqueness checks; never trim passwords. `email_verified_at` replaces a boolean with documented import provenance. Add Laravel sessions and password-reset token tables without reusing Better Auth session rows.
+- `users` owns UUID, name, normalized email, verification timestamp, timestamps and private password hash. One-to-one `user_profiles` owns role, status, diagnosis and image as explicitly required. Add Laravel sessions and password-reset token tables without reusing Better Auth session rows.
 - `POST /login` validates credentials, active/verified state and rate limits; regenerate session ID. `GET /api/v1/me` returns the safe user Resource. `POST /logout` invalidates session and CSRF state. Pending users use activation only; suspended users cannot use business routes even with an old session. Revalidate status on each protected request.
 - Public patient registration accepts name, normalized email, password/confirmation, valid diagnosis ID and affirmative consent. Record consent purpose/version/time in a separate evidence record. Return minimal pending-account data. Privileged provisioning belongs to user-admin; both flows call one activation-challenge issuer.
 - `activation_challenges`: string ID/user ID, normalized email, purpose, keyed code digest, expiry, attempts/max attempts, consumed timestamp and creation timestamp. Generate six-digit codes with cryptographic randomness; do not store/log plaintext. Proposed TTL 10 minutes, five failed attempts/challenge, resend no more than once/minute/account with additional trusted-IP limit. Confirm operational values before release.

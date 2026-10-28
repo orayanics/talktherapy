@@ -16,22 +16,22 @@ Status: implementation in phases. The Laravel platform foundation was completed 
 
 [Spec and task details](../docs/migration/modules/SPEC-taxonomy.md#task-plan)
 
-- [ ] T1 Migrate diagnosis catalog/read API.
-- [ ] T2 Verify reference seed/import and client mapping.
+- [x] T1 Migrate diagnosis catalog/read API.
+- [x] T2 Verify reference seed and client mapping; legacy import is not applicable.
 
 ## Identity
 
 [Spec and task details](../docs/migration/modules/SPEC-identity.md#task-plan)
 
 - [x] I1 Retired by decision: no legacy users/passwords are imported; new credentials use Laravel hashing.
-- [ ] I2 Establish session login/me/logout.
-- [ ] I3 Add patient registration/consent/challenge issue.
-- [ ] I4 Implement atomic activation and attempt limits.
-- [ ] I5 Implement own profile update.
-- [ ] I6 Implement recovery/password change/revocation.
-- [ ] I7 Implement verified email change.
-- [ ] I8 Connect client session/CSRF lifecycle.
-- [ ] I9 Connect auth screens, guards and logout.
+- [x] I2 Establish session login/me/logout.
+- [x] I3 Add patient registration/consent/challenge issue.
+- [x] I4 Implement atomic activation and attempt limits.
+- [x] I5 Implement own profile update.
+- [x] I6 Implement recovery/password change/revocation.
+- [x] I7 Implement verified email change.
+- [x] I8 Connect client session/CSRF lifecycle.
+- [x] I9 Connect auth screens, guards and logout.
 
 ## User administration
 

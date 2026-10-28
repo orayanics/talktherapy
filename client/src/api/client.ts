@@ -3,8 +3,9 @@ import type { AxiosInstance, AxiosRequestConfig, AxiosError } from 'axios'
 import { API_URL } from '@/constants/application'
 
 const apiClient: AxiosInstance = axios.create({
-  baseURL: `${API_URL ?? 'https://127.0.0.1:8080'}`,
+  baseURL: `${API_URL ?? 'http://localhost:8080'}`,
   withCredentials: true,
+  withXSRFToken: true,
   headers: {
     'Content-Type': 'application/json',
     Accept: 'application/json',
@@ -29,12 +30,17 @@ apiClient.interceptors.response.use(
 
     if (status === 419 && config && !config._csrfRetry) {
       config._csrfRetry = true
+      await initializeCsrf()
       return apiClient.request(config)
     }
 
     return Promise.reject(error)
   },
 )
+
+export async function initializeCsrf(): Promise<void> {
+  await apiClient.get('/sanctum/csrf-cookie')
+}
 
 export async function api<T = any>(
   url: string,

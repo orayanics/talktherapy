@@ -7,7 +7,7 @@ import { ProfileSchema } from './schema'
 import type { TProfileUpdate } from './schema'
 
 import { useAlert } from '@/context/AlertContext'
-import { authClient } from '@/utils/auth-client'
+import { api } from '@/api/client'
 
 export default function useUpdateProfileForm(defaultValues?: {
   name?: string
@@ -36,20 +36,24 @@ export default function useUpdateProfileForm(defaultValues?: {
     setApiError(null)
 
     try {
-      await authClient.updateUser({ name: data.name })
+      await api('/api/v1/me', { method: 'PATCH', data: { name: data.name } })
 
       if (data.email && data.email !== defaultValues?.email) {
-        const { error } = await authClient.changeEmail({ newEmail: data.email })
-        if (error) throw new Error(error.message ?? 'Email update failed')
+        await api('/api/v1/me/email-change', {
+          method: 'POST',
+          data: { new_email: data.email, current_password: data.currentPassword },
+        })
       }
 
       if (data.currentPassword && data.newPassword) {
-        const { error } = await authClient.changePassword({
-          currentPassword: data.currentPassword,
-          newPassword: data.newPassword,
-          revokeOtherSessions: false,
+        await api('/api/v1/me/password', {
+          method: 'POST',
+          data: {
+            current_password: data.currentPassword,
+            password: data.newPassword,
+            password_confirmation: data.confirmPassword,
+          },
         })
-        if (error) throw new Error(error.message ?? 'Password update failed')
       }
 
       showAlert('Profile updated', 'success')

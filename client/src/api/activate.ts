@@ -15,7 +15,7 @@ export const mutateVerifyOtp = () => {
   return useMutation({
     mutationFn: async (payload: TVerifyOtp) => {
       const response = await api<{ success: boolean; data: any }>(
-        '/otp/verify',
+        '/api/v1/activation/otp/verify',
         {
           method: 'POST',
           data: JSON.stringify(payload),
@@ -30,7 +30,7 @@ export const mutateResendOtp = () => {
   return useMutation({
     mutationFn: async (payload: TResendOtp) => {
       const response = await api<{ success: boolean; data: any }>(
-        '/otp/resend',
+        '/api/v1/activation/otp/resend',
         {
           method: 'POST',
           data: JSON.stringify(payload),
@@ -46,7 +46,7 @@ export const mutateActivateAccount = () => {
   const { showAlert } = useAlert()
   return useMutation({
     mutationFn: async (payload: TActivateAccount) => {
-      const response = await api<{ success: boolean; data: any }>('/activate', {
+      const response = await api<{ data: any }>('/api/v1/activation', {
         method: 'POST',
         data: JSON.stringify(payload),
       })

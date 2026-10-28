@@ -37,7 +37,7 @@ export default function useUpdateSoapForm({ soapId }: { soapId: string }) {
     },
   })
 
-  const updateMutation = mutateUpdateSoap(soapId, soap?.patient_id ?? '')
+  const updateMutation = mutateUpdateSoap(soapId, soap?.patientId ?? '')
 
   const onSubmit = handleSubmit(async (data) => {
     setApiError(null)

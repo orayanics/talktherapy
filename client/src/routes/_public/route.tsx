@@ -4,6 +4,7 @@ import { authClient } from '@/utils/auth-client'
 import StateLoading from '@/components/State/StateLoading'
 
 export const Route = createFileRoute('/_public')({
+  ssr: false,
   component: RouteComponent,
 })
 

@@ -17,7 +17,6 @@ function RouteComponent() {
 
   if (isPending) return <StateLoading fullpage />
   if (!data) {
-    authClient.signOut()
     return <Navigate to="/login" />
   }
 
@@ -29,14 +28,8 @@ function RouteComponent() {
     banned: user.banned ?? false,
     banExpires: user.banExpires ?? null,
     banReason: user.banReason ?? null,
-    createdAt:
-      user.createdAt instanceof Date
-        ? user.createdAt.toISOString()
-        : user.createdAt,
-    updatedAt:
-      user.updatedAt instanceof Date
-        ? user.updatedAt.toISOString()
-        : user.updatedAt,
+    createdAt: user.createdAt,
+    updatedAt: user.updatedAt,
   }
 
   return (

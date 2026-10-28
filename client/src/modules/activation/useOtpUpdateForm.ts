@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
+import type { Resolver } from 'react-hook-form'
 import { ActivateAccountSchema } from './schema'
 import type { TActivateAccount } from './schema'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -25,7 +26,7 @@ export default function useOtpUpdateForm({
     getValues,
     formState: { errors, isLoading },
   } = useForm<TActivateAccount>({
-    resolver: zodResolver(ActivateAccountSchema),
+    resolver: zodResolver(ActivateAccountSchema) as Resolver<TActivateAccount>,
     defaultValues: {
       email: initialEmail ?? '',
       otp_code: otp,
@@ -38,7 +39,7 @@ export default function useOtpUpdateForm({
 
   const activateAccountMutation = mutateActivateAccount()
   const resendOtpMutation = mutateResendOtp()
-  const isPatient = role === 'PATIENT'
+  const isPatient = role?.toLowerCase() === 'patient'
 
   const onSubmit = handleSubmit(async (data) => {
     setApiError(null)
@@ -53,7 +54,7 @@ export default function useOtpUpdateForm({
       await activateAccountMutation.mutateAsync(payload as TActivateAccount)
     } catch (error: any) {
       if (isAxiosError(error)) {
-        const message = error.response?.data?.error || 'OTP verification failed'
+        const message = error.response?.data?.message || 'OTP verification failed'
         setApiError(message)
       } else {
         setApiError(error.message)
@@ -80,7 +81,7 @@ export default function useOtpUpdateForm({
       })
     } catch (error: any) {
       if (isAxiosError(error)) {
-        const message = error.response?.data?.error || 'Failed to resend OTP'
+        const message = error.response?.data?.message || 'Failed to resend OTP'
         setApiError(message)
       } else {
         setApiError(error.message)

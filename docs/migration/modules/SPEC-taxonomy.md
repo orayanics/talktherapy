@@ -1,6 +1,6 @@
 # Spec: taxonomy
 
-Status: proposed. Depends on: platform. Inherits [common conventions](../ARCHITECTURE.md). Contract: `GET /api/v1/diagnoses` in [API contract](../API-CONTRACT.md).
+Status: implemented and locally verified on 2026-10-28. Depends on: platform. Inherits [common conventions](../ARCHITECTURE.md). Contract: `GET /api/v1/diagnoses` in [API contract](../API-CONTRACT.md).
 
 ## Objective and source behavior
 

@@ -15,7 +15,7 @@ export const mutateRegisterPatient = () => {
   const { showAlert } = useAlert()
   return useMutation({
     mutationFn: async (payload: TRegisterPatient) => {
-      const { data } = await api('/register/patient', {
+      const { data } = await api('/api/v1/registrations/patient', {
         method: 'POST',
         data: JSON.stringify(payload),
       })

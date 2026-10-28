@@ -2,6 +2,7 @@
 
 use App\Exceptions\ApiExceptionResponse;
 use App\Http\Controllers\HealthController;
+use App\Http\Middleware\EnsureAccountIsActive;
 use App\Http\Middleware\RequestContext;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -26,6 +27,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->prepend(RequestContext::class);
         $middleware->statefulApi();
         $middleware->redirectGuestsTo(fn (): ?string => null);
+        $middleware->alias(['account.active' => EnsureAccountIsActive::class]);
         $middleware->trustProxies(
             headers: Request::HEADER_X_FORWARDED_FOR | Request::HEADER_X_FORWARDED_PORT | Request::HEADER_X_FORWARDED_PROTO,
         );

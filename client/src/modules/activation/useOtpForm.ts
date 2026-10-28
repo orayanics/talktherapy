@@ -43,7 +43,7 @@ export default function useOtpForm({
       // get role from response and navigate accordingly
       const result = await verifyOtpMutation.mutateAsync(data)
 
-      if (result?.role === 'PATIENT') {
+      if (result?.role === 'patient') {
         await activateAccountMutation.mutateAsync({
           email: data.email,
           otp_code: data.otp_code,
@@ -61,7 +61,7 @@ export default function useOtpForm({
       })
     } catch (error: any) {
       if (isAxiosError(error)) {
-        const message = error.response?.data?.error || 'OTP verification failed'
+        const message = error.response?.data?.message || 'OTP verification failed'
         setApiError(message)
       } else {
         setApiError(error.message)
@@ -82,7 +82,7 @@ export default function useOtpForm({
       await resendOtpMutation.mutateAsync({ email })
     } catch (error: any) {
       if (isAxiosError(error)) {
-        const message = error.response?.data?.error || 'Failed to resend OTP'
+        const message = error.response?.data?.message || 'Failed to resend OTP'
         setApiError(message)
       } else {
         setApiError(error.message)

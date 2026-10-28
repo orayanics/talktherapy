@@ -6,7 +6,7 @@ import { useState } from 'react'
 import { LoginSchema } from './schema'
 import type { TLogin } from './schema'
 
-import { authClient } from '@/utils/auth-client'
+import { api, initializeCsrf } from '@/api/client'
 
 export default function useLoginForm() {
   const [apiError, setApiError] = useState<string | null>(null)
@@ -26,18 +26,9 @@ export default function useLoginForm() {
   const onSubmit = handleSubmit(async (data) => {
     setApiError(null)
     try {
-      await authClient.signIn.email({
-        email: data.email,
-        password: data.password,
-        callbackURL: '/dashboard',
-        rememberMe: false,
-        fetchOptions: {
-          onError: (error) => {
-            console.log('error')
-            setApiError(error.error.message || 'Login failed')
-          },
-        },
-      })
+      await initializeCsrf()
+      await api('/login', { method: 'POST', data })
+      window.location.href = '/dashboard'
     } catch (error: any) {
       if (isAxiosError(error)) {
         const message = error.response?.data.message || 'Login failed'

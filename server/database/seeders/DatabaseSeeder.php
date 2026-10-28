@@ -14,6 +14,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        $this->call(DiagnosisSeeder::class);
+
         // Production accounts are provisioned explicitly, never with demo credentials.
     }
 }

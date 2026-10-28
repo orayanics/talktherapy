@@ -10,7 +10,7 @@ export interface DiagnosisItem {
 export const fetchDiagnoses = queryOptions<DiagnosisItem[]>({
   queryKey: ['public-diagnoses'],
   queryFn: async () => {
-    const { data } = await api('/public/diagnoses', {
+    const { data } = await api('/api/v1/diagnoses', {
       method: 'GET',
     })
     return data

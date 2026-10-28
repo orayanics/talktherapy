@@ -1,8 +1,8 @@
-import type { Frequency, DayCode } from '@/modules/schedules/ScheduleForm'
+import type { TDayCode, TFrequency } from '@/modules/schedules/schema'
 
 export function buildRRule(
-  freq: Frequency,
-  days: Set<DayCode>,
+  freq: TFrequency,
+  days: Set<TDayCode>,
   count: number,
 ): string {
   if (freq === 'none') return ''

@@ -1,6 +1,8 @@
 # TalkTherapy Laravel API
 
-Laravel 13 / PHP 8.4+, Sanctum SPA sessions, SQLite locally, and Predis for optional Redis connections. This is the platform foundation; business endpoints and client authentication follow in subsequent phases. Archived Bun code is in `../_server/`.
+Laravel 13 / PHP 8.4+, Sanctum SPA sessions, SQLite locally, and Predis for optional Redis connections. Platform, taxonomy, and identity are implemented; remaining business modules follow in subsequent phases. Archived Bun code is in `../_server/`.
+
+All roles require email verification. Authentication fields remain on `users`; role, status, diagnosis, and image are isolated in one-to-one `user_profiles`. No default account is seeded.
 
 ## Local setup
 

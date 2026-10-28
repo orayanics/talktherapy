@@ -9,9 +9,16 @@ export const ProfileSchema = z
     confirmPassword: z.string().or(z.literal('')),
   })
   .refine(
+    (data) => !data.email || Boolean(data.currentPassword),
+    {
+      message: 'Current password is required to change email',
+      path: ['currentPassword'],
+    },
+  )
+  .refine(
     (data) => {
       const { currentPassword, newPassword, confirmPassword } = data
-      const anyFilled = currentPassword || newPassword || confirmPassword
+      const anyFilled = newPassword || confirmPassword
       if (!anyFilled) return true
       return !!(currentPassword && newPassword && confirmPassword)
     },
