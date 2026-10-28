@@ -1,40 +1,58 @@
 import type { Meta } from '#/types/api'
-import type { Patient, Clinician } from '#/modules/patients/types/person'
-import type { Slot } from '#/modules/schedules/types/slot'
 
 export type APPOINTMENT_STATUS =
-  'FREE' | 'PENDING' | 'ACCEPTED' | 'REJECT' | 'CANCELLED' | 'COMPLETED'
+  | 'PENDING'
+  | 'ACCEPTED'
+  | 'REJECT'
+  | 'CANCELLED'
+  | 'COMPLETED'
+
+export interface AppointmentParticipant {
+  id: string
+  name: string
+  email: string
+  diagnosis?: { id: string; label: string; value: string } | null
+}
+
+export interface AppointmentSlot {
+  id: string
+  start_at: string
+  end_at: string
+  status: APPOINTMENT_STATUS
+}
+
 export interface Encounter {
   id: string
-  appointmentId: string
+  appointment_id: string
   diagnosis: string
-  chiefComplaint: string
-  referralSource: string
-  referralUrl: string
-  createdAt: string
-  updatedAt: string
+  chief_complaint: string
+  referral_source: string
+  referral_url: string | null
+  created_at: string
+  updated_at: string
 }
 export interface Event {
   id: string
-  type: string
-  actorType: string
-  actorId: string
+  actor_type: string
+  actor_id: string
+  from_status: APPOINTMENT_STATUS | null
+  to_status: APPOINTMENT_STATUS
   reason: string | null
-  createdAt: string
+  created_at: string
 }
 export interface Appointment {
   id: string
-  slot: Slot
-  patient: Patient
-  clinician: Clinician
+  slot: AppointmentSlot
+  patient: AppointmentParticipant
+  clinician: AppointmentParticipant
   status: APPOINTMENT_STATUS
-  bookedAt: string
-  confirmedAt: string | null
-  cancelledAt: string | null
-  completedAt: string | null
-  events: Event[]
-  encounter: Encounter[]
-  roomId?: string | null
+  booked_at: string
+  confirmed_at: string | null
+  cancelled_at: string | null
+  completed_at: string | null
+  events?: Event[]
+  encounter?: Encounter | null
+  room_id: string | null
 }
 export interface AppointmentsResponse {
   data: Appointment[]

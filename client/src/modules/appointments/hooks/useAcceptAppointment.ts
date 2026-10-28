@@ -8,11 +8,11 @@ export default function useAcceptAppointment() {
 
   const submit = async (
     appointmentId: string,
-    data?: { is_hidden?: boolean },
+    _data?: { is_hidden?: boolean },
   ) => {
     setApiError(null)
     try {
-      await mutation.mutateAsync({ id: appointmentId, body: data })
+      await mutation.mutateAsync(appointmentId)
     } catch (error: unknown) {
       setApiError(errMsg(error, 'Accept failed'))
       throw error

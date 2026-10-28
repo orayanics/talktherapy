@@ -77,7 +77,7 @@ function RouteComponent() {
     fetchSlots({ page }, { from, sort, diagnosis }),
   )
 
-  const { submit, isLoading: isBooking } = useBookSlot()
+  const { submit, apiError, isLoading: isBooking } = useBookSlot()
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
 
@@ -180,6 +180,7 @@ function RouteComponent() {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSubmit={handleSubmit}
+        apiError={apiError}
       />
     </div>
   )

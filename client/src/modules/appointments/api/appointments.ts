@@ -26,16 +26,17 @@ export const fetchAppointments = (
   return queryOptions<AppointmentsResponse>({
     queryKey: ['appointments', query],
     queryFn: async () =>
-      (await api('/appointments/me', { method: 'GET', params: query })).data,
-    staleTime: 30 * 60 * 1000,
+      api<AppointmentsResponse>('/api/v1/appointments', {
+        method: 'GET',
+        params: query,
+      }),
   })
 }
 export const fetchAppointment = (appointmentId: string) =>
   queryOptions<{ data: Appointment }>({
     queryKey: ['appointment', appointmentId],
     queryFn: async () =>
-      api(`/appointments/${appointmentId}`, { method: 'GET' }),
-    staleTime: 30 * 60 * 1000,
+      api(`/api/v1/appointments/${appointmentId}`, { method: 'GET' }),
   })
 const appointmentAction = (
   action: 'accept' | 'reject' | 'cancel' | 'complete',
@@ -45,12 +46,12 @@ const appointmentAction = (
   const { showAlert } = useAlert()
   return useMutation({
     mutationFn: async (
-      payload: string | { id: string; body?: Record<string, any> },
+      payload: string | { id: string; body?: Record<string, unknown> },
     ) => {
       const appointmentId = typeof payload === 'string' ? payload : payload.id
       const body = typeof payload === 'string' ? undefined : payload.body
       return (
-        await api(`/appointments/${appointmentId}/${action}`, {
+        await api(`/api/v1/appointments/${appointmentId}/${action}`, {
           method: 'POST',
           data: body ? JSON.stringify(body) : undefined,
         })
@@ -58,11 +59,19 @@ const appointmentAction = (
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['appointments'] })
+      await queryClient.invalidateQueries({ queryKey: ['appointment'] })
       if (action === 'complete')
         await queryClient.invalidateQueries({
           queryKey: ['clinician-patients'],
         })
       showAlert(successMsg, 'success')
+    },
+    onError: async (error: { response?: { status?: number } }) => {
+      if (error.response?.status === 409) {
+        await queryClient.invalidateQueries({ queryKey: ['appointments'] })
+        await queryClient.invalidateQueries({ queryKey: ['appointment'] })
+        await queryClient.invalidateQueries({ queryKey: ['slots'] })
+      }
     },
   })
 }

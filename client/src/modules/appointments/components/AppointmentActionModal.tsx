@@ -54,8 +54,12 @@ export default function AppointmentActionModal({
   })
 
   const submit = handleSubmit(async (data) => {
-    await onSubmit(data)
-    onClose()
+    try {
+      await onSubmit(data)
+      onClose()
+    } catch {
+      return
+    }
   })
 
   return (

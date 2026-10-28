@@ -1,6 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
-import { startOfDay, endOfDay, addDays } from 'date-fns'
 import { ArrowRight, Stethoscope } from 'lucide-react'
 
 import { fetchAppointments } from '#/modules/appointments/api/appointments'
@@ -17,12 +16,13 @@ import AppointmentPill from '#/modules/appointments/components/AppointmentPill'
 import { formatDate } from '#/utils/useDate'
 
 function upcomingRange() {
-  const start = startOfDay(new Date())
-  const end = endOfDay(addDays(start, 30))
+  const start = new Date()
+  const end = new Date(start)
+  end.setUTCDate(end.getUTCDate() + 30)
 
   return {
-    from: start.toISOString(),
-    to: end.toISOString(),
+    from: formatDate(start, 'yyyy-MM-dd'),
+    to: formatDate(end, 'yyyy-MM-dd'),
   }
 }
 

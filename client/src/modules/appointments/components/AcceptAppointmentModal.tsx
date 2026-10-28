@@ -6,6 +6,7 @@ type Props = {
   isOpen: boolean
   onClose: () => void
   onSubmit: (data?: { is_hidden?: boolean }) => Promise<void>
+  apiError: string | null
   isClinician: boolean
 }
 
@@ -13,14 +14,19 @@ export default function AcceptAppointmentModal({
   isOpen,
   onClose,
   onSubmit,
+  apiError,
 }: Props) {
   const { handleSubmit, formState } = useForm<{ is_hidden: boolean }>({
     defaultValues: { is_hidden: false },
   })
 
   const submit = handleSubmit(async (data) => {
-    await onSubmit(data)
-    onClose()
+    try {
+      await onSubmit(data)
+      onClose()
+    } catch {
+      return
+    }
   })
 
   return (
@@ -40,6 +46,7 @@ export default function AcceptAppointmentModal({
         </div>
 
         <div className="p-8 space-y-6">
+          {apiError && <div className="alert alert-error" role="alert">{apiError}</div>}
           <div className="text-center">
             <p className="text-slate-600 leading-relaxed">
               Accepting this appointment is <b>irreversible</b>.

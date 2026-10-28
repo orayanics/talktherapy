@@ -11,6 +11,7 @@ type Props = {
   isOpen: boolean
   onClose: () => void
   onSubmit: (data: TBookSlot) => Promise<void>
+  apiError: string | null
   defaultValues?: Partial<TBookSlot>
 }
 
@@ -18,6 +19,7 @@ export default function BookModal({
   isOpen,
   onClose,
   onSubmit,
+  apiError,
   defaultValues,
 }: Props) {
   const {
@@ -43,8 +45,12 @@ export default function BookModal({
   }, [isOpen, reset])
 
   const submit = handleSubmit(async (data) => {
-    await onSubmit(data)
-    onClose()
+    try {
+      await onSubmit(data)
+      onClose()
+    } catch {
+      return
+    }
   })
 
   return (
@@ -52,6 +58,7 @@ export default function BookModal({
       <form onSubmit={submit} className="card space-y-4">
         <div className="card-body p-8 space-y-3">
           <h1 className="font-bold uppercase">Book Slot</h1>
+          {apiError && <div className="alert alert-error" role="alert">{apiError}</div>}
 
           <div className="alert alert-soft flex flex-col text-center">
             <p>

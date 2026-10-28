@@ -1,12 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
-import {
-  startOfDay,
-  endOfDay,
-  addDays,
-  eachDayOfInterval,
-  format,
-} from 'date-fns'
 
 import { fetchAppointments } from '#/modules/appointments/api/appointments'
 
@@ -26,13 +19,11 @@ import CompleteAppointmentModal from '#/modules/appointments/components/Complete
 import useCompleteAppointment from '#/modules/appointments/hooks/useCompleteAppointment'
 
 function todayRange() {
-  const now = new Date()
-  const start = startOfDay(now)
-  const end = endOfDay(now)
+  const today = formatDate(new Date(), 'yyyy-MM-dd')
 
   return {
-    from: start.toISOString(),
-    to: end.toISOString(),
+    from: today,
+    to: today,
   }
 }
 
@@ -48,23 +39,29 @@ export default function ClinicianDashboard() {
   const appointments = q.data?.data ?? []
 
   // next 7 days
-  const start = startOfDay(new Date())
-  const end = endOfDay(addDays(start, 6))
+  const weekFrom = formatDate(new Date(), 'yyyy-MM-dd')
+  const start = new Date(`${weekFrom}T00:00:00.000Z`)
+  const end = new Date(start)
+  end.setUTCDate(end.getUTCDate() + 6)
 
-  const qWeek = useQuery(fetchAppointments({}, { from: start.toISOString() }))
+  const qWeek = useQuery(
+    fetchAppointments({}, { from: weekFrom, to: formatDate(end, 'yyyy-MM-dd') }),
+  )
 
   const weekAppointments = qWeek.data?.data ?? []
 
   // init counts
   const countsByDay: Record<string, number> = {}
 
-  eachDayOfInterval({ start, end }).forEach((d) => {
-    countsByDay[format(d, 'EEE MMM dd yyyy')] = 0
-  })
+  for (let day = 0; day < 7; day += 1) {
+    const date = new Date(start)
+    date.setUTCDate(start.getUTCDate() + day)
+    countsByDay[formatDate(date, 'EEE MMM dd yyyy')] = 0
+  }
 
   // count
   for (const appt of weekAppointments) {
-    const key = format(new Date(appt.slot.start_at), 'EEE MMM dd yyyy')
+    const key = formatDate(appt.slot.start_at, 'EEE MMM dd yyyy')
     countsByDay[key] = (countsByDay[key] ?? 0) + 1
   }
 
@@ -119,13 +116,14 @@ export default function ClinicianDashboard() {
 
         <div className="grid grid-cols-3 lg:grid-cols-7 gap-2">
           {Array.from({ length: 7 }).map((_, i) => {
-            const d = addDays(start, i)
+            const d = new Date(start)
+            d.setUTCDate(start.getUTCDate() + i)
             const label = d.toLocaleDateString(undefined, {
               weekday: 'short',
               day: 'numeric',
             })
-            const count = countsByDay[format(d, 'EEE MMM dd yyyy')] ?? 0
-            const dateStr = format(d, 'yyyy-MM-dd')
+            const count = countsByDay[formatDate(d, 'EEE MMM dd yyyy')] ?? 0
+            const dateStr = formatDate(d, 'yyyy-MM-dd')
             return (
               <Link
                 key={d.toDateString()}
@@ -189,12 +187,12 @@ export default function ClinicianDashboard() {
                 },
                 {
                   header: 'Room',
-                  accessor: 'roomId',
+                  accessor: 'room_id',
                   render: (row) =>
-                    row.status === 'ACCEPTED' && row.roomId ? (
+                    row.status === 'ACCEPTED' && row.room_id ? (
                       <Link
                         to="/room/$roomId"
-                        params={{ roomId: row.roomId }}
+                        params={{ roomId: row.room_id }}
                         className="btn btn-neutral"
                       >
                         Join Session
@@ -265,12 +263,14 @@ export default function ClinicianDashboard() {
         onClose={() => setOpenAccept(false)}
         onSubmit={handleAcceptSubmit}
         isClinician={true}
+        apiError={acceptAction.apiError}
       />
       <CompleteAppointmentModal
         isOpen={openComplete}
         onClose={() => setOpenComplete(false)}
         onSubmit={handleCompleteSubmit}
         isClinician={true}
+        apiError={completeAction.apiError}
       />
     </div>
   )

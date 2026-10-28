@@ -10,7 +10,13 @@ export default function useBookSlot() {
   const submit = async (slotId: string, data: TBookSlot) => {
     setApiError(null)
     try {
-      await mutation.mutateAsync({ slot_id: slotId, ...data })
+      await mutation.mutateAsync({
+        slot_id: slotId,
+        encounter: {
+          ...data.encounter,
+          referral_url: data.encounter.referral_url || null,
+        },
+      })
     } catch (error: unknown) {
       setApiError(errMsg(error, 'Booking failed'))
       throw error

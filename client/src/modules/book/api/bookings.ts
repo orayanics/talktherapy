@@ -10,7 +10,7 @@ export const mutateBookSlot = () => {
     mutationFn: async (payload: { slot_id: string; [key: string]: any }) => {
       const { slot_id, ...rest } = payload
       return (
-        await api(`/slots/${slot_id}/book`, {
+          await api(`/api/v1/slots/${slot_id}/book`, {
           method: 'POST',
           data: JSON.stringify(rest),
         })
@@ -20,6 +20,12 @@ export const mutateBookSlot = () => {
       await queryClient.invalidateQueries({ queryKey: ['slots'] })
       await queryClient.invalidateQueries({ queryKey: ['appointments'] })
       showAlert(APPT_MSG.book.success, 'success')
+    },
+    onError: async (error: { response?: { status?: number } }) => {
+      if (error.response?.status === 409) {
+        await queryClient.invalidateQueries({ queryKey: ['slots'] })
+        await queryClient.invalidateQueries({ queryKey: ['appointments'] })
+      }
     },
   })
 }

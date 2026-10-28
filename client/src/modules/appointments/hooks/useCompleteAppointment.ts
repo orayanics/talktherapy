@@ -6,10 +6,10 @@ export default function useCompleteAppointment() {
   const [apiError, setApiError] = useState<string | null>(null)
   const mutation = mutateCompleteAppointment()
 
-  const submit = async (appointmentId: string, data?: any) => {
+  const submit = async (appointmentId: string, _data?: { is_hidden?: boolean }) => {
     setApiError(null)
     try {
-      await mutation.mutateAsync({ id: appointmentId, body: data })
+      await mutation.mutateAsync(appointmentId)
     } catch (error: unknown) {
       setApiError(errMsg(error, 'Complete failed'))
       throw error

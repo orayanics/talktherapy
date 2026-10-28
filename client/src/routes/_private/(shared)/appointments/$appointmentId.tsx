@@ -22,10 +22,6 @@ function RouteComponent() {
 
   const appointment = data?.data
   const encounterObj = appointment?.encounter
-    ? Array.isArray(appointment.encounter)
-      ? appointment.encounter[0]
-      : appointment.encounter
-    : null
   const events = appointment?.events ?? []
 
   const showRoom = appointment?.status !== 'COMPLETED'
@@ -52,7 +48,7 @@ function RouteComponent() {
               Appointment Details
             </h1>
             <Row label="Status" value={appointment.status} />
-            {showRoom && <Row label="Room ID" value={appointment.roomId} />}
+            {showRoom && <Row label="Room ID" value={appointment.room_id} />}
             <Row
               label="Appointment Time"
               value={
@@ -68,7 +64,7 @@ function RouteComponent() {
             <Row label="Clinician Name" value={appointment.clinician.name} />
             <Row
               label="Clinician Specialization"
-              value={appointment.clinician.diagnosis.label}
+              value={appointment.clinician.diagnosis?.label ?? 'N/A'}
             />
           </div>
 
@@ -80,18 +76,20 @@ function RouteComponent() {
               <Row label="Diagnosis" value={encounterObj.diagnosis} />
               <Row
                 label="Chief Complaint"
-                value={encounterObj.chiefComplaint}
+                value={encounterObj.chief_complaint}
               />
               <Row
                 label="Referral Source"
-                value={encounterObj.referralSource}
+                value={encounterObj.referral_source}
               />
               <Row
                 label="Referral Document"
                 value={
-                  encounterObj.referralUrl ? (
+                  encounterObj.referral_url ? (
                     <a
-                      href={encounterObj.referralUrl}
+                      href={encounterObj.referral_url}
+                      target="_blank"
+                      rel="noreferrer"
                       className="text-sm text-primary hover:underline flex items-center gap-1"
                     >
                       View Referral Document
@@ -129,15 +127,15 @@ function RouteComponent() {
 
                   <div className="flex flex-col gap-1">
                     <time className="text-xs font-medium uppercase text-slate-500">
-                      {formatDate(ev.createdAt)}
+                      {formatDate(ev.created_at)}
                     </time>
 
                     <div className="flex items-center gap-2">
                       <h3 className="text-sm font-semibold text-slate-900 capitalize">
-                        {ev.type.replace('_', ' ')}
+                        {ev.to_status.toLowerCase().replace('_', ' ')}
                       </h3>
                       <span className="text-slate-300">•</span>
-                      <RolePill role={ev.actorType} />
+                      <RolePill role={ev.actor_type} />
                     </div>
 
                     {ev.reason && (

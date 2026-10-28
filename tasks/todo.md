@@ -60,7 +60,7 @@ Status: implementation in phases. The Laravel platform foundation was completed 
 [Spec and task details](../docs/migration/modules/SPEC-scheduling.md#task-plan)
 
 - [x] S1 Prove bounded recurrence/timezone semantics. UTC is fixed, so DST gap/fold times are inapplicable. Accept only DAILY/WEEKLY/MONTHLY with optional weekly BYDAY and INTERVAL, COUNT <=365 or UTC UNTIL within one year. Recurrence fixtures pass in PHP and client.
-- [ ] S2 Create validated nonoverlapping schedules. Transactional creation, audit, checks and SQLite overlap tests pass; PostgreSQL concurrency evidence remains pending.
+- [ ] S2 Create validated nonoverlapping schedules. Implementation accepted by user; PostgreSQL concurrency evidence remains pending.
 - [x] S3 List/view slots by actor and availability. Role projection, diagnosis/date filters, active/verified clinician visibility and safe Resource tests pass.
 - [ ] S4 Align client preview and consumers. Client recurrence fixtures, lint, typecheck and build pass; real-browser scheduling workflow evidence remains pending.
 
@@ -72,13 +72,13 @@ Status: implementation in phases. The Laravel platform foundation was completed 
 
 [Spec and task details](../docs/migration/modules/SPEC-appointments.md#task-plan)
 
-- [ ] A1 Establish history schema/constraints/policies.
-- [ ] A2 Book atomically with valid intake.
-- [ ] A3 Read own bookings safely.
-- [ ] A4 Accept/reject assigned pending bookings.
-- [ ] A5 Cancel owning patient's pending booking.
-- [ ] A6 Complete and establish care relationship.
-- [ ] A7 Connect appointment consumers.
+- [x] A1 Establish history schema/constraints/policies. Approved by user. SQLite invariant tests pass; PostgreSQL invariant evidence remains pending.
+- [x] A2 Book atomically with valid intake. Approved by user. Atomic booking, validation and rollback tests pass on SQLite; PostgreSQL race evidence remains pending.
+- [x] A3 Read own bookings safely. Participant-scoped list/detail, safe projection, pagination and date-filter tests pass.
+- [x] A4 Accept/reject assigned pending bookings. Approved by user. Actor, transition, slot, event and cutoff tests pass on SQLite; PostgreSQL competing-action evidence remains pending.
+- [x] A5 Cancel owning patient's pending booking. Owner, pending-only transition, exact cutoff and blocked-slot tests pass.
+- [x] A6 Complete and establish care relationship. Approved by user. Care-pair uniqueness and first-completion preservation tests pass on SQLite; PostgreSQL race evidence remains pending.
+- [ ] A7 Connect appointment consumers. Client API/types/actions and error refresh are integrated; tests, lint, typecheck and build pass; browser flow remains pending.
 
 ## Clinical records
 

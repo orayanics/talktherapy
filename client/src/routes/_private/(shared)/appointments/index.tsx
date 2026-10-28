@@ -178,12 +178,12 @@ function RouteComponent() {
               },
               {
                 header: 'Room',
-                accessor: 'roomId',
+                accessor: 'room_id',
                 render: (row) =>
-                  row.status === 'ACCEPTED' && row.roomId ? (
+                  row.status === 'ACCEPTED' && row.room_id ? (
                     <Link
                       to="/room/$roomId"
-                      params={{ roomId: row.roomId }}
+                      params={{ roomId: row.room_id }}
                       className="btn btn-neutral"
                     >
                       Join Session
@@ -280,12 +280,14 @@ function RouteComponent() {
         onClose={() => setOpenAccept(false)}
         onSubmit={handleAcceptSubmit}
         isClinician={isClinician}
+        apiError={acceptAction.apiError}
       />
       <CompleteAppointmentModal
         isOpen={openComplete}
         onClose={() => setOpenComplete(false)}
         onSubmit={handleCompleteSubmit}
         isClinician={isClinician}
+        apiError={completeAction.apiError}
       />
     </div>
   )
