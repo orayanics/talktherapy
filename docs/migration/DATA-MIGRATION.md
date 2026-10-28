@@ -1,6 +1,6 @@
 # Data migration and cutover contract
 
-Status: proposed. No legacy database was opened or changed. Actual row counts, identifier lengths, hash algorithms, enum outliers, null references, deployed schema drift and timestamp encodings must be measured on an approved snapshot. Schema mappings below come from Prisma source and migration SQL, not assumptions about production rows.
+Status: retired by the confirmed decision that there is no legacy data to import. The mapping below is retained only as historical audit context and must not be implemented unless the user explicitly changes that decision. Deployment backup/restore and rollback planning still apply to the new Laravel database once it contains data.
 
 ## Mapping
 

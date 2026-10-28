@@ -1,8 +1,8 @@
 # TalkTherapy backend migration
 
-Status: proposed specification and task plan; implementation has not started. Audited 2026-10-28 at commit `8af02ff88d97344279c2a0bac4d8806d11901434`.
+Status: implementation in phases. The Laravel platform foundation is complete in `server/`; identity and business modules are pending. Audited 2026-10-28 at commit `8af02ff88d97344279c2a0bac4d8806d11901434`.
 
-Replace the Elysia/Bun backend with a Laravel 13 API, retain the React/TanStack client, and keep speech inference in a private Python service. This package includes both specs and planning because both were explicitly requested. Module boundaries and decisions remain reviewable proposals, not approved production changes.
+Replace the Elysia/Bun backend with a Laravel 13 API, retain the React/TanStack client, and keep speech inference in a private Python service. Confirmed product decisions in Architecture override earlier proposal text; unfinished module boundaries remain reviewable specifications, not approved production changes.
 
 ## Read in this order
 
@@ -39,14 +39,14 @@ Build order: platform -> taxonomy -> identity -> user-admin/content/scheduling/n
 ## Scope and assumptions
 
 - Keep current user-facing capabilities. Correct authorization defects rather than preserving them as compatibility behavior.
-- Proposed production storage: PostgreSQL plus Redis. SQLite remains the legacy source. Database choice is a decision to confirm, not an observed deployment fact.
+- Local storage is SQLite. Predis is installed for Redis-backed production coordination; the user will configure PostgreSQL or MySQL later.
 - Proposed hosting: one public origin for the SPA and API through a reverse proxy. Same-site subdomains are possible with explicit Sanctum configuration. Unrelated domains require revisiting the authentication design.
 - Assume multiple simultaneous patients and clinicians, overlapping bookings, more than one web process, and one bounded inference worker initially. No production traffic measurements were provided.
-- No deployed database, real patient data, model cache, operational credentials, dependency installation, external account actions, or production configuration was used.
+- No legacy data will be imported. No deployed database, real patient data, model cache, external account actions, or production configuration was used.
 - The root README documents setup but contains no substantive Laravel migration design at this revision. The historical changelog references paths and behavior absent from the current tree; source code takes precedence for this audit.
 
-## Decisions before implementation
+## Confirmed decisions and remaining gates
 
-The full decision register is in [Architecture](ARCHITECTURE.md#decisions-to-confirm). Highest-impact items: production database/domain topology, real-data migration need and outage window, credential compatibility versus reset, clinical access/retention policy, appointment cancellation policy, and the scientific/licensing basis for speech scores.
+The full decision register and the user's confirmations are in [Architecture](ARCHITECTURE.md#decisions-to-confirm). There is no legacy import or password compatibility path; new accounts use Laravel hashing. Production database/domain details, clinical/privacy review, and scientific/licensing approval for speech scores remain release gates.
 
-No runtime code was changed. These documents do not authorize deleting data, publishing services, or treating speech scores as clinically validated.
+The platform runtime is implemented, but no business route, client cutover, Python service change, deployment, or claim of clinically validated speech scores is included yet.

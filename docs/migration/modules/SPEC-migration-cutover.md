@@ -1,10 +1,10 @@
 # Spec: migration-cutover
 
-Status: proposed. Depends on: every business module. Data profiling can start after platform design. Inherits [data migration contract](../DATA-MIGRATION.md); that file is the authoritative mapping/runbook. Addresses audit 10, 13, 15, 17, 18. Decisions D1-D12 as relevant.
+Status: legacy import retired; deployment tasks M7-M9 remain proposed. Depends on: every business module. The historical [data migration contract](../DATA-MIGRATION.md) is retained only as audit context. Addresses audit 10, 13, 15, 17, 18. Decisions D1-D12 as relevant.
 
 ## Objective and scope
 
-Move actual legacy records and all client traffic safely, then retire Bun/Better Auth after a proved rollback/retention window. Source: Prisma schema/migrations/seed, current application flows, environment examples and root scripts. No live database has been inspected; migration size/quality cannot be estimated from schema alone.
+There are no legacy records to move. Package the completed Laravel/client/Python system, switch client traffic safely, and retire any remaining Bun/Better Auth deployment references after a proved rollback/observation window.
 
 ## Specification
 
@@ -29,7 +29,7 @@ Two isolated dry runs and one interrupted/resumed run yield the same IDs/checksu
 5. **M5 — Import clinical/inbox/audit data.** Dependency: M4/R2/N1/G2. Files: SOAP mapping, inbox mapping, audit mapping, fixture/test (<=five). Acceptance: exact clinical fields/read state/actor history without delivery replay; malformed JSON quarantined. Verify: sensitive fixture field hashes and related-user denial tests.
 6. **M6 — Reconcile and rehearse restore.** Dependency: M2-M5. Files: reconciliation command, report schema, test, restore runbook (four). Acceptance: all tables accounted for, critical rejects block, repeat/resume stable and both backups restore. Verify: rehearsal evidence with measured times and signed report.
 7. **M7 — Package the deployment.** Dependency: P5/W5/F8/N3/G3. Files: service/proxy configuration, release workflow, environment example, release smoke test, runbook (five per deployment slice). Acceptance: private Python, supervised workers, correct TLS/origins/cookies, no dev seeds and advisory/license gate. Verify: staging full workflow and dependency audits.
-8. **M8 — Cut over and observe.** Dependency: M6/M7/all module checks, operator approval. Files: final reconciliation report, cutover/rollback execution record, smoke results (three; data operations require explicit release authorization). Acceptance: freeze/import/routing/reset succeed with one writer and known rollback point. Verify: production smoke and monitoring against approved thresholds; freeze/rollback on failure.
+8. **M8 — Cut over and observe.** Dependency: M7/all module checks, operator approval. Files: cutover/rollback execution record and smoke results (two; production operations require explicit release authorization). Acceptance: routing succeeds with one active API and a known rollback point. Verify: production smoke and monitoring against approved thresholds; rollback on failure.
 9. **M9 — Retire legacy runtime.** Dependency: M8 plus approved observation/retention window. Files: root workspace/scripts, legacy deployment config, retirement manifest and docs in <=five-file batches; bulk legacy deletion is separately reviewed. Acceptance: no active consumers/writers reference Bun/Better Auth/custom WS; records/backups retained as required and old secrets revoked. Verify: global caller/route/config search, restore availability and final client/API checks.
 
 ## Exclusions and gates

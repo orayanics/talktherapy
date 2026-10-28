@@ -1,30 +1,9 @@
 {
-  "name": "server",
-  "version": "1.0.50",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "bun run --watch src/index.ts",
-    "seed": "bun prisma/seed.ts"
-  },
-  "dependencies": {
-    "@elysiajs/cors": "^1.4.1",
-    "@elysiajs/openapi": "^1.4.14",
-    "@prisma/adapter-libsql": "^7.7.0",
-    "@prisma/client": "^7.7.0",
-    "better-auth": "^1.6.2",
-    "date-fns": "^4.1.0",
-    "dotenv": "^17.4.1",
-    "elysia": "latest",
-    "elysia-rate-limit": "^4.5.1",
-    "nodemailer": "^8.0.5",
-    "prismabox": "^1.1.26",
-    "rrule": "^2.8.1",
-    "zod": "^4.3.6"
-  },
-  "devDependencies": {
-    "@types/nodemailer": "^8.0.0",
-    "bun-types": "latest",
-    "prisma": "^7.7.0"
-  },
-  "module": "src/index.js"
+    "name": "server",
+    "private": true,
+    "scripts": {
+        "dev": "php artisan serve --host=localhost --port=8080",
+        "test": "php artisan test --compact",
+        "lint": "php vendor/bin/pint --test"
+    }
 }

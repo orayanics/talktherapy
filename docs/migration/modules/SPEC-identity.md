@@ -26,7 +26,7 @@ Tests: fixation protection, unauthenticated/expired session, pending/suspended d
 
 ## Task plan
 
-1. **I1 — Prove password portability.** Dependency: P1. Files: synthetic Bun hash fixture generator, PHP compatibility test, redacted decision record (three). Acceptance: supported cohorts and reset fallback documented with actual evidence. Verify: generate only synthetic hashes and run PHP/Laravel checks; never inspect real credentials in output.
+1. **I1 — Retired by decision.** There is no legacy user/password import; all new credentials use Laravel hashing. Do not add Bun hash compatibility code.
 2. **I2 — Establish session login/me/logout.** Dependency: P2/P4, T1. Files: user schema/model changes, auth controller, web/API routes, `IdentitySessionTest` (max five; split schema from endpoints if needed). Acceptance: regeneration, safe user projection and state checks work. Verify: `php artisan test --filter=IdentitySession`.
 3. **I3 — Add patient registration and challenge issue.** Dependency: I2/P3. Files: registration request/controller, registration Action, challenge/consent migration, feature test (five). Acceptance: pending patient, consent evidence and single mail intent committed together; no arbitrary role input. Verify: `php artisan test --filter=IdentityRegistration`.
 4. **I4 — Verify and consume activation challenges.** Dependency: I3. Files: activation request/controller, activation Action, challenge model, activation test (five). Acceptance: pending-only atomic activation and attempt/replay rules. Verify: `php artisan test --filter=IdentityActivation` including concurrent consume.

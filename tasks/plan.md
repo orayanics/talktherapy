@@ -1,10 +1,10 @@
 # Plan: Laravel 13 backend migration
 
-Status: proposed; documentation only. Specs and task plans were explicitly requested together. Implementation and production operations have not started. Source audit date: 2026-10-28.
+Status: implementation in phases. The Laravel platform foundation in `server/` is complete; identity, business modules, client migration, Python hardening, and production operations have not started. Source audit date: 2026-10-28.
 
 ## Objective
 
-Replace `server/`'s Bun/Elysia/Prisma API with a conventional Laravel 13 API, retain `client/`, and isolate `py/` behind a protected service contract. Preserve real records and legitimate workflows while correcting the access-control, resource-boundary and scoring issues identified in the [audit](../docs/migration/AUDIT.md).
+Replace the retired Bun/Elysia/Prisma API with a conventional Laravel 13 API in `server/`, retain `client/`, and isolate `py/` behind a protected service contract. There is no legacy data import; preserve legitimate workflows while correcting the access-control, resource-boundary and scoring issues identified in the [audit](../docs/migration/AUDIT.md).
 
 ## Authoritative documents
 
@@ -17,7 +17,7 @@ Replace `server/`'s Bun/Elysia/Prisma API with a conventional Laravel 13 API, re
 
 ## Delivery strategy
 
-Build in `api/` while the existing runtime remains available. Deliver tested vertical behavior slices with their schema, policy, endpoint and relevant client changes. Develop against isolated PostgreSQL and synthetic fixtures. Never let both backends write the production dataset. No production data access or deployment is implied by this documentation.
+Build directly in `server/`; the user moved the retired implementation to ignored `_server/`. Deliver tested vertical behavior slices with their schema, policy, endpoint and relevant client changes. Use SQLite locally until the user configures PostgreSQL or MySQL, and retain database-specific concurrency gates for that environment. No production data access or deployment is implied by this plan.
 
 Each task in a module spec names dependencies, likely files, acceptance and verification. Split any named batching task into concrete <=five-file implementation checklists before executing it; it is a feature work package, not permission for a giant diff. The mechanically generated Laravel shell is the single explicit broad scaffold exception. Schema/model/endpoint/client changes land in dependency order, and each tested behavior remains behind the staging/new-API boundary until cutover.
 
@@ -25,16 +25,16 @@ Each task in a module spec names dependencies, likely files, acceptance and veri
 
 | Phase | Work packages | Exit evidence |
 |---|---|---|
-| 0: feasibility and decisions | D1-D4/D8-D11, P1, I1, F1, M1 planning | DB/domain topology, credential path, timezone/retention questions recorded; Python runtime/license blockers known early |
+| 0: feasibility and decisions | Confirmed D1-D12, P1, retired I1/M1, F1 | Local DB/runtime decisions recorded; Python runtime/license blockers known early |
 | 1: shared foundation | P2-P5, T1-T2, I2-I4/I8 | Fresh migrations, protected API conventions, patient registration/activation/login, CSRF-aware session client |
 | 2: account lifecycle | I5-I7/I9, U1-U4, N1-N2 | Profile/recovery/provision/suspend and durable intent delivery verified |
 | 3: content and availability | C1-C4, S1-S4 | Member catalog/bookmarks and bounded clinician schedules work with their client consumers |
 | 4: appointment lifecycle | A1-A7 | One-winner booking, participant authorization, exact transitions/intake/history and care pair |
 | 5: clinical/realtime/inference | R1-R5, N3-N4, W1-W5, F2-F8 | Clinical denial matrix, two-browser/TURN call, recoverable notifications, private bounded inference and independent scoring/license gate |
-| 6: reporting and import rehearsal | G1-G4, M2-M6 | Safe counts/export, deterministic import/resume and zero unexplained reconciliation differences |
+| 6: reporting and deployment rehearsal | G1-G4, M7 preparation | Safe counts/export and deployment backup/restore evidence |
 | 7: release and retirement | M7-M9 | Staging gates, final freeze/import, operator-approved write enablement, observed/retained rollback artifacts |
 
-High-risk prototypes start early: finite RRULE semantics (S1), hash compatibility (I1), Python stack/model validation (F1/F5), snapshot profile (M1). Clinical/scoring release gates remain mandatory even if Laravel CRUD is finished.
+High-risk prototypes start early: finite RRULE semantics (S1) and Python stack/model validation (F1/F5). Hash compatibility and snapshot profiling are retired because no legacy credentials or data will be imported. Clinical/scoring release gates remain mandatory even if Laravel CRUD is finished.
 
 ## Dependency direction and concurrent work
 

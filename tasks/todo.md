@@ -1,16 +1,16 @@
 # Migration task checklist
 
-Status: proposed, all implementation tasks pending. Details, dependencies, likely files, acceptance and verification live in the linked module task plans. Work-package tasks that mention file batches must be subdivided into <=five-file execution slices before coding; preserve the parent ID as their prefix. Check a parent only after every child and its evidence are complete.
+Status: implementation in phases. The Laravel platform foundation was completed on 2026-10-28; business modules remain pending. Details, dependencies, likely files, acceptance and verification live in the linked module task plans. Work-package tasks that mention file batches must be subdivided into <=five-file execution slices before coding; preserve the parent ID as their prefix. Check a parent only after every child and its evidence are complete.
 
 ## Platform
 
 [Spec and task details](../docs/migration/modules/SPEC-platform.md#task-plan)
 
-- [ ] P1 Bootstrap the pinned Laravel application.
-- [ ] P2 Configure the API boundary.
-- [ ] P3 Add durable audit/outbox storage.
-- [ ] P4 Define query/Resource conventions.
-- [ ] P5 Wire checks and operational readiness.
+- [x] P1 Bootstrap the pinned Laravel application.
+- [x] P2 Configure the API boundary.
+- [x] P3 Add durable audit/outbox storage.
+- [x] P4 Define query/Resource conventions.
+- [x] P5 Wire checks and operational readiness.
 
 ## Taxonomy
 
@@ -23,7 +23,7 @@ Status: proposed, all implementation tasks pending. Details, dependencies, likel
 
 [Spec and task details](../docs/migration/modules/SPEC-identity.md#task-plan)
 
-- [ ] I1 Prove Bun/PHP credential compatibility.
+- [x] I1 Retired by decision: no legacy users/passwords are imported; new credentials use Laravel hashing.
 - [ ] I2 Establish session login/me/logout.
 - [ ] I3 Add patient registration/consent/challenge issue.
 - [ ] I4 Implement atomic activation and attempt limits.
@@ -143,16 +143,16 @@ Status: proposed, all implementation tasks pending. Details, dependencies, likel
 
 [Spec and task details](../docs/migration/modules/SPEC-migration-cutover.md#task-plan)
 
-- [ ] M1 Profile an approved protected source snapshot.
-- [ ] M2 Import reference/identity data.
-- [ ] M3 Import CMS data/pivots/bookmarks.
-- [ ] M4 Import scheduling/appointment/encounter/care history.
-- [ ] M5 Import SOAP/inbox/audit data.
-- [ ] M6 Reconcile and rehearse restore/resume.
+- [x] M1 Retired by decision: no legacy source snapshot or data import.
+- [x] M2 Retired by decision: no reference/identity import.
+- [x] M3 Retired by decision: no CMS data import.
+- [x] M4 Retired by decision: no scheduling/clinical history import.
+- [x] M5 Retired by decision: no SOAP/inbox/audit import.
+- [x] M6 Retired by decision: no import reconciliation; deployment backup/restore remains in M7.
 
 ### Checkpoint: import and reporting
 
-- [ ] Safe export tests, repeat/resume reconciliation, zero critical rejects, credential cohorts and backup restores verified.
+- [ ] Safe reporting exports and deployment backup/restore are verified; import reconciliation and credential cohorts are not applicable.
 
 - [ ] M7 Package and verify deployment.
 - [ ] M8 Execute approved freeze/import/cutover and observe.

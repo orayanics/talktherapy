@@ -1,5 +1,7 @@
 # Proposed Laravel 13 architecture
 
+Implementation note (2026-10-28): the approved application path is `server/`, not the earlier proposed `api/` sibling. The retired Bun code was moved to ignored `_server/`; there is no legacy data or password import. Local development uses SQLite, PHP 8.4+, native Laravel hashing, and Predis when Redis is configured. The user will choose and configure PostgreSQL or MySQL later. These confirmed decisions override conflicting proposal text below.
+
 ## Objective and boundaries
 
 Deliver the existing telehealth workflows through one Laravel API and one internal Python inference service. Keep React/TanStack. Use a normal Laravel application, not a custom module framework, repository layer, generic CRUD engine, or extra backend services. The module specs are ownership boundaries within this application.
@@ -26,12 +28,12 @@ flowchart LR
 
 Only the reverse proxy exposes public API/WSS endpoints. Python has no browser-facing endpoint and no application database credentials. Laravel owns identity, permissions, appointments, clinical records, audit, notifications, and error translation. Python owns decoding, ASR, alignment, and scoring. Do not add the Laravel AI SDK merely because speech analysis exists.
 
-Create Laravel in `api/` alongside existing `server/` during development. Keep Bun intact until cutover is verified. After the retention/rollback window, decide whether to retain `api/` or rename it to `server/` in a separate change. Development ports: client 3000, Laravel 8080, Python 8001, Reverb 8081; production TLS terminates at the proxy. Values are proposals and must be reflected consistently in example environments and scripts.
+Laravel now lives in `server/`; the retired Bun runtime is not part of the active workspace. Development ports are client 3000, Laravel 8080, Python 8001, and Reverb 8081 when installed; production TLS terminates at the proxy. Production URLs and database infrastructure remain deployment inputs.
 
 ## Conventional application structure
 
 ```text
-api/
+server/
   app/Enums/                    backed role, status and event enums
   app/Models/                   Eloquent models and relationships
   app/Http/Controllers/Api/V1/   thin JSON controllers
@@ -107,7 +109,7 @@ Write audit rows and durable notification intents in the same domain transaction
 
 ## Commands and verification
 
-Future commands after the shell exists, from `api/`: `composer install`, `php artisan migrate`, `php artisan serve --port=8080`, `php artisan queue:work`, `php artisan reverb:start --port=8081`, `php artisan schedule:work`, `php artisan test`, `vendor/bin/pint --test`, `php artisan route:list --path=api`, `composer audit`. Production uses supervised PHP/worker/Reverb processes, not development servers.
+Commands from `server/`: `composer install`, `php artisan migrate`, `php artisan serve --port=8080`, `php artisan test`, `vendor/bin/pint --test`, `php artisan route:list --path=api`, `composer audit`. Queue/Reverb/scheduler processes are introduced with the modules that need them and must be supervised in production.
 
 Client commands from `client/`: `bun run test`, `bun run build`, `bun run lint`, `bunx tsc --noEmit`. Python's proposed check is `python -m pytest -q`; add a pinned test dependency and tests first. Exact production Python runtime and compatibility pins must come from the feasibility task, not an unverified latest install.
 
@@ -117,19 +119,31 @@ Always validate trust boundaries and test forbidden access. Obtain product decis
 
 ## Decisions to confirm
 
-| ID | Proposed default / unresolved question | Gate |
-|---|---|---|
-| D1 | PostgreSQL production; Redis coordination. Confirm hosting support and backups. | platform |
-| D2 | Same-origin SPA/API proxy; confirm public URLs, SSR deployment and cookies. | identity |
-| D3 | Is there real legacy data? Confirm source snapshot and write-freeze window. | import/cutover |
-| D4 | Prove Bun hash compatibility; otherwise forced password reset. No plaintext conversion. | identity import |
-| D5 | Superadmin creates administrators; admin creates clinicians; prevent privileged peer escalation. | user-admin |
-| D6 | Clinicians read records only for established care relationships; author-only SOAP edits; no blanket admin access. Confirm team sharing and patient visibility. | clinical-records |
-| D7 | Preserve current pending-only cancellation, 24-hour cutoff, and blocked cancellation slots initially. Accepted cancellation, unblocking, rescheduling need explicit decisions. | appointments |
-| D8 | No persisted audio/chat/assessment results. Confirm clinical retention, consent and minors policy; don't infer consent for old records. | production |
-| D9 | Reject ambiguous legacy timezone data; choose scheduling timezone and daylight-saving behavior. | scheduling/import |
-| D10 | English/en-US inference scope only. Validate model input/scoring semantics, redistribution/deployment license, and clinician-reviewed calibration. | phoneme release |
-| D11 | Proposed inference cap: 10 MiB, 60 seconds decoded audio, 800 reference characters, one concurrent inference per worker. Confirm against real hardware. | phoneme release |
-| D12 | Session entry initially requires ACCEPTED and a current participant; define any extra early/late join window before adding it. | realtime |
+| ID  | Proposed default / unresolved question                                                                                                                                         | Gate              |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------- |
+| D1  | PostgreSQL production; Redis coordination. Confirm hosting support and backups.                                                                                                | platform          |
+| D2  | Same-origin SPA/API proxy; confirm public URLs, SSR deployment and cookies.                                                                                                    | identity          |
+| D3  | Is there real legacy data? Confirm source snapshot and write-freeze window.                                                                                                    | import/cutover    |
+| D4  | Prove Bun hash compatibility; otherwise forced password reset. No plaintext conversion.                                                                                        | identity import   |
+| D5  | Superadmin creates administrators; admin creates clinicians; prevent privileged peer escalation.                                                                               | user-admin        |
+| D6  | Clinicians read records only for established care relationships; author-only SOAP edits; no blanket admin access. Confirm team sharing and patient visibility.                 | clinical-records  |
+| D7  | Preserve current pending-only cancellation, 24-hour cutoff, and blocked cancellation slots initially. Accepted cancellation, unblocking, rescheduling need explicit decisions. | appointments      |
+| D8  | No persisted audio/chat/assessment results. Confirm clinical retention, consent and minors policy; don't infer consent for old records.                                        | production        |
+| D9  | Reject ambiguous legacy timezone data; choose scheduling timezone and daylight-saving behavior.                                                                                | scheduling/import |
+| D10 | English/en-US inference scope only. Validate model input/scoring semantics, redistribution/deployment license, and clinician-reviewed calibration.                             | phoneme release   |
+| D11 | Proposed inference cap: 10 MiB, 60 seconds decoded audio, 800 reference characters, one concurrent inference per worker. Confirm against real hardware.                        | phoneme release   |
+| D12 | Session entry initially requires ACCEPTED and a current participant; define any extra early/late join window before adding it.                                                 | realtime          |
 
 A blocked decision stops only its dependent implementation. This review package is complete without pretending those product/deployment decisions have already been made.
+D1 - Use predis, use sqlite for local dev (i will setup the postgresql/mysql database myself later)
+D2- decide for local development
+D3 - no
+D4 - ditch bun. use laravel hashing
+D5 - Superadmin can create all users, admin creates clinicians, prevent privileged peer escalation
+D6- confirmed. approved.
+D7- Confirmed. approved.
+D8 - confirmed. approved.
+D9 - confirmed. approved.
+D10 - Confirmed. approved. Mark this for future improvements: other language support
+D11 - confirmed. approved.
+D12 - can join early or late. session room shall be deleted 5 minutes after the time end window.
