@@ -1,5 +1,5 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import type { Meta } from '@/types/params'
+import type { Meta } from '#/types/api'
 
 type Props = {
   meta: Meta

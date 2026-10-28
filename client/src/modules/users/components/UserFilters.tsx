@@ -1,6 +1,7 @@
 import { Search, Filter } from 'lucide-react'
-import type { UsersParams, QueryParams } from '@/types/params'
-import { ROLE_VALUES, STATUS_VALUES } from '@/constants/account'
+import type { QueryParams } from '#/types/api'
+import type { UsersParams } from '#/modules/users/types/params'
+import { ROLE_VALUES, STATUS_VALUES } from '#/constants/account'
 
 type UpdateSearch = (next: Partial<UsersParams & QueryParams>) => void
 

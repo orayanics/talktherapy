@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { CircleAlert, CircleCheck } from 'lucide-react'
-import type { ALERT_TYPE, AlertToastProps } from '@/types/component'
+import type { ALERT_TYPE, AlertToastProps } from '#/types/component'
 
 const STYLES: Record<
   ALERT_TYPE,

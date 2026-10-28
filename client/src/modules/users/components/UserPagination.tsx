@@ -1,5 +1,6 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import type { UsersParams, QueryParams } from '@/types/params'
+import type { QueryParams } from '#/types/api'
+import type { UsersParams } from '#/modules/users/types/params'
 
 type UpdateSearch = (next: Partial<UsersParams & QueryParams>) => void
 

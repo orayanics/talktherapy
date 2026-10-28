@@ -1,10 +1,9 @@
-import { createFileRoute, Navigate } from '@tanstack/react-router'
-import type { USER_ROLE } from '@/types/account'
-import { useSession } from '@/context/SessionContext'
+import { createFileRoute } from '@tanstack/react-router'
+import { useSession } from '#/modules/auth/context/SessionContext'
 
-import DashboardView from '@/modules/dashboard/DashboardView'
-import ClinicianDashboard from '@/modules/dashboard/ClinicianDashboard'
-import PatientDashboard from '@/modules/dashboard/PatientDashboard'
+import DashboardView from '#/modules/dashboard/components/DashboardView'
+import ClinicianDashboard from '#/modules/dashboard/components/ClinicianDashboard'
+import PatientDashboard from '#/modules/dashboard/components/PatientDashboard'
 
 export const Route = createFileRoute('/_private/dashboard')({
   component: RouteComponent,
@@ -12,7 +11,7 @@ export const Route = createFileRoute('/_private/dashboard')({
 
 function RouteComponent() {
   const session = useSession()
-  const role = session.role as USER_ROLE
+  const role = session.role
 
   if (role === 'superadmin' || role === 'admin') return <DashboardView />
 
@@ -20,7 +19,5 @@ function RouteComponent() {
   if (role === 'clinician') return <ClinicianDashboard />
 
   // Patient gets a dashboard showing upcoming appointments and bookmarks
-  if (role === 'patient') return <PatientDashboard />
-
-  return <Navigate to="/unauthorized" />
+  return <PatientDashboard />
 }

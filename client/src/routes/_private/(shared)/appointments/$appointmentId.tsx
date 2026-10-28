@@ -1,13 +1,13 @@
-import { fetchAppointment } from '@/api/schedule'
+import { fetchAppointment } from '#/modules/appointments/api/appointments'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
 
-import StateError from '@/components/State/StateError'
-import StateLoading from '@/components/State/StateLoading'
-import { formatDate } from '@/utils/useDate'
-import RolePill from '@/components/Decorator/RolePill'
+import StateError from '#/components/State/StateError'
+import StateLoading from '#/components/State/StateLoading'
+import { formatDate } from '#/utils/useDate'
+import RolePill from '#/components/Decorator/RolePill'
 import { ArrowLeft } from 'lucide-react'
-import { Row } from '@/components/Table/Row'
+import { Row } from '#/components/Table/Row'
 
 export const Route = createFileRoute(
   '/_private/(shared)/appointments/$appointmentId',

@@ -9,8 +9,8 @@ import type {
   ALERT_TYPE,
   AlertContextValue,
   AlertState,
-} from '@/types/component'
-import { AlertToast } from '@/components/AlertToast'
+} from '#/types/component'
+import { AlertToast } from '#/components/AlertToast'
 
 export const AlertContext = createContext<AlertContextValue | null>(null)
 

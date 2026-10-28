@@ -1,0 +1,20 @@
+import { useState } from 'react'
+import { mutateCompleteAppointment } from '#/modules/appointments/api/appointments'
+import { errMsg } from '#/lib/errorMessage'
+
+export default function useCompleteAppointment() {
+  const [apiError, setApiError] = useState<string | null>(null)
+  const mutation = mutateCompleteAppointment()
+
+  const submit = async (appointmentId: string, data?: any) => {
+    setApiError(null)
+    try {
+      await mutation.mutateAsync({ id: appointmentId, body: data })
+    } catch (error: unknown) {
+      setApiError(errMsg(error, 'Complete failed'))
+      throw error
+    }
+  }
+
+  return { submit, apiError, isLoading: (mutation as any).isPending }
+}

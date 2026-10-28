@@ -2,12 +2,12 @@ import { createFileRoute, Link } from '@tanstack/react-router'
 import { ArrowLeft } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 
-import { fetchSoapById } from '@/api/records'
-import StateLoading from '@/components/State/StateLoading'
-import StateError from '@/components/State/StateError'
-import StateNull from '@/components/State/StateNull'
-import { Row } from '@/components/Table/Row'
-import { formatDate } from '@/utils/useDate'
+import { fetchSoapById } from '#/modules/soaps/api/soaps'
+import StateLoading from '#/components/State/StateLoading'
+import StateError from '#/components/State/StateError'
+import StateNull from '#/components/State/StateNull'
+import { Row } from '#/components/Table/Row'
+import { formatDate } from '#/utils/useDate'
 
 export const Route = createFileRoute(
   '/_private/(clinician)/patients/$patientId/soap/$soapId/',

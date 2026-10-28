@@ -1,5 +1,5 @@
 import { createFileRoute, Navigate, Outlet } from '@tanstack/react-router'
-import { useAuthGuard } from '@/hooks/useAuth'
+import { useAuthGuard } from '#/modules/auth/hooks/useAuth'
 
 export const Route = createFileRoute('/_private/(shared)/content/_adm')({
   component: () => {

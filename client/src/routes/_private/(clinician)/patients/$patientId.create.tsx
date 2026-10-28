@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { ArrowLeft } from 'lucide-react'
-import RowError from '@/components/Table/RowError'
-import useCreateSoapForm from '@/modules/soaps/useCreateSoapForm'
+import RowError from '#/components/Table/RowError'
+import useCreateSoapForm from '#/modules/soaps/hooks/useCreateSoapForm'
 
 export const Route = createFileRoute(
   '/_private/(clinician)/patients/$patientId/create',

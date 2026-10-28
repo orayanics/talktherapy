@@ -1,13 +1,13 @@
-import { fetchSlot } from '@/api/schedule'
+import { fetchSlot } from '#/modules/schedules/api/schedules'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
 
-import StateError from '@/components/State/StateError'
-import StateLoading from '@/components/State/StateLoading'
-import { Row } from '@/components/Table/Row'
+import StateError from '#/components/State/StateError'
+import StateLoading from '#/components/State/StateLoading'
+import { Row } from '#/components/Table/Row'
 import { ArrowLeft, CircleCheck, CircleX } from 'lucide-react'
-import { formatDate } from '@/utils/useDate'
-import AppointmentPill from '@/components/Decorator/AppointmentPill'
+import { formatDate } from '#/utils/useDate'
+import AppointmentPill from '#/modules/appointments/components/AppointmentPill'
 
 export const Route = createFileRoute('/_private/(clinician)/schedules/$slotId')(
   {

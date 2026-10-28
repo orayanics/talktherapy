@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { z } from 'zod'
-import { api } from '@/api/client'
+import { api } from '#/lib/api/client'
 
 export const Route = createFileRoute('/_private/profile/email-change')({
   validateSearch: z.object({ code: z.string().length(6).optional() }),
@@ -14,7 +14,11 @@ function ConfirmEmailChange() {
   const [code, setCode] = useState(initialCode ?? '')
   const navigate = useNavigate()
   const confirmation = useMutation({
-    mutationFn: () => api('/api/v1/email-change/confirm', { method: 'POST', data: { otp_code: code } }),
+    mutationFn: () =>
+      api('/api/v1/email-change/confirm', {
+        method: 'POST',
+        data: { otp_code: code },
+      }),
     onSuccess: () => navigate({ to: '/profile' }),
   })
 
@@ -30,7 +34,9 @@ function ConfirmEmailChange() {
         onChange={(event) => setCode(event.target.value)}
         aria-label="Email verification code"
       />
-      {confirmation.isError && <p className="text-error">The code is invalid or expired.</p>}
+      {confirmation.isError && (
+        <p className="text-error">The code is invalid or expired.</p>
+      )}
       <button
         className="btn btn-primary w-full"
         disabled={code.length !== 6 || confirmation.isPending}

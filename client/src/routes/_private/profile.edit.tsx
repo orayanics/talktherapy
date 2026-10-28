@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
-import FormProfile from '@/modules/profile/FormProfile'
+import FormProfile from '#/modules/profile/components/FormProfile'
 import { ArrowLeft } from 'lucide-react'
-import { useSession } from '@/context/SessionContext'
+import { useSession } from '#/modules/auth/context/SessionContext'
 
 export const Route = createFileRoute('/_private/profile/edit')({
   component: RouteComponent,

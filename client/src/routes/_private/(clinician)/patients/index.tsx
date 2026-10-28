@@ -7,14 +7,14 @@ import {
 import { useQuery } from '@tanstack/react-query'
 import { z } from 'zod'
 
-import { fetchClinicianPatients } from '@/api/records'
-import StateLoading from '@/components/State/StateLoading'
-import StateError from '@/components/State/StateError'
-import StateNull from '@/components/State/StateNull'
-import { TableBase } from '@/components/Table/TableBase'
-import { formatDate } from '@/utils/useDate'
-import Pagination from '@/components/Page/Pagination'
-import CpFilters from '@/modules/patients/CpFilters'
+import { fetchClinicianPatients } from '#/modules/patients/api/patients'
+import StateLoading from '#/components/State/StateLoading'
+import StateError from '#/components/State/StateError'
+import StateNull from '#/components/State/StateNull'
+import { TableBase } from '#/components/Table/TableBase'
+import { formatDate } from '#/utils/useDate'
+import Pagination from '#/components/Page/Pagination'
+import CpFilters from '#/modules/patients/components/CpFilters'
 import { ChevronDown, ChevronUp } from 'lucide-react'
 
 const searchSchema = z

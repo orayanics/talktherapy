@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import ContentDetail from '@/modules/content/ContentDetail'
+import ContentDetail from '#/modules/content/components/ContentDetail'
 
 export const Route = createFileRoute('/_private/(shared)/content/$contentId')({
   component: RouteComponent,

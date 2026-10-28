@@ -1,8 +1,8 @@
 import { z } from 'zod'
 import { createFileRoute } from '@tanstack/react-router'
 
-import ContentList from '@/modules/content/ContentList'
-import { toArray } from '@/utils/query'
+import ContentList from '#/modules/content/components/ContentList'
+import { toArray } from '#/utils/query'
 
 const searchSchema = z
   .object({

@@ -9,8 +9,8 @@ import {
   User,
 } from 'lucide-react'
 
-import type { USER_ROLE } from '@/types/account'
-import type { NavItem } from '@/types/component'
+import type { USER_ROLE } from '#/types/account'
+import type { NavItem } from '#/types/component'
 
 export const superadmin_NAV_ITEMS = [
   {

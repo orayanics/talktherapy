@@ -6,18 +6,18 @@ import {
   useNavigate,
 } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
-import { fetchLogs } from '@/api/logs'
-import { TableBase } from '@/components/Table/TableBase'
-import { formatDate } from '@/utils/useDate'
-import LogDetail from '@/modules/logs/LogDetail'
-import RolePill from '@/components/Decorator/RolePill'
-import Pagination from '@/components/Page/Pagination'
-import LogsFilters from '@/modules/logs/LogsFilters'
+import { fetchLogs } from '#/modules/logs/api/logs'
+import { TableBase } from '#/components/Table/TableBase'
+import { formatDate } from '#/utils/useDate'
+import LogDetail from '#/modules/logs/components/LogDetail'
+import RolePill from '#/components/Decorator/RolePill'
+import Pagination from '#/components/Page/Pagination'
+import LogsFilters from '#/modules/logs/components/LogsFilters'
 import { ChevronDown, ChevronUp } from 'lucide-react'
 
-import StateError from '@/components/State/StateError'
-import StateLoading from '@/components/State/StateLoading'
-import StateNull from '@/components/State/StateNull'
+import StateError from '#/components/State/StateError'
+import StateLoading from '#/components/State/StateLoading'
+import StateNull from '#/components/State/StateNull'
 
 const searchSchema = z
   .object({

@@ -1,12 +1,12 @@
 import React, { useState } from 'react'
 import { Bell, Menu } from 'lucide-react'
 
-import type { USER_ROLE } from '@/types/account'
-import { NAV_BY_ROLE } from '@/constants/sidebar'
+import type { USER_ROLE } from '#/types/account'
+import { NAV_BY_ROLE } from '#/constants/sidebar'
 
 import SidebarItem from './SidebarItem'
-import { authClient } from '@/utils/auth-client'
-import NotificationList from '../NotificationList'
+import { authClient } from '#/modules/auth/api/auth-client'
+import NotificationList from '#/modules/notifications/components/NotificationList'
 
 export interface SidebarProps {
   children: React.ReactNode

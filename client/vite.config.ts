@@ -11,9 +11,10 @@ import fs from 'node:fs'
 
 const keyPath = '../certs/localhost-key.pem'
 const certificatePath = '../certs/localhost.pem'
-const https = fs.existsSync(keyPath) && fs.existsSync(certificatePath)
-  ? { key: fs.readFileSync(keyPath), cert: fs.readFileSync(certificatePath) }
-  : undefined
+const https =
+  fs.existsSync(keyPath) && fs.existsSync(certificatePath)
+    ? { key: fs.readFileSync(keyPath), cert: fs.readFileSync(certificatePath) }
+    : undefined
 
 const config = defineConfig({
   plugins: [

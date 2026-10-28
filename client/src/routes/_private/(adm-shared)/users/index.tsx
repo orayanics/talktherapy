@@ -1,13 +1,14 @@
 import { z } from 'zod'
 
 import { createFileRoute } from '@tanstack/react-router'
-import UsersList from '@/modules/users/UsersList'
+import UsersList from '#/modules/users/components/UsersList'
 
-import { toArray } from '@/utils/query'
-import { ROLE_VALUES, STATUS_VALUES } from '@/constants/account'
+import { toArray } from '#/utils/query'
+import { ROLE_VALUES, STATUS_VALUES } from '#/constants/account'
 
 const roleSchema = z
   .any()
+  .optional()
   .transform((v) => toArray(v))
   .transform((arr) =>
     arr
@@ -17,6 +18,7 @@ const roleSchema = z
 
 const statusSchema = z
   .any()
+  .optional()
   .transform((v) => toArray(v))
   .transform((arr) =>
     arr

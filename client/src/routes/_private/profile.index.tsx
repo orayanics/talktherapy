@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { Calendar, Mail, User, ShieldCheck } from 'lucide-react'
-import { formatDate } from '@/utils/useDate'
-import { useSession } from '@/context/SessionContext'
+import { formatDate } from '#/utils/useDate'
+import { useSession } from '#/modules/auth/context/SessionContext'
 
 export const Route = createFileRoute('/_private/profile/')({
   component: RouteComponent,

@@ -1,4 +1,4 @@
-import type { ACCOUNT_STATUS } from '@/types/account'
+import type { ACCOUNT_STATUS } from '#/types/account'
 
 const STATUS_STYLE_MAP: Partial<Record<ACCOUNT_STATUS, string>> = {
   active: 'bg-green-50 text-green-700 border-green-200',

@@ -1,13 +1,13 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
-import { fetchUser } from '@/api/users'
+import { fetchUser } from '#/modules/users/api/users'
 import { ArrowLeft, Mail, Calendar } from 'lucide-react'
 
-import { formatDate } from '@/utils/useDate'
-import StateError from '@/components/State/StateError'
-import StateLoading from '@/components/State/StateLoading'
-import StatusPill from '@/components/Decorator/StatusPill'
-import RolePill from '@/components/Decorator/RolePill'
+import { formatDate } from '#/utils/useDate'
+import StateError from '#/components/State/StateError'
+import StateLoading from '#/components/State/StateLoading'
+import StatusPill from '#/components/Decorator/StatusPill'
+import RolePill from '#/components/Decorator/RolePill'
 
 export const Route = createFileRoute('/_private/(adm-shared)/users/$userId')({
   component: RouteComponent,
@@ -47,7 +47,7 @@ function RouteComponent() {
               </p>
 
               <p className="text-slate-500 font-medium text-sm flex items-center gap-1.5">
-                <Calendar size={14} /> {formatDate(data.createdAt)}
+                <Calendar size={14} /> {formatDate(data.created_at)}
               </p>
             </div>
           </div>

@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
-import { fetchDiagnoses } from '@/api/public'
-import type { DiagnosisItem } from '@/api/public'
+import { fetchDiagnoses } from '#/modules/diagnoses/api/diagnoses'
+import type { DiagnosisItem } from '#/modules/diagnoses/api/diagnoses'
 
 import MDEditor from '@uiw/react-md-editor'
 import rehypeSanitize from 'rehype-sanitize'
@@ -9,10 +9,10 @@ import rehypeSanitize from 'rehype-sanitize'
 import { Controller } from 'react-hook-form'
 import { ArrowLeft } from 'lucide-react'
 
-import useUpdateContentForm from '@/modules/content/useUpdateContentForm'
-import StateLoading from '@/components/State/StateLoading'
-import StateError from '@/components/State/StateError'
-import RowError from '@/components/Table/RowError'
+import useUpdateContentForm from '#/modules/content/hooks/useUpdateContentForm'
+import StateLoading from '#/components/State/StateLoading'
+import StateError from '#/components/State/StateError'
+import RowError from '#/components/Table/RowError'
 
 export const Route = createFileRoute(
   '/_private/(shared)/content/_adm/$contentId/edit',

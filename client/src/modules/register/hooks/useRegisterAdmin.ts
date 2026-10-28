@@ -1,0 +1,47 @@
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useState } from 'react'
+
+import { RegisterAdminSchema } from '../types/schema'
+import type { TRegisterAdmin } from '../types/schema'
+
+import { mutateRegisterAdmin } from '#/modules/register/api/register'
+import { errMsg } from '#/lib/errorMessage'
+
+export default function useRegisterAdmin() {
+  const [apiError, setApiError] = useState<string | null>(null)
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    reset,
+  } = useForm<TRegisterAdmin>({
+    resolver: zodResolver(RegisterAdminSchema),
+    defaultValues: {
+      name: '',
+      email: '',
+    },
+  })
+
+  const registerMutation = mutateRegisterAdmin()
+
+  const onSubmit = handleSubmit(async (data) => {
+    setApiError(null)
+
+    try {
+      await registerMutation.mutateAsync(data)
+    } catch (error: unknown) {
+      setApiError(errMsg(error, 'Register admin failed'))
+    }
+  })
+
+  return {
+    register,
+    reset,
+    onSubmit,
+    errors,
+    apiError,
+    isLoading: registerMutation.isPending || isSubmitting,
+  }
+}
