@@ -1,0 +1,45 @@
+name: React client
+
+on:
+  push:
+    branches: [main, staging]
+  pull_request:
+  workflow_dispatch:
+  workflow_call:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: client-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: client
+    env:
+      CI: 'true'
+      VITE_STAGE: test
+      VITE_APP_API_URL: http://localhost:8080
+      VITE_APP_WSS_URL: ws://localhost:8081
+      VITE_REVERB_APP_KEY: ci-local
+      VITE_REVERB_HOST: localhost
+      VITE_REVERB_PORT: '8081'
+      VITE_REVERB_SCHEME: http
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: client/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npx tsc --noEmit
+      - run: npm test
+      - run: npm run build
+      - run: npm audit --audit-level=high
