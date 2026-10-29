@@ -23,5 +23,10 @@ export default function useBookSlot() {
     }
   }
 
-  return { submit, apiError, isLoading: mutation.isPending }
+  const reset = () => {
+    setApiError(null)
+    mutation.reset()
+  }
+
+  return { submit, reset, apiError, isLoading: mutation.isPending }
 }

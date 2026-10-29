@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import ModalBody from '#/components/Modal/ModalBody'
 import { AppointmentActionSchema } from '../types/schema'
@@ -47,11 +48,16 @@ export default function AppointmentActionModal({
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors, isSubmitting },
   } = useForm<TAppointmentAction>({
     resolver: zodResolver(AppointmentActionSchema),
     defaultValues: { reason: '', is_hidden: false },
   })
+
+  useEffect(() => {
+    if (!isOpen) reset()
+  }, [isOpen, reset])
 
   const submit = handleSubmit(async (data) => {
     try {

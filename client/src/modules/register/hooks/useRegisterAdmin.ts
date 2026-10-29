@@ -8,7 +8,7 @@ import type { TRegisterAdmin } from '../types/schema'
 import { mutateRegisterAdmin } from '#/modules/register/api/register'
 import { errMsg } from '#/lib/errorMessage'
 
-export default function useRegisterAdmin() {
+export default function useRegisterAdmin(onSuccess?: () => void) {
   const [apiError, setApiError] = useState<string | null>(null)
 
   const {
@@ -31,14 +31,23 @@ export default function useRegisterAdmin() {
 
     try {
       await registerMutation.mutateAsync(data)
+      reset()
+      registerMutation.reset()
+      onSuccess?.()
     } catch (error: unknown) {
       setApiError(errMsg(error, 'Register admin failed'))
     }
   })
 
+  const resetState = () => {
+    reset()
+    setApiError(null)
+    registerMutation.reset()
+  }
+
   return {
     register,
-    reset,
+    reset: resetState,
     onSubmit,
     errors,
     apiError,

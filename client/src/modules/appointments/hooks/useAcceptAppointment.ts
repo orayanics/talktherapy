@@ -19,5 +19,10 @@ export default function useAcceptAppointment() {
     }
   }
 
-  return { submit, apiError, isLoading: (mutation as any).isPending }
+  const reset = () => {
+    setApiError(null)
+    mutation.reset()
+  }
+
+  return { submit, reset, apiError, isLoading: mutation.isPending }
 }

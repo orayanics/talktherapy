@@ -8,7 +8,7 @@ import type { TRegisterClinician } from '../types/schema'
 import { mutateRegisterClinician } from '#/modules/register/api/register'
 import { errMsg } from '#/lib/errorMessage'
 
-export default function useRegisterClinician() {
+export default function useRegisterClinician(onSuccess?: () => void) {
   const [apiError, setApiError] = useState<string | null>(null)
 
   const {
@@ -31,14 +31,23 @@ export default function useRegisterClinician() {
 
     try {
       await registerMutation.mutateAsync(data)
+      reset()
+      registerMutation.reset()
+      onSuccess?.()
     } catch (error: unknown) {
       setApiError(errMsg(error, 'Register clinician failed'))
     }
   })
 
+  const resetState = () => {
+    reset()
+    setApiError(null)
+    registerMutation.reset()
+  }
+
   return {
     register,
-    reset,
+    reset: resetState,
     onSubmit,
     errors,
     apiError,

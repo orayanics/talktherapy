@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import useRegisterAdmin from '#/modules/register/hooks/useRegisterAdmin'
 import type { ModalProps } from '#/types/component'
 
@@ -6,11 +7,15 @@ import RowError from '#/components/Table/RowError'
 
 export default function RegisterAdmin(props: ModalProps) {
   const { isOpen, onClose } = props
+  const [addAnother, setAddAnother] = useState(false)
 
   const { register, reset, onSubmit, errors, apiError, isLoading } =
-    useRegisterAdmin()
+    useRegisterAdmin(() => {
+      if (!addAnother) onClose()
+    })
   const handleClose = () => {
     reset()
+    setAddAnother(false)
     onClose()
   }
 
@@ -43,6 +48,15 @@ export default function RegisterAdmin(props: ModalProps) {
           </div>
 
           <div className="space-x-2">
+            <label className="label mb-3 w-fit cursor-pointer gap-2">
+              <input
+                type="checkbox"
+                className="checkbox checkbox-sm"
+                checked={addAnother}
+                onChange={(event) => setAddAnother(event.target.checked)}
+              />
+              Add another after saving
+            </label>
             <button type="button" className="btn" onClick={handleClose}>
               Close
             </button>

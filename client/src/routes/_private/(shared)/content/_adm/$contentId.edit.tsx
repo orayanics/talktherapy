@@ -110,7 +110,7 @@ function RouteComponent() {
                 Diagnosis Category
               </span>
               <select className="select w-full" {...register('diagnosis_id')}>
-                <option value="">Select Diagnosis</option>
+                <option value="" disabled>Select Diagnosis</option>
                 {diagnoses.map((item: DiagnosisItem) => (
                   <option key={item.id} value={item.id}>
                     {item.label}

@@ -65,7 +65,11 @@ export default function ClinicianDashboard() {
     countsByDay[key] = (countsByDay[key] ?? 0) + 1
   }
 
-  const { submit: submitReject, apiError } = useAppointmentAction(true)
+  const {
+    submit: submitReject,
+    reset: resetReject,
+    apiError,
+  } = useAppointmentAction(true)
   const acceptAction = useAcceptAppointment()
   const completeAction = useCompleteAppointment()
 
@@ -97,6 +101,24 @@ export default function ClinicianDashboard() {
   const handleCompleteSubmit = async (payload?: any) => {
     if (!selected) return
     await completeAction.submit(selected, payload)
+  }
+
+  const closeReject = () => {
+    setOpenReject(false)
+    setSelected(null)
+    resetReject()
+  }
+
+  const closeAccept = () => {
+    setOpenAccept(false)
+    setSelected(null)
+    acceptAction.reset()
+  }
+
+  const closeComplete = () => {
+    setOpenComplete(false)
+    setSelected(null)
+    completeAction.reset()
   }
 
   if (q.isLoading) return <StateLoading />
@@ -253,21 +275,21 @@ export default function ClinicianDashboard() {
 
       <AppointmentActionModal
         isOpen={openReject}
-        onClose={() => setOpenReject(false)}
+        onClose={closeReject}
         onSubmit={handleRejectSubmit}
         isClinician={true}
         apiError={apiError}
       />
       <AcceptAppointmentModal
         isOpen={openAccept}
-        onClose={() => setOpenAccept(false)}
+        onClose={closeAccept}
         onSubmit={handleAcceptSubmit}
         isClinician={true}
         apiError={acceptAction.apiError}
       />
       <CompleteAppointmentModal
         isOpen={openComplete}
-        onClose={() => setOpenComplete(false)}
+        onClose={closeComplete}
         onSubmit={handleCompleteSubmit}
         isClinician={true}
         apiError={completeAction.apiError}

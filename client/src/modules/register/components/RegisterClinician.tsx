@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import useRegisterClinician from '#/modules/register/hooks/useRegisterClinician'
 import type { ModalProps } from '#/types/component'
 
@@ -6,12 +7,16 @@ import RowError from '#/components/Table/RowError'
 
 export default function RegisterClinician(props: ModalProps) {
   const { isOpen, onClose } = props
+  const [addAnother, setAddAnother] = useState(false)
 
   const { register, reset, onSubmit, errors, apiError, isLoading } =
-    useRegisterClinician()
+    useRegisterClinician(() => {
+      if (!addAnother) onClose()
+    })
 
   const handleClose = () => {
     reset()
+    setAddAnother(false)
     onClose()
   }
 
@@ -44,6 +49,15 @@ export default function RegisterClinician(props: ModalProps) {
           </div>
 
           <div className="card-footer space-x-2">
+            <label className="label mb-3 w-fit cursor-pointer gap-2">
+              <input
+                type="checkbox"
+                className="checkbox checkbox-sm"
+                checked={addAnother}
+                onChange={(event) => setAddAnother(event.target.checked)}
+              />
+              Add another after saving
+            </label>
             <button type="button" className="btn" onClick={handleClose}>
               Close
             </button>

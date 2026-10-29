@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import useRegisterPatientInvitation from '#/modules/register/hooks/useRegisterPatientInvitation'
 import type { ModalProps } from '#/types/component'
 import ModalBody from '#/components/Modal/ModalBody'
@@ -7,10 +8,14 @@ export default function RegisterPatientInvitation({
   isOpen,
   onClose,
 }: ModalProps) {
+  const [addAnother, setAddAnother] = useState(false)
   const { register, reset, onSubmit, errors, apiError, isLoading } =
-    useRegisterPatientInvitation()
+    useRegisterPatientInvitation(() => {
+      if (!addAnother) onClose()
+    })
   const handleClose = () => {
     reset()
+    setAddAnother(false)
     onClose()
   }
 
@@ -44,6 +49,15 @@ export default function RegisterPatientInvitation({
             The patient will choose a password and diagnosis during activation.
           </p>
           <div className="space-x-2">
+            <label className="label mb-3 w-fit cursor-pointer gap-2">
+              <input
+                type="checkbox"
+                className="checkbox checkbox-sm"
+                checked={addAnother}
+                onChange={(event) => setAddAnother(event.target.checked)}
+              />
+              Invite another after saving
+            </label>
             <button type="button" className="btn" onClick={handleClose}>
               Close
             </button>

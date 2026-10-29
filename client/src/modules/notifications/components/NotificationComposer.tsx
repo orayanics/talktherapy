@@ -1,8 +1,9 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { fetchUsers } from '#/modules/users/api/users'
 import type { AdminUser } from '#/modules/users/types/user'
-import { useAdminNotificationComposer, type BroadcastDraft } from '#/modules/notifications/api/admin'
+import { useAdminNotificationComposer } from '#/modules/notifications/api/admin'
+import type { BroadcastDraft } from '#/modules/notifications/api/admin'
 
 const roles = ['patient', 'clinician', 'admin', 'superadmin'] as const
 
@@ -18,8 +19,13 @@ export default function NotificationComposer() {
   const [message, setMessage] = useState('')
   const users = useQuery(fetchUsers({ page }, { search: search || undefined, account_status: ['active'] }))
   const { preview, send } = useAdminNotificationComposer()
+  const resetPreview = preview.reset
+  const resetSend = send.reset
   const visibleUsers = (users.data?.data ?? []).filter((user) => user.email_verified_at)
-  const selectedUserIds = Object.keys(selectedUsers)
+  const selectedUserIds = useMemo(
+    () => Object.keys(selectedUsers),
+    [selectedUsers],
+  )
   const draft: BroadcastDraft = useMemo(() => ({
     recipient_ids: mode === 'users' ? selectedUserIds : undefined,
     roles: mode === 'role' && selectedRole ? [selectedRole] : undefined,
@@ -29,9 +35,14 @@ export default function NotificationComposer() {
     message,
   }), [channels, message, mode, selectedRole, selectedUserIds, subject, title])
   const canPreview = channels.length > 0 && message.trim().length > 0 && (mode === 'users' ? selectedUserIds.length > 0 : Boolean(selectedRole))
+
+  useEffect(() => {
+    resetPreview()
+    resetSend()
+  }, [draft, resetPreview, resetSend])
   const toggleUser = (user: AdminUser) => setSelectedUsers((current) => {
     const next = { ...current }
-    if (next[user.id]) delete next[user.id]
+    if (user.id in next) delete next[user.id]
     else next[user.id] = user
     return next
   })

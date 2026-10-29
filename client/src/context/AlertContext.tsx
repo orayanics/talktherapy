@@ -38,7 +38,12 @@ export const AlertProvider = ({ children }: { children: React.ReactNode }) => {
   })
 
   const hideAlert = useCallback(() => {
-    setAlert((prev) => ({ ...prev, visible: false }))
+    setAlert((prev) => ({
+      message: '',
+      type: 'info',
+      visible: false,
+      id: prev.id,
+    }))
   }, [])
 
   const showAlert = useCallback((message: string, type: ALERT_TYPE) => {

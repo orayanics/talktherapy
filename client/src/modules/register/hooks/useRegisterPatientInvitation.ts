@@ -6,7 +6,7 @@ import type { TRegisterPatientInvitation } from '#/modules/register/types/schema
 import { mutateRegisterPatientInvitation } from '#/modules/register/api/register'
 import { errMsg } from '#/lib/errorMessage'
 
-export default function useRegisterPatientInvitation() {
+export default function useRegisterPatientInvitation(onSuccess?: () => void) {
   const [apiError, setApiError] = useState<string | null>(null)
   const {
     register,
@@ -22,14 +22,23 @@ export default function useRegisterPatientInvitation() {
     setApiError(null)
     try {
       await mutation.mutateAsync(data)
+      reset()
+      mutation.reset()
+      onSuccess?.()
     } catch (error: unknown) {
       setApiError(errMsg(error, 'Patient invitation failed'))
     }
   })
 
+  const resetState = () => {
+    reset()
+    setApiError(null)
+    mutation.reset()
+  }
+
   return {
     register,
-    reset,
+    reset: resetState,
     onSubmit,
     errors,
     apiError,

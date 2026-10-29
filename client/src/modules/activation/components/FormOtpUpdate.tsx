@@ -93,7 +93,7 @@ export default function FormOtpUpdate({
             <div>
               <FormLabel title="Diagnosis Group" />
               <select className="select w-full" {...register('diagnosis_id')}>
-                <option value="">Select Specialization</option>
+                <option value="" disabled>Select Specialization</option>
                 {diagnoses.map((item: DiagnosisItem) => (
                   <option key={item.id} value={item.id}>
                     {item.label}

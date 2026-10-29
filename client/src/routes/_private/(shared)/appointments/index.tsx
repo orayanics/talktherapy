@@ -72,7 +72,8 @@ function RouteComponent() {
     fetchAppointments({ page }, { from, sort }),
   )
 
-  const { submit, apiError } = useAppointmentAction(isClinician)
+  const { submit, reset: resetAction, apiError } =
+    useAppointmentAction(isClinician)
   const acceptAction = useAcceptAppointment()
   const completeAction = useCompleteAppointment()
   const [selected, setSelected] = useState<string | null>(null)
@@ -119,6 +120,24 @@ function RouteComponent() {
   const handleCompleteSubmit = async (payload?: any) => {
     if (!selected) return
     await completeAction.submit(selected, payload)
+  }
+
+  const closeAction = () => {
+    setOpen(false)
+    setSelected(null)
+    resetAction()
+  }
+
+  const closeAccept = () => {
+    setOpenAccept(false)
+    setSelected(null)
+    acceptAction.reset()
+  }
+
+  const closeComplete = () => {
+    setOpenComplete(false)
+    setSelected(null)
+    completeAction.reset()
   }
 
   return (
@@ -270,21 +289,21 @@ function RouteComponent() {
 
       <AppointmentActionModal
         isOpen={open}
-        onClose={() => setOpen(false)}
+        onClose={closeAction}
         onSubmit={handleSubmit}
         isClinician={isClinician}
         apiError={apiError}
       />
       <AcceptAppointmentModal
         isOpen={openAccept}
-        onClose={() => setOpenAccept(false)}
+        onClose={closeAccept}
         onSubmit={handleAcceptSubmit}
         isClinician={isClinician}
         apiError={acceptAction.apiError}
       />
       <CompleteAppointmentModal
         isOpen={openComplete}
-        onClose={() => setOpenComplete(false)}
+        onClose={closeComplete}
         onSubmit={handleCompleteSubmit}
         isClinician={isClinician}
         apiError={completeAction.apiError}

@@ -77,7 +77,7 @@ function RouteComponent() {
     fetchSlots({ page }, { from, sort, diagnosis }),
   )
 
-  const { submit, apiError, isLoading: isBooking } = useBookSlot()
+  const { submit, reset, apiError, isLoading: isBooking } = useBookSlot()
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
 
@@ -100,6 +100,12 @@ function RouteComponent() {
   const handleSubmit = async (payload: TBookSlot) => {
     if (!selectedSlot) return
     await submit(selectedSlot, payload)
+  }
+
+  const closeBooking = () => {
+    setIsModalOpen(false)
+    setSelectedSlot(null)
+    reset()
   }
 
   return (
@@ -178,7 +184,7 @@ function RouteComponent() {
       />
       <BookModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={closeBooking}
         onSubmit={handleSubmit}
         apiError={apiError}
       />
