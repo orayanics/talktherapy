@@ -6,7 +6,7 @@ import type { LogParams } from '#/modules/logs/types/params'
 
 export interface LogEntry {
   id: string
-  actorId: string
+  actorId: string | null
   actorEmail: string
   actorRole: string
   action: string
@@ -21,6 +21,16 @@ export interface LogsResponse {
   meta: Meta
 }
 
+interface RawLogEntry {
+  id: string
+  actor_id: string | null
+  actor_email?: string | null
+  actor_role?: string | null
+  action: string
+  details: Record<string, unknown>
+  created_at: string
+}
+
 export const fetchLogs = (
   params: QueryParams = {},
   searchParams: LogParams = {},
@@ -30,6 +40,9 @@ export const fetchLogs = (
     per_page: searchParams.per_page,
 
     search: searchParams.search,
+    action: searchParams.action,
+    entity: searchParams.entity,
+    actor_role: searchParams.actor_role,
     date_from: searchParams.date_from,
     date_to: searchParams.date_to,
     sort: searchParams.sort,
@@ -38,11 +51,22 @@ export const fetchLogs = (
   return queryOptions<LogsResponse>({
     queryKey: ['logs', query],
     queryFn: async () => {
-      const { data } = await api('/logs', {
+      const response = await api<{ data: RawLogEntry[]; meta: Meta }>('/api/v1/logs', {
         method: 'GET',
         params: query,
       })
-      return data
+      return {
+        ...response,
+        data: response.data.map((row) => ({
+          id: row.id,
+          actorId: row.actor_id,
+          actorEmail: row.actor_email ?? '',
+          actorRole: row.actor_role ?? '',
+          action: row.action,
+          details: row.details,
+          createdAt: row.created_at,
+        })),
+      }
     },
     staleTime: 1000 * 60 * 60,
   })
@@ -68,7 +92,7 @@ export const exportLogs = async (
   )
 
   // use existing axios `api` wrapper to get a blob response
-  const blob = await api<Blob>('/logs/export', {
+  const blob = await api<Blob>('/api/v1/logs/export', {
     method: 'GET',
     params: normalizedParams,
     responseType: 'blob',
@@ -76,25 +100,9 @@ export const exportLogs = async (
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-')
 
   if (fmt === 'json') {
-    const text = await blob.text()
-
-    const items = text
-      .split(/\r?\n/)
-      .filter(Boolean)
-      .map((l) => {
-        try {
-          return JSON.parse(l)
-        } catch {
-          return null
-        }
-      })
-      .filter(Boolean)
-
     return {
-      blob: new Blob([JSON.stringify(items, null, 2)], {
-        type: 'application/json',
-      }),
-      filename: `audit_logs_${timestamp}.json`,
+      blob,
+      filename: `audit_logs_${timestamp}.jsonl`,
     }
   }
 
@@ -103,3 +111,14 @@ export const exportLogs = async (
     filename: `audit_logs_${timestamp}.csv`,
   }
 }
+
+export const queueLogsExport = async (params: Partial<LogParams> = {}) => {
+  const response = await api<{ data: { id: string; status: string } }>('/api/v1/logs/exports', {
+    method: 'POST',
+    data: { format: 'jsonl', ...params },
+  })
+  return response.data
+}
+
+export const downloadQueuedLogsExport = (id: string) =>
+  api<Blob>(`/api/v1/logs/exports/${id}/download`, { method: 'GET', responseType: 'blob' })

@@ -3,12 +3,14 @@
 use App\Http\Controllers\Api\V1\AdminUserProvisionController;
 use App\Http\Controllers\Api\V1\AdminUserStatusController;
 use App\Http\Controllers\Api\V1\AppointmentController;
+use App\Http\Controllers\Api\V1\AuditLogController;
 use App\Http\Controllers\Api\V1\BookmarkController;
 use App\Http\Controllers\Api\V1\ContentController;
 use App\Http\Controllers\Api\V1\DiagnosisController;
 use App\Http\Controllers\Api\V1\NotificationController;
 use App\Http\Controllers\Api\V1\PatientController;
 use App\Http\Controllers\Api\V1\ProfileController;
+use App\Http\Controllers\Api\V1\ReportingStatsController;
 use App\Http\Controllers\Api\V1\ScheduleController;
 use App\Http\Controllers\Api\V1\SlotController;
 use App\Http\Controllers\Api\V1\SoapController;
@@ -42,6 +44,12 @@ Route::middleware(['auth:sanctum', 'account.active', 'verified'])->group(functio
     Route::post('/me/email-change', [EmailChangeController::class, 'request'])->middleware('throttle:3,1');
     Route::post('/email-change/confirm', [EmailChangeController::class, 'confirm'])->middleware('throttle:10,1');
     Route::get('/users/counts', [UserController::class, 'counts']);
+    Route::get('/reports/stats', ReportingStatsController::class)->name('reports.stats');
+    Route::get('/logs', [AuditLogController::class, 'index'])->name('logs.index');
+    Route::get('/logs/export', [AuditLogController::class, 'export'])->name('logs.export');
+    Route::post('/logs/exports', [AuditLogController::class, 'queue'])->name('logs.exports.queue');
+    Route::get('/logs/exports/{export}', [AuditLogController::class, 'status'])->name('logs.exports.status');
+    Route::get('/logs/exports/{export}/download', [AuditLogController::class, 'download'])->name('logs.export.download');
     Route::post('/users', AdminUserProvisionController::class);
     Route::get('/users', [UserController::class, 'index']);
     Route::patch('/users/{user}/status', AdminUserStatusController::class);

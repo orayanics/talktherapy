@@ -141,11 +141,11 @@ function RouteComponent() {
                 header: 'Actor Email',
                 accessor: 'actorEmail',
 
-                render: (row) => (
+                render: (row) => row.actorId ? (
                   <Link to="/users/$userId" params={{ userId: row.actorId }}>
-                    {row.actorEmail}
+                    {row.actorEmail || 'Deleted actor'}
                   </Link>
-                ),
+                ) : (row.actorEmail || 'Deleted actor'),
               },
               {
                 header: 'Actor Role',

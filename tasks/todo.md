@@ -136,10 +136,10 @@ To run realtime locally, start php artisan reverb:start and php artisan schedule
 
 [Spec and task details](../docs/migration/modules/SPEC-reporting.md#task-plan)
 
-- [ ] G1 Aggregate administrator dashboard counts.
-- [ ] G2 Read safe filtered audit history.
-- [ ] G3 Stream safe bounded CSV/JSONL exports.
-- [ ] G4 Connect reporting consumers.
+- [x] G1 Aggregate administrator dashboard counts.
+- [x] G2 Read safe filtered audit history.
+- [x] G3 Stream safe bounded CSV/JSONL exports.
+- [x] G4 Connect reporting consumers.
 
 ## Migration and cutover
 

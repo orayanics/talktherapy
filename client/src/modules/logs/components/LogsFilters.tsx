@@ -21,7 +21,7 @@ export default function LogsFilters({
   per_page = 10,
   updateSearch,
 }: Props) {
-  const { onSubmit: exportLogs, isLoading, apiError } = useExport()
+  const { onSubmit: exportLogs, onQueue, isLoading, apiError } = useExport()
 
   return (
     <div className="flex lg:flex-row flex-col gap-2">
@@ -155,6 +155,9 @@ export default function LogsFilters({
                   disabled={isLoading}
                 >
                   JSON
+                </button>
+                <button className="btn" onClick={() => onQueue({ search: searchTerm, date_from, date_to })} disabled={isLoading}>
+                  Queue JSONL
                 </button>
               </div>
             </div>
