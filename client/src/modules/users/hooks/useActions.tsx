@@ -9,13 +9,15 @@ export default function useActions() {
     mutationFn: async ({
       userId,
       status,
+      reason,
     }: {
       userId: string
       status: 'active' | 'suspended'
+      reason?: string
     }) => {
       return api(`/api/v1/users/${userId}/status`, {
         method: 'PATCH',
-        data: { status },
+        data: { status, reason },
       })
     },
     onSuccess: async () => {
@@ -25,8 +27,8 @@ export default function useActions() {
     },
   })
 
-  async function suspendUser(userId: string) {
-    await statusMutation.mutateAsync({ userId, status: 'suspended' })
+  async function suspendUser(userId: string, reason: string) {
+    await statusMutation.mutateAsync({ userId, status: 'suspended', reason })
   }
 
   async function reactivateUser(userId: string) {

@@ -227,7 +227,10 @@ export default function UsersList() {
                         ) : user.status === 'active' ? (
                           <button
                             className="btn btn-sm btn-neutral"
-                            onClick={() => suspendUser(user.id)}
+                            onClick={() => {
+                              const reason = window.prompt('Reason for suspension:')?.trim()
+                              if (reason) void suspendUser(user.id, reason)
+                            }}
                           >
                             Suspend
                           </button>

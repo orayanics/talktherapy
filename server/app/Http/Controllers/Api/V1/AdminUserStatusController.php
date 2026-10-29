@@ -10,18 +10,19 @@ use App\Http\Resources\UserResource;
 use App\Models\AuditLog;
 use App\Models\User;
 use App\Models\UserProfile;
+use App\Services\NotificationService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 
 class AdminUserStatusController extends Controller
 {
-    public function __invoke(ChangeUserStatusRequest $request, string $user): UserResource
+    public function __invoke(ChangeUserStatusRequest $request, string $user, NotificationService $notifications): UserResource
     {
         $target = User::query()->with('profile')->findOrFail($user);
         $status = UserStatus::from($request->string('status')->toString());
         Gate::authorize('changeStatus', [$target, $status->value]);
 
-        DB::transaction(function () use ($request, $target, $status): void {
+        DB::transaction(function () use ($request, $target, $status, $notifications): void {
             $lockedUser = User::query()->with('profile')->lockForUpdate()->findOrFail($target->id);
             abort_if($request->user()->is($lockedUser), 403);
 
@@ -51,6 +52,11 @@ class AdminUserStatusController extends Controller
                 'request_id' => $request->attributes->get('request_id'),
                 'details' => ['reason' => $request->validated('reason')],
             ]);
+            $notifications->inApp($lockedUser, 'account', $status === UserStatus::Suspended ? 'Account suspended' : 'Account reactivated', $status === UserStatus::Suspended ? 'Your TalkTherapy account was suspended.' : 'Your TalkTherapy account was reactivated.');
+            $message = $status === UserStatus::Suspended
+                ? 'Your TalkTherapy account was suspended. Reason: '.(string) $request->validated('reason')
+                : 'Your TalkTherapy account was reactivated.';
+            $notifications->email($lockedUser, $status === UserStatus::Suspended ? 'user_suspended' : 'user_reactivated', ['message' => $message]);
         });
 
         return UserResource::make($target->fresh()->load('profile'));

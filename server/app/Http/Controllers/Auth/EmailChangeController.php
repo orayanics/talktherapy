@@ -8,6 +8,7 @@ use App\Http\Requests\Auth\ConfirmEmailChangeRequest;
 use App\Http\Requests\Auth\RequestEmailChangeRequest;
 use App\Models\ActivationChallenge;
 use App\Models\AuditLog;
+use App\Models\OutboxMessage;
 use App\Models\User;
 use App\Notifications\ActivationCodeNotification;
 use Illuminate\Http\JsonResponse;
@@ -25,6 +26,7 @@ class EmailChangeController extends Controller
         $code = DB::transaction(fn (): string => $issuer->handle($request->user(), $newEmail, 'email_change', $newEmail));
         try {
             Notification::route('mail', $newEmail)->notify(new ActivationCodeNotification($code, 'email_change'));
+            OutboxMessage::query()->where('recipient_id', $request->user()->id)->where('kind', 'identity.email_change')->whereNull('broadcasted_at')->latest()->first()?->forceFill(['delivered_at' => now(), 'broadcasted_at' => now()])->save();
         } catch (Throwable $exception) {
             Log::warning('Email change delivery deferred to outbox.', ['exception_type' => $exception::class]);
         }

@@ -11,6 +11,7 @@ use App\Models\Encounter;
 use App\Models\OutboxMessage;
 use App\Models\Slot;
 use App\Models\User;
+use App\Services\NotificationService;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
@@ -19,9 +20,11 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class BookAppointment
 {
     /** @param array{diagnosis: string, chief_complaint: string, referral_source: string, referral_url?: ?string} $encounter */
-    public function book(User $patient, Slot $slot, array $encounter, ?string $requestId): Appointment
+    public function book(User $patient, Slot $slot, array $encounter, ?string $requestId, ?NotificationService $notifications = null): Appointment
     {
-        return DB::transaction(function () use ($patient, $slot, $encounter, $requestId): Appointment {
+        $notifications ??= app(NotificationService::class);
+
+        return DB::transaction(function () use ($patient, $slot, $encounter, $requestId, $notifications): Appointment {
             $lockedSlot = Slot::query()->whereKey($slot->id)->lockForUpdate()->firstOrFail();
             if ($lockedSlot->is_hidden) {
                 throw new NotFoundHttpException;
@@ -89,6 +92,7 @@ class BookAppointment
                     'available_at' => now(),
                     'expires_at' => now()->addDay(),
                 ]);
+                $notifications->email($recipient, 'appointment_booked', ['message' => 'A new appointment request is waiting for you in TalkTherapy.']);
             }
 
             return $appointment->load(['slot', 'patient.profile', 'clinician.profile', 'encounter', 'events']);

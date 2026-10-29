@@ -8,6 +8,7 @@ use App\Http\Requests\Auth\ForgotPasswordRequest;
 use App\Http\Requests\Auth\ResetPasswordRequest;
 use App\Models\AuditLog;
 use App\Models\User;
+use App\Services\NotificationService;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
@@ -19,9 +20,9 @@ use Illuminate\Validation\ValidationException;
 
 class PasswordController extends Controller
 {
-    public function change(ChangePasswordRequest $request): Response
+    public function change(ChangePasswordRequest $request, NotificationService $notifications): Response
     {
-        DB::transaction(function () use ($request): void {
+        DB::transaction(function () use ($request, $notifications): void {
             $request->user()->update(['password' => $request->string('password')->toString(), 'remember_token' => Str::random(60)]);
             $sessions = DB::table('sessions')->where('user_id', $request->user()->id);
             if ($request->hasSession()) {
@@ -36,6 +37,7 @@ class PasswordController extends Controller
                 'entity_id' => $request->user()->id,
                 'request_id' => $request->attributes->get('request_id'),
             ]);
+            $notifications->email($request->user(), 'password_changed', ['message' => 'Your TalkTherapy password was changed. If you did not make this change, contact support immediately.']);
         });
 
         return response()->noContent();

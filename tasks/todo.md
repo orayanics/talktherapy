@@ -99,9 +99,16 @@ Status: implementation in phases. The Laravel platform foundation was completed 
 [Spec and task details](../docs/migration/modules/SPEC-notifications.md#task-plan)
 
 - [x] N1 Implement durable owner-scoped inbox API; owner isolation, idempotent read, admin send, and audit tests pass on SQLite.
-- [x] N2 Implement recoverable outbox delivery with leased claims, idempotent inbox writes, retries, expiry and a minute scanner. SQLite delivery tests pass; queue outage/restart and multi-worker recovery evidence remains pending.
-- [x] N3 Authorize private Reverb channels with the authenticated user, active/verified state and session epoch; callback denial tests pass. Real Reverb auth/revocation checks remain pending.
-- [x] N4 Replace raw notification sockets with Echo/Reverb, CSRF-aware channel auth, user-scoped REST queries, event deduplication and reconnect refetch. Client build passes; real-browser reconnect/account-switch checks remain pending.
+- [x] N2 Implement recoverable in-app and email outbox delivery with leased claims, idempotent inbox writes, retries, expiry and a minute scanner. Appointment, SOAP, identity, account-status and password-change email paths are covered by SQLite tests; queue outage/restart and multi-worker recovery evidence remains pending.
+- [x] N3 Authorize private Reverb channels with the authenticated user, active/verified state and session epoch; callback denial tests pass. Local non-TLS Reverb configuration is verified; real Reverb auth/revocation checks remain pending.
+- [x] N4 Replace raw notification sockets with Echo/Reverb, CSRF-aware channel auth, user-scoped REST queries, event deduplication and reconnect refetch. Client typecheck, lint and build pass; real-browser reconnect/account-switch checks remain pending.
+
+  - [x] Invitation emails for admin-provisioned admin, clinician and patient accounts are delivered through identity outbox processing.
+  - [x] Appointment and SOAP email notifications are delivered to the same recipients as their in-app notifications.
+  - [x] Account suspension requires a reason and includes it in the audit record and suspension email.
+  - [ ] Add scheduled appointment reminders for patients and clinicians with timezone-aware delivery keys.
+  - [ ] Add schedule-change notifications for clinicians and security alerts for email changes to both old and new addresses.
+  - [ ] Verify Mailpit SMTP delivery and Reverb reconnect/account-switch behavior in a real browser session.
 
 ## Realtime sessions
 

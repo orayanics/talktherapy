@@ -7,11 +7,14 @@ use App\Events\UserNotificationAvailable;
 use App\Models\OutboxMessage;
 use App\Models\User;
 use App\Models\UserNotification;
+use App\Notifications\ActivationCodeNotification;
+use App\Notifications\SystemNotification;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Str;
 use Throwable;
 
@@ -22,7 +25,7 @@ class DeliverNotifications extends Command
     public function handle(): int
     {
         OutboxMessage::query()
-            ->whereIn('kind', ['appointment.booked', 'appointment.accepted', 'appointment.rejected', 'appointment.cancelled', 'appointment.completed', 'soap.created', 'soap.updated', 'notification.broadcast'])
+            ->whereIn('kind', $this->supportedKinds())
             ->whereNull('broadcasted_at')
             ->whereNotNull('expires_at')
             ->where('expires_at', '<=', now())
@@ -48,7 +51,7 @@ class DeliverNotifications extends Command
     {
         return DB::transaction(function (): ?OutboxMessage {
             $message = OutboxMessage::query()
-                ->whereIn('kind', ['appointment.booked', 'appointment.accepted', 'appointment.rejected', 'appointment.cancelled', 'appointment.completed', 'soap.created', 'soap.updated', 'notification.broadcast'])
+                ->whereIn('kind', $this->supportedKinds())
                 ->where('attempts', '<', 5)
                 ->where('available_at', '<=', now())
                 ->where(fn (Builder $query): Builder => $query->whereNull('claimed_at')->orWhere('claimed_at', '<', now()->subMinutes(5)))
@@ -69,6 +72,42 @@ class DeliverNotifications extends Command
 
     private function deliver(OutboxMessage $message): void
     {
+        if (str_starts_with($message->kind, 'identity.')) {
+            $email = (string) ($message->payload['email'] ?? '');
+            if ($email !== '') {
+                Notification::route('mail', $email)->notify(new ActivationCodeNotification((string) $message->payload['code'], (string) ($message->payload['purpose'] ?? 'activation')));
+            }
+            $message->forceFill(['delivered_at' => now(), 'broadcasted_at' => now(), 'claimed_at' => null, 'claim_token' => null, 'last_error_code' => null])->save();
+
+            return;
+        }
+        if (str_starts_with($message->kind, 'email.')) {
+            $recipient = User::query()->find($message->recipient_id);
+            if (! $recipient) {
+                $message->forceFill(['delivered_at' => now(), 'broadcasted_at' => now()])->save();
+
+                return;
+            }
+            $subject = match ($message->kind) {
+                'email.appointment_booked' => 'New TalkTherapy appointment request',
+                'email.appointment_accepted' => 'TalkTherapy appointment accepted',
+                'email.appointment_rejected' => 'TalkTherapy appointment declined',
+                'email.appointment_cancelled' => 'TalkTherapy appointment cancelled',
+                'email.appointment_completed' => 'TalkTherapy appointment completed',
+                'email.soap_created' => 'New TalkTherapy clinical record',
+                'email.soap_updated' => 'TalkTherapy clinical record updated',
+                'email.user_invited' => 'Your TalkTherapy account invitation',
+                'email.user_suspended' => 'Your TalkTherapy account was suspended',
+                'email.user_reactivated' => 'Your TalkTherapy account was reactivated',
+                'email.password_changed' => 'Your TalkTherapy password was changed',
+                default => 'TalkTherapy account update',
+            };
+            $body = (string) ($message->payload['message'] ?? 'Your TalkTherapy account has an update.');
+            Notification::route('mail', $recipient->email)->notify(new SystemNotification($subject, $body));
+            $message->forceFill(['delivered_at' => now(), 'broadcasted_at' => now(), 'claimed_at' => null, 'claim_token' => null, 'last_error_code' => null])->save();
+
+            return;
+        }
         $notification = DB::transaction(function () use ($message): ?UserNotification {
             $locked = OutboxMessage::query()->whereKey($message->id)->lockForUpdate()->firstOrFail();
             if ($locked->claim_token !== $message->claim_token) {
@@ -116,6 +155,13 @@ class DeliverNotifications extends Command
     private function notificationFor(OutboxMessage $message): ?UserNotification
     {
         if ($message->kind === 'notification.broadcast') {
+            if (isset($message->payload['title'])) {
+                return UserNotification::query()->firstOrCreate(
+                    ['delivery_key' => $message->delivery_key],
+                    ['user_id' => $message->recipient_id, 'type' => $message->payload['type'], 'title' => $message->payload['title'], 'message' => $message->payload['message'], 'entity_type' => $message->payload['entityType'], 'entity_id' => $message->payload['entityId']],
+                );
+            }
+
             return UserNotification::query()->whereKey($message->payload['notification_id'])->first();
         }
 
@@ -156,5 +202,11 @@ class DeliverNotifications extends Command
             'claim_token' => null,
             'last_error_code' => 'notification_delivery_failed',
         ]);
+    }
+
+    /** @return array<int, string> */
+    private function supportedKinds(): array
+    {
+        return ['appointment.booked', 'appointment.accepted', 'appointment.rejected', 'appointment.cancelled', 'appointment.completed', 'soap.created', 'soap.updated', 'notification.broadcast', 'identity.activation', 'identity.email_change', 'email.appointment_booked', 'email.appointment_accepted', 'email.appointment_rejected', 'email.appointment_cancelled', 'email.appointment_completed', 'email.soap_created', 'email.soap_updated', 'email.user_invited', 'email.user_suspended', 'email.user_reactivated', 'email.password_changed'];
     }
 }

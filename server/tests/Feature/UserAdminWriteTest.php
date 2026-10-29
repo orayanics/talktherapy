@@ -125,8 +125,8 @@ class UserAdminWriteTest extends TestCase
         $actor = $this->createUser(UserRole::Superadmin);
         $otherSuperadmin = $this->createUser(UserRole::Superadmin, email: 'other-superadmin@example.com');
 
-        $this->actingAs($actor)->patchJson("/api/v1/users/{$actor->id}/status", ['status' => 'suspended'])->assertForbidden();
-        $this->actingAs($actor)->patchJson("/api/v1/users/{$otherSuperadmin->id}/status", ['status' => 'suspended'])
+        $this->actingAs($actor)->patchJson("/api/v1/users/{$actor->id}/status", ['status' => 'suspended', 'reason' => 'Policy violation'])->assertForbidden();
+        $this->actingAs($actor)->patchJson("/api/v1/users/{$otherSuperadmin->id}/status", ['status' => 'suspended', 'reason' => 'Policy violation'])
             ->assertOk();
 
         $this->assertSame(UserStatus::Active, $actor->fresh()->profile->status);
@@ -139,7 +139,7 @@ class UserAdminWriteTest extends TestCase
         $target = $this->createUser(UserRole::Admin, email: 'admin@example.com');
         DB::table('sessions')->insert(['id' => 'target-session', 'user_id' => $target->id, 'payload' => '', 'last_activity' => time()]);
 
-        $this->actingAs($actor)->patchJson("/api/v1/users/{$target->id}/status", ['status' => 'suspended'])->assertOk()
+        $this->actingAs($actor)->patchJson("/api/v1/users/{$target->id}/status", ['status' => 'suspended', 'reason' => 'Policy violation'])->assertOk()
             ->assertJsonPath('data.status', 'suspended');
 
         $this->assertDatabaseMissing('sessions', ['user_id' => $target->id]);
@@ -156,11 +156,11 @@ class UserAdminWriteTest extends TestCase
         $pendingUser = $this->createUser(UserRole::Patient, UserStatus::Pending, 'pending@example.com');
         $activeUser = $this->createUser(UserRole::Patient, UserStatus::Active, 'active@example.com');
 
-        $this->actingAs($actor)->patchJson("/api/v1/users/{$pendingUser->id}/status", ['status' => 'suspended'])
+        $this->actingAs($actor)->patchJson("/api/v1/users/{$pendingUser->id}/status", ['status' => 'suspended', 'reason' => 'Policy violation'])
             ->assertConflict();
-        $this->actingAs($actor)->patchJson("/api/v1/users/{$activeUser->id}/status", ['status' => 'suspended'])
+        $this->actingAs($actor)->patchJson("/api/v1/users/{$activeUser->id}/status", ['status' => 'suspended', 'reason' => 'Policy violation'])
             ->assertOk();
-        $this->actingAs($actor)->patchJson("/api/v1/users/{$activeUser->id}/status", ['status' => 'suspended'])
+        $this->actingAs($actor)->patchJson("/api/v1/users/{$activeUser->id}/status", ['status' => 'suspended', 'reason' => 'Policy violation'])
             ->assertConflict();
         $this->actingAs($actor)->patchJson("/api/v1/users/{$activeUser->id}/status", ['status' => 'active'])
             ->assertOk();
@@ -177,9 +177,9 @@ class UserAdminWriteTest extends TestCase
         $actor = $this->createUser(UserRole::Patient);
         $target = $this->createUser(UserRole::Clinician, email: 'status-target@example.com');
 
-        $this->actingAs($actor)->patchJson("/api/v1/users/{$target->id}/status", ['status' => 'suspended'])
+        $this->actingAs($actor)->patchJson("/api/v1/users/{$target->id}/status", ['status' => 'suspended', 'reason' => 'Policy violation'])
             ->assertForbidden();
-        $this->actingAs($actor)->patchJson('/api/v1/users/00000000-0000-4000-8000-000000000000/status', ['status' => 'suspended'])
+        $this->actingAs($actor)->patchJson('/api/v1/users/00000000-0000-4000-8000-000000000000/status', ['status' => 'suspended', 'reason' => 'Policy violation'])
             ->assertForbidden();
     }
 

@@ -6,15 +6,18 @@ use App\Models\AuditLog;
 use App\Models\OutboxMessage;
 use App\Models\Soap;
 use App\Models\User;
+use App\Services\NotificationService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 
 class CreateSoap
 {
     /** @param array{activity_plan: string, session_type?: ?string, subjective_notes?: ?string, objective_notes?: ?string, assessment?: ?string, recommendation?: ?string, comments?: ?string} $input */
-    public function create(User $clinician, User $patient, array $input, ?string $requestId): Soap
+    public function create(User $clinician, User $patient, array $input, ?string $requestId, ?NotificationService $notifications = null): Soap
     {
-        return DB::transaction(function () use ($clinician, $patient, $input, $requestId): Soap {
+        $notifications ??= app(NotificationService::class);
+
+        return DB::transaction(function () use ($clinician, $patient, $input, $requestId, $notifications): Soap {
             Gate::forUser($clinician)->authorize('createForPatient', [Soap::class, $patient]);
 
             $soap = Soap::query()->create([
@@ -41,6 +44,7 @@ class CreateSoap
                 'available_at' => now(),
                 'expires_at' => now()->addDays(30),
             ]);
+            $notifications->email($patient, 'soap_created', ['message' => 'A new clinical record is available in TalkTherapy.']);
 
             return $soap->load(['clinician:id,name', 'clinician.profile.diagnosis', 'patient:id,name']);
         });

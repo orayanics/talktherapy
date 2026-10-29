@@ -6,6 +6,7 @@ use App\Models\AuditLog;
 use App\Models\OutboxMessage;
 use App\Models\Soap;
 use App\Models\User;
+use App\Services\NotificationService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
@@ -13,9 +14,11 @@ use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 class UpdateSoap
 {
     /** @param array{version: int, activity_plan?: string, session_type?: ?string, subjective_notes?: ?string, objective_notes?: ?string, assessment?: ?string, recommendation?: ?string, comments?: ?string} $input */
-    public function update(User $clinician, Soap $soap, array $input, ?string $requestId): Soap
+    public function update(User $clinician, Soap $soap, array $input, ?string $requestId, ?NotificationService $notifications = null): Soap
     {
-        return DB::transaction(function () use ($clinician, $soap, $input, $requestId): Soap {
+        $notifications ??= app(NotificationService::class);
+
+        return DB::transaction(function () use ($clinician, $soap, $input, $requestId, $notifications): Soap {
             $record = Soap::query()->whereKey($soap->id)->lockForUpdate()->firstOrFail();
             Gate::forUser($clinician)->authorize('update', $record);
             $version = $input['version'];
@@ -48,6 +51,7 @@ class UpdateSoap
                 'available_at' => now(),
                 'expires_at' => now()->addDays(30),
             ]);
+            $notifications->email(User::query()->findOrFail($record->patient_id), 'soap_updated', ['message' => 'A clinical record was updated in TalkTherapy.']);
 
             return $record->fresh()->load(['clinician:id,name', 'clinician.profile.diagnosis', 'patient:id,name']);
         });

@@ -10,6 +10,7 @@ use App\Models\ClinicianPatient;
 use App\Models\OutboxMessage;
 use App\Models\Slot;
 use App\Models\User;
+use App\Services\NotificationService;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
@@ -21,35 +22,37 @@ use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 class TransitionAppointment
 {
     /** @param array{reason?: string, is_hidden?: bool} $input */
-    public function accept(User $actor, string $appointmentId, array $input, ?string $requestId): Appointment
+    public function accept(User $actor, string $appointmentId, array $input, ?string $requestId, ?NotificationService $notifications = null): Appointment
     {
-        return $this->transition($actor, $appointmentId, 'accept', $input, $requestId);
+        return $this->transition($actor, $appointmentId, 'accept', $input, $requestId, $notifications);
     }
 
     /** @param array{reason: string, is_hidden?: bool} $input */
-    public function reject(User $actor, string $appointmentId, array $input, ?string $requestId): Appointment
+    public function reject(User $actor, string $appointmentId, array $input, ?string $requestId, ?NotificationService $notifications = null): Appointment
     {
-        return $this->transition($actor, $appointmentId, 'reject', $input, $requestId);
+        return $this->transition($actor, $appointmentId, 'reject', $input, $requestId, $notifications);
     }
 
     /** @param array{reason: string} $input */
-    public function cancel(User $actor, string $appointmentId, array $input, ?string $requestId): Appointment
+    public function cancel(User $actor, string $appointmentId, array $input, ?string $requestId, ?NotificationService $notifications = null): Appointment
     {
-        return $this->transition($actor, $appointmentId, 'cancel', $input, $requestId);
+        return $this->transition($actor, $appointmentId, 'cancel', $input, $requestId, $notifications);
     }
 
     /** @param array<string, mixed> $input */
-    public function complete(User $actor, string $appointmentId, array $input, ?string $requestId): Appointment
+    public function complete(User $actor, string $appointmentId, array $input, ?string $requestId, ?NotificationService $notifications = null): Appointment
     {
-        return $this->transition($actor, $appointmentId, 'complete', $input, $requestId);
+        return $this->transition($actor, $appointmentId, 'complete', $input, $requestId, $notifications);
     }
 
     /** @param array<string, mixed> $input */
-    private function transition(User $actor, string $appointmentId, string $action, array $input, ?string $requestId): Appointment
+    private function transition(User $actor, string $appointmentId, string $action, array $input, ?string $requestId, ?NotificationService $notifications): Appointment
     {
         $initial = Appointment::query()->select(['id', 'slot_id'])->findOrFail($appointmentId);
 
-        return DB::transaction(function () use ($actor, $initial, $action, $input, $requestId): Appointment {
+        $notifications ??= app(NotificationService::class);
+
+        return DB::transaction(function () use ($actor, $initial, $action, $input, $requestId, $notifications): Appointment {
             $slot = Slot::query()->whereKey($initial->slot_id)->lockForUpdate()->firstOrFail();
             $appointment = Appointment::query()->whereKey($initial->id)->lockForUpdate()->firstOrFail();
             if ($actor->id !== $appointment->patient_id && $actor->id !== $appointment->clinician_id) {
@@ -136,6 +139,7 @@ class TransitionAppointment
                 'available_at' => now(),
                 'expires_at' => now()->addDay(),
             ]);
+            $notifications->email(User::query()->findOrFail($recipientId), 'appointment_'.$eventAction, ['message' => "Your appointment status is now {$appointment->status}."]);
 
             if ($action === 'complete') {
                 $now = now();

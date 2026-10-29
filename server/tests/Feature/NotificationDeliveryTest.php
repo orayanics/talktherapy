@@ -7,9 +7,12 @@ use App\Events\UserNotificationAvailable;
 use App\Models\OutboxMessage;
 use App\Models\User;
 use App\Models\UserNotification;
+use App\Notifications\ActivationCodeNotification;
+use App\Notifications\SystemNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Notification;
 use RuntimeException;
 use Tests\TestCase;
 
@@ -19,7 +22,7 @@ class NotificationDeliveryTest extends TestCase
 
     public function test_delivery_creates_one_safe_notification_and_is_idempotent(): void
     {
-        $recipient = User::factory()->create(['email_verified_at' => now()]);
+        $recipient = User::factory()->create(['email' => 'patient@example.com', 'email_verified_at' => now()]);
         $recipient->profile()->create(['role' => UserRole::Patient, 'status' => 'active']);
         $outbox = OutboxMessage::query()->create([
             'kind' => 'soap.created',
@@ -74,5 +77,53 @@ class NotificationDeliveryTest extends TestCase
 
         $this->assertDatabaseCount('notifications', 1);
         $this->assertSame(2, $outbox->fresh()->attempts);
+    }
+
+    public function test_email_outbox_delivery_sends_without_creating_an_inbox_row(): void
+    {
+        $recipient = User::factory()->create(['email' => 'patient@example.com', 'email_verified_at' => now()]);
+        $recipient->profile()->create(['role' => UserRole::Patient, 'status' => 'active']);
+        OutboxMessage::query()->create([
+            'kind' => 'email.password_changed',
+            'aggregate_id' => $recipient->id,
+            'recipient_id' => $recipient->id,
+            'delivery_key' => 'email:password-changed:test:'.$recipient->id,
+            'payload' => ['message' => 'Your password changed.'],
+            'available_at' => now(),
+            'expires_at' => now()->addDay(),
+        ]);
+        Notification::fake();
+
+        Artisan::call('app:deliver-notifications');
+
+        Notification::assertSentOnDemand(SystemNotification::class, function ($notification, array $channels, object $notifiable): bool {
+            return $notification->subject === 'Your TalkTherapy password was changed'
+                && $notification->body === 'Your password changed.'
+                && $notifiable->routes['mail'] === 'patient@example.com';
+        });
+        $this->assertDatabaseCount('notifications', 0);
+        $this->assertNotNull(OutboxMessage::query()->where('kind', 'email.password_changed')->sole()->broadcasted_at);
+    }
+
+    public function test_identity_activation_outbox_sends_invitation_email(): void
+    {
+        $recipient = User::factory()->create(['email' => 'invite@example.com']);
+        $recipient->profile()->create(['role' => UserRole::Clinician, 'status' => 'pending']);
+        OutboxMessage::query()->create([
+            'kind' => 'identity.activation',
+            'aggregate_id' => fake()->uuid(),
+            'recipient_id' => $recipient->id,
+            'delivery_key' => 'identity:activation:test:'.$recipient->id,
+            'payload' => ['email' => $recipient->email, 'code' => '123456', 'purpose' => 'activation'],
+            'available_at' => now(),
+            'expires_at' => now()->addDay(),
+        ]);
+        Notification::fake();
+
+        Artisan::call('app:deliver-notifications');
+
+        Notification::assertSentOnDemand(ActivationCodeNotification::class, function ($notification, array $channels, object $notifiable): bool {
+            return $notification->code === '123456' && $notifiable->routes['mail'] === 'invite@example.com';
+        });
     }
 }

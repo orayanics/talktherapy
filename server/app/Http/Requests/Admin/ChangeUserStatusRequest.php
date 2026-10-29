@@ -27,7 +27,7 @@ class ChangeUserStatusRequest extends FormRequest
     {
         return [
             'status' => ['required', Rule::enum(UserStatus::class)->only([UserStatus::Active, UserStatus::Suspended])],
-            'reason' => ['nullable', 'string', 'max:1000'],
+            'reason' => ['required_if:status,suspended', 'nullable', 'string', 'max:1000'],
         ];
     }
 }

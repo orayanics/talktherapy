@@ -11,6 +11,7 @@ use App\Http\Requests\Auth\ResendActivationRequest;
 use App\Http\Requests\Auth\VerifyOtpRequest;
 use App\Models\ActivationChallenge;
 use App\Models\AuditLog;
+use App\Models\OutboxMessage;
 use App\Models\User;
 use App\Notifications\ActivationCodeNotification;
 use Illuminate\Http\JsonResponse;
@@ -54,6 +55,7 @@ class ActivationController extends Controller
         ));
         try {
             $user->notify(new ActivationCodeNotification($code));
+            OutboxMessage::query()->where('recipient_id', $user->id)->where('kind', 'identity.activation')->whereNull('broadcasted_at')->latest()->first()?->forceFill(['delivered_at' => now(), 'broadcasted_at' => now()])->save();
         } catch (Throwable $exception) {
             Log::warning('Activation email delivery deferred to outbox.', ['exception_type' => $exception::class]);
         }
