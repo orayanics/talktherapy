@@ -9,7 +9,7 @@ export default function SlpImprovement({ result }: SlpImprovementProps) {
   if (!isShow) return null
   return (
     <div className="space-y-2">
-      <p className="uppercase font-medium">Needs improvement</p>
+      <p className="uppercase font-medium">Areas to practice</p>
       <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
         {result.analysis.structured.needsWorkUnits.slice(0, 10).map((item) => (
           <li
@@ -27,7 +27,7 @@ export default function SlpImprovement({ result }: SlpImprovementProps) {
               ) : null}
             </div>
             <div className="font-mono tabular-nums text-sm">
-              {item.avgScore.toFixed(1)}% correct
+              {item.avgScore.toFixed(1)}% practice estimate
             </div>
           </li>
         ))}

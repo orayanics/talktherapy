@@ -28,7 +28,7 @@ export type UnitAssessment = {
 export type OverallAssessment = {
   avgScore: number
   percentAboveNeedsWork: number
-  status: 'accurate' | 'mixed' | 'needs_work'
+  status: 'accurate' | 'mixed' | 'needs_work' | 'unknown'
 }
 
 export type StructuredAssessment = {
@@ -61,20 +61,36 @@ export type AssessResponse = {
   feedback: AssessFeedback
 }
 
+export const MAX_AUDIO_BYTES = 10 * 1024 * 1024
+export const MAX_REFERENCE_LENGTH = 800
+
 export const assessPronunciation = async (
   audioBlob: Blob,
   referenceText: string,
 ): Promise<AssessResponse> => {
-  const formData = new FormData()
-  formData.append('audio', audioBlob, 'recording.webm')
-  formData.append('referenceText', referenceText)
+  if (audioBlob.size === 0 || audioBlob.size > MAX_AUDIO_BYTES) {
+    throw new Error('Recording must be between 1 byte and 10 MiB.')
+  }
 
-  const { data } = await api<{ data: AssessResponse }>('/slp/assess', {
+  const trimmedReferenceText = referenceText.trim()
+  if (
+    !trimmedReferenceText ||
+    trimmedReferenceText.length > MAX_REFERENCE_LENGTH
+  ) {
+    throw new Error('Reference text must be between 1 and 800 characters.')
+  }
+
+  const formData = new FormData()
+  const extension = audioBlob.type.toLowerCase().includes('wav')
+    ? 'wav'
+    : 'webm'
+  formData.append('audio', audioBlob, `recording.${extension}`)
+  formData.append('reference_text', trimmedReferenceText)
+
+  const { data } = await api<{ data: AssessResponse }>('/api/v1/slp/assess', {
     method: 'POST',
     data: formData,
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
+    timeout: 50_000,
   })
   return data
 }

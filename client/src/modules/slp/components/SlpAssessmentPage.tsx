@@ -1,5 +1,6 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import useSlpAssessment from '#/modules/slp/hooks/useSlpAssessment'
+import { MAX_AUDIO_BYTES, MAX_REFERENCE_LENGTH } from '#/modules/slp/api/slp'
 import FormLabel from '#/components/Form/FormLabel'
 import SlpImprovement from './SlpImprovement'
 import SlpAccurate from './SlpAccurate'
@@ -18,6 +19,11 @@ export default function SlpAssessmentPage() {
   const recorderRef = useRef<MediaRecorder | null>(null)
   const chunksRef = useRef<Blob[]>([])
 
+  useEffect(() => {
+    if (!audioUrl) return
+    return () => URL.revokeObjectURL(audioUrl)
+  }, [audioUrl])
+
   const { result, apiError, submitAssessment, resetAssessment, isSubmitting } =
     useSlpAssessment()
 
@@ -26,40 +32,69 @@ export default function SlpAssessmentPage() {
   const startRecording = async () => {
     setLocalError(null)
     resetAssessment()
+    setAudioBlob(null)
+    setAudioUrl(null)
 
     const mediaDevices = Reflect.get(navigator, 'mediaDevices') as
       MediaDevices | undefined
-    if (typeof mediaDevices?.getUserMedia !== 'function') {
+    if (typeof mediaDevices?.getUserMedia !== 'function' || typeof MediaRecorder === 'undefined') {
       setLocalError('Microphone is not available in this browser.')
       return
     }
 
+    let stream: MediaStream | null = null
     try {
-      const stream = await mediaDevices.getUserMedia({ audio: true })
-      const recorder = new MediaRecorder(stream)
+      stream = await mediaDevices.getUserMedia({ audio: true })
+      const mimeType = ['audio/webm;codecs=opus', 'audio/webm'].find((type) =>
+        MediaRecorder.isTypeSupported(type),
+      )
+      if (!mimeType) {
+        stream.getTracks().forEach((track) => track.stop())
+        setLocalError('This browser cannot record the supported WebM audio format.')
+        return
+      }
+
+      const recorder = new MediaRecorder(stream, { mimeType })
       chunksRef.current = []
+      let recordedBytes = 0
+      let exceededLimit = false
 
       recorder.ondataavailable = (event: BlobEvent) => {
-        if (event.data.size > 0) chunksRef.current.push(event.data)
+        if (event.data.size === 0 || exceededLimit) return
+        if (recordedBytes + event.data.size > MAX_AUDIO_BYTES) {
+          exceededLimit = true
+          chunksRef.current = []
+          setLocalError('Recording exceeded the 10 MiB upload limit. Try a shorter recording.')
+          if (recorder.state !== 'inactive') recorder.stop()
+          return
+        }
+        recordedBytes += event.data.size
+        chunksRef.current.push(event.data)
       }
 
       recorder.onstop = () => {
+        setIsRecording(false)
+        recorderRef.current = null
+        stream?.getTracks().forEach((track) => track.stop())
+        if (exceededLimit) {
+          setAudioBlob(null)
+          setAudioUrl(null)
+          return
+        }
+
         const blob = new Blob(chunksRef.current, {
-          type: recorder.mimeType || 'audio/webm',
+          type: recorder.mimeType,
         })
         setAudioBlob(blob)
-
-        if (audioUrl) URL.revokeObjectURL(audioUrl)
         const url = URL.createObjectURL(blob)
         setAudioUrl(url)
-
-        for (const track of stream.getTracks()) track.stop()
       }
 
       recorderRef.current = recorder
-      recorder.start()
+      recorder.start(1000)
       setIsRecording(true)
     } catch {
+      stream?.getTracks().forEach((track) => track.stop())
       setLocalError('Microphone permission denied or unavailable.')
     }
   }
@@ -67,7 +102,6 @@ export default function SlpAssessmentPage() {
   const stopRecording = () => {
     if (!recorderRef.current) return
     recorderRef.current.stop()
-    setIsRecording(false)
   }
 
   const onAssess = async () => {
@@ -78,8 +112,18 @@ export default function SlpAssessmentPage() {
       return
     }
 
+    if (audioBlob.size > MAX_AUDIO_BYTES) {
+      setLocalError('Recording exceeds the 10 MiB upload limit. Record a shorter clip.')
+      return
+    }
+
     if (!referenceText.trim()) {
       setLocalError('Reference text is required.')
+      return
+    }
+
+    if (referenceText.trim().length > MAX_REFERENCE_LENGTH) {
+      setLocalError('Reference text must be 800 characters or fewer.')
       return
     }
 
@@ -96,8 +140,8 @@ export default function SlpAssessmentPage() {
         <p className="text-lg font-bold text-slate-900 uppercase">
           Assisted Practice
         </p>
-        <p className="text-xs text-slate-400 font-medium">
-          Get instant feedback on your pronunciation and tips for improvement.
+        <p className="text-xs text-slate-500 font-medium">
+          Practice with an automated estimate. This is not a diagnosis or clinical measure.
         </p>
       </div>
 
@@ -111,6 +155,7 @@ export default function SlpAssessmentPage() {
             <input
               id="slp-reference-text"
               type="text"
+              maxLength={MAX_REFERENCE_LENGTH}
               className="input w-full"
               value={referenceText}
               onChange={(e) => setReferenceText(e.target.value)}
@@ -127,7 +172,7 @@ export default function SlpAssessmentPage() {
                 disabled={isRecording || isSubmitting}
                 type="button"
               >
-                Start
+                Start recording
               </button>
               <button
                 className="btn btn-neutral"
@@ -135,7 +180,7 @@ export default function SlpAssessmentPage() {
                 disabled={!isRecording || isSubmitting}
                 type="button"
               >
-                Stop
+                Stop recording
               </button>
               <button
                 className="btn btn-primary"
@@ -143,9 +188,15 @@ export default function SlpAssessmentPage() {
                 disabled={!audioBlob || isRecording || isSubmitting}
                 type="button"
               >
-                Assess
+                Analyze practice recording
               </button>
             </div>
+
+            {isSubmitting && (
+              <p className="text-sm text-slate-600" role="status">
+                Analyzing your recording. This can take up to 45 seconds.
+              </p>
+            )}
 
             {audioUrl && (
               <div>

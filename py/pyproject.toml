@@ -8,14 +8,17 @@ version = "0.1.0"
 description = "Private phoneme analysis service for TalkTherapy"
 requires-python = ">=3.11,<3.14"
 dependencies = [
+    "av==18.1.0",
     "fastapi==0.116.1",
     "faster-whisper==1.2.0",
     "phonemizer==3.3.0",
     "python-multipart==0.0.20",
     "PyYAML==6.0.2",
+    "requests==2.34.2",
+    "soundfile==0.13.1",
     "torch==2.8.0",
     "torchaudio==2.8.0",
-    "torchcodec==0.6.0",
+    "torchcodec==0.7.0",
     "uvicorn[standard]==0.35.0",
 ]
 

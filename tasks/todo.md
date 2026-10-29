@@ -133,8 +133,8 @@ To run realtime locally, start php artisan reverb:start and php artisan schedule
 - [ ] F3 Bound uploads/decoder/auth/temporary-file lifecycle.
 - [ ] F4 Isolate inference and readiness.
 - [ ] F5 Validate alignment/duration/scoring semantics.
-- [ ] F6 Add secure bounded Laravel proxy.
-- [ ] F7 Connect browser assessment.
+- [x] F6 Add secure bounded Laravel proxy. Authenticated/rate-limited Laravel route validates upload and reference text, streams audio to the private Python endpoint with a server-only token/request ID, strictly validates the response and maps upstream errors; focused feature tests pass.
+- [ ] F7 Connect browser assessment. Multipart client flow, recording limits, safe errors and estimate-oriented UI are integrated; client tests/lint/build pass, real-browser recording verification remains pending.
 - [ ] F8 Approve maintained/licensed/validated production model path.
 
 ### Python service audit (2026-10-29)

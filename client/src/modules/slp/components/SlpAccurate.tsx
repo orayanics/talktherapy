@@ -10,7 +10,7 @@ export default function SlpAccurate({ result }: SlpAccurateProps) {
 
   return (
     <div className="space-y-2">
-      <div className="uppercase font-medium">Accuracy</div>
+      <div className="uppercase font-medium">Higher practice estimates</div>
       <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
         {result.analysis.structured.accurateUnits.slice(0, 10).map((item) => (
           <li

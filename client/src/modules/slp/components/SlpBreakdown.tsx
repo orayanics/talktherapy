@@ -20,7 +20,7 @@ export default function SlpBreakdown({ result }: SlpBreakdownProps) {
           <thead>
             <tr>
               <th>Word</th>
-              <th className="text-right">Correct Avg (%)</th>
+              <th className="text-right">Average estimate (%)</th>
               <th>Status</th>
               <th>Focus (lowest units)</th>
             </tr>

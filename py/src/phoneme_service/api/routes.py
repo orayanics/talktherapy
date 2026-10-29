@@ -79,7 +79,7 @@ async def save_bounded_upload(audio: UploadFile, destination: Path) -> int:
             output.write(chunk)
     if total == 0:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT, detail="Audio is empty."
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Audio is empty."
         )
     return total
 
@@ -129,13 +129,13 @@ async def assess(
     reference_text = referenceText.strip()
     if not reference_text:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail="Reference text is required.",
         )
     suffix = Path(audio.filename or "recording.webm").suffix.lower()
     if suffix not in {".webm", ".wav"}:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail="Only WebM and WAV audio are supported.",
         )
 
@@ -196,7 +196,7 @@ async def assess(
 
     except ValueError as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail="Audio or reference text could not be analyzed.",
         ) from exc
     except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as exc:

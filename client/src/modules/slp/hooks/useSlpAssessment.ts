@@ -22,11 +22,29 @@ export default function useSlpAssessment() {
     },
     onError: (error: unknown) => {
       if (isAxiosError(error)) {
-        const detail =
-          typeof error.response?.data?.detail === 'string'
-            ? error.response.data.detail
-            : undefined
-        setApiError(detail ?? error.message ?? 'Failed to submit assessment.')
+        const status = error.response?.status
+        const responseData = error.response?.data as
+          | { errors?: Record<string, string[]> }
+          | undefined
+        const fieldError = Object.values(responseData?.errors ?? {})
+          .flat()
+          .find((message) => typeof message === 'string')
+
+        if (status === 413) {
+          setApiError('The recording exceeds the 10 MiB upload limit.')
+        } else if (status === 422) {
+          setApiError(fieldError ?? 'The recording could not be assessed. Check the audio and reference text.')
+        } else if (status === 429) {
+          setApiError('Too many assessments were submitted. Please wait a minute and try again.')
+        } else if (status === 503) {
+          setApiError('The assessment service is busy or unavailable. Please try again later.')
+        } else if (status === 504 || error.code === 'ECONNABORTED' || error.code === 'ETIMEDOUT') {
+          setApiError('The assessment took too long. Try again later with a shorter recording.')
+        } else if (status === 502) {
+          setApiError('The assessment service returned an unusable result. Please try again later.')
+        } else {
+          setApiError('Could not submit the assessment. Check your connection and try again.')
+        }
         return
       }
 

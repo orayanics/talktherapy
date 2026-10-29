@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\V1\DiagnosisController;
 use App\Http\Controllers\Api\V1\NotificationController;
 use App\Http\Controllers\Api\V1\NotificationPreferenceController;
 use App\Http\Controllers\Api\V1\PatientController;
+use App\Http\Controllers\Api\V1\PhonemeAssessmentController;
 use App\Http\Controllers\Api\V1\ProfileController;
 use App\Http\Controllers\Api\V1\ReportingStatsController;
 use App\Http\Controllers\Api\V1\ScheduleController;
@@ -36,6 +37,7 @@ Route::post('/reset-password', [PasswordController::class, 'reset'])->middleware
 
 Route::middleware(['auth:sanctum', 'account.active', 'verified'])->group(function (): void {
     Route::post('/broadcasting/auth', [BroadcastController::class, 'authenticate'])->name('broadcasting.auth');
+    Route::post('/slp/assess', PhonemeAssessmentController::class)->middleware('throttle:5,1')->name('slp.assess');
     Route::get('/me', [SessionController::class, 'show'])->name('me.show');
     Route::get('/notifications/channel', [NotificationController::class, 'channel'])->name('notifications.channel');
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
