@@ -1,5 +1,9 @@
 # TalkTherapy
 
+## Laravel backend migration
+
+The [migration review and specifications](docs/migration/README.md) cover the current `client`, `server`, and `py` code, the Laravel 13 API design, each module's migration tasks, API/data contracts, and cutover/rollback requirements. Start with the [audit](docs/migration/AUDIT.md) and [implementation plan](tasks/plan.md). The Laravel platform foundation is implemented in `server/`; see [phase 1 progress](tasks/phase-1.md). Business modules and client integration remain in progress. The archived Bun reference is in `_server/`.
+
 ## Overview
 
 **TalkTherapy** is a telehealth platform designed for Speech-Language Pathology (SLP) clinicians and patients.
@@ -19,73 +23,24 @@ Originally developed for **UST-CRS** to meet academic requirements, the platform
 
 ## Technology Stack
 
-### Backend
+- Backend: Laravel 13, PHP 8.4+, Sanctum and Predis; SQLite locally.
+- Frontend: React / TanStack Start, Query and Router, Axios, Tailwind, Zod and React Hook Form. Better Auth remains temporarily until client identity migration.
+- Inference: private Python / FastAPI speech analysis service; hardening and scoring validation are scheduled separately.
 
-- **Bun\***
-- **ElysiaJS**
-- **Prisma**
-- **SQLite**
-- **NodeMailer**
-- **Zod**
+## Local development
 
-### Frontend
+Set up the API using [server/README.md](server/README.md), then run from the repository root:
 
-- **TanStack Start** (Query, Router)
-- **Axios**
-- **Tailwind CSS**
-- **Zod**
-- **React Hook Form**
-- **Better Auth**
-
-## Starting in local
-
-To install both web and server dependencies:
-
-```bash
+```sh
 bun install
+bun run dev:server
 ```
 
-To migrate sql:
+Run `bun run dev:client` in another terminal when its configured local TLS certificates are available. The current client still calls legacy endpoints; a running Laravel foundation does not yet make the complete app usable. Client session/API migration is a later phase. Do not run the archived Prisma/Better Auth reset or seed commands against Laravel.
 
-```bash
-cd server
-# If prisma is not yet setup,
-bunx --bun prisma init
-# Generate Prisma Client
-bunx --bun prisma generate
-# Migrate the DB
-bunx --bun prisma migrate dev
-# If error occurs, reset the DB and try again
-bunx --bun prisma migrate reset
-# Seed the DB
-bun run seed
-```
+Backend checks: `bun run test:server` and `bun run lint:server`. Client build: `bun run build`.
 
-Setting up Better-Auth
-https://better-auth.com/docs/installation
-
-```bash
-# Generate table
-bun x auth@latest generate
-# Migrate the DB
-bun x auth@latest migrate
-```
-
-To start the development server run:
-
-```bash
-bun run dev
-```
-
-To generate certs for HTTPS (required for WebRTC):
-
-```bash
-mkcert -install
-mkcert localhost
-
-# Generate certs
-mkcert -key-file key.pem -cert-file cert.pem localhost
-```
+The Python instructions below describe the existing service. Its unpinned stack needs the compatibility and validation work in the phoneme-analysis spec before production use. Use port 8001 for Python when running beside the Laravel development API.
 
 ## Setting Up the Python Environment for Phoneme Analysis
 
@@ -114,5 +69,6 @@ python3 -c "from faster_whisper import WhisperModel; print('ok')"
 To run the FastAPI server for phoneme analysis:
 
 ```bash
-uvicorn service:app --host 0.0.0.0 --port 8000 --reload
+cd py
+uvicorn service:app --host 127.0.0.1 --port 8001 --reload
 ```

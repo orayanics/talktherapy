@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { ArrowLeft } from 'lucide-react'
-import RowError from '@/components/Table/RowError'
-import useCreateSoapForm from '@/modules/soaps/useCreateSoapForm'
+import RowError from '#/components/Table/RowError'
+import useCreateSoapForm from '#/modules/soaps/hooks/useCreateSoapForm'
 
 export const Route = createFileRoute(
   '/_private/(clinician)/patients/$patientId/create',
@@ -32,17 +32,17 @@ function RouteComponent() {
 
           <form onSubmit={createHook.onSubmit} className="space-y-4">
             {createHook.apiError && (
-              <div className="alert alert-soft alert-error">
+              <div className="alert alert-soft alert-error" role="alert">
                 {createHook.apiError}
               </div>
             )}
 
             <div>
-              <label>
+              <label htmlFor="soap-activity-plan">
                 <span className="text-xs font-mono text-gray-400">
                   Activity Plan
                 </span>
-                <input
+                <input id="soap-activity-plan"
                   {...createHook.register('activity_plan')}
                   className="input shadow-sm w-full"
                 />
@@ -51,11 +51,11 @@ function RouteComponent() {
             </div>
 
             <div>
-              <label>
+              <label htmlFor="soap-session-type">
                 <span className="text-xs font-mono text-gray-400">
                   Session Type
                 </span>
-                <input
+                <input id="soap-session-type"
                   {...createHook.register('session_type')}
                   className="input shadow-sm w-full"
                 />
@@ -64,11 +64,11 @@ function RouteComponent() {
             </div>
 
             <div>
-              <label>
+              <label htmlFor="soap-subjective-notes">
                 <span className="text-xs font-mono text-gray-400">
                   Subjective Notes
                 </span>
-                <textarea
+                <textarea id="soap-subjective-notes"
                   {...createHook.register('subjective_notes')}
                   className="textarea w-full"
                 />
@@ -77,11 +77,11 @@ function RouteComponent() {
             </div>
 
             <div>
-              <label>
+              <label htmlFor="soap-objective-notes">
                 <span className="text-xs font-mono text-gray-400">
                   Objective Notes
                 </span>
-                <textarea
+                <textarea id="soap-objective-notes"
                   {...createHook.register('objective_notes')}
                   className="textarea w-full"
                 />
@@ -90,11 +90,11 @@ function RouteComponent() {
             </div>
 
             <div>
-              <label>
+              <label htmlFor="soap-assessment">
                 <span className="text-xs font-mono text-gray-400">
                   Assessment
                 </span>
-                <textarea
+                <textarea id="soap-assessment"
                   {...createHook.register('assessment')}
                   className="textarea w-full"
                 />
@@ -103,11 +103,11 @@ function RouteComponent() {
             </div>
 
             <div>
-              <label>
+              <label htmlFor="soap-recommendation">
                 <span className="text-xs font-mono text-gray-400">
                   Recommendation
                 </span>
-                <textarea
+                <textarea id="soap-recommendation"
                   {...createHook.register('recommendation')}
                   className="textarea w-full"
                 />
@@ -116,11 +116,11 @@ function RouteComponent() {
             </div>
 
             <div>
-              <label>
+              <label htmlFor="soap-comments">
                 <span className="text-xs font-mono text-gray-400">
                   Comments
                 </span>
-                <textarea
+                <textarea id="soap-comments"
                   {...createHook.register('comments')}
                   className="textarea w-full"
                 />

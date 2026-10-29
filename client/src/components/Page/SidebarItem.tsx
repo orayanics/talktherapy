@@ -1,5 +1,5 @@
 import { Link } from '@tanstack/react-router'
-import type { NavItem } from '@/types/component'
+import type { NavItem } from '#/types/component'
 
 export interface SidebarItemProps {
   items?: Array<NavItem>

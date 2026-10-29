@@ -1,4 +1,4 @@
-export default function RowError({ message }: { message?: string }) {
+export default function RowError({ message, id }: { message?: string; id?: string }) {
   if (!message) return null
-  return <p className="text-error text-xs mt-2">{message}</p>
+  return <p id={id} className="text-error text-xs mt-2">{message}</p>
 }

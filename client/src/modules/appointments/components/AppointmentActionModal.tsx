@@ -1,0 +1,135 @@
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useEffect } from 'react'
+import { useForm } from 'react-hook-form'
+import ModalBody from '#/components/Modal/ModalBody'
+import { AppointmentActionSchema } from '../types/schema'
+import type { TAppointmentAction } from '../types/schema'
+import { CircleX } from 'lucide-react'
+
+type Props = {
+  isOpen: boolean
+  onClose: () => void
+  onSubmit: (data: TAppointmentAction) => Promise<void>
+  isClinician: boolean
+  apiError: string | null
+}
+
+const FORM_CONTENT = {
+  clinician: {
+    header: 'Reject Appointment',
+    description: (
+      <>
+        Rejecting this appointment is <b>irreversible</b>. You have the option
+        to set this <b>appointment hidden</b> from list view, which will make it
+        visible to patients again.
+      </>
+    ),
+    submitText: 'Reject',
+  },
+  patient: {
+    header: 'Cancel Appointment',
+    description: (
+      <>
+        Canceling this appointment is irreversible. You{' '}
+        <b>cannot cancel an appointment 1 day before</b> the scheduled time.
+      </>
+    ),
+    submitText: 'Submit',
+  },
+}
+
+export default function AppointmentActionModal({
+  isOpen,
+  onClose,
+  onSubmit,
+  isClinician,
+  apiError,
+}: Props) {
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<TAppointmentAction>({
+    resolver: zodResolver(AppointmentActionSchema),
+    defaultValues: { reason: '', is_hidden: false },
+  })
+
+  useEffect(() => {
+    if (!isOpen) reset()
+  }, [isOpen, reset])
+
+  const submit = handleSubmit(async (data) => {
+    try {
+      await onSubmit(data)
+      onClose()
+    } catch {
+      return
+    }
+  })
+
+  return (
+    <ModalBody isOpen={isOpen} onClose={onClose}>
+      <form
+        onSubmit={submit}
+        className="bg-white overflow-hidden shadow-2xl border border-slate-200"
+      >
+        <div className="bg-rose-100 p-8 space-y-2 text-center">
+          <CircleX size={42} className="text-rose-600 mx-auto" />
+          <h1 className="text-xl font-bold text-slate-800 tracking-tight">
+            {isClinician
+              ? FORM_CONTENT.clinician.header
+              : FORM_CONTENT.patient.header}
+          </h1>
+          <p className="text-rose-700 text-xs font-semibold uppercase tracking-widest mt-1">
+            Action Required
+          </p>
+        </div>
+
+        <div className="p-8 space-y-6">
+          {apiError && (
+            <div className="alert alert-soft alert-error" role="alert">{apiError}</div>
+          )}
+
+          <div className="text-center">
+            <p className="text-slate-600 leading-relaxed">
+              {isClinician
+                ? FORM_CONTENT.clinician.description
+                : FORM_CONTENT.patient.description}
+            </p>
+          </div>
+
+          <div className="flex flex-col">
+            <label htmlFor="appointment-action-reason" className="label">Reason</label>
+            <textarea id="appointment-action-reason" {...register('reason')} className="textarea w-full" aria-invalid={Boolean(errors.reason)} aria-describedby={errors.reason ? 'appointment-action-reason-error' : undefined} />
+            {errors.reason && (
+              <p id="appointment-action-reason-error" role="alert" className="text-sm text-error">{errors.reason.message}</p>
+            )}
+          </div>
+
+          {isClinician && (
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="appointment-action-hidden" {...register('is_hidden')}
+                className="checkbox"
+              />
+              <label htmlFor="appointment-action-hidden" className="label">Hide from List</label>
+            </div>
+          )}
+        </div>
+
+        <div className="p-2 flex justify-end gap-2">
+          <button type="button" className="btn btn-neutral" onClick={onClose}>
+            Close
+          </button>
+          <button disabled={isSubmitting} className="btn btn-error">
+            {isClinician
+              ? FORM_CONTENT.clinician.submitText
+              : FORM_CONTENT.patient.submitText}
+          </button>
+        </div>
+      </form>
+    </ModalBody>
+  )
+}

@@ -1,4 +1,7 @@
 node_modules
 
 certs
-.github
+
+slp-env
+
+_server

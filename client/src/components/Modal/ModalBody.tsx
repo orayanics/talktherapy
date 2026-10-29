@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 
 interface ModalBodyProps {
   children: React.ReactNode
@@ -9,30 +9,31 @@ interface ModalBodyProps {
 
 export default function ModalBody(props: ModalBodyProps) {
   const { children, onClose, className, isOpen } = props
+  const dialogRef = useRef<HTMLDialogElement>(null)
 
   useEffect(() => {
-    if (!isOpen) return
+    const dialog = dialogRef.current
+    if (!dialog || !isOpen || dialog.open) return
 
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        onClose()
-      }
-    }
+    if (typeof dialog.showModal === 'function') dialog.showModal()
+    else dialog.setAttribute('open', '')
+  }, [isOpen])
 
-    window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [isOpen, onClose])
-
-  const modalClassName = [isOpen ? 'modal-open' : '', className || '']
-    .filter(Boolean)
-    .join(' ')
+  if (!isOpen) return null
 
   return (
-    <div className={`${modalClassName} modal modal-middle backdrop-blur-[1px]`}>
+    <dialog
+      ref={dialogRef}
+      className={`modal modal-open modal-middle backdrop-blur-[1px] ${className || ''}`}
+      onCancel={(event) => {
+        event.preventDefault()
+        onClose()
+      }}
+    >
       <div className="modal-box p-0">{children}</div>
       <button type="button" className="modal-backdrop" onClick={onClose}>
         Close
       </button>
-    </div>
+    </dialog>
   )
 }

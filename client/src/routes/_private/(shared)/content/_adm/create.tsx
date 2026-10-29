@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
-import { fetchDiagnoses } from '@/api/public'
-import type { DiagnosisItem } from '@/api/public'
+import { fetchDiagnoses } from '#/modules/diagnoses/api/diagnoses'
+import type { DiagnosisItem } from '#/modules/diagnoses/api/diagnoses'
 
 import MDEditor from '@uiw/react-md-editor'
 import rehypeSanitize from 'rehype-sanitize'
@@ -9,10 +9,10 @@ import rehypeSanitize from 'rehype-sanitize'
 import { Controller } from 'react-hook-form'
 import { ArrowLeft } from 'lucide-react'
 
-import useContentForm from '@/modules/content/useContentForm'
-import StateLoading from '@/components/State/StateLoading'
-import StateError from '@/components/State/StateError'
-import RowError from '@/components/Table/RowError'
+import useContentForm from '#/modules/content/hooks/useContentForm'
+import StateLoading from '#/components/State/StateLoading'
+import StateError from '#/components/State/StateError'
+import RowError from '#/components/Table/RowError'
 
 export const Route = createFileRoute('/_private/(shared)/content/_adm/create')({
   component: RouteComponent,
@@ -46,13 +46,13 @@ function RouteComponent() {
           </h2>
 
           {apiError && (
-            <div className="alert alert-soft alert-error">{apiError}</div>
+            <div className="alert alert-soft alert-error" role="alert">{apiError}</div>
           )}
 
           <div>
-            <label>
+            <label htmlFor="content-title">
               <span className="text-xs font-mono text-gray-400">Title</span>
-              <input
+                <input id="content-title"
                 {...register('title')}
                 placeholder="Title"
                 className="input shadow-sm w-full"
@@ -62,11 +62,11 @@ function RouteComponent() {
           </div>
 
           <div>
-            <label>
+            <label htmlFor="content-description">
               <span className="text-xs font-mono text-gray-400">
                 Description
               </span>
-              <input
+                <input id="content-description"
                 {...register('description')}
                 placeholder="Description"
                 className="input shadow-sm w-full"
@@ -76,15 +76,15 @@ function RouteComponent() {
           </div>
 
           <div>
-            <span className="text-xs font-mono text-gray-400">
+            <label htmlFor="content-body" className="text-xs font-mono text-gray-400">
               Content Body
-            </span>
+            </label>
             <Controller
               name="body"
               control={control}
               defaultValue=""
               render={({ field }) => (
-                <div data-color-mode="light">
+                <div id="content-body" data-color-mode="light">
                   <MDEditor
                     value={field.value}
                     onChange={field.onChange}
@@ -101,12 +101,12 @@ function RouteComponent() {
           </div>
 
           <div>
-            <label>
+            <label htmlFor="content-diagnosis">
               <span className="text-xs font-mono text-gray-400">
                 Diagonis Category
               </span>
-              <select className="select w-full" {...register('diagnosis_id')}>
-                <option value="">Select Diagnosis</option>
+              <select id="content-diagnosis" className="select w-full" {...register('diagnosis_id')}>
+                <option value="" disabled>Select Diagnosis</option>
                 {diagnoses.map((item: DiagnosisItem) => (
                   <option key={item.id} value={item.id}>
                     {item.label}
@@ -118,9 +118,9 @@ function RouteComponent() {
           </div>
 
           <div>
-            <label>
+            <label htmlFor="content-tags">
               <span className="text-xs font-mono text-gray-400">Tags</span>
-              <input
+                <input id="content-tags"
                 {...register('tag_names', {
                   setValueAs: (value) => {
                     if (Array.isArray(value)) return value

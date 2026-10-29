@@ -11,7 +11,7 @@ import '@fontsource-variable/jetbrains-mono/wght.css'
 import appCss from '../styles.css?url'
 
 import type { QueryClient } from '@tanstack/react-query'
-import { AlertProvider } from '@/context/AlertContext'
+import { AlertProvider } from '#/context/AlertContext'
 
 interface MyRouterContext {
   queryClient: QueryClient

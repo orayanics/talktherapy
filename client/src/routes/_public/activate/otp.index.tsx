@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { z } from 'zod'
-import FormOtp from '@/modules/activation/FormOtp'
+import FormOtp from '#/modules/activation/components/FormOtp'
 
 export const Route = createFileRoute('/_public/activate/otp/')({
   validateSearch: z.object({

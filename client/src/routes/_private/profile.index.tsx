@@ -1,7 +1,9 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { Calendar, Mail, User, ShieldCheck } from 'lucide-react'
-import { formatDate } from '@/utils/useDate'
-import { useSession } from '@/context/SessionContext'
+import { formatDate } from '#/utils/useDate'
+import { useSession } from '#/modules/auth/context/SessionContext'
+import { useNotificationPreferences } from '#/modules/notifications/api/preferences'
+import { useEffect, useState } from 'react'
 
 export const Route = createFileRoute('/_private/profile/')({
   component: RouteComponent,
@@ -10,6 +12,9 @@ export const Route = createFileRoute('/_private/profile/')({
 function RouteComponent() {
   const session = useSession()
   const { name, email, createdAt } = session
+  const preferences = useNotificationPreferences()
+  const [draft, setDraft] = useState({ in_app: true, email: true })
+  useEffect(() => { if (preferences.data) setDraft(preferences.data) }, [preferences.data])
 
   return (
     <div className="space-y-6">
@@ -64,6 +69,12 @@ function RouteComponent() {
             <User size={16} />
             Edit Profile
           </Link>
+          <form onSubmit={(event) => { event.preventDefault(); void preferences.update(draft) }} className="bg-white border border-slate-300 rounded-lg shadow-sm p-4 space-y-3">
+            <h3 className="font-bold">Notification preferences</h3>
+            <label className="flex items-center justify-between"><span>In-app notifications</span><input className="toggle" type="checkbox" checked={draft.in_app} onChange={(event) => setDraft({ ...draft, in_app: event.target.checked })} /></label>
+            <label className="flex items-center justify-between"><span>Email notifications</span><input className="toggle" type="checkbox" checked={draft.email} onChange={(event) => setDraft({ ...draft, email: event.target.checked })} /></label>
+            <button className="btn btn-sm btn-neutral" disabled={preferences.isUpdating}>Save preferences</button>
+          </form>
         </div>
       </div>
     </div>

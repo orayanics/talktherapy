@@ -47,24 +47,6 @@ body {
   @apply font-sans bg-base-200 text-base-content antialiased;
 }
 
-.input.input:focus,
-.input.input:focus-within {
-  --input-color: var(--color-neutral);
-  outline: none;
-}
-
-.select.select:focus,
-.select.select:focus-within {
-  --input-color: var(--color-neutral);
-  outline: none;
-}
-
-.textarea.textarea:focus,
-.textarea.textarea:focus-within {
-  --input-color: var(--color-neutral);
-  outline: none;
-}
-
 @layer components {
   .border-slate {
     @apply border-slate-300 hover:border-slate-400;
@@ -89,4 +71,15 @@ body {
 /* Native calendar icon color */
 .input::-webkit-calendar-picker-indicator {
   filter: invert(1);
+}
+
+/* BG Circular */
+.bg-circular {
+  background: #ffffff;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 1) 0%,
+    rgba(200, 230, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
 }

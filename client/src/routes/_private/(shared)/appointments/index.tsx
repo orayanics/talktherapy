@@ -6,24 +6,24 @@ import {
   Link,
 } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
-import { fetchAppointments } from '@/api/schedule'
+import { fetchAppointments } from '#/modules/appointments/api/appointments'
 
-import StateError from '@/components/State/StateError'
-import StateLoading from '@/components/State/StateLoading'
-import StateNull from '@/components/State/StateNull'
-import Pagination from '@/components/Page/Pagination'
-import { TableBase } from '@/components/Table/TableBase'
-import ScheduleFilters from '@/modules/schedules/list/ScheduleFilters'
-import { formatDate } from '@/utils/useDate'
-import AppointmentActionModal from '@/modules/appointments/AppointmentActionModal'
-import useAppointmentAction from '@/modules/appointments/useAppointmentAction'
-import AcceptAppointmentModal from '@/modules/appointments/AcceptAppointmentModal'
-import useAcceptAppointment from '@/modules/appointments/useAcceptAppointment'
-import CompleteAppointmentModal from '@/modules/appointments/CompleteAppointmentModal'
-import useCompleteAppointment from '@/modules/appointments/useCompleteAppointment'
+import StateError from '#/components/State/StateError'
+import StateLoading from '#/components/State/StateLoading'
+import StateNull from '#/components/State/StateNull'
+import Pagination from '#/components/Page/Pagination'
+import { TableBase } from '#/components/Table/TableBase'
+import ScheduleFilters from '#/modules/schedules/components/list/ScheduleFilters'
+import { formatDate } from '#/utils/useDate'
+import AppointmentActionModal from '#/modules/appointments/components/AppointmentActionModal'
+import useAppointmentAction from '#/modules/appointments/hooks/useAppointmentAction'
+import AcceptAppointmentModal from '#/modules/appointments/components/AcceptAppointmentModal'
+import useAcceptAppointment from '#/modules/appointments/hooks/useAcceptAppointment'
+import CompleteAppointmentModal from '#/modules/appointments/components/CompleteAppointmentModal'
+import useCompleteAppointment from '#/modules/appointments/hooks/useCompleteAppointment'
 import { useState } from 'react'
-import { useAuthGuard } from '@/hooks/useAuth'
-import AppointmentPill from '@/components/Decorator/AppointmentPill'
+import { useAuthGuard } from '#/modules/auth/hooks/useAuth'
+import AppointmentPill from '#/modules/appointments/components/AppointmentPill'
 import { ChevronDown, ChevronUp } from 'lucide-react'
 
 const searchSchema = z
@@ -72,7 +72,8 @@ function RouteComponent() {
     fetchAppointments({ page }, { from, sort }),
   )
 
-  const { submit, apiError } = useAppointmentAction(isClinician)
+  const { submit, reset: resetAction, apiError } =
+    useAppointmentAction(isClinician)
   const acceptAction = useAcceptAppointment()
   const completeAction = useCompleteAppointment()
   const [selected, setSelected] = useState<string | null>(null)
@@ -121,6 +122,24 @@ function RouteComponent() {
     await completeAction.submit(selected, payload)
   }
 
+  const closeAction = () => {
+    setOpen(false)
+    setSelected(null)
+    resetAction()
+  }
+
+  const closeAccept = () => {
+    setOpenAccept(false)
+    setSelected(null)
+    acceptAction.reset()
+  }
+
+  const closeComplete = () => {
+    setOpenComplete(false)
+    setSelected(null)
+    completeAction.reset()
+  }
+
   return (
     <div className="space-y-4">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -161,7 +180,7 @@ function RouteComponent() {
                     to="/appointments/$appointmentId"
                     params={{ appointmentId: row.id }}
                   >
-                    {formatDate(row.slot.startAt)}
+                    {formatDate(row.slot.start_at)}
                   </Link>
                 ),
               },
@@ -170,20 +189,20 @@ function RouteComponent() {
                 accessor: 'slot',
                 render: (row) => (
                   <div className="flex gap-2">
-                    <div>{formatDate(row.slot.startAt, 'p')}</div>
+                    <div>{formatDate(row.slot.start_at, 'p')}</div>
                     <div>to</div>
-                    <div>{formatDate(row.slot.endAt, 'p')}</div>
+                    <div>{formatDate(row.slot.end_at, 'p')}</div>
                   </div>
                 ),
               },
               {
                 header: 'Room',
-                accessor: 'roomId',
+                accessor: 'room_id',
                 render: (row) =>
-                  row.status === 'ACCEPTED' && row.roomId ? (
+                  row.status === 'ACCEPTED' && row.room_id ? (
                     <Link
                       to="/room/$roomId"
-                      params={{ roomId: row.roomId }}
+                      params={{ roomId: row.id }}
                       className="btn btn-neutral"
                     >
                       Join Session
@@ -270,22 +289,24 @@ function RouteComponent() {
 
       <AppointmentActionModal
         isOpen={open}
-        onClose={() => setOpen(false)}
+        onClose={closeAction}
         onSubmit={handleSubmit}
         isClinician={isClinician}
         apiError={apiError}
       />
       <AcceptAppointmentModal
         isOpen={openAccept}
-        onClose={() => setOpenAccept(false)}
+        onClose={closeAccept}
         onSubmit={handleAcceptSubmit}
         isClinician={isClinician}
+        apiError={acceptAction.apiError}
       />
       <CompleteAppointmentModal
         isOpen={openComplete}
-        onClose={() => setOpenComplete(false)}
+        onClose={closeComplete}
         onSubmit={handleCompleteSubmit}
         isClinician={isClinician}
+        apiError={completeAction.apiError}
       />
     </div>
   )

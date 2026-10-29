@@ -1,4 +1,4 @@
-import type { USER_ROLE } from '@/types/account'
+import type { USER_ROLE } from '#/types/account'
 
 const STATUS_STYLE_MAP: Partial<Record<USER_ROLE, string>> = {
   superadmin: 'bg-green-50 text-green-700 border-green-200',
@@ -16,8 +16,8 @@ function isUserRole(value: string): value is USER_ROLE {
 export default function RolePill({ role }: { role?: string }) {
   const normalized = role ?? ''
 
-  const classes = isUserRole(normalized as USER_ROLE)
-    ? STATUS_STYLE_MAP[normalized as USER_ROLE]
+  const classes = isUserRole(normalized)
+    ? STATUS_STYLE_MAP[normalized]
     : DEFAULT_STATUS_STYLE
 
   return (

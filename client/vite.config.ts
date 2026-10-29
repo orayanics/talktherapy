@@ -1,6 +1,5 @@
 import { defineConfig } from 'vite'
 import { devtools } from '@tanstack/devtools-vite'
-import tsconfigPaths from 'vite-tsconfig-paths'
 
 import { tanstackStart } from '@tanstack/react-start/plugin/vite'
 
@@ -9,21 +8,19 @@ import tailwindcss from '@tailwindcss/vite'
 
 import fs from 'node:fs'
 
+const keyPath = '../certs/localhost-key.pem'
+const certificatePath = '../certs/localhost.pem'
+const https =
+  fs.existsSync(keyPath) && fs.existsSync(certificatePath)
+    ? { key: fs.readFileSync(keyPath), cert: fs.readFileSync(certificatePath) }
+    : undefined
+
 const config = defineConfig({
-  plugins: [
-    devtools(),
-    tsconfigPaths({ projects: ['./tsconfig.json'] }),
-    tailwindcss(),
-    tanstackStart(),
-    viteReact(),
-  ],
+  plugins: [devtools(), tailwindcss(), tanstackStart(), viteReact()],
   server: {
     port: 3000,
     host: true,
-    https: {
-      key: fs.readFileSync('../certs/localhost-key.pem'),
-      cert: fs.readFileSync('../certs/localhost.pem'),
-    },
+    https,
   },
 })
 

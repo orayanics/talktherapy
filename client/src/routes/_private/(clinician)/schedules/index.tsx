@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { createFileRoute } from '@tanstack/react-router'
-import ScheduleList from '@/modules/schedules/list/ScheduleList'
+import ScheduleList from '#/modules/schedules/components/list/ScheduleList'
 
 const searchSchema = z
   .object({

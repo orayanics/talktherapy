@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 
-import RoomSession from '../../../modules/session/room/RoomSession'
+import RoomSession from '#/modules/session/components/RoomSession'
 
 export const Route = createFileRoute('/_session/room/$roomId')({
   component: RouteComponent,

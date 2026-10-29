@@ -30,24 +30,36 @@ export default function Dropdown(props: DropdownProps) {
   }, [dropdownRef])
 
   return (
-    <>
-      <details
-        ref={dropdownRef}
-        className={`dropdown ${position || 'dropdown-end'}`}
+    <details
+      ref={dropdownRef}
+      className={`dropdown ${position || 'dropdown-end'}`}
+      onKeyDown={(event) => {
+        if (event.key === 'Escape') {
+          dropdownRef.current?.removeAttribute('open')
+          dropdownRef.current?.querySelector('summary')?.focus()
+        }
+      }}
+    >
+      <summary
+        aria-haspopup="menu"
+        className={`btn ${btnClassName || ''}`}
+        onClick={onClick}
       >
-        <summary
-          role="button"
-          className={`btn ${btnClassName || ''}`}
-          onClick={onClick}
-        >
-          {label || 'Select Option'}
-        </summary>
-        <ul
-          className={`mt-2 dropdown-content menu bg-white rounded-lg z-1 p-2 shadow-md border border-slate ${className}`}
-        >
-          {children}
-        </ul>
-      </details>
-    </>
+        {label || 'Select Option'}
+      </summary>
+      <ul
+        className={`mt-2 dropdown-content menu bg-white rounded-lg z-50 p-2 shadow-md border border-slate ${className || ''}`}
+        onClick={(event) => {
+          const option = (event.target as HTMLElement).closest(
+            'a, button, [role="menuitem"]',
+          )
+          if (option && !option.hasAttribute('disabled')) {
+            dropdownRef.current?.removeAttribute('open')
+          }
+        }}
+      >
+        {children}
+      </ul>
+    </details>
   )
 }

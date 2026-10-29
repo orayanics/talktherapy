@@ -1,20 +1,20 @@
 import { z } from 'zod'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, useSearch, useNavigate } from '@tanstack/react-router'
-import { fetchSlots } from '@/api/schedule'
-import BookModal from '@/modules/book/BookModal'
-import useBookSlot from '@/modules/book/useBookSlot'
+import { fetchSlots } from '#/modules/schedules/api/schedules'
+import BookModal from '#/modules/book/components/BookModal'
+import useBookSlot from '#/modules/book/hooks/useBookSlot'
 import { useState } from 'react'
 
-import StateError from '@/components/State/StateError'
-import StateLoading from '@/components/State/StateLoading'
-import StateNull from '@/components/State/StateNull'
-import Pagination from '@/components/Page/Pagination'
-import { TableBase } from '@/components/Table/TableBase'
-import ScheduleFilters from '@/modules/schedules/list/ScheduleFilters'
-import { formatDate } from '@/utils/useDate'
-import { toArray } from '@/utils/query'
-import type { TBookSlot } from '@/modules/book/schema'
+import StateError from '#/components/State/StateError'
+import StateLoading from '#/components/State/StateLoading'
+import StateNull from '#/components/State/StateNull'
+import Pagination from '#/components/Page/Pagination'
+import { TableBase } from '#/components/Table/TableBase'
+import ScheduleFilters from '#/modules/schedules/components/list/ScheduleFilters'
+import { formatDate } from '#/utils/useDate'
+import { toArray } from '#/utils/query'
+import type { TBookSlot } from '#/modules/book/types/schema'
 
 const searchSchema = z
   .object({
@@ -36,7 +36,7 @@ const searchSchema = z
       .optional()
       .transform((v) =>
         toArray(v)
-          .map((val) => String(val).toLowerCase())
+          .map((val) => String(val))
           .filter((val) => val.length > 0),
       ),
   })
@@ -77,7 +77,7 @@ function RouteComponent() {
     fetchSlots({ page }, { from, sort, diagnosis }),
   )
 
-  const { submit, isLoading: isBooking } = useBookSlot()
+  const { submit, reset, apiError, isLoading: isBooking } = useBookSlot()
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
 
@@ -100,6 +100,12 @@ function RouteComponent() {
   const handleSubmit = async (payload: TBookSlot) => {
     if (!selectedSlot) return
     await submit(selectedSlot, payload)
+  }
+
+  const closeBooking = () => {
+    setIsModalOpen(false)
+    setSelectedSlot(null)
+    reset()
   }
 
   return (
@@ -131,24 +137,25 @@ function RouteComponent() {
               },
               {
                 header: 'Date',
-                accessor: 'startAt',
-                render: (row) => formatDate(row.startAt, 'PP'),
+                accessor: 'start_at',
+                render: (row) => formatDate(row.start_at, 'PP'),
               },
               {
                 header: 'Time',
-                accessor: 'startAt',
+                accessor: 'start_at',
                 render: (row) => (
                   <div className="flex gap-2">
-                    <div>{formatDate(row.startAt, 'p')}</div>
+                    <div>{formatDate(row.start_at, 'p')}</div>
                     <div>to</div>
-                    <div>{formatDate(row.endAt, 'p')}</div>
+                    <div>{formatDate(row.end_at, 'p')}</div>
                   </div>
                 ),
               },
               {
                 header: 'Specialization',
-                accessor: 'user',
-                render: (row) => row.user.diagnosis.label,
+                accessor: 'clinician',
+                render: (row) =>
+                  row.clinician.diagnosis?.label ?? 'Not specified',
               },
               { header: 'Status', accessor: 'status' },
               {
@@ -177,8 +184,9 @@ function RouteComponent() {
       />
       <BookModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={closeBooking}
         onSubmit={handleSubmit}
+        apiError={apiError}
       />
     </div>
   )

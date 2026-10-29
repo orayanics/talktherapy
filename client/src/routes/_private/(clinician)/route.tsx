@@ -1,4 +1,4 @@
-import { useAuthGuard } from '@/hooks/useAuth'
+import { useAuthGuard } from '#/modules/auth/hooks/useAuth'
 import { createFileRoute, Outlet, Navigate } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/_private/(clinician)')({
