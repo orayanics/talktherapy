@@ -7,6 +7,7 @@ import { NAV_BY_ROLE } from '#/constants/sidebar'
 import SidebarItem from './SidebarItem'
 import { authClient } from '#/modules/auth/api/auth-client'
 import NotificationList from '#/modules/notifications/components/NotificationList'
+import { useNotifications } from '#/modules/notifications/hooks/useNotifications'
 
 export interface SidebarProps {
   children: React.ReactNode
@@ -16,6 +17,7 @@ export interface SidebarProps {
 export default function Sidebar(props: SidebarProps) {
   const { children, role } = props
   const [show, setShow] = useState(false)
+  const { unreadCount } = useNotifications()
 
   const navItems = NAV_BY_ROLE[role]
 
@@ -46,12 +48,21 @@ export default function Sidebar(props: SidebarProps) {
             <button
               className="btn btn-square border border-slate-300"
               onClick={() => setShow((s) => !s)}
+              aria-label={unreadCount > 0 ? `Notifications, ${unreadCount} unread` : 'Notifications'}
             >
               <Bell size={19} strokeWidth={2.2} />
+              {unreadCount > 0 && <span className="absolute right-2 top-1 badge badge-error badge-xs min-w-4 px-1 text-[10px] text-white">{unreadCount > 99 ? '99+' : unreadCount}</span>}
             </button>
             {show && (
-              <div className="absolute z-20 right-0 mt-2">
-                <NotificationList />
+              <div className="fixed inset-0 z-50" role="dialog" aria-modal="true" aria-label="Notifications">
+                <button className="absolute inset-0 bg-slate-900/30" aria-label="Close notifications" onClick={() => setShow(false)} />
+                <section className="absolute inset-y-0 right-0 flex w-full max-w-md flex-col bg-white shadow-2xl">
+                  <div className="flex items-center justify-between border-b border-slate-200 px-5 py-4">
+                    <h2 className="text-base font-bold text-slate-900">Notifications</h2>
+                    <button className="btn btn-sm btn-ghost" onClick={() => setShow(false)}>Close</button>
+                  </div>
+                  <div className="min-h-0 flex-1 p-4"><NotificationList /></div>
+                </section>
               </div>
             )}
           </div>
@@ -91,6 +102,15 @@ export default function Sidebar(props: SidebarProps) {
             <span className="font-bold text-[18px] tracking-tight text-slate-900">
               TalkTherapy
             </span>
+            <button
+              type="button"
+              className="btn btn-ghost btn-sm relative ms-auto"
+              onClick={() => setShow((s) => !s)}
+              aria-label={unreadCount > 0 ? `Notifications, ${unreadCount} unread` : 'Notifications'}
+            >
+              <Bell size={18} />
+              {unreadCount > 0 && <span className="absolute -right-1 -top-1 badge badge-error badge-xs min-w-4 px-1 text-[10px] text-white">{unreadCount > 99 ? '99+' : unreadCount}</span>}
+            </button>
           </div>
 
           {/* Navigation Links mimicking HR Design */}

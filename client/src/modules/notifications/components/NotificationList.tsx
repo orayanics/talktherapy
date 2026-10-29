@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react'
 import { useNotifications } from '#/modules/notifications/hooks/useNotifications'
 
 export default function NotificationList() {
@@ -10,16 +11,27 @@ export default function NotificationList() {
     isFetchingNextPage,
     loadNextPage,
   } = useNotifications()
+  const loadMoreRef = useRef<HTMLLIElement | null>(null)
+
+  useEffect(() => {
+    const target = loadMoreRef.current
+    if (!target || !hasNextPage) return
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting && !isFetchingNextPage) void loadNextPage()
+    }, { rootMargin: '160px' })
+    observer.observe(target)
+    return () => observer.disconnect()
+  }, [hasNextPage, isFetchingNextPage, loadNextPage])
 
   return (
-    <div className="w-100 bg-white border border-slate-200 rounded-xl shadow-xl shadow-slate-200/50 overflow-hidden">
+    <div className="flex h-full min-h-0 flex-col bg-white overflow-hidden">
       <div className="flex items-center justify-between px-4 py-3 border-b border-slate-50 bg-slate-50/50">
         <h3 className="text-sm font-semibold text-slate-900 tracking-tight">
           Activity
         </h3>
       </div>
 
-      <ul className="divide-y divide-slate-50 max-h-95 overflow-auto">
+      <ul className="min-h-0 flex-1 divide-y divide-slate-50 overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {isPending && (
           <li className="p-4 text-xs text-slate-500">Loading notifications…</li>
         )}
@@ -62,7 +74,7 @@ export default function NotificationList() {
           </li>
         ))}
         {hasNextPage && (
-          <li className="p-3 text-center">
+          <li ref={loadMoreRef} className="p-3 text-center">
             <button
               className="link link-primary text-xs"
               disabled={isFetchingNextPage}

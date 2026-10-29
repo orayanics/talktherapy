@@ -26,7 +26,7 @@ class AuditLogReadRequest extends FormRequest
             'date_from' => ['sometimes', 'nullable', 'date'],
             'date_to' => ['sometimes', 'nullable', 'date'],
             'sort' => ['sometimes', Rule::in(['asc', 'desc'])],
-            'format' => ['sometimes', Rule::in(['csv', 'jsonl'])],
+            'format' => ['sometimes', Rule::in(['csv', 'jsonl', 'xls'])],
             'batch_size' => ['sometimes', 'integer', 'min:1', 'max:1000'],
         ];
     }

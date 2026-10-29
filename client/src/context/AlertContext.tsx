@@ -16,9 +16,11 @@ export const AlertContext = createContext<AlertContextValue | null>(null)
 
 // Module-level store for use outside the React tree (e.g. axios interceptors, queryFns)
 let _globalShowAlert: AlertContextValue['showAlert'] | null = null
+const pendingAlerts: Array<Parameters<AlertContextValue['showAlert']>> = []
 
 export const showAlertGlobal = (message: string, type: ALERT_TYPE) => {
-  _globalShowAlert?.(message, type)
+  if (_globalShowAlert) _globalShowAlert(message, type)
+  else pendingAlerts.push([message, type])
 }
 
 export const useAlert = () => {
@@ -50,6 +52,7 @@ export const AlertProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     _globalShowAlert = showAlert
+    pendingAlerts.splice(0).forEach(([message, type]) => showAlert(message, type))
     return () => {
       _globalShowAlert = null
     }

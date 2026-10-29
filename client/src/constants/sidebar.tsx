@@ -7,6 +7,8 @@ import {
   Logs,
   Settings,
   User,
+  Stethoscope,
+  Send,
 } from 'lucide-react'
 
 import type { USER_ROLE } from '#/types/account'
@@ -33,6 +35,8 @@ export const superadmin_NAV_ITEMS = [
     to: '/logs',
     icon: <Logs size={16} />,
   },
+  { label: 'Diagnoses', to: '/diagnoses', icon: <Stethoscope size={16} /> },
+  { label: 'Broadcast', to: '/notifications', icon: <Send size={16} /> },
   {
     label: 'Profile',
     to: '/profile',
@@ -61,6 +65,8 @@ export const ADMIN_NAV_ITEMS = [
     to: '/logs',
     icon: <Logs size={16} />,
   },
+  { label: 'Diagnoses', to: '/diagnoses', icon: <Stethoscope size={16} /> },
+  { label: 'Broadcast', to: '/notifications', icon: <Send size={16} /> },
   {
     label: 'Profile',
     to: '/profile',

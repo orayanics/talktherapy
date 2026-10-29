@@ -156,9 +156,11 @@ export default function LogsFilters({
                 >
                   JSON
                 </button>
+                <button className="btn" onClick={() => exportLogs({ search: searchTerm, date_from, date_to }, 'xls')} disabled={isLoading}>Excel</button>
                 <button className="btn" onClick={() => onQueue({ search: searchTerm, date_from, date_to })} disabled={isLoading}>
                   Queue JSONL
                 </button>
+                <button className="btn" onClick={() => onQueue({ search: searchTerm, date_from, date_to }, 'xls')} disabled={isLoading}>Queue Excel</button>
               </div>
             </div>
           </div>

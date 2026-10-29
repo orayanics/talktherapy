@@ -24,7 +24,7 @@ class AuditLogController extends Controller
     {
         $format = $request->validated('format', 'csv');
         $query = $this->query($request)->orderBy('created_at', $request->validated('sort', 'desc'))->orderBy('id', 'desc');
-        $filename = 'audit_logs.'.($format === 'jsonl' ? 'jsonl' : 'csv');
+        $filename = 'audit_logs.'.($format === 'jsonl' ? 'jsonl' : $format);
 
         $actor = $request->user();
         AuditLog::query()->create(['actor_id' => $actor->id, 'actor_role' => $actor->profile?->role?->value, 'action' => 'audit.export.started', 'entity_type' => 'audit_log', 'details' => ['format' => $format]]);
@@ -34,17 +34,25 @@ class AuditLogController extends Controller
             try {
                 if ($format === 'csv') {
                     fputcsv($out, ['id', 'actor_id', 'actor_email', 'actor_role', 'action', 'entity_type', 'entity_id', 'details', 'request_id', 'created_at']);
+                } elseif ($format === 'xls') {
+                    fwrite($out, '<table><thead><tr><th>id</th><th>actor_id</th><th>actor_email</th><th>actor_role</th><th>action</th><th>entity_type</th><th>entity_id</th><th>details</th><th>request_id</th><th>created_at</th></tr></thead><tbody>');
                 }
                 $query->with('actor')->chunkById($request->integer('batch_size', 1000), function ($rows) use ($out, $format): void {
                     foreach ($rows as $row) {
                         $data = (new AuditLogResource($row))->resolve();
                         if ($format === 'jsonl') {
                             fwrite($out, json_encode($data, JSON_UNESCAPED_SLASHES)."\n");
+                        } elseif ($format === 'xls') {
+                            $cells = [$data['id'], $data['actor_id'], $data['actor_email'], $data['actor_role'], $data['action'], $data['entity_type'], $data['entity_id'], json_encode($data['details']), $data['request_id'], $data['created_at']];
+                            fwrite($out, '<tr>'.implode('', array_map(static fn ($value): string => '<td>'.htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8').'</td>', $cells)).'</tr>');
                         } else {
                             fputcsv($out, array_map(static fn ($value): string => preg_match('/^[=+\-@\s\x00-\x1F]/u', (string) $value) ? "'".(string) $value : (string) $value, [$data['id'], $data['actor_id'], $data['actor_email'], $data['actor_role'], $data['action'], $data['entity_type'], $data['entity_id'], json_encode($data['details']), $data['request_id'], $data['created_at']]));
                         }
                     }
                 }, 'id', 'id');
+                if ($format === 'xls') {
+                    fwrite($out, '</tbody></table>');
+                }
                 fclose($out);
                 AuditLog::query()->create(['actor_id' => $actor->id, 'actor_role' => $actor->profile?->role?->value, 'action' => 'audit.export.completed', 'entity_type' => 'audit_log', 'details' => ['format' => $format]]);
             } catch (\Throwable $exception) {
@@ -54,7 +62,7 @@ class AuditLogController extends Controller
                 AuditLog::query()->create(['actor_id' => $actor->id, 'actor_role' => $actor->profile?->role?->value, 'action' => 'audit.export.failed', 'entity_type' => 'audit_log', 'details' => ['format' => $format, 'error' => $exception->getMessage()]]);
                 throw $exception;
             }
-        }, $filename, ['Content-Type' => $format === 'jsonl' ? 'application/x-ndjson' : 'text/csv']);
+        }, $filename, ['Content-Type' => $format === 'jsonl' ? 'application/x-ndjson' : ($format === 'xls' ? 'application/vnd.ms-excel' : 'text/csv')]);
     }
 
     public function queue(AuditLogReadRequest $request): JsonResponse

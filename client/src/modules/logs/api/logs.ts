@@ -74,9 +74,9 @@ export const fetchLogs = (
 
 export const exportLogs = async (
   params: Partial<LogParams> = {},
-  fmt: 'csv' | 'json' = 'csv',
+  fmt: 'csv' | 'json' | 'xls' = 'csv',
 ) => {
-  const backendFormat = fmt === 'json' ? 'jsonl' : 'csv'
+  const backendFormat = fmt === 'json' ? 'jsonl' : fmt
 
   const query = {
     format: backendFormat,
@@ -106,16 +106,20 @@ export const exportLogs = async (
     }
   }
 
+  if (fmt === 'xls') {
+    return { blob, filename: `audit_logs_${timestamp}.xls` }
+  }
+
   return {
     blob,
     filename: `audit_logs_${timestamp}.csv`,
   }
 }
 
-export const queueLogsExport = async (params: Partial<LogParams> = {}) => {
+export const queueLogsExport = async (params: Partial<LogParams> = {}, format: 'jsonl' | 'xls' = 'jsonl') => {
   const response = await api<{ data: { id: string; status: string } }>('/api/v1/logs/exports', {
     method: 'POST',
-    data: { format: 'jsonl', ...params },
+    data: { format, ...params },
   })
   return response.data
 }

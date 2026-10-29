@@ -21,7 +21,9 @@ import { Route as PublicIndexRouteImport } from './routes/_public/index'
 import { Route as PublicLoginRouteImport } from './routes/_public/login'
 import { Route as PublicRegisterRouteImport } from './routes/_public/register'
 import { Route as SessionRoomRouteRouteImport } from './routes/_session/room/route'
+import { Route as PrivateadmSharedDiagnosesRouteImport } from './routes/_private/(adm-shared)/diagnoses'
 import { Route as PrivateadmSharedLogsRouteImport } from './routes/_private/(adm-shared)/logs'
+import { Route as PrivateadmSharedNotificationsRouteImport } from './routes/_private/(adm-shared)/notifications'
 import { Route as PrivatepatientBookRouteImport } from './routes/_private/(patient)/book'
 import { Route as PrivateProfileIndexRouteImport } from './routes/_private/profile.index'
 import { Route as PrivateProfileEditRouteImport } from './routes/_private/profile.edit'
@@ -105,11 +107,23 @@ const SessionRoomRouteRoute = SessionRoomRouteRouteImport.update({
   path: '/room',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PrivateadmSharedDiagnosesRoute =
+  PrivateadmSharedDiagnosesRouteImport.update({
+    id: '/diagnoses',
+    path: '/diagnoses',
+    getParentRoute: () => PrivateadmSharedRouteRoute,
+  } as any)
 const PrivateadmSharedLogsRoute = PrivateadmSharedLogsRouteImport.update({
   id: '/logs',
   path: '/logs',
   getParentRoute: () => PrivateadmSharedRouteRoute,
 } as any)
+const PrivateadmSharedNotificationsRoute =
+  PrivateadmSharedNotificationsRouteImport.update({
+    id: '/notifications',
+    path: '/notifications',
+    getParentRoute: () => PrivateadmSharedRouteRoute,
+  } as any)
 const PrivatepatientBookRoute = PrivatepatientBookRouteImport.update({
   id: '/book',
   path: '/book',
@@ -274,7 +288,9 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof PrivateDashboardRoute
   '/login': typeof PublicLoginRoute
   '/register': typeof PublicRegisterRoute
+  '/diagnoses': typeof PrivateadmSharedDiagnosesRoute
   '/logs': typeof PrivateadmSharedLogsRoute
+  '/notifications': typeof PrivateadmSharedNotificationsRoute
   '/book': typeof PrivatepatientBookRoute
   '/profile/edit': typeof PrivateProfileEditRoute
   '/profile/email-change': typeof PrivateProfileEmailChangeRoute
@@ -311,7 +327,9 @@ export interface FileRoutesByTo {
   '/dashboard': typeof PrivateDashboardRoute
   '/login': typeof PublicLoginRoute
   '/register': typeof PublicRegisterRoute
+  '/diagnoses': typeof PrivateadmSharedDiagnosesRoute
   '/logs': typeof PrivateadmSharedLogsRoute
+  '/notifications': typeof PrivateadmSharedNotificationsRoute
   '/book': typeof PrivatepatientBookRoute
   '/profile/edit': typeof PrivateProfileEditRoute
   '/profile/email-change': typeof PrivateProfileEmailChangeRoute
@@ -353,7 +371,9 @@ export interface FileRoutesById {
   '/_public/login': typeof PublicLoginRoute
   '/_public/register': typeof PublicRegisterRoute
   '/_public/': typeof PublicIndexRoute
+  '/_private/(adm-shared)/diagnoses': typeof PrivateadmSharedDiagnosesRoute
   '/_private/(adm-shared)/logs': typeof PrivateadmSharedLogsRoute
+  '/_private/(adm-shared)/notifications': typeof PrivateadmSharedNotificationsRoute
   '/_private/(patient)/book': typeof PrivatepatientBookRoute
   '/_private/profile/edit': typeof PrivateProfileEditRoute
   '/_private/profile/email-change': typeof PrivateProfileEmailChangeRoute
@@ -392,7 +412,9 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/login'
     | '/register'
+    | '/diagnoses'
     | '/logs'
+    | '/notifications'
     | '/book'
     | '/profile/edit'
     | '/profile/email-change'
@@ -429,7 +451,9 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/login'
     | '/register'
+    | '/diagnoses'
     | '/logs'
+    | '/notifications'
     | '/book'
     | '/profile/edit'
     | '/profile/email-change'
@@ -470,7 +494,9 @@ export interface FileRouteTypes {
     | '/_public/login'
     | '/_public/register'
     | '/_public/'
+    | '/_private/(adm-shared)/diagnoses'
     | '/_private/(adm-shared)/logs'
+    | '/_private/(adm-shared)/notifications'
     | '/_private/(patient)/book'
     | '/_private/profile/edit'
     | '/_private/profile/email-change'
@@ -594,11 +620,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SessionRoomRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_private/(adm-shared)/diagnoses': {
+      id: '/_private/(adm-shared)/diagnoses'
+      path: '/diagnoses'
+      fullPath: '/diagnoses'
+      preLoaderRoute: typeof PrivateadmSharedDiagnosesRouteImport
+      parentRoute: typeof PrivateadmSharedRouteRoute
+    }
     '/_private/(adm-shared)/logs': {
       id: '/_private/(adm-shared)/logs'
       path: '/logs'
       fullPath: '/logs'
       preLoaderRoute: typeof PrivateadmSharedLogsRouteImport
+      parentRoute: typeof PrivateadmSharedRouteRoute
+    }
+    '/_private/(adm-shared)/notifications': {
+      id: '/_private/(adm-shared)/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof PrivateadmSharedNotificationsRouteImport
       parentRoute: typeof PrivateadmSharedRouteRoute
     }
     '/_private/(patient)/book': {
@@ -794,13 +834,17 @@ declare module '@tanstack/react-router' {
 }
 
 interface PrivateadmSharedRouteRouteChildren {
+  PrivateadmSharedDiagnosesRoute: typeof PrivateadmSharedDiagnosesRoute
   PrivateadmSharedLogsRoute: typeof PrivateadmSharedLogsRoute
+  PrivateadmSharedNotificationsRoute: typeof PrivateadmSharedNotificationsRoute
   PrivateadmSharedUsersUserIdRoute: typeof PrivateadmSharedUsersUserIdRoute
   PrivateadmSharedUsersIndexRoute: typeof PrivateadmSharedUsersIndexRoute
 }
 
 const PrivateadmSharedRouteRouteChildren: PrivateadmSharedRouteRouteChildren = {
+  PrivateadmSharedDiagnosesRoute: PrivateadmSharedDiagnosesRoute,
   PrivateadmSharedLogsRoute: PrivateadmSharedLogsRoute,
+  PrivateadmSharedNotificationsRoute: PrivateadmSharedNotificationsRoute,
   PrivateadmSharedUsersUserIdRoute: PrivateadmSharedUsersUserIdRoute,
   PrivateadmSharedUsersIndexRoute: PrivateadmSharedUsersIndexRoute,
 }

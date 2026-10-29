@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-#[Fillable(['user_id', 'role', 'status', 'diagnosis_id', 'image'])]
+#[Fillable(['user_id', 'role', 'status', 'diagnosis_id', 'image', 'notification_preferences'])]
 class UserProfile extends Model
 {
     /** @use HasFactory<UserProfileFactory> */
@@ -37,6 +37,7 @@ class UserProfile extends Model
         return [
             'role' => UserRole::class,
             'status' => UserStatus::class,
+            'notification_preferences' => 'array',
         ];
     }
 }

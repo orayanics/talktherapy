@@ -64,6 +64,18 @@ class NotificationInboxTest extends TestCase
         $this->assertDatabaseCount('notifications', 0);
     }
 
+    public function test_admin_can_preview_and_send_to_roles_and_channels(): void
+    {
+        $admin = $this->user(UserRole::Admin);
+        $patient = $this->user(UserRole::Patient);
+
+        $payload = ['roles' => ['patient'], 'channels' => ['in_app', 'email'], 'title' => 'Maintenance', 'subject' => 'Scheduled maintenance', 'message' => 'The service will be briefly unavailable.'];
+        $this->actingAs($admin)->postJson('/api/v1/notifications/preview', $payload)->assertOk()->assertJsonPath('data.recipients', 1)->assertJsonPath('data.email.subject', 'Scheduled maintenance');
+        $this->actingAs($admin)->postJson('/api/v1/notifications', $payload)->assertCreated()->assertJsonPath('data.recipients', 1);
+        $this->assertDatabaseHas('outbox_messages', ['kind' => 'email.custom', 'recipient_id' => $patient->id]);
+        $this->assertDatabaseHas('notifications', ['user_id' => $patient->id, 'title' => 'Maintenance']);
+    }
+
     public function test_channel_descriptor_is_scoped_and_private_channel_checks_user_and_epoch(): void
     {
         $owner = $this->user(UserRole::Patient);

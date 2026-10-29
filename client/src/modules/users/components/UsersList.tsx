@@ -21,6 +21,7 @@ import { ChevronDown, ChevronUp } from 'lucide-react'
 
 import useActions from '#/modules/users/hooks/useActions'
 import { useSession } from '#/modules/auth/context/SessionContext'
+import ModalBody from '#/components/Modal/ModalBody'
 
 export default function UsersList() {
   const search = useSearch({ from: '/_private/(adm-shared)/users/' })
@@ -73,11 +74,35 @@ export default function UsersList() {
   const [isClinicianModalOpen, setClinicianModalOpen] = useState(false)
   const [isAdminModalOpen, setAdminModalOpen] = useState(false)
   const [isPatientModalOpen, setPatientModalOpen] = useState(false)
+  const [suspendingUser, setSuspendingUser] = useState<(typeof users)[number] | null>(null)
+  const [suspensionReason, setSuspensionReason] = useState('')
+  const [suspensionError, setSuspensionError] = useState('')
   const isAsc = sort === 'asc'
 
-  const { suspendUser, reactivateUser } = useActions()
+  const { suspendUser, reactivateUser, isPending: isStatusPending } = useActions()
   const session = useSession()
   const canInviteAdmin = session.role === 'superadmin'
+
+  const closeSuspension = () => {
+    if (isStatusPending) return
+    setSuspendingUser(null)
+    setSuspensionReason('')
+    setSuspensionError('')
+  }
+
+  const confirmSuspension = async () => {
+    const reason = suspensionReason.trim()
+    if (!suspendingUser || !reason) {
+      setSuspensionError('A reason is required.')
+      return
+    }
+    try {
+      await suspendUser(suspendingUser.id, reason)
+      closeSuspension()
+    } catch {
+      setSuspensionError('Unable to suspend this account. Please try again.')
+    }
+  }
 
   return (
     <div className="flex flex-col gap-4">
@@ -131,6 +156,24 @@ export default function UsersList() {
         isOpen={isPatientModalOpen}
         onClose={() => setPatientModalOpen(false)}
       />
+
+      <ModalBody isOpen={Boolean(suspendingUser)} onClose={closeSuspension}>
+        <form onSubmit={(event) => { event.preventDefault(); void confirmSuspension() }} className="bg-white p-6 space-y-5">
+          <div>
+            <h2 className="text-lg font-bold text-slate-900">Suspend account</h2>
+            <p className="mt-1 text-sm text-slate-600">This immediately prevents sign-in. The reason will be included in the audit record and email.</p>
+          </div>
+          <div>
+            <label htmlFor="suspension-reason" className="label">Reason</label>
+            <textarea id="suspension-reason" required minLength={3} maxLength={1000} value={suspensionReason} onChange={(event) => { setSuspensionReason(event.target.value); setSuspensionError('') }} className="textarea textarea-bordered w-full" rows={4} autoFocus />
+            {suspensionError && <p role="alert" className="mt-2 text-sm text-error">{suspensionError}</p>}
+          </div>
+          <div className="flex justify-end gap-2">
+            <button type="button" className="btn btn-ghost" onClick={closeSuspension}>Cancel</button>
+            <button type="submit" className="btn btn-error" disabled={isStatusPending}>{isStatusPending ? 'Suspending…' : 'Suspend account'}</button>
+          </div>
+        </form>
+      </ModalBody>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {count && !countPending && !countError && <StatCards {...count} />}
@@ -227,10 +270,7 @@ export default function UsersList() {
                         ) : user.status === 'active' ? (
                           <button
                             className="btn btn-sm btn-neutral"
-                            onClick={() => {
-                              const reason = window.prompt('Reason for suspension:')?.trim()
-                              if (reason) void suspendUser(user.id, reason)
-                            }}
+                            onClick={() => { setSuspendingUser(user); setSuspensionReason(''); setSuspensionError('') }}
                           >
                             Suspend
                           </button>

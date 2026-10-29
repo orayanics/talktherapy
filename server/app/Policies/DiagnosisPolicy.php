@@ -16,4 +16,19 @@ class DiagnosisPolicy
     {
         return true;
     }
+
+    public function create(User $user): bool
+    {
+        return in_array($user->profile?->role?->value, ['admin', 'superadmin'], true);
+    }
+
+    public function update(User $user, Diagnosis $diagnosis): bool
+    {
+        return $this->create($user);
+    }
+
+    public function delete(User $user, Diagnosis $diagnosis): bool
+    {
+        return $this->create($user);
+    }
 }

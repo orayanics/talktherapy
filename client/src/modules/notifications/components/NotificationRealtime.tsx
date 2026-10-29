@@ -1,9 +1,10 @@
-import { useEffect, useMemo, useRef } from 'react'
+import { useCallback, useEffect, useMemo, useRef } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useConnectionStatus, useEcho } from '@laravel/echo-react'
 import { api } from '#/lib/api/client'
 import { useSession } from '#/modules/auth/context/SessionContext'
 import '#/modules/notifications/api/echo'
+import { showAlertGlobal } from '#/context/AlertContext'
 
 type ChannelDescriptor = { channel: string }
 type NotificationEvent = { notification_id: string; type: string }
@@ -53,22 +54,38 @@ function NotificationChannel({
 }) {
   const queryClient = useQueryClient()
   const seenIds = useRef(new Set<string>())
+  const announce = useCallback((event: NotificationEvent) => {
+    const { notification_id, type } = event
+    if (seenIds.current.has(notification_id)) return
+    seenIds.current.add(notification_id)
+    if (seenIds.current.size > 200) {
+      const oldestId = seenIds.current.values().next().value
+      if (oldestId) seenIds.current.delete(oldestId)
+    }
+    void queryClient.invalidateQueries({ queryKey: ['notifications', userId] })
+    showAlertGlobal(
+      type === 'appointment'
+        ? 'New appointment notification received.'
+        : type === 'clinical_record'
+          ? 'New clinical record notification received.'
+          : 'New notification received.',
+      'info',
+    )
+  }, [queryClient, userId])
 
   useEcho<NotificationEvent>(
     channel,
     '.UserNotificationAvailable',
-    ({ notification_id }) => {
-      if (seenIds.current.has(notification_id)) return
-      seenIds.current.add(notification_id)
-      if (seenIds.current.size > 200) {
-        const oldestId = seenIds.current.values().next().value
-        if (oldestId) seenIds.current.delete(oldestId)
-      }
-      void queryClient.invalidateQueries({
-        queryKey: ['notifications', userId],
-      })
-    },
-    [channel, userId],
+    announce,
+    [channel, announce],
+  )
+
+  // Keep compatibility with broadcasters that serialize the PHP event name.
+  useEcho<NotificationEvent>(
+    channel,
+    'App\\Events\\UserNotificationAvailable',
+    announce,
+    [channel, announce],
   )
 
   return null

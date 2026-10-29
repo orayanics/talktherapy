@@ -16,7 +16,7 @@ export default function useExport() {
       fmt,
       params,
     }: {
-      fmt: 'csv' | 'json'
+      fmt: 'csv' | 'json' | 'xls'
       params?: Partial<LogParams>
     }) => exportLogs(params ?? {}, fmt),
 
@@ -25,7 +25,7 @@ export default function useExport() {
     },
   })
 
-  const onSubmit = async (params: Partial<LogParams>, fmt: 'csv' | 'json') => {
+  const onSubmit = async (params: Partial<LogParams>, fmt: 'csv' | 'json' | 'xls') => {
     setApiError(null)
     try {
       const { blob, filename } = await exportMutation.mutateAsync({
@@ -39,11 +39,11 @@ export default function useExport() {
     }
   }
 
-  const onQueue = async (params: Partial<LogParams>) => {
+  const onQueue = async (params: Partial<LogParams>, format: 'jsonl' | 'xls' = 'jsonl') => {
     setApiError(null)
     setIsQueueing(true)
     try {
-      const queued = await queueLogsExport(params)
+      const queued = await queueLogsExport(params, format)
       let status = 'queued'
       let attempts = 0
       while (status !== 'completed' && attempts++ < 120) {
@@ -53,7 +53,7 @@ export default function useExport() {
         if (status === 'failed') throw new Error('Queued export failed')
         if (status === 'completed' && result.data.download_url) {
           const blob = await downloadQueuedLogsExport(queued.id)
-          saveAs(blob, `audit_logs_${new Date().toISOString().replace(/[:.]/g, '-')}.jsonl`)
+          saveAs(blob, `audit_logs_${new Date().toISOString().replace(/[:.]/g, '-')}.${format}`)
         }
       }
       if (status !== 'completed') throw new Error('Export timed out')

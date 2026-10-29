@@ -171,3 +171,27 @@ To run realtime locally, start php artisan reverb:start and php artisan schedule
 
 - [ ] Final reconciliation/operator gate passed before writes; one writer enabled, health/alerts verified and post-write rollback constraints acknowledged.
 - [ ] No active Better Auth/custom WS/Bun consumers remain; required retained evidence/backups and revoked legacy secrets accounted for.
+
+## Product improvements: notifications, exports, admin UX and diagnoses
+
+[Plan/task matrix](plan-matrix.md)
+
+These are planned follow-up slices. Keep the shared UI state/error contract first so each later feature has consistent loading, success, failure and reset behavior.
+
+- [ ] P0 Record research-backed contracts for mutations, notification channels/preferences, side-drawer accessibility, XLSX export limits and diagnoses ownership.
+- [ ] P1 Standardize mutation feedback with Sonner promise toasts and reset/null transient UI state after success, retry, route changes and account switching.
+- [x] P2 Replace the notification popover with an accessible responsive side drawer; preserve unread counts, realtime updates, pagination and mark-read behavior.
+- [x] P3 Add Excel-compatible export alongside CSV/JSONL with bounded/queued large-export behavior, completion/failure audit records, authorization and download cleanup.
+- [x] P4 Add admin/superadmin custom in-app notification authoring and delivery through the existing notification service, outbox and Reverb event path.
+- [x] P5 Add per-user in-app and email notification preferences; enforce preferences at delivery time and expose authenticated user settings UI.
+- [x] P6 Add diagnoses CRUD backend (migration/model/policy/requests/resources/routes/tests) for authorized admin/superadmin workflows.
+- [x] P7 Add diagnoses CRUD frontend (list/search/create/edit/archive, validation, mutation feedback and empty/error/loading states) and connect appointment consumers.
+- [x] P8 Replace the browser `prompt()` suspension flow with a validated accessible modal; require a reason, reset stale state, and show the same reason in confirmation/email/audit views.
+
+### Checkpoint: product improvements foundation
+
+- [ ] Shared mutation/toast/reset tests pass; notification drawer preserves keyboard/focus behavior; no transient error/alert leaks across routes or users.
+
+### Checkpoint: product improvements complete
+
+- [ ] XLSX and queued export evidence, notification preference delivery matrix, admin notification audit/realtime evidence, diagnoses CRUD denial matrix, and suspension-modal browser flow all pass.

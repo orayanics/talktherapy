@@ -88,7 +88,14 @@ class DeliverNotifications extends Command
 
                 return;
             }
+            $preferences = array_merge(['email' => true], $recipient->profile?->notification_preferences ?? []);
+            if ($preferences['email'] === false && ! in_array($message->kind, ['email.user_suspended', 'email.user_reactivated', 'email.password_changed'], true)) {
+                $message->forceFill(['delivered_at' => now(), 'broadcasted_at' => now(), 'claimed_at' => null, 'claim_token' => null])->save();
+
+                return;
+            }
             $subject = match ($message->kind) {
+                'email.custom' => (string) ($message->payload['subject'] ?? 'TalkTherapy notification'),
                 'email.appointment_booked' => 'New TalkTherapy appointment request',
                 'email.appointment_accepted' => 'TalkTherapy appointment accepted',
                 'email.appointment_rejected' => 'TalkTherapy appointment declined',
@@ -123,6 +130,12 @@ class DeliverNotifications extends Command
 
             $recipient = User::query()->with('profile')->find($locked->recipient_id);
             if (! $recipient || $recipient->profile?->status !== UserStatus::Active || ! $recipient->hasVerifiedEmail()) {
+                $locked->forceFill(['delivered_at' => now(), 'broadcasted_at' => now(), 'claimed_at' => null, 'claim_token' => null])->save();
+
+                return null;
+            }
+            $preferences = array_merge(['in_app' => true], $recipient->profile?->notification_preferences ?? []);
+            if ($preferences['in_app'] === false) {
                 $locked->forceFill(['delivered_at' => now(), 'broadcasted_at' => now(), 'claimed_at' => null, 'claim_token' => null])->save();
 
                 return null;
@@ -207,6 +220,6 @@ class DeliverNotifications extends Command
     /** @return array<int, string> */
     private function supportedKinds(): array
     {
-        return ['appointment.booked', 'appointment.accepted', 'appointment.rejected', 'appointment.cancelled', 'appointment.completed', 'soap.created', 'soap.updated', 'notification.broadcast', 'identity.activation', 'identity.email_change', 'email.appointment_booked', 'email.appointment_accepted', 'email.appointment_rejected', 'email.appointment_cancelled', 'email.appointment_completed', 'email.soap_created', 'email.soap_updated', 'email.user_invited', 'email.user_suspended', 'email.user_reactivated', 'email.password_changed'];
+        return ['appointment.booked', 'appointment.accepted', 'appointment.rejected', 'appointment.cancelled', 'appointment.completed', 'soap.created', 'soap.updated', 'notification.broadcast', 'identity.activation', 'identity.email_change', 'email.appointment_booked', 'email.appointment_accepted', 'email.appointment_rejected', 'email.appointment_cancelled', 'email.appointment_completed', 'email.soap_created', 'email.soap_updated', 'email.user_invited', 'email.user_suspended', 'email.user_reactivated', 'email.password_changed', 'email.custom'];
     }
 }

@@ -31,6 +31,9 @@ class BuildAuditExport implements ShouldQueue
                     $query->where($field, $value);
                 }
             }
+            if ($export->format === 'xls') {
+                fwrite($handle, '<table><thead><tr><th>id</th><th>actor_id</th><th>actor_email</th><th>actor_role</th><th>action</th><th>entity_type</th><th>entity_id</th><th>details</th><th>request_id</th><th>created_at</th></tr></thead><tbody>');
+            }
             $query->chunkById(1000, function ($rows) use ($handle, $export): void {
                 foreach ($rows as $row) {
                     $data = [
@@ -41,11 +44,16 @@ class BuildAuditExport implements ShouldQueue
                     ];
                     if ($export->format === 'jsonl') {
                         fwrite($handle, json_encode($data, JSON_UNESCAPED_SLASHES)."\n");
+                    } elseif ($export->format === 'xls') {
+                        fwrite($handle, '<tr>'.implode('', array_map(static fn ($value): string => '<td>'.htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8').'</td>', array_values($data))).'</tr>');
                     } else {
                         fputcsv($handle, array_map(static fn ($value): string => preg_match('/^[=+\-@\s\x00-\x1F]/u', (string) $value) ? "'".(string) $value : (string) $value, array_values($data)));
                     }
                 }
             }, 'id', 'id');
+            if ($export->format === 'xls') {
+                fwrite($handle, '</tbody></table>');
+            }
             fclose($handle);
             $export->update(['status' => 'completed', 'path' => $path]);
             AuditLog::query()->create(['actor_id' => $export->actor_id, 'actor_role' => $export->actor?->profile?->role?->value, 'action' => 'audit.export.completed', 'entity_type' => 'audit_export', 'entity_id' => $export->id, 'details' => ['format' => $export->format]]);

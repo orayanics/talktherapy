@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-#[Fillable(['id', 'label', 'value'])]
+#[Fillable(['id', 'label', 'value', 'active'])]
 class Diagnosis extends Model
 {
     /** @use HasFactory<DiagnosisFactory> */
@@ -16,4 +16,9 @@ class Diagnosis extends Model
     public $incrementing = false;
 
     protected $keyType = 'string';
+
+    protected function casts(): array
+    {
+        return ['active' => 'boolean'];
+    }
 }
