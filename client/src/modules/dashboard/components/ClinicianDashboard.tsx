@@ -214,7 +214,7 @@ export default function ClinicianDashboard() {
                     row.status === 'ACCEPTED' && row.room_id ? (
                       <Link
                         to="/room/$roomId"
-                        params={{ roomId: row.room_id }}
+                        params={{ roomId: row.id }}
                         className="btn btn-neutral"
                       >
                         Join Session

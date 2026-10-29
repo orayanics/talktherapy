@@ -114,11 +114,13 @@ Status: implementation in phases. The Laravel platform foundation was completed 
 
 [Spec and task details](../docs/migration/modules/SPEC-realtime.md#task-plan)
 
-- [ ] W1 Define/authorize session descriptor.
-- [ ] W2 Relay validated signals.
+- [x] W1 Define/authorize session descriptor. Participant-scoped, active/verified, ACCEPTED-only descriptor with generation-bound Echo presence channel and no bearer token.
+- [x] W2 Relay validated signals. Type-specific bounds, participant/target/generation checks, immediate `SessionSignal` broadcast and feature coverage are implemented.
 - [ ] W3 Coordinate presence and revocation.
-- [ ] W4 Migrate browser transport.
+- [x] W4 Migrate browser transport. Room hook uses the descriptor and Echo/Reverb presence signals; the legacy raw WebSocket/join-token path is removed.
 - [ ] W5 Verify TURN/network/media cleanup.
+
+  - Remaining W3/W5 work: shared Redis participant leases, explicit disconnect/revocation integration across all account/session transitions, scoped TURN credentials, and two-browser/separate-network verification.
 
 To run realtime locally, start php artisan reverb:start and php artisan schedule:work.
 

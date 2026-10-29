@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\V1\AdminUserProvisionController;
 use App\Http\Controllers\Api\V1\AdminUserStatusController;
 use App\Http\Controllers\Api\V1\AppointmentController;
+use App\Http\Controllers\Api\V1\AppointmentSessionController;
 use App\Http\Controllers\Api\V1\AuditLogController;
 use App\Http\Controllers\Api\V1\BookmarkController;
 use App\Http\Controllers\Api\V1\ContentController;
@@ -76,6 +77,8 @@ Route::middleware(['auth:sanctum', 'account.active', 'verified'])->group(functio
     Route::post('/slots/{slot}/book', [AppointmentController::class, 'store'])->name('slots.book');
     Route::get('/appointments', [AppointmentController::class, 'index'])->name('appointments.index');
     Route::get('/appointments/{appointment}', [AppointmentController::class, 'show'])->name('appointments.show');
+    Route::post('/appointments/{appointment}/session', [AppointmentSessionController::class, 'descriptor'])->name('appointments.session');
+    Route::post('/appointments/{appointment}/signals', [AppointmentSessionController::class, 'signal'])->name('appointments.signals');
     Route::post('/appointments/{appointment}/accept', [AppointmentController::class, 'accept'])->name('appointments.accept');
     Route::post('/appointments/{appointment}/reject', [AppointmentController::class, 'reject'])->name('appointments.reject');
     Route::post('/appointments/{appointment}/cancel', [AppointmentController::class, 'cancel'])->name('appointments.cancel');

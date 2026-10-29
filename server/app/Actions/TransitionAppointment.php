@@ -95,6 +95,7 @@ class TransitionAppointment
                 $appointment->cancelled_at = now();
             } elseif ($action === 'complete') {
                 $appointment->completed_at = now();
+                $appointment->session_generation++;
             }
             $appointment->save();
 

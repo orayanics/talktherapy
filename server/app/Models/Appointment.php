@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
-#[Fillable(['slot_id', 'patient_id', 'clinician_id', 'status', 'booked_at', 'confirmed_at', 'cancelled_at', 'completed_at', 'room_id'])]
+#[Fillable(['slot_id', 'patient_id', 'clinician_id', 'status', 'booked_at', 'confirmed_at', 'cancelled_at', 'completed_at', 'room_id', 'session_generation'])]
 class Appointment extends Model
 {
     /** @use HasFactory<AppointmentFactory> */
@@ -49,6 +49,7 @@ class Appointment extends Model
             'confirmed_at' => 'immutable_datetime',
             'cancelled_at' => 'immutable_datetime',
             'completed_at' => 'immutable_datetime',
+            'session_generation' => 'integer',
         ];
     }
 }

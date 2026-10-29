@@ -40,7 +40,7 @@ export default function RoomSession({ roomId }: RoomSessionProps) {
     return <RoomPrompt roomId={roomId} />
   }
 
-  if (permission === 'denied') {
+  if (permission === 'denied' || permission === 'insecure') {
     return <RoomDenied />
   }
 

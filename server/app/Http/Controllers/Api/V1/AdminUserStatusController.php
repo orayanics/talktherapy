@@ -41,6 +41,12 @@ class AdminUserStatusController extends Controller
             if ($status === UserStatus::Suspended) {
                 $lockedUser->increment('session_version');
                 DB::table('sessions')->where('user_id', $lockedUser->id)->delete();
+                DB::table('appointments')
+                    ->where('status', 'ACCEPTED')
+                    ->where(fn ($query) => $query
+                        ->where('patient_id', $lockedUser->id)
+                        ->orWhere('clinician_id', $lockedUser->id))
+                    ->increment('session_generation');
             }
 
             AuditLog::query()->create([

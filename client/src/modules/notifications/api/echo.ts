@@ -1,7 +1,7 @@
 import { configureEcho, echoIsConfigured } from '@laravel/echo-react'
 import type { ChannelAuthorizationCallback } from 'pusher-js'
 import { api } from '#/lib/api/client'
-import { API_URL } from '#/constants/application'
+import { API_URL, browserHostname, resolveDevelopmentHost } from '#/constants/application'
 
 if (!echoIsConfigured()) {
   const useTls = import.meta.env.VITE_REVERB_SCHEME === 'https'
@@ -9,7 +9,9 @@ if (!echoIsConfigured()) {
   configureEcho({
     broadcaster: 'reverb',
     key: import.meta.env.VITE_REVERB_APP_KEY,
-    wsHost: import.meta.env.VITE_REVERB_HOST,
+    wsHost: resolveDevelopmentHost(
+      'http://' + (import.meta.env.VITE_REVERB_HOST ?? 'localhost') + ':' + (import.meta.env.VITE_REVERB_PORT ?? '8081'),
+    )?.replace(/^https?:\/\//, '').replace(/:\d+$/, '') ?? browserHostname,
     wsPort: Number(import.meta.env.VITE_REVERB_PORT ?? 8081),
     wssPort: Number(import.meta.env.VITE_REVERB_PORT ?? 8081),
     forceTLS: useTls,

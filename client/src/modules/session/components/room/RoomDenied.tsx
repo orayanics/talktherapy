@@ -2,6 +2,8 @@ import { Link } from '@tanstack/react-router'
 import { X } from 'lucide-react'
 
 export default function RoomDenied() {
+  const secureContext = typeof window === 'undefined' || window.isSecureContext
+
   return (
     <div className="flex h-screen w-screen items-center justify-center bg-white">
       <div className="flex flex-col items-center text-center px-6 gap-6 max-w-2xl">
@@ -14,8 +16,9 @@ export default function RoomDenied() {
 
         <div className="max-w-md">
           <p className="text-slate-900">
-            Camera and microphone are required to join this room. Please allow
-            permissions and refresh the page.
+            {secureContext
+              ? 'Camera and microphone are required to join this room. Allow both permissions in your browser, then refresh the page.'
+              : 'Camera and microphone require a secure connection. Open the app using HTTPS, or use localhost for local development.'}
           </p>
         </div>
 

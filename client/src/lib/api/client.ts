@@ -6,6 +6,8 @@ const apiClient: AxiosInstance = axios.create({
   baseURL: `${API_URL ?? 'http://localhost:8080'}`,
   withCredentials: true,
   withXSRFToken: true,
+  xsrfCookieName: 'XSRF-TOKEN',
+  xsrfHeaderName: 'X-XSRF-TOKEN',
   headers: {
     'Content-Type': 'application/json',
     Accept: 'application/json',
@@ -14,6 +16,17 @@ const apiClient: AxiosInstance = axios.create({
 
 // optional: request interceptor (runs before every request)
 apiClient.interceptors.request.use(async (config) => {
+  if (typeof document !== 'undefined' && !config.headers['X-XSRF-TOKEN']) {
+    const token = document.cookie
+      .split('; ')
+      .find((cookie) => cookie.startsWith('XSRF-TOKEN='))
+      ?.slice('XSRF-TOKEN='.length)
+
+    if (token) {
+      config.headers.set('X-XSRF-TOKEN', decodeURIComponent(token))
+    }
+  }
+
   return config
 })
 
