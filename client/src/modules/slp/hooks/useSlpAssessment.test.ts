@@ -16,7 +16,7 @@ it('aborts a cancelled turn and ignores a late result', async () => {
       }),
   )
   const { result } = renderHook(useSlpAssessment)
-  let request!: Promise<void>
+  let request!: Promise<AssessResponse | null>
   act(() => {
     request = result.current.submitAssessment(new Blob(['audio']), 'sun')
   })

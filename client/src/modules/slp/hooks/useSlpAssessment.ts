@@ -28,7 +28,7 @@ export default function useSlpAssessment() {
     reference: string,
     language: 'en' | 'tl' = 'en',
   ) => {
-    if (active.current) return
+    if (active.current) return null
     const controller = new AbortController()
     active.current = controller
     setSubmitting(true)
@@ -41,9 +41,13 @@ export default function useSlpAssessment() {
         controller.signal,
         language,
       )
-      if (active.current === controller) setResult(data)
+      if (active.current === controller) {
+        setResult(data)
+        return data
+      }
     } catch (error) {
-      if (active.current !== controller || controller.signal.aborted) return
+      if (active.current !== controller || controller.signal.aborted)
+        return null
       let message =
         'We could not send that recording. Check your connection and try again.'
       if (isAxiosError(error)) {
@@ -72,6 +76,7 @@ export default function useSlpAssessment() {
         setSubmitting(false)
       }
     }
+    return null
   }
   return { result, apiError, isSubmitting, submitAssessment, resetAssessment }
 }

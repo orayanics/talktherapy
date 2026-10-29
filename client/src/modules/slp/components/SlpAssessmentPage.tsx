@@ -1,362 +1,403 @@
-import { useState } from 'react'
-import {
-  Bird,
-  Cat,
-  Fish,
-  Flower2,
-  Mic,
-  Pause,
-  RotateCcw,
-  Square,
-  Sun,
-} from 'lucide-react'
+import { useEffect, useReducer, useRef, useState } from 'react'
+import { Pause, Star } from 'lucide-react'
 import useSlpAssessment from '../hooks/useSlpAssessment'
 import usePracticeRecorder from '../hooks/usePracticeRecorder'
-import { MAX_REFERENCE_LENGTH } from '../api/slp'
-
-const prompts = [
-  { word: 'sun', filipino: 'araw', picture: Sun, scene: 'A sunny start' },
-  { word: 'fish', filipino: 'isda', picture: Fish, scene: 'By the pond' },
-  { word: 'cat', filipino: 'pusa', picture: Cat, scene: 'A little visitor' },
-  { word: 'bird', filipino: 'ibon', picture: Bird, scene: 'Up in the trees' },
-  {
-    word: 'flower',
-    filipino: 'bulaklak',
-    picture: Flower2,
-    scene: 'In the garden',
-  },
-]
+import {
+  getPracticeWord,
+  picturePrompts,
+  practiceCategories,
+} from '../data/practiceContent'
+import { practiceThemes } from '../data/practiceThemes'
+import type {
+  PracticeCategory,
+  PracticeLanguage,
+} from '../data/practiceContent'
+import type { PracticeThemeId } from '../data/practiceThemes'
+import PracticePicture from './PracticePicture'
+import PracticeTurn from './PracticeTurn'
+import PracticeReview from './PracticeReview'
+import PracticeRoundSummary from './PracticeRoundSummary'
+import {
+  getCheckOutcome,
+  practiceGameReducer,
+  summarizePractice,
+} from '../data/practiceGame'
+import './practice.css'
 
 export default function SlpAssessmentPage() {
   const [index, setIndex] = useState(0)
-  const [language, setLanguage] = useState<'en' | 'tl'>('en')
+  const [language, setLanguage] = useState<PracticeLanguage>('en')
+  const [category, setCategory] = useState<PracticeCategory>('everyday')
+  const [themeId, setThemeId] = useState<PracticeThemeId>('jungle')
   const [mode, setMode] = useState<'explore' | 'focus'>('explore')
+  const [settingsOpen, setSettingsOpen] = useState(false)
   const [customWord, setCustomWord] = useState('')
   const [paused, setPaused] = useState(false)
   const [finished, setFinished] = useState(false)
-  const [completed, setCompleted] = useState<Set<number>>(new Set())
+  const [visited, setVisited] = useState<Set<string>>(new Set())
+  const [game, dispatchGame] = useReducer(practiceGameReducer, {})
+  const roundGeneration = useRef(0)
   const recorder = usePracticeRecorder()
   const assessment = useSlpAssessment()
+  const prompts = picturePrompts.filter((item) => item.category === category)
   const prompt = prompts[index]
-  const Picture = prompt.picture
-  const word =
-    customWord.trim() || (language === 'tl' ? prompt.filipino : prompt.word)
+  const theme =
+    practiceThemes.find((item) => item.id === themeId) ?? practiceThemes[0]
+  const Buddy = theme.icon
+  const word = customWord.trim() || getPracticeWord(prompt, language)
+  const currentProgress =
+    game[prompt.id]?.word === word ? game[prompt.id] : undefined
+  const summary = summarizePractice(
+    game,
+    prompts.map((item) => item.id),
+  )
+  const completed = new Set(
+    prompts.filter((item) => game[item.id]).map((item) => item.id),
+  )
+  useEffect(() => {
+    if (recorder.audio && recorder.url) {
+      setVisited((previous) =>
+        previous.has(prompt.id) ? previous : new Set(previous).add(prompt.id),
+      )
+      dispatchGame({
+        type: 'recorded',
+        promptId: prompt.id,
+        word,
+        recordingKey: recorder.url,
+      })
+    }
+  }, [recorder.audio, recorder.url, prompt.id, word])
+  const locked =
+    recorder.state === 'recording' ||
+    recorder.state === 'requesting_permission' ||
+    assessment.isSubmitting
   const capturing =
     recorder.state === 'recording' || recorder.state === 'requesting_permission'
-  const locked = capturing || assessment.isSubmitting
-  const error = recorder.error ?? assessment.apiError
+  const showingFeedback = !!currentProgress && !capturing
   const clear = () => {
+    roundGeneration.current++
+    dispatchGame({ type: 'cancel_checks' })
     recorder.clear()
     assessment.resetAssessment()
   }
+  const restart = () => {
+    clear()
+    setCustomWord('')
+    dispatchGame({ type: 'reset' })
+    setIndex(0)
+    setFinished(false)
+    setVisited(new Set())
+    setPaused(false)
+  }
   const next = () => {
+    setVisited((previous) => new Set(previous).add(prompt.id))
     clear()
     setCustomWord('')
     if (index === prompts.length - 1) setFinished(true)
     else setIndex(index + 1)
   }
   const analyze = async () => {
-    if (!recorder.audio) return
-    setCompleted((previous) => new Set(previous).add(index))
-    await assessment.submitAssessment(recorder.audio, word, language)
+    if (!recorder.audio || !recorder.url) return
+    const generation = roundGeneration.current
+    const recordingKey = recorder.url
+    dispatchGame({
+      type: 'check',
+      promptId: prompt.id,
+      recordingKey,
+      outcome: 'checking',
+      transcript: '',
+    })
+    const response = await assessment.submitAssessment(
+      recorder.audio,
+      word,
+      language,
+    )
+    if (roundGeneration.current !== generation) return
+    dispatchGame({
+      type: 'check',
+      promptId: prompt.id,
+      recordingKey,
+      outcome: response ? getCheckOutcome(response) : 'unavailable',
+      transcript: response?.analysis.transcript ?? '',
+    })
   }
-  const versioned = assessment.result?.meta.schemaVersion === '2.0'
-  const feedback = versioned
-    ? assessment.result?.feedback.text
-    : 'Thanks for trying! Listen together, then try again or take a break.'
+  const retryWord = (promptId: string) => {
+    const target = prompts.findIndex((item) => item.id === promptId)
+    if (target < 0) return
+    clear()
+    setIndex(target)
+    setFinished(false)
+    setPaused(false)
+    const practicedWord = game[promptId]?.word
+    setCustomWord(
+      practicedWord &&
+        practicedWord !== getPracticeWord(prompts[target], language)
+        ? practicedWord
+        : '',
+    )
+  }
 
   return (
     <section
-      className="mx-auto max-w-5xl space-y-6 text-slate-900"
+      className="slp-practice mx-auto max-w-5xl space-y-5 sm:space-y-6"
+      data-practice-theme={themeId}
+      data-practice-mode={mode}
       aria-label="Speech practice"
     >
       <header className="flex flex-wrap items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold">
-            {mode === 'explore' ? 'Our sound garden' : 'Speech practice'}
-          </h1>
-          <p className="text-sm text-slate-600">
-            {mode === 'explore'
-              ? 'One word, one turn. Explore with your helper.'
-              : 'Record, replay, and practice at your pace.'}
-          </p>
+        <div className="flex items-center gap-4">
+          {mode === 'explore' && (
+            <Buddy
+              size={48}
+              strokeWidth={1.5}
+              className="slp-adventure-mark hidden sm:block"
+              aria-hidden="true"
+            />
+          )}
+          <div>
+            <h1 className="text-xl sm:text-2xl font-bold">
+              {mode === 'explore' ? 'Picture adventures' : 'Speech practice'}
+            </h1>
+            <p className="mt-1 text-sm text-slate-600 hidden sm:block">
+              {mode === 'explore'
+                ? theme.greeting
+                : 'Record, replay, and practice at your pace.'}
+            </p>
+          </div>
         </div>
         <button
           type="button"
-          className="btn min-h-12"
+          className="slp-secondary-button"
+          aria-label={paused ? 'Come back to practice' : 'Take a break'}
           onClick={() => {
             clear()
             setPaused(!paused)
           }}
         >
           <Pause size={18} aria-hidden="true" />
-          {paused ? 'Come back to practice' : 'Take a break'}
+          <span className="sm:hidden">{paused ? 'Resume' : 'Break'}</span>
+          <span className="hidden sm:inline">
+            {paused ? 'Come back to practice' : 'Take a break'}
+          </span>
         </button>
       </header>
-      <div className="flex flex-wrap gap-4">
-        <label className="flex items-center gap-2 text-sm font-medium">
-          Practice language
-          <select
-            className="select min-h-12"
-            value={language}
-            disabled={locked}
-            onChange={(event) => {
-              clear()
-              setCustomWord('')
-              setCompleted(new Set())
-              setIndex(0)
-              setFinished(false)
-              setLanguage(event.target.value as 'en' | 'tl')
-            }}
-          >
-            <option value="en">English</option>
-            <option value="tl">Filipino (Tagalog)</option>
-          </select>
-        </label>
-        <label className="flex items-center gap-2 text-sm font-medium">
-          Activity style
-          <select
-            className="select min-h-12"
-            value={mode}
-            onChange={(event) =>
-              setMode(event.target.value as 'explore' | 'focus')
-            }
-          >
-            <option value="explore">Explore with pictures</option>
-            <option value="focus">Simple focus</option>
-          </select>
-        </label>
-      </div>
-      <div
-        className="flex flex-wrap items-center gap-3"
-        aria-label={`${completed.size} of 5 practice turns tried`}
+
+      <button
+        type="button"
+        className="slp-secondary-button"
+        aria-expanded={settingsOpen}
+        aria-controls="practice-activity-settings"
+        onClick={() => setSettingsOpen(!settingsOpen)}
       >
-        {prompts.map((item, step) => (
-          <span
-            key={item.word}
-            className={`rounded-full border px-4 py-2 text-sm ${completed.has(step) ? 'border-emerald-700 bg-emerald-50 text-emerald-900' : 'border-slate-300 text-slate-600'}`}
-          >
-            {step + 1}
-            {completed.has(step)
-              ? ' · Tried'
-              : step === index && !finished
-                ? ' · Your turn'
-                : ''}
-          </span>
-        ))}
+        {settingsOpen
+          ? 'Close activity settings'
+          : 'Change theme, language or pictures'}
+      </button>
+      <div
+        id="practice-activity-settings"
+        className={`${settingsOpen ? 'block' : 'hidden'} space-y-5`}
+      >
+        {mode === 'explore' && (
+          <fieldset className="space-y-3">
+            <legend className="slp-section-label mb-3">
+              Pick your adventure
+            </legend>
+            <div className="flex flex-wrap gap-2">
+              {practiceThemes.map((item) => (
+                <button
+                  key={item.id}
+                  type="button"
+                  className="slp-theme-button"
+                  aria-pressed={themeId === item.id}
+                  onClick={() => setThemeId(item.id)}
+                >
+                  <item.icon size={18} aria-hidden="true" />
+                  {item.label}
+                </button>
+              ))}
+            </div>
+          </fieldset>
+        )}
+
+        <div className="grid gap-4 sm:grid-cols-3">
+          <label className="space-y-2 text-sm font-medium">
+            <span className="block">Practice language</span>
+            <select
+              className="select min-h-12 w-full bg-white"
+              value={language}
+              disabled={locked}
+              onChange={(event) => {
+                restart()
+                setLanguage(event.target.value as PracticeLanguage)
+              }}
+            >
+              <option value="en">English</option>
+              <option value="tl">Filipino (Tagalog)</option>
+            </select>
+          </label>
+          <label className="space-y-2 text-sm font-medium">
+            <span className="block">Picture set</span>
+            <select
+              className="select min-h-12 w-full bg-white"
+              value={category}
+              disabled={locked}
+              onChange={(event) => {
+                restart()
+                setCategory(event.target.value as PracticeCategory)
+              }}
+            >
+              {practiceCategories.map((item) => (
+                <option key={item.id} value={item.id}>
+                  {item[language]}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="space-y-2 text-sm font-medium">
+            <span className="block">Activity style</span>
+            <select
+              className="select min-h-12 w-full bg-white"
+              value={mode}
+              onChange={(event) =>
+                setMode(event.target.value as 'explore' | 'focus')
+              }
+            >
+              <option value="explore">Explore with pictures</option>
+              <option value="focus">Simple focus</option>
+            </select>
+          </label>
+        </div>
       </div>
-      {paused || finished ? (
-        <div className="rounded-3xl bg-emerald-50 p-8 text-center space-y-5">
-          <Flower2
-            className="mx-auto text-emerald-800"
-            size={80}
+      <div className="slp-lesson-progress">
+        <div className="flex items-center justify-between gap-3">
+          <p className="slp-section-label">
+            {finished
+              ? 'Round complete'
+              : `Picture ${index + 1} of ${prompts.length}`}
+          </p>
+          <p className="slp-section-label">{summary.stars} practice stars</p>
+        </div>
+        <progress
+          className="slp-progress-meter"
+          max={prompts.length}
+          value={visited.size}
+          aria-label="Picture stops visited"
+        />
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <ol
+            className="slp-progress hidden sm:flex"
+            aria-label={`${completed.size} of ${prompts.length} practice turns tried`}
+          >
+            {prompts.map((item, step) => (
+              <li
+                key={item.id}
+                className="slp-progress-step"
+                aria-current={step === index && !finished ? 'step' : undefined}
+                data-tried={completed.has(item.id)}
+                aria-label={`Picture ${step + 1}${completed.has(item.id) ? ', tried' : ''}`}
+              >
+                {completed.has(item.id) ? (
+                  <Star size={20} fill="currentColor" aria-hidden="true" />
+                ) : (
+                  step + 1
+                )}
+              </li>
+            ))}
+          </ol>
+          <p className="text-sm text-slate-600 hidden sm:block">
+            {summary.stars} of {prompts.length * 3} practice stars ·{' '}
+            {completed.size} of {prompts.length} words
+          </p>
+        </div>
+      </div>
+
+      {paused ? (
+        <div className="slp-rest space-y-5">
+          <Buddy
+            size={72}
+            strokeWidth={1.5}
+            className="slp-adventure-mark mx-auto"
             aria-hidden="true"
           />
-          <h2 className="text-2xl font-bold">
-            {paused ? 'Time for a little rest' : 'Thanks for exploring!'}
-          </h2>
+          <h2 className="text-2xl font-bold">Time for a little rest</h2>
           <p>
             {completed.size} practice {completed.size === 1 ? 'turn' : 'turns'}{' '}
             tried. Every try is part of learning.
           </p>
           <button
             type="button"
-            className="btn btn-neutral min-h-12"
+            className="slp-secondary-button"
             onClick={() => {
-              clear()
               setPaused(false)
-              setFinished(false)
-              if (finished) {
-                setIndex(0)
-                setCompleted(new Set())
-              }
             }}
           >
-            {paused ? 'I’m ready' : 'Explore again'}
+            I’m ready
           </button>
         </div>
+      ) : finished ? (
+        <PracticeRoundSummary
+          game={game}
+          prompts={prompts}
+          language={language}
+          focusMode={mode === 'focus'}
+          onRestart={restart}
+          onRetry={retryWord}
+        />
       ) : (
-        <div className="grid gap-6 md:grid-cols-2">
-          <div className="rounded-3xl bg-amber-50 p-8 flex flex-col items-center justify-center gap-5 text-center">
-            <p className="text-sm text-amber-900">
-              {customWord.trim() ? 'Your practice word' : prompt.scene}
-            </p>
-            {!customWord.trim() && mode === 'explore' && (
-              <Picture
-                size={112}
-                strokeWidth={1.5}
-                className="text-amber-800"
-                aria-hidden="true"
-              />
-            )}
-            <h2
-              lang={language === 'tl' ? 'fil' : 'en'}
-              className="break-words max-w-full text-5xl font-bold"
-            >
-              {word}
-            </h2>
-            <p className="max-w-xs text-slate-700">
-              {mode === 'explore'
-                ? 'Ask your helper to say the word. Listen, then have your turn.'
-                : 'Say the word or your chosen phrase. Replay to reflect on your practice.'}
-            </p>
-          </div>
-          <div className="space-y-5 py-2">
-            <div
-              role="status"
-              aria-live="polite"
-              className="text-lg font-semibold"
-            >
-              {recorder.state === 'requesting_permission'
-                ? 'Ask your helper to allow the microphone.'
-                : recorder.state === 'recording'
-                  ? 'I’m listening. Say your word, then tap Done.'
-                  : assessment.isSubmitting
-                    ? 'Listening to your turn…'
-                    : assessment.result
-                      ? 'Thanks for having a go!'
-                      : recorder.audio
-                        ? 'Want to hear your turn?'
-                        : 'Ready when you are.'}
-            </div>
-            {error && (
-              <p role="alert" className="rounded-xl bg-red-50 p-4 text-red-900">
-                {error}
-              </p>
-            )}
-            {recorder.state === 'recording' ? (
-              <button
-                type="button"
-                className="btn btn-neutral min-h-14 w-full text-lg"
-                onClick={recorder.stop}
-              >
-                <Square size={20} aria-hidden="true" />
-                Done
-              </button>
-            ) : (
-              <button
-                type="button"
-                className="btn btn-neutral min-h-14 w-full text-lg"
-                disabled={locked}
-                onClick={() => {
-                  assessment.resetAssessment()
-                  void recorder.start()
-                }}
-              >
-                <Mic size={20} aria-hidden="true" />
-                {recorder.audio ? 'Record again' : 'My turn'}
-              </button>
-            )}
-            {recorder.url && (
-              <div className="space-y-2">
-                <label htmlFor="practice-replay" className="font-medium">
-                  Listen to my turn
-                </label>
-                <audio
-                  id="practice-replay"
-                  controls
-                  src={recorder.url}
-                  className="w-full"
-                  aria-label="Listen to my recording"
-                />
-              </div>
-            )}
-            {recorder.audio && !assessment.result && (
-              <button
-                type="button"
-                className="btn min-h-12 w-full"
-                disabled={locked}
-                onClick={() => void analyze()}
-              >
-                {assessment.isSubmitting ? 'Listening…' : 'Finish my turn'}
-              </button>
-            )}
-            {assessment.result && (
-              <div className="rounded-2xl bg-emerald-50 p-5" role="status">
-                <p>{feedback}</p>
-              </div>
-            )}
-            <div className="flex flex-wrap gap-3">
-              <button
-                type="button"
-                className="btn min-h-12"
-                disabled={locked}
-                onClick={next}
-              >
-                {index === 4 ? 'Finish exploring' : 'Next word'}
-              </button>
-              {(locked || recorder.audio) && (
-                <button type="button" className="btn min-h-12" onClick={clear}>
-                  <RotateCcw size={18} aria-hidden="true" />
-                  {locked ? 'Cancel turn' : 'Start over'}
-                </button>
-              )}
-            </div>
-          </div>
+        <div
+          className={
+            showingFeedback ? 'slp-feedback-stage' : 'slp-lesson-stage'
+          }
+        >
+          {!showingFeedback && (
+            <PracticePicture
+              key={`${prompt.id}-${language}-${customWord}`}
+              prompt={prompt}
+              language={language}
+              customWord={customWord}
+              focusMode={mode === 'focus'}
+            />
+          )}
+          <PracticeTurn
+            recorder={recorder}
+            assessment={assessment}
+            language={language}
+            last={index === prompts.length - 1}
+            progress={currentProgress}
+            focusMode={mode === 'focus'}
+            onReplayed={() =>
+              dispatchGame({ type: 'replayed', promptId: prompt.id })
+            }
+            onReflect={(reflection) =>
+              dispatchGame({
+                type: 'reflected',
+                promptId: prompt.id,
+                reflection,
+              })
+            }
+            onStart={() => {
+              roundGeneration.current++
+              dispatchGame({ type: 'cancel_checks' })
+              assessment.resetAssessment()
+              void recorder.start()
+            }}
+            onFinish={() => void analyze()}
+            onNext={next}
+            onClear={clear}
+          />
         </div>
       )}
-      <details className="border-t border-slate-200 pt-4">
-        <summary className="cursor-pointer py-3 font-medium">
-          Practice settings and review · for you and your helper
-        </summary>
-        <div className="space-y-4 py-4 text-sm text-slate-700">
-          <p>
-            Proof of concept for ages 3–18 in the Philippines. Younger children
-            need a helper. These example words have not been reviewed as therapy
-            targets. Automated transcription cannot judge sound accuracy.
-          </p>
-          <p>
-            Filipino mode uses Tagalog transcription. Other Philippine languages
-            and mixed-language speech have not been evaluated.
-          </p>
-          <div className="space-y-2">
-            <label className="block font-medium" htmlFor="practice-word">
-              Word or short phrase from your speech plan
-            </label>
-            <input
-              id="practice-word"
-              className="input w-full"
-              maxLength={MAX_REFERENCE_LENGTH}
-              value={customWord}
-              disabled={locked}
-              onChange={(event) => {
-                clear()
-                setCustomWord(event.target.value)
-              }}
-              placeholder={prompt.word}
-            />
-          </div>
-          <p>
-            Sending a turn uses the private analysis service. Recordings are not
-            enrolled for model training.
-          </p>
-          {assessment.result && (
-            <dl className="space-y-2">
-              <div>
-                <dt className="font-medium">
-                  Automatic transcript · may contain mistakes
-                </dt>
-                <dd>
-                  {assessment.result.analysis.transcript ||
-                    'No transcript available'}
-                </dd>
-              </div>
-              <div>
-                <dt className="font-medium">Review</dt>
-                <dd>
-                  {versioned
-                    ? assessment.result.meta.status?.replaceAll('_', ' ')
-                    : 'Legacy result · sound judgments withheld'}
-                </dd>
-              </div>
-              <div>
-                <dt className="font-medium">Model</dt>
-                <dd>{assessment.result.meta.modelVersion ?? 'Not provided'}</dd>
-              </div>
-            </dl>
-          )}
-        </div>
-      </details>
+      <PracticeReview
+        prompt={prompt}
+        word={word}
+        customWord={customWord}
+        locked={locked}
+        result={assessment.result}
+        onChange={(value) => {
+          clear()
+          setCustomWord(value)
+        }}
+      />
     </section>
   )
 }

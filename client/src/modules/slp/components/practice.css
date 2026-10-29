@@ -1,0 +1,599 @@
+.slp-practice {
+  --practice-accent: #166534;
+  --practice-ink: #173d29;
+  --practice-tint: #e8f3df;
+  --practice-ground: #f7f9ef;
+  --practice-depth: #114b29;
+  color: #1e293b;
+  background: var(--practice-ground);
+  border-radius: 2rem;
+  padding: clamp(1rem, 3vw, 2rem);
+}
+.slp-practice[data-practice-theme='ocean'] {
+  --practice-accent: #0f766e;
+  --practice-ink: #164e63;
+  --practice-tint: #dff4f1;
+  --practice-ground: #f0f9fa;
+  --practice-depth: #0b5651;
+}
+.slp-practice[data-practice-theme='space'] {
+  --practice-accent: #6d28d9;
+  --practice-ink: #3b2368;
+  --practice-tint: #ede7fb;
+  --practice-ground: #f7f5fc;
+  --practice-depth: #4c1d95;
+}
+.slp-practice[data-practice-mode='focus'] {
+  --practice-accent: #334155;
+  --practice-ink: #1e293b;
+  --practice-tint: #f1f5f9;
+  --practice-ground: #fafafa;
+  --practice-depth: #1e293b;
+}
+.slp-adventure-mark {
+  color: var(--practice-accent);
+  flex-shrink: 0;
+}
+.slp-section-label {
+  color: var(--practice-ink);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+.slp-theme-button,
+.slp-secondary-button,
+.slp-text-button,
+.slp-reveal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 3rem;
+  padding: 0.625rem 1rem;
+  border-radius: 1rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+.slp-theme-button {
+  border: 1px solid #cbd5e1;
+  color: #334155;
+  background: #fff;
+}
+.slp-theme-button[aria-pressed='true'] {
+  border: 2px solid var(--practice-accent);
+  color: var(--practice-ink);
+  background: var(--practice-tint);
+}
+.slp-main-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  min-height: 3.5rem;
+  width: 100%;
+  padding: 0.75rem 1.5rem;
+  border-radius: 1.125rem;
+  background: var(--practice-accent);
+  color: white;
+  font-size: 1.125rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 5px 0 var(--practice-depth);
+}
+.slp-secondary-button {
+  border: 1px solid #94a3b8;
+  color: #1e293b;
+  background: #fff;
+  box-shadow: 0 3px 0 #cbd5e1;
+}
+.slp-theme-button {
+  box-shadow: 0 3px 0 #cbd5e1;
+}
+.slp-main-button:active:not(:disabled),
+.slp-secondary-button:active:not(:disabled),
+.slp-theme-button:active:not(:disabled) {
+  transform: translateY(3px);
+  box-shadow: none;
+}
+.slp-practice h1,
+.slp-practice h2,
+.slp-practice h3 {
+  letter-spacing: -0.025em;
+}
+.slp-lesson-progress {
+  display: grid;
+  gap: 0.875rem;
+}
+.slp-progress-meter {
+  display: block;
+  appearance: none;
+  width: 100%;
+  height: 1rem;
+  border: 0;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #dce4d8;
+}
+.slp-progress-meter::-webkit-progress-bar {
+  background: #dce4d8;
+  border-radius: 999px;
+}
+.slp-progress-meter::-webkit-progress-value {
+  background: var(--practice-accent);
+  border-radius: 999px;
+}
+.slp-progress-meter::-moz-progress-bar {
+  background: var(--practice-accent);
+  border-radius: 999px;
+}
+.slp-lesson-stage {
+  display: grid;
+  gap: 1.25rem;
+  max-width: 46rem;
+  margin-inline: auto;
+}
+.slp-lesson-stage .slp-turn {
+  padding: 0.25rem 0;
+}
+.slp-lesson-stage .slp-picture-panel {
+  border-width: 2px;
+  border-bottom-width: 5px;
+}
+.slp-lesson-stage .slp-picture-frame {
+  min-height: 10rem;
+  max-height: 17rem;
+  aspect-ratio: auto;
+}
+.slp-lesson-stage .slp-picture-frame img {
+  height: 14rem;
+  max-width: 100%;
+}
+.slp-feedback-stage {
+  max-width: 46rem;
+  margin-inline: auto;
+}
+.slp-prompt-buddy {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+.slp-prompt-buddy p {
+  max-width: 21rem;
+  padding: 0.75rem 1rem;
+  border: 2px solid #d5ded0;
+  border-radius: 1rem 1rem 1rem 0.25rem;
+  font-weight: 600;
+  color: var(--practice-ink);
+}
+.slp-tala {
+  flex-shrink: 0;
+  overflow: visible;
+}
+.slp-turn-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.875rem;
+  padding: 1rem 0 0.5rem;
+}
+.slp-feedback-stage .slp-turn-actions {
+  border-top: 2px solid var(--practice-tint);
+  background: var(--practice-ground);
+  padding: 1rem 0.25rem 0.75rem;
+}
+.slp-turn-actions > .slp-main-button {
+  flex: 1 1 16rem;
+  width: auto;
+}
+.slp-reflection-button {
+  box-shadow: 0 3px 0 #cbd5e1;
+}
+.slp-reflection-button:active {
+  transform: translateY(2px);
+  box-shadow: none;
+}
+@media (max-width: 639px) {
+  .slp-practice .slp-progress {
+    display: none;
+  }
+  .slp-practice .slp-summary-hero {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+  .slp-summary-hero > .slp-tala {
+    width: 88px;
+    height: 88px;
+    justify-self: center;
+  }
+  .slp-summary-hero h2 {
+    font-size: 1.75rem;
+  }
+  .slp-summary-hero > svg {
+    justify-self: center;
+  }
+  .slp-lesson-stage .slp-picture-frame img {
+    height: 12rem;
+  }
+  .slp-prompt-buddy .slp-tala {
+    width: 48px;
+    height: 48px;
+  }
+  .slp-prompt-buddy p {
+    font-size: 0.875rem;
+    padding: 0.5rem 0.75rem;
+  }
+}
+.slp-word-check[data-outcome='matched'] {
+  background: var(--practice-tint);
+}
+.slp-text-button,
+.slp-reveal {
+  color: var(--practice-ink);
+  text-decoration: underline;
+  text-underline-offset: 0.25rem;
+}
+.slp-practice button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.slp-practice button:focus-visible,
+.slp-practice select:focus-visible,
+.slp-practice summary:focus-visible {
+  outline: 3px solid var(--practice-accent);
+  outline-offset: 4px;
+}
+.slp-progress {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.slp-progress-step {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 50%;
+  border: 1px solid #94a3b8;
+  background: #fff;
+  font-weight: 600;
+}
+.slp-progress-step[aria-current='step'] {
+  outline: 3px solid var(--practice-accent);
+  outline-offset: 3px;
+}
+.slp-progress-step[data-tried='true'] {
+  background: var(--practice-accent);
+  color: #fff;
+  border-color: var(--practice-accent);
+}
+.slp-picture-panel {
+  min-width: 0;
+  border-radius: 1.5rem;
+  padding: 1rem;
+  background: #fff;
+  border: 3px solid var(--practice-tint);
+}
+.slp-picture-frame {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 4 / 3;
+  min-height: 12rem;
+  overflow: hidden;
+  border-radius: 0.75rem;
+  background: white;
+}
+.slp-picture-frame img {
+  width: 100%;
+  height: 100%;
+  max-height: 20rem;
+  object-fit: contain;
+}
+.slp-custom-word {
+  font-size: clamp(1.5rem, 5vw, 3rem);
+  font-weight: 700;
+  overflow-wrap: anywhere;
+  text-align: center;
+  max-width: 100%;
+}
+.slp-turn {
+  min-width: 0;
+  padding: 1rem 0;
+}
+.slp-feedback {
+  padding: 1.25rem;
+  border-radius: 1rem;
+  background: var(--practice-tint);
+  color: var(--practice-ink);
+}
+.slp-rest {
+  border-radius: 1.5rem;
+  padding: 2rem;
+  text-align: center;
+  background: white;
+}
+.slp-review {
+  border-top: 1px solid #cbd5e1;
+  padding-top: 0.5rem;
+}
+.slp-review summary {
+  cursor: pointer;
+  padding: 1rem 0;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+@media (max-width: 639px) {
+  .slp-turn {
+    padding-top: 0.25rem;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .slp-main-button,
+  .slp-theme-button {
+    transition: background-color 0.15s ease;
+  }
+  .slp-main-button:hover:not(:disabled) {
+    filter: brightness(0.93);
+  }
+}
+
+.slp-word-feedback {
+  min-width: 0;
+  padding: 1.25rem;
+  border: 2px solid var(--practice-accent);
+  border-radius: 1.5rem;
+  background: white;
+}
+.slp-word-feedback:focus-visible {
+  outline: 3px solid var(--practice-accent);
+  outline-offset: 4px;
+}
+.slp-word-feedback > * + * {
+  margin-top: 1.25rem;
+}
+.slp-reward-heading {
+  display: flex;
+  gap: 0.875rem;
+  align-items: center;
+  color: var(--practice-ink);
+}
+.slp-reward-heading > svg {
+  flex-shrink: 0;
+  color: #b45309;
+}
+.slp-stars {
+  display: inline-flex;
+  gap: 0.25rem;
+  vertical-align: middle;
+}
+.slp-star-earned {
+  color: #b45309;
+}
+.slp-star-empty {
+  color: #94a3b8;
+}
+.slp-star-result {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  padding: 1rem;
+  background: #fffbeb;
+  border-radius: 1rem;
+  color: #78350f;
+}
+.slp-action-list {
+  display: grid;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+}
+.slp-action-list li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #475569;
+}
+.slp-action-list li[data-done='true'] {
+  color: var(--practice-ink);
+  font-weight: 600;
+}
+.slp-reflection-button {
+  min-height: 3rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #94a3b8;
+  border-radius: 0.75rem;
+  background: #fff;
+  color: #334155;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+.slp-reflection-button[aria-pressed='true'] {
+  border: 2px solid var(--practice-accent);
+  background: var(--practice-tint);
+  color: var(--practice-ink);
+  font-weight: 700;
+}
+.slp-word-check {
+  border-left: 4px solid var(--practice-accent);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  background: #f8fafc;
+  overflow-wrap: anywhere;
+}
+.slp-word-check[data-outcome='different'],
+.slp-word-check[data-outcome='unscorable'] {
+  border-left-color: #b45309;
+  background: #fffbeb;
+}
+.slp-transcript-pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 0.75rem;
+}
+.slp-transcript-pair dt {
+  font-size: 0.75rem;
+  color: #475569;
+}
+.slp-transcript-pair dd {
+  margin-top: 0.25rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+.slp-summary-hero {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 1.25rem;
+  padding: clamp(1.25rem, 3vw, 2rem);
+  border-radius: 1.5rem;
+  background: var(--practice-accent);
+  color: #fff;
+}
+.slp-summary-hero > svg {
+  color: #fde68a;
+}
+.slp-summary-score {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-top: 1px solid #ffffff70;
+  padding-top: 1rem;
+}
+.slp-summary-score > svg {
+  color: #fde68a;
+}
+.slp-summary-score strong {
+  font-size: 2.5rem;
+  line-height: 1.1;
+}
+.slp-summary-score strong span {
+  font-size: 1.25rem;
+  font-weight: 500;
+}
+.slp-summary-score > span {
+  font-size: 0.875rem;
+}
+.slp-summary-metrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem 1rem;
+  padding: 0.5rem 0;
+}
+.slp-summary-metrics p {
+  font-size: 0.875rem;
+  color: #475569;
+}
+.slp-summary-metrics strong {
+  display: block;
+  font-size: 2rem;
+  line-height: 1.3;
+  color: var(--practice-ink);
+  font-variant-numeric: tabular-nums;
+}
+.slp-badge-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.slp-badge-list li {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.875rem 1rem;
+  background: #fff;
+  border: 1px solid #cbd5e1;
+  border-radius: 1rem;
+}
+.slp-badge-list svg {
+  color: var(--practice-accent);
+  flex-shrink: 0;
+}
+.slp-badge-list strong {
+  display: block;
+  font-size: 0.875rem;
+}
+.slp-badge-list span {
+  display: block;
+  font-size: 0.75rem;
+  color: #475569;
+}
+.slp-word-story {
+  border-radius: 1.25rem;
+  border: 1px solid #cbd5e1;
+  overflow: hidden;
+  background: white;
+}
+.slp-word-story li {
+  display: grid;
+  grid-template-columns: 3rem minmax(0, 1fr);
+  gap: 0.75rem 1rem;
+  align-items: start;
+  padding: 1rem;
+}
+.slp-word-story li + li {
+  border-top: 1px solid #e2e8f0;
+}
+.slp-word-story img {
+  width: 3rem;
+  height: 3rem;
+  object-fit: contain;
+  border-radius: 0.5rem;
+}
+.slp-word-story p {
+  overflow-wrap: anywhere;
+}
+.slp-word-story button {
+  grid-column: 2;
+  justify-self: start;
+}
+.slp-word-story .slp-stars svg {
+  width: 18px;
+  height: 18px;
+}
+@media (min-width: 768px) {
+  .slp-summary-hero {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+  }
+  .slp-summary-score {
+    grid-column: auto;
+    flex-direction: column;
+    border-top: 0;
+    border-left: 1px solid #ffffff70;
+    padding: 0.5rem 0 0.5rem 1.5rem;
+  }
+  .slp-summary-metrics {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .slp-word-story li {
+    grid-template-columns: 4rem minmax(0, 1fr) auto;
+    align-items: center;
+  }
+  .slp-word-story img {
+    width: 4rem;
+    height: 4rem;
+  }
+  .slp-word-story button {
+    grid-column: auto;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .slp-reward-heading > svg {
+    animation: slp-reward-arrive 0.35s ease-out;
+  }
+  @keyframes slp-reward-arrive {
+    from {
+      transform: scale(0.8);
+    }
+    to {
+      transform: scale(1);
+    }
+  }
+}
