@@ -1,11 +1,10 @@
 from __future__ import annotations
 
 import statistics
-from typing import Optional
 
-from core.phonemization import DIGRAPHS
-from core.scoring import SCORING_CONFIG
-from models.dto import (
+from phoneme_service.core.phonemization import DIGRAPHS
+from phoneme_service.core.scoring import SCORING_CONFIG
+from phoneme_service.models.dto import (
     LowScoringUnit,
     PhonemeScore,
     StructuredAssessment,
@@ -163,7 +162,9 @@ def format_feedback_from_structured(structured: StructuredAssessment) -> str:
     overall = structured.overall
     lines = [
         "Pronunciation Assessment",
-        f"Overall: {overall.avgScore:.1f}% avg  |  {overall.percentAboveNeedsWork:.1f}% of units >= {SCORING_CONFIG.threshold_needs_work:.0f}%  |  Status: {overall.status}",
+        f"Overall: {overall.avgScore:.1f}% avg  |  "
+        f"{overall.percentAboveNeedsWork:.1f}% of units >= "
+        f"{SCORING_CONFIG.threshold_needs_work:.0f}%  |  Status: {overall.status}",
     ]
 
     if structured.words:

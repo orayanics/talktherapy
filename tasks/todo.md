@@ -137,6 +137,22 @@ To run realtime locally, start php artisan reverb:start and php artisan schedule
 - [ ] F7 Connect browser assessment.
 - [ ] F8 Approve maintained/licensed/validated production model path.
 
+### Python service audit (2026-10-29)
+
+- [x] Replace the flat prototype with an installable `src/phoneme_service` package, explicit module boundaries, a `pyproject.toml`, service README and initial unit tests.
+- [x] Remove committed Python bytecode and ignore virtual environments, caches, local secrets and build artifacts.
+- [x] Move model loading into FastAPI lifespan startup; expose separate liveness/readiness endpoints and keep model downloads out of health checks.
+- [x] Make the inference API private-by-contract: versioned `/v1` routes, constant-time service-token validation, no browser CORS boundary, 10 MiB streamed upload cap, supported-extension allowlist, one-job admission, FFmpeg timeout/`-nostdin`, temporary-directory cleanup and safe error bodies.
+- [x] Stop logging transcripts, run decode/ASR/alignment outside the async event loop, reject no-speech input, count aligned frames by span duration and fail invalid scoring configuration.
+- [ ] Generate and commit a hash-locked dependency file from a clean Linux build; add a CPU container recipe with pinned FFmpeg/espeak-ng packages and pre-provisioned model artifacts. The current direct pins are bootstrap constraints, not a reproducible supply-chain lock.
+- [ ] Replace the deprecated MMS_FA path before TorchAudio 2.9+, document exact model revisions/checksums/licenses, and obtain approval for the MMS_FA CC-BY-NC 4.0 deployment constraint.
+- [ ] Add Python CI for Python 3.11-3.13: install from the lock, lint, unit/contract tests, dependency audit and a no-network startup smoke test.
+- [ ] Inspect decoded media rather than trusting filename suffix: enforce WebM/Opus and WAV codecs, <=60-second duration, finite samples, non-silence and safe channel/sample-rate bounds with fixtures.
+- [ ] Run each assessment in a supervised worker process with a 40-second wall-clock budget, cancellation on disconnect, forced termination/restart after hangs, bounded memory and measured CPU/GPU concurrency.
+- [ ] Add the authenticated Laravel `/api/v1/slp/assess` proxy with request IDs, size/rate limits, streamed multipart forwarding, strict response validation and explicit 413/422/429/502/503/504 mapping. The browser must never call Python directly.
+- [ ] Version the scoring/model response, distinguish missing/extra/different speech from pronunciation quality, replace lossy IPA-to-letter mapping, and validate calibration on licensed clinician-reviewed fixtures before any clinical claim.
+- [ ] Add privacy-safe metrics for queue rejection, decode/inference latency, failure code, model/scoring version and memory; never record audio, transcript, reference text or bearer credentials.
+
 ### Checkpoint: realtime and inference
 
 - [ ] Real multi-instance/socket revocation/TURN checks and bounded Python clean-image tests pass; model licensing and scientific sign-off recorded separately.

@@ -15,32 +15,40 @@ class ScoringConfig:
     transcript_cer_threshold: float = 0.25
 
 
-def _safe_parse_float(raw: str, default: float) -> float:
+def _safe_parse_float(raw: object, default: float) -> float:
+    if raw is None:
+        return default
     try:
         return float(raw)
-    except (TypeError, ValueError):
+    except (TypeError, ValueError) as exc:
+        raise ValueError("Scoring configuration contains an invalid number") from exc
+
+
+def _safe_parse_int(raw: object, default: int) -> int:
+    if raw is None:
         return default
-
-
-def _safe_parse_int(raw: str, default: int) -> int:
+    if isinstance(raw, bool) or not isinstance(raw, int):
+        raise ValueError("Scoring configuration contains an invalid integer")
     try:
         return int(raw)
-    except (TypeError, ValueError):
-        return default
+    except (TypeError, ValueError) as exc:
+        raise ValueError("Scoring configuration contains an invalid integer") from exc
 
 
 def _load_yaml_with_pyyaml(path: str) -> dict:
     try:
-        import yaml  # type: ignore
-    except ImportError:
-        return {}
+        import yaml
+    except ImportError as exc:
+        raise RuntimeError("PyYAML is required to load scoring configuration") from exc
 
     try:
-        with open(path, "r", encoding="utf-8") as f:
+        with open(path, encoding="utf-8") as f:
             data = yaml.safe_load(f)
-        return data if isinstance(data, dict) else {}
-    except OSError:
-        return {}
+    except OSError as exc:
+        raise RuntimeError(f"Could not read scoring configuration: {path}") from exc
+    if not isinstance(data, dict):
+        raise ValueError("Scoring configuration must be a mapping")
+    return data
 
 
 def load_scoring_config(path: str = "config/scoring.yaml") -> ScoringConfig:
@@ -56,7 +64,7 @@ def load_scoring_config(path: str = "config/scoring.yaml") -> ScoringConfig:
     thresholds = data.get("thresholds", {}) if isinstance(data.get("thresholds"), dict) else {}
     alignment = data.get("alignment", {}) if isinstance(data.get("alignment"), dict) else {}
 
-    return ScoringConfig(
+    config = ScoringConfig(
         sigmoid_k=_safe_parse_float(sigmoid.get("k"), defaults.sigmoid_k),
         sigmoid_x0=_safe_parse_float(sigmoid.get("x0"), defaults.sigmoid_x0),
         threshold_accurate=_safe_parse_float(
@@ -73,6 +81,24 @@ def load_scoring_config(path: str = "config/scoring.yaml") -> ScoringConfig:
             defaults.transcript_cer_threshold,
         ),
     )
+    numeric_values = (
+        config.sigmoid_k,
+        config.sigmoid_x0,
+        config.threshold_accurate,
+        config.threshold_needs_work,
+        config.transcript_cer_threshold,
+    )
+    if not all(math.isfinite(value) for value in numeric_values):
+        raise ValueError("Scoring configuration values must be finite")
+    if config.sigmoid_k <= 0:
+        raise ValueError("Sigmoid k must be positive")
+    if not 0 <= config.threshold_needs_work <= config.threshold_accurate <= 100:
+        raise ValueError("Scoring thresholds must satisfy 0 <= needs_work <= accurate <= 100")
+    if config.min_reliable_frames < 1:
+        raise ValueError("min_reliable_frames must be positive")
+    if not 0 <= config.transcript_cer_threshold <= 1:
+        raise ValueError("transcript_cer_threshold must be between 0 and 1")
+    return config
 
 
 SCORING_CONFIG = load_scoring_config()

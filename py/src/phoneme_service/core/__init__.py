@@ -1,0 +1,1 @@
+"""Phoneme analysis domain logic."""

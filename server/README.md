@@ -2,7 +2,7 @@
 
 Laravel 13 / PHP 8.4+, Sanctum SPA sessions, SQLite locally, and Predis for optional Redis connections. Platform, taxonomy, and identity are implemented; remaining business modules follow in subsequent phases. Archived Bun code is in `../_server/`.
 
-All roles require email verification. Authentication fields remain on `users`; role, status, diagnosis, and image are isolated in one-to-one `user_profiles`. No default account is seeded.
+All roles require email verification. Authentication fields remain on `users`; role, status, diagnosis, and image are isolated in one-to-one `user_profiles`. `php artisan migrate --seed` creates the four local accounts documented in the root README; plain `php artisan migrate` creates none.
 
 ## Local setup
 
@@ -19,7 +19,7 @@ php artisan serve --host=localhost --port=8080
 
 Keep `.env` and SQLite files untracked. `composer run setup` is a new-local-installation shortcut including key generation. Never run it against an existing deployment: changing the key can make encrypted outbox payloads unreadable. No default user/password is seeded.
 
-Local session/cache/queue drivers use the database; Redis is optional. When configuring Redis later, choose the appropriate drivers and retain `REDIS_CLIENT=predis`. Set production HTTPS/cookie settings and `APP_DEBUG=false`. `TRUSTED_PROXIES` must list only actual proxy addresses.
+Local session/cache/queue drivers use the database; Redis is optional. When configuring Redis later, choose the appropriate drivers and retain `REDIS_CLIENT=predis`. Set production HTTPS/cookie settings and `APP_DEBUG=false`. `TRUSTED_PROXIES` must list only actual proxy addresses. Seeded credentials are strictly for local development; invited users set their own password during activation.
 
 ## Health and contracts
 

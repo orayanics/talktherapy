@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Optional
+from typing import Literal
 
 from pydantic import BaseModel, Field
 
@@ -8,8 +8,8 @@ from pydantic import BaseModel, Field
 class PhonemeScore(BaseModel):
     phoneme: str
     score: float = Field(ge=0.0, le=100.0)
-    word: Optional[str] = None
-    wordIndex: Optional[int] = None
+    word: str | None = None
+    wordIndex: int | None = None
 
 
 class LowScoringUnit(BaseModel):
@@ -18,9 +18,9 @@ class LowScoringUnit(BaseModel):
 
 
 class WordAssessment(BaseModel):
-    word: Optional[str] = None
+    word: str | None = None
     avgScore: float = Field(ge=0.0, le=100.0)
-    status: str
+    status: Literal["accurate", "mixed", "needs_work"]
     lowUnits: list[LowScoringUnit] = Field(default_factory=list)
 
 
@@ -33,7 +33,7 @@ class UnitAssessment(BaseModel):
 class OverallAssessment(BaseModel):
     avgScore: float = Field(ge=0.0, le=100.0)
     percentAboveNeedsWork: float = Field(ge=0.0, le=100.0)
-    status: str
+    status: Literal["accurate", "mixed", "needs_work", "unknown"]
 
 
 class StructuredAssessment(BaseModel):
@@ -46,7 +46,7 @@ class StructuredAssessment(BaseModel):
 
 
 class AssessMeta(BaseModel):
-    alignmentSource: str
+    alignmentSource: Literal["reference", "transcript"]
     cer: float = Field(ge=0.0)
 
 

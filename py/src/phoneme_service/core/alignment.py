@@ -7,9 +7,9 @@ from dataclasses import dataclass
 import torch
 import torchaudio
 
-from core.phonemization import normalize_text, tokenize_text_with_word_map
-from core.scoring import SCORING_CONFIG, score_phoneme
-from models.dto import PhonemeScore
+from phoneme_service.core.phonemization import normalize_text, tokenize_text_with_word_map
+from phoneme_service.core.scoring import SCORING_CONFIG, score_phoneme
+from phoneme_service.models.dto import PhonemeScore
 
 log = logging.getLogger("phoneme_service")
 
@@ -53,7 +53,7 @@ def _select_alignment_text(reference_text: str, transcript: str) -> tuple[str, s
     transcript_norm = normalize_text(transcript)
 
     if not transcript_norm:
-        return reference_text, "reference", 1.0, 1.0
+        raise ValueError("No speech detected")
 
     cer = char_error_rate(reference_norm, transcript_norm)
     alignment_confidence = max(0.0, 1.0 - cer)
@@ -62,6 +62,10 @@ def _select_alignment_text(reference_text: str, transcript: str) -> tuple[str, s
         return transcript, "transcript", alignment_confidence, cer
 
     return reference_text, "reference", alignment_confidence, cer
+
+
+def _duration_frames(spans) -> int:
+    return sum(max(0, int(span.end) - int(span.start)) for span in spans)
 
 
 def get_phoneme_scores(
@@ -97,9 +101,7 @@ def get_phoneme_scores(
     phoneme_scores: list[PhonemeScore] = []
 
     raw_scores = [
-        statistics.fmean(getattr(s, "score", -10.0) for s in spans)
-        for spans in aligned
-        if spans
+        statistics.fmean(getattr(s, "score", -10.0) for s in spans) for spans in aligned if spans
     ]
     if raw_scores:
         log.info(
@@ -109,10 +111,10 @@ def get_phoneme_scores(
             max(raw_scores),
         )
 
-    for idx, (token, spans) in enumerate(zip(tokens, aligned)):
+    for idx, (token, spans) in enumerate(zip(tokens, aligned, strict=False)):
         if spans:
             raw_score = statistics.fmean(getattr(s, "score", -10.0) for s in spans)
-            duration_frames = len(spans)
+            duration_frames = _duration_frames(spans)
         else:
             raw_score = -10.0
             duration_frames = 0
