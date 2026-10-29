@@ -147,6 +147,7 @@ export function useRoomSession(appointmentId: string) {
       }
       sessionLogsRef.current.push(entry)
       if (sessionLogsRef.current.length > 200) sessionLogsRef.current.shift()
+      if (import.meta.env.DEV) console.info('[room-session] ' + JSON.stringify(entry))
     }
     const errorDetails = (error: unknown) => {
       const failure = error as
