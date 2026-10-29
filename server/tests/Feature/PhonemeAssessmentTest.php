@@ -176,6 +176,28 @@ class PhonemeAssessmentTest extends TestCase
         $this->assertSame(1, $attempts);
     }
 
+    public function test_timeout_still_returns_gateway_timeout_when_transport_closes_upload_stream(): void
+    {
+        Http::preventStrayRequests();
+        $attempts = 0;
+        Http::fake(['phoneme.test/v1/assess' => function (ClientRequest $request) use (&$attempts): never {
+            $attempts++;
+            $request->toPsrRequest()->getBody()->close();
+
+            throw new ConnectionException('cURL error 28: Operation timed out');
+        }]);
+
+        $this->actingAs($this->createActiveUser())
+            ->post('/api/v1/slp/assess', [
+                'audio' => $this->fakeWavFile(),
+                'reference_text' => 'She sells shells.',
+            ], ['Accept' => 'application/json'])
+            ->assertStatus(504)
+            ->assertJsonPath('code', 'upstream_timeout');
+
+        $this->assertSame(1, $attempts);
+    }
+
     public function test_v2_practice_response_preserves_uncertainty_and_provenance(): void
     {
         $assessment = $this->practiceAssessment();

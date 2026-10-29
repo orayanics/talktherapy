@@ -48,7 +48,9 @@ class PhonemeClient
 
             abort(503);
         } finally {
-            fclose($stream);
+            if (is_resource($stream)) {
+                fclose($stream);
+            }
         }
 
         $this->handleUpstreamFailure($response);
