@@ -88,7 +88,7 @@ export default function AppointmentActionModal({
 
         <div className="p-8 space-y-6">
           {apiError && (
-            <div className="alert alert-soft alert-error">{apiError}</div>
+            <div className="alert alert-soft alert-error" role="alert">{apiError}</div>
           )}
 
           <div className="text-center">
@@ -100,10 +100,10 @@ export default function AppointmentActionModal({
           </div>
 
           <div className="flex flex-col">
-            <label className="label">Reason</label>
-            <textarea {...register('reason')} className="textarea w-full" />
+            <label htmlFor="appointment-action-reason" className="label">Reason</label>
+            <textarea id="appointment-action-reason" {...register('reason')} className="textarea w-full" aria-invalid={Boolean(errors.reason)} aria-describedby={errors.reason ? 'appointment-action-reason-error' : undefined} />
             {errors.reason && (
-              <p className="text-sm text-red-600">{errors.reason.message}</p>
+              <p id="appointment-action-reason-error" role="alert" className="text-sm text-error">{errors.reason.message}</p>
             )}
           </div>
 
@@ -111,10 +111,10 @@ export default function AppointmentActionModal({
             <div className="flex items-center gap-2">
               <input
                 type="checkbox"
-                {...register('is_hidden')}
+                id="appointment-action-hidden" {...register('is_hidden')}
                 className="checkbox"
               />
-              <label className="label">Hide from List</label>
+              <label htmlFor="appointment-action-hidden" className="label">Hide from List</label>
             </div>
           )}
         </div>

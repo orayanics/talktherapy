@@ -23,6 +23,8 @@ export default function ScheduleFilters({
       <div className="flex gap-2">
         <label className="flex items-center gap-2">
           <input
+            id="schedule-filter-from"
+            aria-label="Filter schedules from date"
             value={from ?? ''}
             onChange={(e) => updateSearch({ from: e.target.value })}
             type="date"
@@ -34,6 +36,8 @@ export default function ScheduleFilters({
       {diagnosis && (
         <div>
           <button
+            type="button"
+            aria-label="Open schedule filters"
             className="btn btn-outline border-slate-200 bg-white h-10 px-4 rounded-lg flex items-center gap-2 shadow-sm text-sm"
             popoverTarget="book-popover"
             style={{ anchorName: '--book-anchor' }}
@@ -55,7 +59,7 @@ export default function ScheduleFilters({
                 </span>
                 {diagnoses.map((item) => (
                   <label key={item.id} className="flex items-center gap-2 mb-2">
-                    <input
+                    <input aria-label={`Filter by diagnosis: ${item.label}`}
                       type="checkbox"
                       className="checkbox"
                       checked={diagnosis.includes(item.value)}

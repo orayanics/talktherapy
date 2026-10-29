@@ -63,13 +63,14 @@ export default function FormOtpUpdate({
 
         <div className="p-6 space-y-5">
           {apiError && (
-            <div className="alert alert-soft alert-error">{apiError}</div>
+            <div className="alert alert-soft alert-error" role="alert">{apiError}</div>
           )}
 
           <div className="grid grid-cols-1 gap-2">
             <div>
-              <FormLabel title="Full Name" />
+              <FormLabel title="Full Name" htmlFor="activation-name" />
               <input
+                id="activation-name"
                 {...register('name')}
                 placeholder="Dr. Jane Doe"
                 className="input w-full"
@@ -78,8 +79,9 @@ export default function FormOtpUpdate({
             </div>
 
             <div className="space-y-1.5">
-              <FormLabel title="Email Address" />
+              <FormLabel title="Email Address" htmlFor="activation-email" />
               <input
+                id="activation-email"
                 {...register('email')}
                 placeholder="name@clinic.com"
                 className="input w-full"
@@ -91,8 +93,8 @@ export default function FormOtpUpdate({
 
           {shouldShowDiagnosis && (
             <div>
-              <FormLabel title="Diagnosis Group" />
-              <select className="select w-full" {...register('diagnosis_id')}>
+              <FormLabel title="Diagnosis Group" htmlFor="activation-diagnosis" />
+              <select id="activation-diagnosis" className="select w-full" {...register('diagnosis_id')}>
                 <option value="" disabled>Select Specialization</option>
                 {diagnoses.map((item: DiagnosisItem) => (
                   <option key={item.id} value={item.id}>
@@ -106,8 +108,9 @@ export default function FormOtpUpdate({
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <FormLabel title="Password" />
+              <FormLabel title="Password" htmlFor="activation-password" />
               <input
+                id="activation-password"
                 type="password"
                 {...register('password')}
                 placeholder="••••••••"
@@ -117,8 +120,9 @@ export default function FormOtpUpdate({
             </div>
 
             <div>
-              <FormLabel title="Confirm Password" />
+              <FormLabel title="Confirm Password" htmlFor="activation-password-confirmation" />
               <input
+                id="activation-password-confirmation"
                 type="password"
                 {...register('password_confirmation')}
                 placeholder="••••••••"

@@ -36,6 +36,8 @@ export default function ContentFilters({
       <div className="relative w-full h-10 bg-white border-slate-200 rounded-lg shadow-sm input input-bordered">
         <Search className="text-slate-600" size={16} />
         <input
+          id="content-search"
+          aria-label="Search content"
           value={searchTerm}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             updateSearch({ page: 1, search: e.target.value })
@@ -46,6 +48,8 @@ export default function ContentFilters({
 
       <div>
         <button
+          type="button"
+          aria-label="Open content filters"
           className="btn btn-outline border-slate-200 bg-white h-10 px-4 rounded-lg flex items-center gap-2 shadow-sm text-sm"
           popoverTarget="filter-popover"
           style={{ anchorName: '--filter-anchor' }}
@@ -67,7 +71,7 @@ export default function ContentFilters({
               </span>
               {diagnoses.map((item) => (
                 <label key={item.id} className="flex items-center gap-2 mb-2">
-                  <input
+                <input aria-label={`Filter by diagnosis: ${item.label}`}
                     type="checkbox"
                     className="checkbox"
                     checked={diagnosis.includes(item.value)}

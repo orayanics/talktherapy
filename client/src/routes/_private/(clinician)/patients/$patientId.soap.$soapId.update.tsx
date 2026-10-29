@@ -33,7 +33,7 @@ function RouteComponent() {
 
           <form onSubmit={updateHook.onSubmit} className="space-y-4">
             {updateHook.apiError && (
-              <div className="alert alert-soft alert-error">
+              <div className="alert alert-soft alert-error" role="alert">
                 {updateHook.apiError}
                 {updateHook.isConflict && (
                   <button type="button" className="btn btn-sm" onClick={updateHook.reloadLatest}>
@@ -44,11 +44,11 @@ function RouteComponent() {
             )}
 
             <div>
-              <label>
+              <label htmlFor="soap-update-activity-plan">
                 <span className="text-xs font-mono text-gray-400">
                   Activity Plan
                 </span>
-                <input
+                <input id="soap-update-activity-plan"
                   {...updateHook.register('activity_plan')}
                   className="input shadow-sm w-full"
                 />
@@ -57,11 +57,11 @@ function RouteComponent() {
             </div>
 
             <div>
-              <label>
+              <label htmlFor="soap-update-session-type">
                 <span className="text-xs font-mono text-gray-400">
                   Session Type
                 </span>
-                <input
+                <input id="soap-update-session-type"
                   {...updateHook.register('session_type')}
                   className="input shadow-sm w-full"
                 />
@@ -70,11 +70,11 @@ function RouteComponent() {
             </div>
 
             <div>
-              <label>
+              <label htmlFor="soap-update-subjective-notes">
                 <span className="text-xs font-mono text-gray-400">
                   Subjective Notes
                 </span>
-                <textarea
+                <textarea id="soap-update-subjective-notes"
                   {...updateHook.register('subjective_notes')}
                   className="textarea w-full"
                 />
@@ -83,11 +83,11 @@ function RouteComponent() {
             </div>
 
             <div>
-              <label>
+              <label htmlFor="soap-update-objective-notes">
                 <span className="text-xs font-mono text-gray-400">
                   Objective Notes
                 </span>
-                <textarea
+                <textarea id="soap-update-objective-notes"
                   {...updateHook.register('objective_notes')}
                   className="textarea w-full"
                 />
@@ -96,11 +96,11 @@ function RouteComponent() {
             </div>
 
             <div>
-              <label>
+              <label htmlFor="soap-update-assessment">
                 <span className="text-xs font-mono text-gray-400">
                   Assessment
                 </span>
-                <textarea
+                <textarea id="soap-update-assessment"
                   {...updateHook.register('assessment')}
                   className="textarea w-full"
                 />
@@ -109,11 +109,11 @@ function RouteComponent() {
             </div>
 
             <div>
-              <label>
+              <label htmlFor="soap-update-recommendation">
                 <span className="text-xs font-mono text-gray-400">
                   Recommendation
                 </span>
-                <textarea
+                <textarea id="soap-update-recommendation"
                   {...updateHook.register('recommendation')}
                   className="textarea w-full"
                 />
@@ -122,11 +122,11 @@ function RouteComponent() {
             </div>
 
             <div>
-              <label>
+              <label htmlFor="soap-update-comments">
                 <span className="text-xs font-mono text-gray-400">
                   Comments
                 </span>
-                <textarea
+                <textarea id="soap-update-comments"
                   {...updateHook.register('comments')}
                   className="textarea w-full"
                 />

@@ -25,11 +25,12 @@ export default function RegisterPatientInvitation({
         <div className="card-body p-8">
           <h1 className="font-bold uppercase">Invite Patient</h1>
           {apiError && (
-            <div className="alert alert-soft alert-error">{apiError}</div>
+            <div className="alert alert-soft alert-error" role="alert">{apiError}</div>
           )}
           <div className="flex flex-col">
-            <label className="label">Name</label>
+            <label htmlFor="patient-name" className="label">Name</label>
             <input
+              id="patient-name"
               {...register('name')}
               placeholder="Name"
               className="input w-full"
@@ -37,8 +38,9 @@ export default function RegisterPatientInvitation({
             <RowError message={errors.name?.message} />
           </div>
           <div className="flex flex-col">
-            <label className="label">Email</label>
+            <label htmlFor="patient-email" className="label">Email</label>
             <input
+              id="patient-email"
               {...register('email')}
               placeholder="Email"
               className="input w-full"
@@ -50,13 +52,13 @@ export default function RegisterPatientInvitation({
           </p>
           <div className="space-x-2">
             <label className="label mb-3 w-fit cursor-pointer gap-2">
-              <input
+              <input id="patient-add-another"
                 type="checkbox"
                 className="checkbox checkbox-sm"
                 checked={addAnother}
                 onChange={(event) => setAddAnother(event.target.checked)}
               />
-              Invite another after saving
+              <span>Invite another after saving</span>
             </label>
             <button type="button" className="btn" onClick={handleClose}>
               Close

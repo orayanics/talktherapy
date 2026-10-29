@@ -101,14 +101,15 @@ export default function SlpAssessmentPage() {
         </p>
       </div>
 
-      {error && <div className="alert alert-soft alert-error">{error}</div>}
+      {error && <div className="alert alert-soft alert-error" role="alert">{error}</div>}
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
         <div className="space-y-4 col-span-4">
           {/* reference */}
           <div>
-            <FormLabel title="Reference Text" />
+            <FormLabel title="Reference Text" htmlFor="slp-reference-text" />
             <input
+              id="slp-reference-text"
               type="text"
               className="input w-full"
               value={referenceText}

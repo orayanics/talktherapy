@@ -58,6 +58,8 @@ export default function RoomChat({ messages, onSend }: ChatProps) {
       <div className="p-4 bg-base-200/50 border-t border-base-300 mt-auto">
         <div className="flex gap-2">
           <input
+            id="session-chat-message"
+            aria-label="Chat message"
             value={text}
             onChange={(e) => setText(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && submit()}
@@ -65,6 +67,8 @@ export default function RoomChat({ messages, onSend }: ChatProps) {
             className="input input-bordered input-sm flex-1 bg-base-100 shadow-inner min-w-0"
           />
           <button
+            type="button"
+            aria-label="Send chat message"
             onClick={submit}
             className="btn btn-neutral btn-sm shadow-sm px-4"
           >

@@ -68,8 +68,9 @@ export default function BookModal({
           </div>
 
           <div className="flex flex-col">
-            <label className="label">Diagnosis</label>
+            <label htmlFor="booking-diagnosis" className="label">Diagnosis</label>
             <input
+              id="booking-diagnosis"
               {...register('encounter.diagnosis')}
               className="input w-full"
             />
@@ -77,8 +78,9 @@ export default function BookModal({
           </div>
 
           <div className="flex flex-col">
-            <label className="label">Chief Complaint</label>
+            <label htmlFor="booking-chief-complaint" className="label">Chief Complaint</label>
             <textarea
+              id="booking-chief-complaint"
               {...register('encounter.chief_complaint')}
               className="textarea w-full"
             />
@@ -86,8 +88,9 @@ export default function BookModal({
           </div>
 
           <div className="flex flex-col">
-            <label className="label">Referral Source</label>
+            <label htmlFor="booking-referral-source" className="label">Referral Source</label>
             <input
+              id="booking-referral-source"
               {...register('encounter.referral_source')}
               className="input w-full"
             />
@@ -95,8 +98,9 @@ export default function BookModal({
           </div>
 
           <div className="flex flex-col">
-            <label className="label">Referral URL</label>
+            <label htmlFor="booking-referral-url" className="label">Referral URL</label>
             <input
+              id="booking-referral-url"
               {...register('encounter.referral_url')}
               className="input w-full"
             />

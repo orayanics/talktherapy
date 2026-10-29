@@ -36,29 +36,35 @@ export default function LoginForm() {
         </div>
 
         {apiError && (
-          <div className="alert alert-soft alert-error">{apiError}</div>
+          <div className="alert alert-soft alert-error" role="alert">{apiError}</div>
         )}
 
         <div className="flex flex-col">
-          <FormLabel title="Email" />
+          <FormLabel title="Email" htmlFor="login-email" />
           <input
+            id="login-email"
             {...register('email')}
             placeholder="Email"
             type="email"
             className="input w-full"
+            aria-invalid={Boolean(errors.email)}
+            aria-describedby={errors.email ? 'login-email-error' : undefined}
           />
-          <RowError message={errors.email?.message} />
+          <RowError id="login-email-error" message={errors.email?.message} />
         </div>
 
         <div className="flex flex-col">
-          <FormLabel title="Password" />
+          <FormLabel title="Password" htmlFor="login-password" />
           <input
+            id="login-password"
             {...register('password')}
             placeholder="Password"
             className="input w-full"
             type="password"
+            aria-invalid={Boolean(errors.password)}
+            aria-describedby={errors.password ? 'login-password-error' : undefined}
           />
-          <RowError message={errors.password?.message} />
+          <RowError id="login-password-error" message={errors.password?.message} />
         </div>
 
         <div className="flex flex-col gap-4 items-center">

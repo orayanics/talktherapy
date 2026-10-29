@@ -28,6 +28,8 @@ export default function UserFilters({
       <div className="relative w-full h-10 bg-white border-slate-200 rounded-lg shadow-sm input input-bordered">
         <Search className="text-slate-600" size={16} />
         <input
+          id="user-search"
+          aria-label="Search users"
           value={searchTerm}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             updateSearch({ page: 1, search: e.target.value })
@@ -38,6 +40,8 @@ export default function UserFilters({
 
       <div>
         <button
+          type="button"
+          aria-label="Open user filters"
           className="btn btn-outline border-slate-200 bg-white h-10 px-4 rounded-lg flex items-center gap-2 shadow-sm text-sm"
           popoverTarget="filter-popover"
           style={{ anchorName: '--filter-anchor' }}

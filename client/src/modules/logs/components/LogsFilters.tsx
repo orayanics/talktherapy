@@ -26,13 +26,15 @@ export default function LogsFilters({
   return (
     <div className="flex lg:flex-row flex-col gap-2">
       {apiError && (
-        <div className="alert alert-error">
+        <div className="alert alert-error" role="alert">
           <span>{apiError}</span>
         </div>
       )}
       <div className="lg:w-100 w-full shadow-sm input">
         <Search className="text-slate-600" size={16} />
         <input
+          id="logs-search"
+          aria-label="Search activity logs"
           value={searchTerm}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             updateSearch({ page: 1, search: e.target.value })
@@ -44,6 +46,8 @@ export default function LogsFilters({
       <div className="flex lg:flex-row flex-col gap-2 justify-end-safe lg:ms-auto">
         <div>
           <button
+            type="button"
+            aria-label="Open date filters"
             className="lg:w-auto w-full btn btn-neutral flex items-center gap-2 shadow-sm text-sm"
             popoverTarget="date-range-popover"
             style={{ anchorName: '--date-range-anchor' }}
@@ -64,8 +68,9 @@ export default function LogsFilters({
               </span>
               <div className="flex flex-col gap-2">
                 <div>
-                  <p>Date From</p>
+                  <label htmlFor="logs-date-from">Date From</label>
                   <input
+                    id="logs-date-from"
                     type="date"
                     className="input input-sm"
                     value={date_from}
@@ -76,8 +81,9 @@ export default function LogsFilters({
                 </div>
 
                 <div>
-                  <p>Date To</p>
+                  <label htmlFor="logs-date-to">Date To</label>
                   <input
+                    id="logs-date-to"
                     type="date"
                     className="input input-sm"
                     value={date_to}
@@ -92,6 +98,7 @@ export default function LogsFilters({
         </div>
 
         <select
+          aria-label="Logs per page"
           className="select col-span-12 lg:col-span-2 w-full"
           value={String(per_page)}
           onChange={(e) =>
@@ -106,6 +113,8 @@ export default function LogsFilters({
 
         <div>
           <button
+            type="button"
+            aria-label="Open export options"
             className="lg:w-auto w-full btn btn-neutral flex items-center gap-2 shadow-sm text-sm"
             popoverTarget="export-popover"
             style={{ anchorName: '--export-anchor' }}

@@ -1,6 +1,6 @@
 export default function StateError() {
   return (
-    <div
+    <div role="alert"
       className="bg-white h-64 border rounded-lg border-rose-300 border-dashed shadow-sm
       flex flex-col items-center justify-center p-6
       "

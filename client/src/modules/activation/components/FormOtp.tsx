@@ -30,28 +30,34 @@ export default function FormOtp({ initialEmail }: { initialEmail?: string }) {
 
         <div className="p-6 space-y-5">
           {apiError && (
-            <div className="alert alert-soft alert-error">{apiError}</div>
+            <div className="alert alert-soft alert-error" role="alert">{apiError}</div>
           )}
 
           <div className="space-y-1.5">
-            <FormLabel title="Email Address" />
+            <FormLabel title="Email Address" htmlFor="activation-email" />
             <input
+              id="activation-email"
               {...register('email')}
               placeholder="Email"
               className="input w-full"
+              aria-invalid={Boolean(errors.email)}
+              aria-describedby={errors.email ? 'activation-email-error' : undefined}
             />
-            <RowError message={errors.email?.message} />
+            <RowError id="activation-email-error" message={errors.email?.message} />
           </div>
 
           <div className="space-y-1.5">
-            <FormLabel title="One-Time Password (OTP)" />
+            <FormLabel title="One-Time Password (OTP)" htmlFor="activation-otp" />
             <input
+              id="activation-otp"
               type="text"
               {...register('otp_code')}
               placeholder="000000"
               className="input w-full"
+              aria-invalid={Boolean(errors.otp_code)}
+              aria-describedby={errors.otp_code ? 'activation-otp-error' : undefined}
             />
-            <RowError message={errors.otp_code?.message} />
+            <RowError id="activation-otp-error" message={errors.otp_code?.message} />
           </div>
 
           <div className="pt-2 space-y-3">

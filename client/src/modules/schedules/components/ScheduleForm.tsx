@@ -45,7 +45,7 @@ export default function ScheduleForm() {
         </h2>
 
         {apiError && (
-          <div className="alert alert-soft alert-error">{apiError}</div>
+          <div className="alert alert-soft alert-error" role="alert">{apiError}</div>
         )}
 
         <div>
@@ -58,11 +58,11 @@ export default function ScheduleForm() {
                 Schedule times and previews use UTC.
               </p>
               <div>
-                <label>
+                  <label htmlFor="schedule-start-at">
                   <span className="text-xs font-mono text-gray-400">
                     Start (UTC)
                   </span>
-                  <input
+                  <input id="schedule-start-at"
                     {...register('start_at')}
                     type="datetime-local"
                     className="w-full input shadow-sm"
@@ -73,11 +73,11 @@ export default function ScheduleForm() {
               </div>
 
               <div>
-                <label>
+                <label htmlFor="schedule-end-at">
                   <span className="text-xs font-mono text-gray-400">
                     End (UTC)
                   </span>
-                  <input
+                  <input id="schedule-end-at"
                     {...register('end_at')}
                     type="datetime-local"
                     className="w-full input shadow-sm"
@@ -141,12 +141,12 @@ export default function ScheduleForm() {
 
             {freq !== 'none' && (
               <div className="space-x-4">
-                <label>
+                <label htmlFor="schedule-occurrences">
                   <span className="text-xs font-mono text-gray-400">
                     Occurrences
                   </span>
 
-                  <input
+                  <input id="schedule-occurrences"
                     type="number"
                     min={1}
                     max={365}

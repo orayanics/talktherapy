@@ -51,13 +51,13 @@ function RouteComponent() {
           </h2>
 
           {apiError && (
-            <div className="alert alert-soft alert-error">{apiError}</div>
+            <div className="alert alert-soft alert-error" role="alert">{apiError}</div>
           )}
 
           <div>
-            <label>
+            <label htmlFor="content-edit-title">
               <span className="text-xs font-mono text-gray-400">Title</span>
-              <input
+                <input id="content-edit-title"
                 {...register('title')}
                 placeholder="Title"
                 className="input shadow-sm w-full"
@@ -67,11 +67,11 @@ function RouteComponent() {
           </div>
 
           <div>
-            <label>
+            <label htmlFor="content-edit-description">
               <span className="text-xs font-mono text-gray-400">
                 Description
               </span>
-              <input
+                <input id="content-edit-description"
                 {...register('description')}
                 placeholder="Description"
                 className="input shadow-sm w-full"
@@ -81,14 +81,14 @@ function RouteComponent() {
           </div>
 
           <div>
-            <span className="text-xs font-mono text-gray-400">
+            <label htmlFor="content-edit-body" className="text-xs font-mono text-gray-400">
               Content Body
-            </span>
+            </label>
             <Controller
               name="body"
               control={control}
               render={({ field }) => (
-                <div data-color-mode="light">
+                <div id="content-edit-body" data-color-mode="light">
                   <MDEditor
                     value={field.value}
                     onChange={field.onChange}
@@ -105,11 +105,11 @@ function RouteComponent() {
           </div>
 
           <div>
-            <label>
+            <label htmlFor="content-edit-diagnosis">
               <span className="text-xs font-mono text-gray-400">
                 Diagnosis Category
               </span>
-              <select className="select w-full" {...register('diagnosis_id')}>
+              <select id="content-edit-diagnosis" className="select w-full" {...register('diagnosis_id')}>
                 <option value="" disabled>Select Diagnosis</option>
                 {diagnoses.map((item: DiagnosisItem) => (
                   <option key={item.id} value={item.id}>
@@ -122,9 +122,9 @@ function RouteComponent() {
           </div>
 
           <div>
-            <label>
+            <label htmlFor="content-edit-tags">
               <span className="text-xs font-mono text-gray-400">Tags</span>
-              <input
+                <input id="content-edit-tags"
                 {...register('tag_names', {
                   setValueAs: (value) => {
                     if (Array.isArray(value)) return value

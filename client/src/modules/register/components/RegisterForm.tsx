@@ -44,12 +44,13 @@ export default function RegisterForm() {
         </div>
 
         {apiError && (
-          <div className="alert alert-soft alert-error">{apiError}</div>
+          <div className="alert alert-soft alert-error" role="alert">{apiError}</div>
         )}
 
         <div className="flex flex-col">
-          <FormLabel title="Name" />
+          <FormLabel title="Name" htmlFor="register-name" />
           <input
+            id="register-name"
             {...register('name')}
             placeholder="Name"
             className="input w-full"
@@ -58,8 +59,9 @@ export default function RegisterForm() {
         </div>
 
         <div className="flex flex-col">
-          <FormLabel title="Email" />
+          <FormLabel title="Email" htmlFor="register-email" />
           <input
+            id="register-email"
             {...register('email')}
             placeholder="Email"
             type="email"
@@ -69,8 +71,8 @@ export default function RegisterForm() {
         </div>
 
         <div className="flex flex-col">
-          <FormLabel title="Diagnosis Group" />
-          <select className="select w-full" {...register('diagnosis_id')}>
+          <FormLabel title="Diagnosis Group" htmlFor="register-diagnosis" />
+          <select id="register-diagnosis" className="select w-full" {...register('diagnosis_id')}>
             <option value="" disabled>Select Diagnosis</option>
             {diagnoses.map((item: DiagnosisItem) => (
               <option key={item.id} value={item.id}>
@@ -82,8 +84,9 @@ export default function RegisterForm() {
         </div>
 
         <div className="flex flex-col">
-          <FormLabel title="Password" />
+          <FormLabel title="Password" htmlFor="register-password" />
           <input
+            id="register-password"
             {...register('password')}
             placeholder="Password"
             className="input w-full"
@@ -93,8 +96,9 @@ export default function RegisterForm() {
         </div>
 
         <div className="flex flex-col">
-          <FormLabel title="Confirm Password" />
+          <FormLabel title="Confirm Password" htmlFor="register-password-confirmation" />
           <input
+            id="register-password-confirmation"
             {...register('password_confirmation')}
             placeholder="Confirm Password"
             className="input w-full"
@@ -104,12 +108,12 @@ export default function RegisterForm() {
         </div>
 
         <div className="flex gap-2">
-          <input
+          <input id="register-consent"
             {...register('consent')}
             className="checkbox bg-white"
             type="checkbox"
           />
-          <label className="label">I consent to the terms and conditions</label>
+          <label htmlFor="register-consent" className="label">I consent to the terms and conditions</label>
         </div>
         <RowError message={errors.consent?.message} />
 
