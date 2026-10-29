@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\UserRole;
 use App\Models\Diagnosis;
 use App\Models\User;
 
@@ -19,7 +20,12 @@ class DiagnosisPolicy
 
     public function create(User $user): bool
     {
-        return in_array($user->profile?->role?->value, ['admin', 'superadmin'], true);
+        return $this->viewAdmin($user);
+    }
+
+    public function viewAdmin(User $user): bool
+    {
+        return in_array($user->profile?->role, [UserRole::Admin, UserRole::Superadmin], true);
     }
 
     public function update(User $user, Diagnosis $diagnosis): bool

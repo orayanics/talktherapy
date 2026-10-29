@@ -26,7 +26,7 @@ class DiagnosisController extends Controller
 
     public function indexAdmin(): AnonymousResourceCollection
     {
-        abort_unless(in_array(request()->user()?->profile?->role?->value, ['admin', 'superadmin'], true), 403);
+        Gate::authorize('viewAdmin', Diagnosis::class);
 
         return AdminDiagnosisResource::collection(Diagnosis::query()->orderBy('label')->orderBy('id')->get());
     }
