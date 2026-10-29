@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useRoomSession } from '#/modules/session/hooks/useRoomSession'
+import { saveSessionLogs, useRoomSession } from '#/modules/session/hooks/useRoomSession'
 import {
   SquareArrowRight,
   MessageCircle,
@@ -24,6 +24,12 @@ export default function RoomSession({ roomId }: RoomSessionProps) {
     localRef,
     remoteRef,
     messages,
+    sessionError,
+    sessionLogs,
+    participants,
+    connectionStatus,
+    playbackBlocked,
+    playRemote,
     permission,
     hasPeer,
     micEnabled,
@@ -46,8 +52,18 @@ export default function RoomSession({ roomId }: RoomSessionProps) {
 
   return (
     <div className="flex h-screen w-screen bg-white overflow-hidden relative">
+      {sessionError && <div role="alert" className="alert alert-error absolute top-0 inset-x-0 z-50">{sessionError}</div>}
       {/* Main Video Area */}
       <main className="flex-1 right-0 left-0 relative flex items-center justify-center overflow-hidden">
+        <div className="absolute left-4 bottom-40 z-30 max-w-[calc(100%-2rem)] rounded-box bg-base-100/95 p-3 shadow">
+          <p role="status" className="text-sm font-semibold">{connectionStatus}</p>
+          <button type="button" className="btn btn-ghost btn-xs" onClick={() => saveSessionLogs(sessionLogs)}>Save diagnostics</button>
+          <p className="text-xs">In room: {participants.length}</p>
+          <ul className="text-sm">
+            {participants.map((member) => <li key={member.id}>{member.name ?? 'Participant'}{member.role ? ` (${member.role})` : ''}</li>)}
+          </ul>
+          {playbackBlocked && <button type="button" className="btn btn-primary btn-sm mt-2" onClick={playRemote}>Enable remote audio/video</button>}
+        </div>
         {/* Remote Video (Full Screen) */}
         <div className="absolute inset-0 bg-white">
           <video
