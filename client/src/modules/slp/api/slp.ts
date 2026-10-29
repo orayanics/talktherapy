@@ -43,6 +43,13 @@ export type StructuredAssessment = {
 export type AssessMeta = {
   alignmentSource: string
   cer: number
+  schemaVersion?: '2.0'
+  status?: 'review_required' | 'task_mismatch' | 'unscorable'
+  measurement?: 'transcript_agreement_only'
+  modelVersion?: string
+  calibrationVersion?: 'none'
+  learningEligible?: false
+  language?: 'en' | 'tl'
 }
 
 export type AssessAnalysis = {
@@ -67,6 +74,8 @@ export const MAX_REFERENCE_LENGTH = 800
 export const assessPronunciation = async (
   audioBlob: Blob,
   referenceText: string,
+  signal?: AbortSignal,
+  language: 'en' | 'tl' = 'en',
 ): Promise<AssessResponse> => {
   if (audioBlob.size === 0 || audioBlob.size > MAX_AUDIO_BYTES) {
     throw new Error('Recording must be between 1 byte and 10 MiB.')
@@ -86,11 +95,13 @@ export const assessPronunciation = async (
     : 'webm'
   formData.append('audio', audioBlob, `recording.${extension}`)
   formData.append('reference_text', trimmedReferenceText)
+  formData.append('language', language)
 
   const { data } = await api<{ data: AssessResponse }>('/api/v1/slp/assess', {
     method: 'POST',
     data: formData,
     timeout: 50_000,
+    signal,
   })
   return data
 }

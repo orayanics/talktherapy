@@ -46,8 +46,15 @@ class StructuredAssessment(BaseModel):
 
 
 class AssessMeta(BaseModel):
-    alignmentSource: Literal["reference", "transcript"]
+    alignmentSource: Literal["reference", "transcript", "none"]
     cer: float = Field(ge=0.0)
+    schemaVersion: Literal["2.0"] = "2.0"
+    status: Literal["review_required", "task_mismatch", "unscorable"] = "review_required"
+    measurement: Literal["transcript_agreement_only"] = "transcript_agreement_only"
+    modelVersion: str = Field(min_length=1, max_length=200)
+    calibrationVersion: Literal["none"] = "none"
+    learningEligible: Literal[False] = False
+    language: Literal["en", "tl"] = "en"
 
 
 class AssessAnalysis(BaseModel):

@@ -176,6 +176,84 @@ class PhonemeAssessmentTest extends TestCase
         $this->assertSame(1, $attempts);
     }
 
+    public function test_v2_practice_response_preserves_uncertainty_and_provenance(): void
+    {
+        $assessment = $this->practiceAssessment();
+        Http::preventStrayRequests();
+        Http::fake(['phoneme.test/v1/assess' => Http::response($assessment, 200)]);
+
+        $this->actingAs($this->createActiveUser())
+            ->post('/api/v1/slp/assess', [
+                'audio' => $this->fakeWavFile(), 'reference_text' => 'sun',
+            ], ['Accept' => 'application/json'])
+            ->assertOk()
+            ->assertJsonPath('data.meta.schemaVersion', '2.0')
+            ->assertJsonPath('data.meta.learningEligible', false)
+            ->assertJsonPath('data.analysis.structured.overall.status', 'unknown');
+    }
+
+    public function test_v2_cannot_smuggle_corrective_scores_or_training_permission(): void
+    {
+        foreach (['correction', 'consent', 'missing_model'] as $violation) {
+            $assessment = $this->practiceAssessment();
+            if ($violation === 'correction') {
+                $assessment['analysis']['structured']['overall']['status'] = 'accurate';
+            } elseif ($violation === 'consent') {
+                $assessment['meta']['learningEligible'] = true;
+            } else {
+                unset($assessment['meta']['modelVersion']);
+            }
+            Http::preventStrayRequests();
+            Http::fake(['phoneme.test/v1/assess' => Http::response($assessment, 200)]);
+            $this->actingAs($this->createActiveUser())
+                ->post('/api/v1/slp/assess', [
+                    'audio' => $this->fakeWavFile(), 'reference_text' => 'sun',
+                ], ['Accept' => 'application/json'])->assertStatus(502);
+        }
+    }
+
+    public function test_filipino_language_is_forwarded_and_unsupported_languages_are_rejected(): void
+    {
+        Http::preventStrayRequests();
+        $forwardedBody = '';
+        Http::fake(function (ClientRequest $request) use (&$forwardedBody) {
+            $forwardedBody = $request->body();
+
+            return Http::response($this->practiceAssessment(), 200);
+        });
+        $this->actingAs($this->createActiveUser())
+            ->post('/api/v1/slp/assess', [
+                'audio' => $this->fakeWavFile(), 'reference_text' => 'araw', 'language' => 'tl',
+            ], ['Accept' => 'application/json'])->assertOk();
+        $this->assertStringContainsString('name="language"', $forwardedBody);
+        $this->assertStringContainsString('tl', $forwardedBody);
+
+        $this->post('/api/v1/slp/assess', [
+            'audio' => $this->fakeWavFile(), 'reference_text' => 'araw', 'language' => 'unknown',
+        ], ['Accept' => 'application/json'])->assertUnprocessable();
+        Http::assertSentCount(1);
+    }
+
+    private function practiceAssessment(): array
+    {
+        $assessment = $this->assessment();
+        $assessment['meta'] = [
+            'alignmentSource' => 'none', 'cer' => 0, 'schemaVersion' => '2.0',
+            'status' => 'review_required', 'measurement' => 'transcript_agreement_only',
+            'modelVersion' => 'faster-whisper-base', 'calibrationVersion' => 'none',
+            'learningEligible' => false,
+        ];
+        $assessment['analysis']['lowScoring'] = [];
+        foreach (['words', 'accurateUnits', 'needsWorkUnits'] as $key) {
+            $assessment['analysis']['structured'][$key] = [];
+        }
+        $assessment['analysis']['structured']['overall'] = [
+            'avgScore' => 0, 'percentAboveNeedsWork' => 0, 'status' => 'unknown',
+        ];
+
+        return $assessment;
+    }
+
     private function createActiveUser(): User
     {
         $user = User::factory()->create(['email_verified_at' => now()]);

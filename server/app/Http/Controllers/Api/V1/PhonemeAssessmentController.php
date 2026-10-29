@@ -15,6 +15,7 @@ class PhonemeAssessmentController extends Controller
             $request->file('audio'),
             $request->validated('reference_text'),
             (string) $request->attributes->get('request_id'),
+            $request->validated('language', 'en'),
         );
 
         return response()->json(['data' => $assessment]);

@@ -1,227 +1,362 @@
-import { useEffect, useRef, useState } from 'react'
-import useSlpAssessment from '#/modules/slp/hooks/useSlpAssessment'
-import { MAX_AUDIO_BYTES, MAX_REFERENCE_LENGTH } from '#/modules/slp/api/slp'
-import FormLabel from '#/components/Form/FormLabel'
-import SlpImprovement from './SlpImprovement'
-import SlpAccurate from './SlpAccurate'
-import SlpBreakdown from './SlpBreakdown'
-import SlpAlert from './SlpAlert'
+import { useState } from 'react'
+import {
+  Bird,
+  Cat,
+  Fish,
+  Flower2,
+  Mic,
+  Pause,
+  RotateCcw,
+  Square,
+  Sun,
+} from 'lucide-react'
+import useSlpAssessment from '../hooks/useSlpAssessment'
+import usePracticeRecorder from '../hooks/usePracticeRecorder'
+import { MAX_REFERENCE_LENGTH } from '../api/slp'
+
+const prompts = [
+  { word: 'sun', filipino: 'araw', picture: Sun, scene: 'A sunny start' },
+  { word: 'fish', filipino: 'isda', picture: Fish, scene: 'By the pond' },
+  { word: 'cat', filipino: 'pusa', picture: Cat, scene: 'A little visitor' },
+  { word: 'bird', filipino: 'ibon', picture: Bird, scene: 'Up in the trees' },
+  {
+    word: 'flower',
+    filipino: 'bulaklak',
+    picture: Flower2,
+    scene: 'In the garden',
+  },
+]
 
 export default function SlpAssessmentPage() {
-  const [referenceText, setReferenceText] = useState(
-    'She sells sea shells by the sea shore.',
-  )
-  const [isRecording, setIsRecording] = useState(false)
-  const [localError, setLocalError] = useState<string | null>(null)
-  const [audioBlob, setAudioBlob] = useState<Blob | null>(null)
-  const [audioUrl, setAudioUrl] = useState<string | null>(null)
-
-  const recorderRef = useRef<MediaRecorder | null>(null)
-  const chunksRef = useRef<Blob[]>([])
-
-  useEffect(() => {
-    if (!audioUrl) return
-    return () => URL.revokeObjectURL(audioUrl)
-  }, [audioUrl])
-
-  const { result, apiError, submitAssessment, resetAssessment, isSubmitting } =
-    useSlpAssessment()
-
-  const error = localError ?? apiError
-
-  const startRecording = async () => {
-    setLocalError(null)
-    resetAssessment()
-    setAudioBlob(null)
-    setAudioUrl(null)
-
-    const mediaDevices = Reflect.get(navigator, 'mediaDevices') as
-      MediaDevices | undefined
-    if (typeof mediaDevices?.getUserMedia !== 'function' || typeof MediaRecorder === 'undefined') {
-      setLocalError('Microphone is not available in this browser.')
-      return
-    }
-
-    let stream: MediaStream | null = null
-    try {
-      stream = await mediaDevices.getUserMedia({ audio: true })
-      const mimeType = ['audio/webm;codecs=opus', 'audio/webm'].find((type) =>
-        MediaRecorder.isTypeSupported(type),
-      )
-      if (!mimeType) {
-        stream.getTracks().forEach((track) => track.stop())
-        setLocalError('This browser cannot record the supported WebM audio format.')
-        return
-      }
-
-      const recorder = new MediaRecorder(stream, { mimeType })
-      chunksRef.current = []
-      let recordedBytes = 0
-      let exceededLimit = false
-
-      recorder.ondataavailable = (event: BlobEvent) => {
-        if (event.data.size === 0 || exceededLimit) return
-        if (recordedBytes + event.data.size > MAX_AUDIO_BYTES) {
-          exceededLimit = true
-          chunksRef.current = []
-          setLocalError('Recording exceeded the 10 MiB upload limit. Try a shorter recording.')
-          if (recorder.state !== 'inactive') recorder.stop()
-          return
-        }
-        recordedBytes += event.data.size
-        chunksRef.current.push(event.data)
-      }
-
-      recorder.onstop = () => {
-        setIsRecording(false)
-        recorderRef.current = null
-        stream?.getTracks().forEach((track) => track.stop())
-        if (exceededLimit) {
-          setAudioBlob(null)
-          setAudioUrl(null)
-          return
-        }
-
-        const blob = new Blob(chunksRef.current, {
-          type: recorder.mimeType,
-        })
-        setAudioBlob(blob)
-        const url = URL.createObjectURL(blob)
-        setAudioUrl(url)
-      }
-
-      recorderRef.current = recorder
-      recorder.start(1000)
-      setIsRecording(true)
-    } catch {
-      stream?.getTracks().forEach((track) => track.stop())
-      setLocalError('Microphone permission denied or unavailable.')
-    }
+  const [index, setIndex] = useState(0)
+  const [language, setLanguage] = useState<'en' | 'tl'>('en')
+  const [mode, setMode] = useState<'explore' | 'focus'>('explore')
+  const [customWord, setCustomWord] = useState('')
+  const [paused, setPaused] = useState(false)
+  const [finished, setFinished] = useState(false)
+  const [completed, setCompleted] = useState<Set<number>>(new Set())
+  const recorder = usePracticeRecorder()
+  const assessment = useSlpAssessment()
+  const prompt = prompts[index]
+  const Picture = prompt.picture
+  const word =
+    customWord.trim() || (language === 'tl' ? prompt.filipino : prompt.word)
+  const capturing =
+    recorder.state === 'recording' || recorder.state === 'requesting_permission'
+  const locked = capturing || assessment.isSubmitting
+  const error = recorder.error ?? assessment.apiError
+  const clear = () => {
+    recorder.clear()
+    assessment.resetAssessment()
   }
-
-  const stopRecording = () => {
-    if (!recorderRef.current) return
-    recorderRef.current.stop()
+  const next = () => {
+    clear()
+    setCustomWord('')
+    if (index === prompts.length - 1) setFinished(true)
+    else setIndex(index + 1)
   }
-
-  const onAssess = async () => {
-    setLocalError(null)
-
-    if (!audioBlob) {
-      setLocalError('Record audio first.')
-      return
-    }
-
-    if (audioBlob.size > MAX_AUDIO_BYTES) {
-      setLocalError('Recording exceeds the 10 MiB upload limit. Record a shorter clip.')
-      return
-    }
-
-    if (!referenceText.trim()) {
-      setLocalError('Reference text is required.')
-      return
-    }
-
-    if (referenceText.trim().length > MAX_REFERENCE_LENGTH) {
-      setLocalError('Reference text must be 800 characters or fewer.')
-      return
-    }
-
-    try {
-      await submitAssessment(audioBlob, referenceText)
-    } catch {
-      // Error state is handled inside the hook.
-    }
+  const analyze = async () => {
+    if (!recorder.audio) return
+    setCompleted((previous) => new Set(previous).add(index))
+    await assessment.submitAssessment(recorder.audio, word, language)
   }
+  const versioned = assessment.result?.meta.schemaVersion === '2.0'
+  const feedback = versioned
+    ? assessment.result?.feedback.text
+    : 'Thanks for trying! Listen together, then try again or take a break.'
 
   return (
-    <div className="space-y-4">
-      <div>
-        <p className="text-lg font-bold text-slate-900 uppercase">
-          Assisted Practice
-        </p>
-        <p className="text-xs text-slate-500 font-medium">
-          Practice with an automated estimate. This is not a diagnosis or clinical measure.
-        </p>
+    <section
+      className="mx-auto max-w-5xl space-y-6 text-slate-900"
+      aria-label="Speech practice"
+    >
+      <header className="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold">
+            {mode === 'explore' ? 'Our sound garden' : 'Speech practice'}
+          </h1>
+          <p className="text-sm text-slate-600">
+            {mode === 'explore'
+              ? 'One word, one turn. Explore with your helper.'
+              : 'Record, replay, and practice at your pace.'}
+          </p>
+        </div>
+        <button
+          type="button"
+          className="btn min-h-12"
+          onClick={() => {
+            clear()
+            setPaused(!paused)
+          }}
+        >
+          <Pause size={18} aria-hidden="true" />
+          {paused ? 'Come back to practice' : 'Take a break'}
+        </button>
+      </header>
+      <div className="flex flex-wrap gap-4">
+        <label className="flex items-center gap-2 text-sm font-medium">
+          Practice language
+          <select
+            className="select min-h-12"
+            value={language}
+            disabled={locked}
+            onChange={(event) => {
+              clear()
+              setCustomWord('')
+              setCompleted(new Set())
+              setIndex(0)
+              setFinished(false)
+              setLanguage(event.target.value as 'en' | 'tl')
+            }}
+          >
+            <option value="en">English</option>
+            <option value="tl">Filipino (Tagalog)</option>
+          </select>
+        </label>
+        <label className="flex items-center gap-2 text-sm font-medium">
+          Activity style
+          <select
+            className="select min-h-12"
+            value={mode}
+            onChange={(event) =>
+              setMode(event.target.value as 'explore' | 'focus')
+            }
+          >
+            <option value="explore">Explore with pictures</option>
+            <option value="focus">Simple focus</option>
+          </select>
+        </label>
       </div>
-
-      {error && <div className="alert alert-soft alert-error" role="alert">{error}</div>}
-
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-        <div className="space-y-4 col-span-4">
-          {/* reference */}
-          <div>
-            <FormLabel title="Reference Text" htmlFor="slp-reference-text" />
-            <input
-              id="slp-reference-text"
-              type="text"
-              maxLength={MAX_REFERENCE_LENGTH}
-              className="input w-full"
-              value={referenceText}
-              onChange={(e) => setReferenceText(e.target.value)}
-              disabled={isRecording || isSubmitting}
-            />
+      <div
+        className="flex flex-wrap items-center gap-3"
+        aria-label={`${completed.size} of 5 practice turns tried`}
+      >
+        {prompts.map((item, step) => (
+          <span
+            key={item.word}
+            className={`rounded-full border px-4 py-2 text-sm ${completed.has(step) ? 'border-emerald-700 bg-emerald-50 text-emerald-900' : 'border-slate-300 text-slate-600'}`}
+          >
+            {step + 1}
+            {completed.has(step)
+              ? ' · Tried'
+              : step === index && !finished
+                ? ' · Your turn'
+                : ''}
+          </span>
+        ))}
+      </div>
+      {paused || finished ? (
+        <div className="rounded-3xl bg-emerald-50 p-8 text-center space-y-5">
+          <Flower2
+            className="mx-auto text-emerald-800"
+            size={80}
+            aria-hidden="true"
+          />
+          <h2 className="text-2xl font-bold">
+            {paused ? 'Time for a little rest' : 'Thanks for exploring!'}
+          </h2>
+          <p>
+            {completed.size} practice {completed.size === 1 ? 'turn' : 'turns'}{' '}
+            tried. Every try is part of learning.
+          </p>
+          <button
+            type="button"
+            className="btn btn-neutral min-h-12"
+            onClick={() => {
+              clear()
+              setPaused(false)
+              setFinished(false)
+              if (finished) {
+                setIndex(0)
+                setCompleted(new Set())
+              }
+            }}
+          >
+            {paused ? 'I’m ready' : 'Explore again'}
+          </button>
+        </div>
+      ) : (
+        <div className="grid gap-6 md:grid-cols-2">
+          <div className="rounded-3xl bg-amber-50 p-8 flex flex-col items-center justify-center gap-5 text-center">
+            <p className="text-sm text-amber-900">
+              {customWord.trim() ? 'Your practice word' : prompt.scene}
+            </p>
+            {!customWord.trim() && mode === 'explore' && (
+              <Picture
+                size={112}
+                strokeWidth={1.5}
+                className="text-amber-800"
+                aria-hidden="true"
+              />
+            )}
+            <h2
+              lang={language === 'tl' ? 'fil' : 'en'}
+              className="break-words max-w-full text-5xl font-bold"
+            >
+              {word}
+            </h2>
+            <p className="max-w-xs text-slate-700">
+              {mode === 'explore'
+                ? 'Ask your helper to say the word. Listen, then have your turn.'
+                : 'Say the word or your chosen phrase. Replay to reflect on your practice.'}
+            </p>
           </div>
-
-          {/* recording controls */}
-          <div className="space-y-4">
-            <div className="grid gap-2">
-              <button
-                className="btn btn-neutral"
-                onClick={startRecording}
-                disabled={isRecording || isSubmitting}
-                type="button"
-              >
-                Start recording
-              </button>
-              <button
-                className="btn btn-neutral"
-                onClick={stopRecording}
-                disabled={!isRecording || isSubmitting}
-                type="button"
-              >
-                Stop recording
-              </button>
-              <button
-                className="btn btn-primary"
-                onClick={onAssess}
-                disabled={!audioBlob || isRecording || isSubmitting}
-                type="button"
-              >
-                Analyze practice recording
-              </button>
+          <div className="space-y-5 py-2">
+            <div
+              role="status"
+              aria-live="polite"
+              className="text-lg font-semibold"
+            >
+              {recorder.state === 'requesting_permission'
+                ? 'Ask your helper to allow the microphone.'
+                : recorder.state === 'recording'
+                  ? 'I’m listening. Say your word, then tap Done.'
+                  : assessment.isSubmitting
+                    ? 'Listening to your turn…'
+                    : assessment.result
+                      ? 'Thanks for having a go!'
+                      : recorder.audio
+                        ? 'Want to hear your turn?'
+                        : 'Ready when you are.'}
             </div>
-
-            {isSubmitting && (
-              <p className="text-sm text-slate-600" role="status">
-                Analyzing your recording. This can take up to 45 seconds.
+            {error && (
+              <p role="alert" className="rounded-xl bg-red-50 p-4 text-red-900">
+                {error}
               </p>
             )}
-
-            {audioUrl && (
-              <div>
-                <FormLabel title="Your Recording" />
-                <audio controls className="w-full" src={audioUrl} />
+            {recorder.state === 'recording' ? (
+              <button
+                type="button"
+                className="btn btn-neutral min-h-14 w-full text-lg"
+                onClick={recorder.stop}
+              >
+                <Square size={20} aria-hidden="true" />
+                Done
+              </button>
+            ) : (
+              <button
+                type="button"
+                className="btn btn-neutral min-h-14 w-full text-lg"
+                disabled={locked}
+                onClick={() => {
+                  assessment.resetAssessment()
+                  void recorder.start()
+                }}
+              >
+                <Mic size={20} aria-hidden="true" />
+                {recorder.audio ? 'Record again' : 'My turn'}
+              </button>
+            )}
+            {recorder.url && (
+              <div className="space-y-2">
+                <label htmlFor="practice-replay" className="font-medium">
+                  Listen to my turn
+                </label>
+                <audio
+                  id="practice-replay"
+                  controls
+                  src={recorder.url}
+                  className="w-full"
+                  aria-label="Listen to my recording"
+                />
               </div>
             )}
+            {recorder.audio && !assessment.result && (
+              <button
+                type="button"
+                className="btn min-h-12 w-full"
+                disabled={locked}
+                onClick={() => void analyze()}
+              >
+                {assessment.isSubmitting ? 'Listening…' : 'Finish my turn'}
+              </button>
+            )}
+            {assessment.result && (
+              <div className="rounded-2xl bg-emerald-50 p-5" role="status">
+                <p>{feedback}</p>
+              </div>
+            )}
+            <div className="flex flex-wrap gap-3">
+              <button
+                type="button"
+                className="btn min-h-12"
+                disabled={locked}
+                onClick={next}
+              >
+                {index === 4 ? 'Finish exploring' : 'Next word'}
+              </button>
+              {(locked || recorder.audio) && (
+                <button type="button" className="btn min-h-12" onClick={clear}>
+                  <RotateCcw size={18} aria-hidden="true" />
+                  {locked ? 'Cancel turn' : 'Start over'}
+                </button>
+              )}
+            </div>
           </div>
         </div>
-
-        <div className="col-span-8">
-          {result && (
-            <div className="space-y-4">
+      )}
+      <details className="border-t border-slate-200 pt-4">
+        <summary className="cursor-pointer py-3 font-medium">
+          Practice settings and review · for you and your helper
+        </summary>
+        <div className="space-y-4 py-4 text-sm text-slate-700">
+          <p>
+            Proof of concept for ages 3–18 in the Philippines. Younger children
+            need a helper. These example words have not been reviewed as therapy
+            targets. Automated transcription cannot judge sound accuracy.
+          </p>
+          <p>
+            Filipino mode uses Tagalog transcription. Other Philippine languages
+            and mixed-language speech have not been evaluated.
+          </p>
+          <div className="space-y-2">
+            <label className="block font-medium" htmlFor="practice-word">
+              Word or short phrase from your speech plan
+            </label>
+            <input
+              id="practice-word"
+              className="input w-full"
+              maxLength={MAX_REFERENCE_LENGTH}
+              value={customWord}
+              disabled={locked}
+              onChange={(event) => {
+                clear()
+                setCustomWord(event.target.value)
+              }}
+              placeholder={prompt.word}
+            />
+          </div>
+          <p>
+            Sending a turn uses the private analysis service. Recordings are not
+            enrolled for model training.
+          </p>
+          {assessment.result && (
+            <dl className="space-y-2">
               <div>
-                <p className="uppercase font-medium">Your Results</p>
-                <SlpAlert status={result.analysis.structured.overall.status} />
+                <dt className="font-medium">
+                  Automatic transcript · may contain mistakes
+                </dt>
+                <dd>
+                  {assessment.result.analysis.transcript ||
+                    'No transcript available'}
+                </dd>
               </div>
-
-              <SlpImprovement result={result} />
-              <SlpAccurate result={result} />
-              <SlpBreakdown result={result} />
-            </div>
+              <div>
+                <dt className="font-medium">Review</dt>
+                <dd>
+                  {versioned
+                    ? assessment.result.meta.status?.replaceAll('_', ' ')
+                    : 'Legacy result · sound judgments withheld'}
+                </dd>
+              </div>
+              <div>
+                <dt className="font-medium">Model</dt>
+                <dd>{assessment.result.meta.modelVersion ?? 'Not provided'}</dd>
+              </div>
+            </dl>
           )}
         </div>
-      </div>
-    </div>
+      </details>
+    </section>
   )
 }

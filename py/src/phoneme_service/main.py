@@ -6,7 +6,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
-from phoneme_service.api.routes import initialize_models
+from phoneme_service.api.routes import initialize_models, shutdown_models
 from phoneme_service.api.routes import router as api_router
 
 logging.basicConfig(
@@ -18,7 +18,10 @@ logging.basicConfig(
 @asynccontextmanager
 async def lifespan(_: FastAPI):
     await asyncio.to_thread(initialize_models)
-    yield
+    try:
+        yield
+    finally:
+        await asyncio.to_thread(shutdown_models)
 
 
 app = FastAPI(title="TalkTherapy Phoneme Analysis", version="0.1.0", lifespan=lifespan)

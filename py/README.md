@@ -1,6 +1,6 @@
 # Phoneme analysis service
 
-Private FastAPI inference service for TalkTherapy. It transcribes an English recording, aligns speech against reference text, and returns heuristic pronunciation feedback. The output is not a diagnosis and is not approved for clinical use.
+Private FastAPI practice service for TalkTherapy. The version-2 endpoint transcribes English or Filipino/Tagalog recordings and returns neutral practice feedback with an explicit review status. It does not return sound-correctness judgments. The previous text-alignment/heuristic scoring modules remain for research regression coverage and are not used by the active endpoint.
 
 ## Layout
 
@@ -18,7 +18,7 @@ py/
 
 ## Setup
 
-Install Python 3.11-3.13, FFmpeg, and eSpeak NG first. PyAV is pinned to 18.1.0 because the pinned faster-whisper release passes an argument removed in PyAV 19. SoundFile provides TorchAudio's WAV backend on Windows.
+Install Python 3.11-3.13 and FFmpeg first. eSpeak NG is needed only for the retained phonemization research modules. PyAV is pinned to 18.1.0 because the pinned faster-whisper release passes an argument removed in PyAV 19. SoundFile provides TorchAudio's WAV backend for research on Windows.
 
 ### Windows 11 (PowerShell)
 
@@ -123,7 +123,7 @@ Test-Path 'C:\Program Files\eSpeak NG\libespeak-ng.dll'
 
 For `service_unavailable`, confirm Laravel and Python use the same non-placeholder token, then restart both services. Check `/v1/health/ready` returns HTTP 200. If TorchAudio cannot find a WAV backend or faster-whisper reports `metadata_errors`, reinstall `.[dev]` to apply the pinned SoundFile and PyAV dependencies, then restart Uvicorn.
 
-Startup loads the Whisper and TorchAudio models and can download weights on the first run. Production images must provision and verify model artifacts before startup. Do not expose port 8001 to browsers or the public network.
+Startup checks FFmpeg and warms Whisper in a separate process. MMS_FA and eSpeak are no longer loaded by the active endpoint. Whisper uses local artifacts only, including after worker recovery; missing artifacts fail startup. Provision weights before starting the service. Do not expose port 8001 to browsers or the public network.
 
 Internal endpoints:
 
@@ -139,4 +139,26 @@ python -m ruff check src tests
 python -m compileall -q src tests
 ```
 
-See [the phoneme-analysis specification](../docs/migration/modules/SPEC-phoneme-analysis.md) and [the tracked release gates](../tasks/todo.md#phoneme-analysis). The Laravel proxy, process-level inference deadline, decoded-duration validation, reproducible model lock/image, and clinical calibration remain required before enabling the feature.
+See [the phoneme-analysis specification](../docs/migration/modules/SPEC-phoneme-analysis.md) and [PLAN_SLP.md](../PLAN_SLP.md). The proxy, bounded process inference and decoded-duration validation are implemented. Reproducible model/image locks, measured resource budgets and clinical validation remain release work.
+
+## Version-2 proof of concept
+
+The agreed scope is ages 3–18 in the Philippines, with English (`en`) and Filipino using Tagalog ASR (`tl`). This does not establish accuracy for children, code-switching or other Philippine languages. No SLP reviewer or consented training corpus is currently available. Training and automatic corrective feedback remain disabled.
+
+From `py/`, activate the environment and provision the development Whisper artifact once (network access required):
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+python -c "from faster_whisper.utils import download_model; print(download_model('base'))"
+python -m uvicorn phoneme_service.main:app --host 127.0.0.1 --port 8001 --env-file .env
+```
+
+Restart Uvicorn and Laravel after updating this code. The existing shared service token remains required. The development download uses the repository's current revision; production still requires a rights-reviewed, checksummed artifact manifest. Optional `PHONEME_ASR_MODEL` selects an existing local model directory or cached model name, and `PHONEME_ASR_REVISION` selects a provisioned revision. Response model identity is marked unverified until artifact provenance is established.
+
+Multipart requests now accept optional `language=en|tl` alongside `audio` and `referenceText`; Laravel accepts `reference_text` and forwards the selected language. Results include `meta.schemaVersion=2.0`, `status`, `measurement=transcript_agreement_only`, model/calibration identity, language and `learningEligible=false`. `review_required` means listen together; `task_mismatch` means the ASR transcript disagreed, which may itself be an ASR error; `unscorable` means no usable transcript. None is a diagnosis. Legacy result arrays are empty and overall status is `unknown`; numeric zeros in that compatibility envelope are placeholders, not measurements.
+
+Uploads are limited to 10 MiB. Decode accepts forced WAV/WebM demuxers, emits mono 16 kHz PCM, and rejects clips shorter than 0.1 seconds, longer than 60 seconds, truncated PCM and near-zero audio energy. The energy check is an engineering capture check, not validated voice-activity detection. Decode/inference share a 40-second work budget after upload; a model deadline kills its process. The next request attempts recovery. Only one job is admitted per Uvicorn process; deploy one process per provisioned worker budget. FFmpeg has its own 20-second timeout. OS memory limits and multi-process deployment budgets remain to be verified.
+
+The child activity offers picture exploration, a simple focus style, English/Filipino prompts, custom words, recording/replay, cancellation and breaks. Example vocabulary is demonstration content, not an SLP-reviewed treatment program. No exemplar recordings are bundled yet; the helper models the word. Recordings are temporary and are not retained as training examples.
+
+Offline dataset preparation starts with `core.learning.TrainingExample` and `validate_dataset`. These reject missing eligibility, withdrawals, duplicate recordings, child/group leakage, missing partitions and evaluation labels without two distinct annotators plus adjudication. These checks validate a curator export; they do not verify real consent or clinical judgments. Neural training, model promotion and consented recording storage remain deferred until approved data exists.

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import logging
 import re
 from functools import lru_cache
 
@@ -35,7 +34,6 @@ DIGRAPHS: frozenset[str] = frozenset({"ch", "sh", "zh", "th", "dh", "ng"})
 WORD_RE = re.compile(r"[A-Za-z0-9']+")
 
 _ALLOWED_ALIGNMENT_CHARS: set[str] = set()
-log = logging.getLogger("phoneme_service")
 
 
 def configure_allowed_alignment_chars(characters: set[str]) -> None:
@@ -68,7 +66,7 @@ def _cached_word_tokens(word: str) -> tuple[str, ...]:
     ).lower()
     tokens = _ipa_to_tokens(ipa)
     if not tokens:
-        raise ValueError(f"No valid alignment tokens for word: {word!r}")
+        raise ValueError("No valid alignment tokens for an expected word")
     return tuple(tokens)
 
 
@@ -82,9 +80,10 @@ def tokenize_text_with_word_map(text: str) -> tuple[list[str], list[int], list[s
     for word in words:
         try:
             word_tokens = list(_cached_word_tokens(word))
-        except Exception:
-            log.warning("Skipping un-phonemizable word: %r", word)
-            continue
+        except (ValueError, RuntimeError):
+            # Partial coverage must not be presented as a complete assessment.
+            # Keep reference words out of errors and ordinary service logs.
+            raise ValueError("Expected word could not be phonemized") from None
 
         word_index = len(kept_words)
         kept_words.append(word)

@@ -3,44 +3,40 @@ from __future__ import annotations
 import asyncio
 import hmac
 import logging
+import shutil
 import subprocess
 import tempfile
+import time
 from pathlib import Path
+from typing import Literal
 
 from fastapi import APIRouter, Depends, Form, Header, HTTPException, UploadFile, status
-from torchaudio.pipelines import MMS_FA as bundle
 
 from phoneme_service.config.settings import SETTINGS
-from phoneme_service.core.alignment import get_phoneme_scores
-from phoneme_service.core.assessment import (
-    build_structured_assessment,
-    format_feedback_from_structured,
-)
-from phoneme_service.core.phonemization import configure_allowed_alignment_chars
-from phoneme_service.core.scoring import SCORING_CONFIG
-from phoneme_service.models.dto import AssessAnalysis, AssessFeedback, AssessMeta, AssessResponse
-from phoneme_service.services.asr import get_whisper_model, transcribe
+from phoneme_service.core.practice import build_practice_response
+from phoneme_service.models.dto import AssessResponse
+from phoneme_service.services.audio import validate_wav
+from phoneme_service.services.worker import InferenceWorker
 
 router = APIRouter(prefix="/v1")
 log = logging.getLogger("phoneme_service")
 inference_slot = asyncio.Semaphore(1)
 
-_fa_model = None
-_tokenizer = None
-_aligner = None
+worker = InferenceWorker()
 
 
 def initialize_models() -> None:
-    global _fa_model, _tokenizer, _aligner
-    _fa_model = bundle.get_model()
-    _tokenizer = bundle.get_tokenizer()
-    _aligner = bundle.get_aligner()
-    configure_allowed_alignment_chars(set(_tokenizer.dictionary.keys()))
-    get_whisper_model()
+    if shutil.which("ffmpeg") is None:
+        raise RuntimeError("FFmpeg is unavailable on PATH")
+    worker.start()
+
+
+def shutdown_models() -> None:
+    worker.close()
 
 
 def models_ready() -> bool:
-    return _fa_model is not None and _tokenizer is not None and _aligner is not None
+    return worker.ready
 
 
 def convert_to_wav(input_path: Path, output_path: Path) -> None:
@@ -51,12 +47,27 @@ def convert_to_wav(input_path: Path, output_path: Path) -> None:
             "-v",
             "error",
             "-y",
+            "-protocol_whitelist",
+            "file,pipe",
+            "-f",
+            "wav" if input_path.suffix == ".wav" else "matroska",
             "-i",
             str(input_path),
+            "-map",
+            "0:a:0",
+            "-vn",
+            "-sn",
+            "-dn",
+            "-t",
+            "61",
+            "-threads",
+            "1",
             "-ac",
             "1",
             "-ar",
             "16000",
+            "-c:a",
+            "pcm_s16le",
             str(output_path),
         ],
         stdout=subprocess.DEVNULL,
@@ -120,12 +131,9 @@ def readiness() -> dict[str, str]:
 async def assess(
     audio: UploadFile,
     referenceText: str = Form(..., min_length=1, max_length=800),
+    language: Literal["en", "tl"] = Form("en"),
 ):
-    if not models_ready():
-        raise HTTPException(
-            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail="Analysis service is not ready.",
-        )
+    # Dead workers recover within the next admitted request's inference budget.
     reference_text = referenceText.strip()
     if not reference_text:
         raise HTTPException(
@@ -151,47 +159,32 @@ async def assess(
             raw_path = Path(temp_dir) / f"input{suffix}"
             wav_path = Path(temp_dir) / "audio.wav"
             byte_count = await save_bounded_upload(audio, raw_path)
-            await asyncio.to_thread(convert_to_wav, raw_path, wav_path)
 
-            transcript = await asyncio.to_thread(transcribe, str(wav_path))
-            alignment = await asyncio.to_thread(
-                get_phoneme_scores,
-                audio_path=str(wav_path),
-                reference_text=reference_text,
-                transcript=transcript,
-                fa_model=_fa_model,
-                tokenizer=_tokenizer,
-                aligner=_aligner,
-                fa_sample_rate=bundle.sample_rate,
-            )
-            log.info(
-                "Assessment completed: bytes=%d source=%s", byte_count, alignment.alignment_source
-            )
+            def analyze_recording() -> str:
+                deadline = time.monotonic() + 40
+                convert_to_wav(raw_path, wav_path)
+                validate_wav(wav_path)
+                return worker.transcribe(
+                    str(wav_path), timeout=max(0, deadline - time.monotonic()), language=language
+                )
 
-        structured_assessment = build_structured_assessment(
-            reference_text=reference_text,
-            transcript=transcript,
-            phoneme_scores=alignment.phoneme_scores,
-        )
-        feedback_text = format_feedback_from_structured(structured_assessment)
+            task = asyncio.create_task(asyncio.to_thread(analyze_recording))
+            try:
+                transcript = await asyncio.shield(task)
+            except asyncio.CancelledError:
+                # Keep temporary files and admission until bounded work finishes.
+                try:
+                    await task
+                except Exception:
+                    pass
+                raise
+            log.info("Practice completed: bytes=%d schema=2.0", byte_count)
 
-        low_scoring = [
-            p for p in alignment.phoneme_scores if p.score < SCORING_CONFIG.threshold_needs_work
-        ]
-
-        return AssessResponse(
-            meta=AssessMeta(
-                alignmentSource=alignment.alignment_source,
-                cer=round(alignment.cer, 4),
-            ),
-            analysis=AssessAnalysis(
-                transcript=transcript,
-                lowScoring=low_scoring,
-                structured=structured_assessment,
-            ),
-            feedback=AssessFeedback(
-                text=feedback_text,
-            ),
+        return build_practice_response(
+            reference_text,
+            transcript,
+            model_version="faster-whisper-base-unverified",
+            language=language,
         )
 
     except ValueError as exc:
@@ -199,12 +192,16 @@ async def assess(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail="Audio or reference text could not be analyzed.",
         ) from exc
+    except TimeoutError as exc:
+        raise HTTPException(status_code=504, detail="Analysis deadline exceeded.") from exc
+    except (RuntimeError, EOFError, BrokenPipeError) as exc:
+        raise HTTPException(status_code=503, detail="Analysis worker unavailable.") from exc
     except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as exc:
         raise HTTPException(status_code=422, detail="Audio conversion failed.") from exc
     except HTTPException:
         raise
     except Exception as exc:
-        log.exception("Assessment failed")
+        log.error("Assessment failed: reason=inference_failure")
         raise HTTPException(status_code=500, detail="Assessment failed.") from exc
     finally:
         inference_slot.release()

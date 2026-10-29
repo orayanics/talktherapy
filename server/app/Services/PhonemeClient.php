@@ -12,7 +12,7 @@ use Illuminate\Validation\ValidationException;
 class PhonemeClient
 {
     /** @return array<string, mixed> */
-    public function assess(UploadedFile $audio, string $referenceText, string $requestId): array
+    public function assess(UploadedFile $audio, string $referenceText, string $requestId, string $language = 'en'): array
     {
         $baseUrl = rtrim((string) config('services.phoneme.url'), '/');
         $token = trim((string) config('services.phoneme.token'));
@@ -40,7 +40,7 @@ class PhonemeClient
                     'recording.'.$audio->guessExtension(),
                     ['Content-Type' => $audio->getMimeType() ?? 'application/octet-stream'],
                 )
-                ->post($baseUrl.'/v1/assess', ['referenceText' => $referenceText]);
+                ->post($baseUrl.'/v1/assess', ['referenceText' => $referenceText, 'language' => $language]);
         } catch (ConnectionException $exception) {
             if ($this->isTimeout($exception)) {
                 abort(504);
@@ -87,8 +87,15 @@ class PhonemeClient
     private function isValidAssessment(array $payload): bool
     {
         $validator = Validator::make($payload, [
-            'meta' => ['required', 'array:alignmentSource,cer'],
-            'meta.alignmentSource' => ['required', 'in:reference,transcript'],
+            'meta' => ['required', 'array:alignmentSource,cer,schemaVersion,status,measurement,modelVersion,calibrationVersion,learningEligible,language'],
+            'meta.language' => ['sometimes', 'in:en,tl'],
+            'meta.alignmentSource' => ['required', 'in:reference,transcript,none'],
+            'meta.schemaVersion' => ['sometimes', 'in:2.0'],
+            'meta.status' => ['required_with:meta.schemaVersion', 'in:review_required,task_mismatch,unscorable'],
+            'meta.measurement' => ['required_with:meta.schemaVersion', 'in:transcript_agreement_only'],
+            'meta.modelVersion' => ['required_with:meta.schemaVersion', 'string', 'max:200'],
+            'meta.calibrationVersion' => ['required_with:meta.schemaVersion', 'in:none'],
+            'meta.learningEligible' => ['required_with:meta.schemaVersion', 'boolean'],
             'meta.cer' => ['required', 'numeric', 'min:0'],
             'analysis' => ['required', 'array:transcript,lowScoring,structured'],
             'analysis.transcript' => ['required', 'string', 'max:5000'],
@@ -130,7 +137,21 @@ class PhonemeClient
             'feedback.text' => ['required', 'string', 'max:10000'],
         ]);
 
-        return ! $validator->fails() && $this->containsFiniteNumbers($payload);
+        if ($validator->fails() || ! $this->containsFiniteNumbers($payload)) {
+            return false;
+        }
+
+        if (isset($payload['meta']['schemaVersion'])) {
+            return $payload['meta']['alignmentSource'] === 'none'
+                && $payload['meta']['learningEligible'] === false
+                && $payload['analysis']['structured']['overall']['status'] === 'unknown'
+                && $payload['analysis']['lowScoring'] === []
+                && $payload['analysis']['structured']['words'] === []
+                && $payload['analysis']['structured']['accurateUnits'] === []
+                && $payload['analysis']['structured']['needsWorkUnits'] === [];
+        }
+
+        return true;
     }
 
     private function containsFiniteNumbers(mixed $value): bool
