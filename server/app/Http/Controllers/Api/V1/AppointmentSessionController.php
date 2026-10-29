@@ -44,7 +44,6 @@ class AppointmentSessionController extends Controller
             ->where(fn ($query) => $query
                 ->where('patient_id', $request->user()->id)
                 ->orWhere('clinician_id', $request->user()->id))
-            ->with(['patient:id,name', 'patient.profile:user_id,role', 'clinician:id,name', 'clinician.profile:user_id,role'])
             ->findOrFail($appointment);
         $this->ensureJoinable($record);
 
