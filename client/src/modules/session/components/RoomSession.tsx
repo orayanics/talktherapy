@@ -7,7 +7,6 @@ import {
   MicOff,
   Video,
   VideoOff,
-  X,
 } from 'lucide-react'
 import RoomWaiting from './room/RoomWaiting'
 import RoomPrompt from './room/RoomPrompt'
@@ -68,7 +67,7 @@ export default function RoomSession({ roomId }: RoomSessionProps) {
       {sessionError && (
         <div
           role="alert"
-          className="alert alert-error absolute top-0 inset-x-0 z-50"
+          className="alert alert-error absolute mx-auto top-2 inset-x-0 z-50 w-fit"
         >
           {sessionError}
         </div>
@@ -93,12 +92,12 @@ export default function RoomSession({ roomId }: RoomSessionProps) {
               <div className="flex gap-2 mt-1">
                 {!peerMedia.camera && (
                   <div className="badge badge-error badge-sm gap-1">
-                    <VideoOff /> Off
+                    <VideoOff size={16} /> Off
                   </div>
                 )}
                 {!peerMedia.mic && (
                   <div className="badge badge-error badge-sm gap-1">
-                    <Mic /> Muted
+                    <Mic size={16} /> Muted
                   </div>
                 )}
               </div>
@@ -174,31 +173,13 @@ export default function RoomSession({ roomId }: RoomSessionProps) {
         </div>
       </main>
 
-      {/* Chat Sidebar */}
-      <div
-        id="session-chat"
-        aria-label="Session chat"
-        aria-hidden={!chatOpen}
-        className={`h-full bg-base-100 z-40 border-l border-slate-200 shadow-lg shadow-slate-200 transition-all duration-300 ease-in-out motion-reduce:transition-none flex flex-col ${chatOpen ? 'w-80 lg:w-96 translate-x-0' : 'w-0 translate-x-full overflow-hidden border-none'}`}
-      >
-        <div className="p-4 border-b border-slate-200 flex justify-between items-center bg-base-100/80 backdrop-blur shrink-0 min-w-[20rem]">
-          <h3 className="font-semibold text-lg flex items-center gap-2">
-            Chat
-          </h3>
-          <button
-            ref={chatCloseRef}
-            type="button"
-            onClick={() => setChatOpen(false)}
-            className="btn btn-square btn-ghost"
-            aria-label="Close chat"
-          >
-            <X />
-          </button>
-        </div>
-        <div className="flex-1 overflow-hidden min-w-[20rem]">
-          <RoomChat messages={messages} onSend={sendChat} />
-        </div>
-      </div>
+      <RoomChat
+        messages={messages}
+        onSend={sendChat}
+        open={chatOpen}
+        onClose={() => setChatOpen(false)}
+        closeButtonRef={chatCloseRef}
+      />
     </div>
   )
 }

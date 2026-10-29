@@ -470,7 +470,7 @@ export function useRoomSession(appointmentId: string) {
             patchDiag({ iceGathering: peer.iceGatheringState })
           }
           pc.onicecandidate = (event) => {
-            if (disposed || pc !== peer || !event.candidate) return
+            if (disposed || pc !== peer || !event.candidate?.candidate) return
             trace('ice.local-candidate', {
               candidateType: event.candidate.type,
               protocol: event.candidate.protocol,
