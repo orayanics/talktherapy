@@ -1,6 +1,5 @@
-import { queryOptions } from '@tanstack/react-query'
+import { queryOptions, useMutation, useQueryClient } from '@tanstack/react-query'
 import { api } from '#/lib/api/client'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 export interface DiagnosisItem {
   id: string
@@ -22,7 +21,12 @@ export const fetchDiagnoses = queryOptions<DiagnosisItem[]>({
 
 export function useDiagnosisActions() {
   const queryClient = useQueryClient()
-  const invalidate = () => queryClient.invalidateQueries({ queryKey: ['admin-diagnoses'] })
+  const invalidate = async () => {
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: ['admin-diagnoses'] }),
+      queryClient.invalidateQueries({ queryKey: ['public-diagnoses'] }),
+    ])
+  }
   const create = useMutation({
     mutationFn: (input: Pick<DiagnosisItem, 'id' | 'label' | 'value'>) => api('/api/v1/admin/diagnoses', { method: 'POST', data: input }),
     onSuccess: invalidate,

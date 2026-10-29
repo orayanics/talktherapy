@@ -46,6 +46,9 @@ class DiagnosisTest extends TestCase
         $this->actingAs($admin)->deleteJson('/api/v1/admin/diagnoses/diagnosis-new')->assertNoContent();
         $this->assertDatabaseHas('diagnoses', ['id' => 'diagnosis-new', 'active' => false]);
         $this->getJson('/api/v1/diagnoses')->assertJsonMissing(['id' => 'diagnosis-new']);
+        $this->actingAs($admin)->patchJson('/api/v1/admin/diagnoses/diagnosis-new', ['label' => 'Updated', 'value' => 'UPD', 'active' => true])->assertOk();
+        $this->assertDatabaseHas('diagnoses', ['id' => 'diagnosis-new', 'active' => true]);
+        $this->getJson('/api/v1/diagnoses')->assertJsonFragment(['id' => 'diagnosis-new']);
     }
 
     public function test_admin_catalog_includes_seeded_diagnoses(): void
