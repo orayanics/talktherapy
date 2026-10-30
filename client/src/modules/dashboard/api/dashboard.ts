@@ -2,7 +2,11 @@ import { api } from '#/lib/api/client'
 import { queryOptions } from '@tanstack/react-query'
 
 export interface AdminStats {
-  users: { total: number; by_role: Record<string, number> }
+  users: {
+    total: number
+    by_role: Record<string, number>
+    by_diagnosis: Array<{ value: string; label: string; count: number }>
+  }
   appointments: Record<string, number>
   slots: Record<string, number>
 }

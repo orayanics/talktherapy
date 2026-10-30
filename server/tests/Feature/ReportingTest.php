@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Jobs\BuildAuditExport;
 use App\Models\AuditLog;
+use App\Models\Diagnosis;
 use App\Models\User;
 use App\Models\UserProfile;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -30,6 +31,36 @@ class ReportingTest extends TestCase
             $this->actingAs($this->createUser($role))->getJson('/api/v1/reports/stats')->assertForbidden();
             $this->actingAs($this->createUser($role))->getJson('/api/v1/logs')->assertForbidden();
         }
+    }
+
+    public function test_stats_count_patients_by_diagnosis(): void
+    {
+        $admin = $this->createUser('admin');
+        $aphasia = Diagnosis::factory()->create(['value' => 'APH', 'label' => 'Aphasia']);
+        $stuttering = Diagnosis::factory()->create(['value' => 'STUT', 'label' => 'Stuttering']);
+        $noPatients = Diagnosis::factory()->create(['value' => 'NONE', 'label' => 'No Patients']);
+
+        foreach ([$aphasia, $aphasia, $stuttering] as $diagnosis) {
+            $patient = User::factory()->create();
+            UserProfile::factory()->for($patient)->create([
+                'role' => 'patient',
+                'status' => 'active',
+                'diagnosis_id' => $diagnosis->id,
+            ]);
+        }
+        $clinician = User::factory()->create();
+        UserProfile::factory()->for($clinician)->create([
+            'role' => 'clinician',
+            'status' => 'active',
+            'diagnosis_id' => $aphasia->id,
+        ]);
+
+        $this->actingAs($admin)
+            ->getJson('/api/v1/reports/stats')
+            ->assertOk()
+            ->assertJsonFragment(['value' => 'APH', 'label' => 'Aphasia', 'count' => 2])
+            ->assertJsonFragment(['value' => 'STUT', 'label' => 'Stuttering', 'count' => 1])
+            ->assertJsonFragment(['value' => $noPatients->value, 'label' => $noPatients->label, 'count' => 0]);
     }
 
     public function test_stream_export_records_completion_and_neutralizes_formula_cells(): void
