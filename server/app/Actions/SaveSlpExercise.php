@@ -6,7 +6,6 @@ use App\Models\AuditLog;
 use App\Models\SlpExercise;
 use App\Models\SlpExerciseVersion;
 use App\Models\User;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 
 class SaveSlpExercise
@@ -18,6 +17,7 @@ class SaveSlpExercise
             $exercise = SlpExercise::query()->create(['owner_id' => $actor->id, 'scope' => $attributes['scope'] ?? 'private', 'module' => $attributes['module']]);
             $this->version($exercise, $actor, $attributes, 1);
             $this->audit($actor, $exercise, 'slp.exercise.created', $requestId);
+
             return $exercise->load('versions');
         });
     }
@@ -30,6 +30,7 @@ class SaveSlpExercise
             $latest = $locked->versions()->max('revision') ?? 0;
             $this->version($locked, $actor, $attributes + $locked->versions()->latest('revision')->firstOrFail()->only(['language', 'dialect', 'task_type', 'prompt_text', 'configuration']), $latest + 1);
             $this->audit($actor, $locked, 'slp.exercise.updated', $requestId);
+
             return $locked->load('versions');
         });
     }

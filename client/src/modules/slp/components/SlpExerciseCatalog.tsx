@@ -3,7 +3,8 @@ import { useQuery } from '@tanstack/react-query'
 import { useAuthGuard } from '#/modules/auth/hooks/useAuth'
 import RowError from '#/components/Table/RowError'
 import ExerciseDelivery from './ExerciseDelivery'
-import { fetchSlpExercises, mutateCreateSlpExercise, type SlpExerciseModule } from '../api/exercises'
+import { fetchSlpExercises, mutateCreateSlpExercise } from '../api/exercises'
+import type { SlpExerciseModule } from '../api/exercises'
 
 const modules: SlpExerciseModule[] = ['fluency', 'timing', 'articulation', 'aphasia', 'voice', 'motor_speech']
 
@@ -48,6 +49,6 @@ export default function SlpExerciseCatalog() {
       {create.isError && <RowError message="Could not save this draft." />}
       <button className="btn btn-neutral" disabled={create.isPending}>Save draft</button>
     </form>
-    <ul className="space-y-2">{data?.data.map((exercise) => <li key={exercise.id} className="rounded border border-slate-200 p-3"><div className="font-medium">{exercise.latest_version?.prompt_text}</div><div className="text-xs text-slate-500">{exercise.module} · {exercise.latest_version?.language} · revision {exercise.latest_version?.revision}</div><ExerciseDelivery exercise={exercise} /></li>)}</ul>
+    <ul className="space-y-2">{data.data.map((exercise) => <li key={exercise.id} className="rounded border border-slate-200 p-3"><div className="font-medium">{exercise.latest_version?.prompt_text}</div><div className="text-xs text-slate-500">{exercise.module} · {exercise.latest_version?.language} · revision {exercise.latest_version?.revision}</div><ExerciseDelivery exercise={exercise} /></li>)}</ul>
   </div>
 }

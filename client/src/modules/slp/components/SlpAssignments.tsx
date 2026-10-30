@@ -45,7 +45,7 @@ export default function SlpAssignments() {
             </p>
           </div>
         </header>
-        {!data?.data.length && (
+        {!data.data.length && (
           <div className="tt-card" role="status">
             <h2 className="text-lg font-bold">No practice yet</h2>
             <p className="mt-1 text-sm text-slate-600">
@@ -54,7 +54,7 @@ export default function SlpAssignments() {
           </div>
         )}
         <ul className="grid gap-4">
-          {data?.data.map((item, index) => (
+          {data.data.map((item, index) => (
             <li key={item.id} className="tt-card">
               <div className="flex items-start gap-3">
                 <span className="tt-node now" aria-hidden="true">

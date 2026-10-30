@@ -18,7 +18,13 @@ class SlpExerciseVersion extends Model
         return ['configuration' => 'array'];
     }
 
-    public function exercise(): BelongsTo { return $this->belongsTo(SlpExercise::class); }
+    public function exercise(): BelongsTo
+    {
+        return $this->belongsTo(SlpExercise::class);
+    }
 
-    public function creator(): BelongsTo { return $this->belongsTo(User::class, 'created_by'); }
+    public function creator(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
 }

@@ -57,6 +57,7 @@ class SlpExerciseCatalogTest extends TestCase
     {
         $user = User::factory()->create(['email_verified_at' => now()]);
         UserProfile::factory()->for($user)->create(['role' => $role, 'status' => UserStatus::Active]);
+
         return $user->load('profile');
     }
 }

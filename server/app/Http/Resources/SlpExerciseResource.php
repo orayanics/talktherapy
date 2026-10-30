@@ -10,6 +10,7 @@ class SlpExerciseResource extends JsonResource
     public function toArray(Request $request): array
     {
         $version = $this->relationLoaded('versions') ? $this->versions->sortByDesc('revision')->first() : null;
+
         return [
             'id' => $this->id,
             'owner_id' => $this->owner_id,
