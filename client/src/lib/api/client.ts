@@ -20,7 +20,7 @@ apiClient.interceptors.request.use(async (config) => {
   if (
     ['POST', 'PUT', 'PATCH'].includes(method ?? '') &&
     typeof config.data === 'string' &&
-    /^[[]{/.test(config.data.trim()) &&
+    /^[[{]/.test(config.data.trim()) &&
     !contentType
   ) {
     config.headers.set('Content-Type', 'application/json')
