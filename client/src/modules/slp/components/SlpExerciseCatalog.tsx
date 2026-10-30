@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useAuthGuard } from '#/modules/auth/hooks/useAuth'
 import RowError from '#/components/Table/RowError'
+import ExerciseDelivery from './ExerciseDelivery'
 import { fetchSlpExercises, mutateCreateSlpExercise, type SlpExerciseModule } from '../api/exercises'
 
 const modules: SlpExerciseModule[] = ['fluency', 'timing', 'articulation', 'aphasia', 'voice', 'motor_speech']
@@ -16,11 +17,14 @@ export default function SlpExerciseCatalog() {
   const [taskType, setTaskType] = useState('passage_reading')
   const [prompt, setPrompt] = useState('')
   const [scope, setScope] = useState<'private' | 'shared'>('private')
+  const [visible, setVisible] = useState(false)
 
   const submit = async (event: React.FormEvent) => {
     event.preventDefault()
-    await create.mutateAsync({ module, language, task_type: taskType, prompt_text: prompt, scope })
-    setPrompt('')
+    try {
+      await create.mutateAsync({ module, language, task_type: taskType, prompt_text: prompt, scope, configuration: { patient_visible: visible } })
+      setPrompt('')
+    } catch { /* Mutation state displays the error and preserves the draft. */ }
   }
 
   if (isPending) return <div>Loading exercises…</div>
@@ -33,6 +37,7 @@ export default function SlpExerciseCatalog() {
     </div>
     <form onSubmit={submit} className="space-y-3 rounded-lg border border-slate-300 bg-white p-5">
       <h2 className="font-semibold">New draft</h2>
+      <label className="flex gap-2"><input type="checkbox" checked={visible} onChange={(event) => setVisible(event.target.checked)} />Allow assigned patients to test this draft</label>
       <div className="grid gap-3 md:grid-cols-2">
         <label>Module<select className="select w-full" value={module} onChange={(event) => setModule(event.target.value as SlpExerciseModule)}>{modules.map((item) => <option key={item}>{item}</option>)}</select></label>
         <label>Language<input className="input w-full" value={language} onChange={(event) => setLanguage(event.target.value)} maxLength={16} /></label>
@@ -43,6 +48,6 @@ export default function SlpExerciseCatalog() {
       {create.isError && <RowError message="Could not save this draft." />}
       <button className="btn btn-neutral" disabled={create.isPending}>Save draft</button>
     </form>
-    <ul className="space-y-2">{data?.data.map((exercise) => <li key={exercise.id} className="rounded border border-slate-200 p-3"><div className="font-medium">{exercise.latest_version?.prompt_text}</div><div className="text-xs text-slate-500">{exercise.module} · {exercise.latest_version?.language} · revision {exercise.latest_version?.revision}</div></li>)}</ul>
+    <ul className="space-y-2">{data?.data.map((exercise) => <li key={exercise.id} className="rounded border border-slate-200 p-3"><div className="font-medium">{exercise.latest_version?.prompt_text}</div><div className="text-xs text-slate-500">{exercise.module} · {exercise.latest_version?.language} · revision {exercise.latest_version?.revision}</div><ExerciseDelivery exercise={exercise} /></li>)}</ul>
   </div>
 }

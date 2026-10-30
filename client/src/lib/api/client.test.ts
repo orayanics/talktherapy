@@ -55,3 +55,14 @@ it('sends FormData intact so the browser can add the multipart boundary', async 
   expect(CapturingXMLHttpRequest.instance.body).toBe(formData)
   expect(CapturingXMLHttpRequest.instance.headers['content-type']).toBeUndefined()
 })
+
+it('marks serialized mutation bodies as JSON', async () => {
+  vi.stubGlobal('XMLHttpRequest', CapturingXMLHttpRequest)
+
+  await api('/api/v1/content', {
+    method: 'POST',
+    data: JSON.stringify({ title: 'Example' }),
+  })
+
+  expect(CapturingXMLHttpRequest.instance.headers['content-type']).toBe('application/json')
+})

@@ -15,6 +15,17 @@ const apiClient: AxiosInstance = axios.create({
 
 // optional: request interceptor (runs before every request)
 apiClient.interceptors.request.use(async (config) => {
+  const method = config.method?.toUpperCase()
+  const contentType = config.headers?.get?.('Content-Type') ?? config.headers?.['Content-Type']
+  if (
+    ['POST', 'PUT', 'PATCH'].includes(method ?? '') &&
+    typeof config.data === 'string' &&
+    /^[\[{]/.test(config.data.trim()) &&
+    !contentType
+  ) {
+    config.headers.set('Content-Type', 'application/json')
+  }
+
   if (typeof document !== 'undefined' && !config.headers['X-XSRF-TOKEN']) {
     const token = document.cookie
       .split('; ')

@@ -58,7 +58,7 @@ export const fetchSlpExercises = (page = 1) => queryOptions<ExerciseListResponse
 export const mutateCreateSlpExercise = () => {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (input: SlpExerciseInput) => api<ExerciseResponse>('/api/v1/slp/exercises', { method: 'POST', data: JSON.stringify(input) }),
+    mutationFn: (input: SlpExerciseInput) => api<ExerciseResponse>('/api/v1/slp/exercises', { method: 'POST', data: input }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: slpExerciseKeys.all }),
   })
 }
@@ -66,7 +66,7 @@ export const mutateCreateSlpExercise = () => {
 export const mutateUpdateSlpExercise = (id: string) => {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (input: Partial<SlpExerciseInput>) => api<ExerciseResponse>(`/api/v1/slp/exercises/${id}`, { method: 'PATCH', data: JSON.stringify(input) }),
+    mutationFn: (input: Partial<SlpExerciseInput>) => api<ExerciseResponse>(`/api/v1/slp/exercises/${id}`, { method: 'PATCH', data: input }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: slpExerciseKeys.all }),
   })
 }

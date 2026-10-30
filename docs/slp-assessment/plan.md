@@ -2,6 +2,8 @@
 
 Status: planned, not implemented. Specification: [platform](SPEC-platform.md), [modules](SPEC-modules.md). Keep existing migration tasks intact. Use the checklist here as this initiative's task tracker.
 
+Implementation update (2026-10-30): the initial catalog slice and a conservative workflow baseline are now implemented. The baseline covers publication transitions, private assets, consent, assignments, attempts, recording uploads, queued manual-review analysis, review revisions, and report snapshots. Tasks that require a full recorder UX, waveform editor, retention scheduler, Python quality service, or clinical model validation remain open.
+
 ## Implementation conventions and verification
 
 Use existing controller → FormRequest/Policy → Action → Resource patterns; keep controllers thin and patient/clinician Resource projections distinct. Follow existing TypeScript `#/*` imports and named API functions, e.g. `fetchAssignments` and `mutateSubmitRecording`; derive query keys from resource/ID/filter, invalidate after successful changes, and stop polling on terminal states/unmount. No new generalized plugin engine, permission framework or CMS dependency.

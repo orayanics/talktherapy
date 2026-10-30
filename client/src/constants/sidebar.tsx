@@ -3,6 +3,7 @@ import {
   Clapperboard,
   ClipboardClock,
   ClipboardPlus,
+  ClipboardCheck,
   LayoutDashboard,
   Logs,
   Settings,
@@ -29,6 +30,11 @@ export const superadmin_NAV_ITEMS = [
     label: 'Content',
     to: '/content',
     icon: <Clapperboard size={16} />,
+  },
+  {
+    label: 'SLP Exercises',
+    to: '/slp/exercises',
+    icon: <ClipboardCheck size={16} />,
   },
   {
     label: 'Logs',
@@ -59,6 +65,11 @@ export const ADMIN_NAV_ITEMS = [
     label: 'Content',
     to: '/content',
     icon: <Clapperboard size={16} />,
+  },
+  {
+    label: 'SLP Exercises',
+    to: '/slp/exercises',
+    icon: <ClipboardCheck size={16} />,
   },
   {
     label: 'Logs',
@@ -101,6 +112,16 @@ export const CLINICIAN_NAV_ITEMS = [
     to: '/content',
     icon: <Clapperboard size={16} />,
   },
+  {
+    label: 'SLP Exercises',
+    to: '/slp/exercises',
+    icon: <ClipboardCheck size={16} />,
+  },
+  {
+    label: 'SLP Assignments',
+    to: '/slp/assignments',
+    icon: <ClipboardPlus size={16} />,
+  },
 
   {
     label: 'Profile',
@@ -119,6 +140,11 @@ export const PATIENT_NAV_ITEMS = [
     label: 'Practice',
     to: '/slp',
     icon: <ClipboardPlus size={16} />,
+  },
+  {
+    label: 'Assignments',
+    to: '/slp/assignments',
+    icon: <ClipboardCheck size={16} />,
   },
   {
     label: 'Book',

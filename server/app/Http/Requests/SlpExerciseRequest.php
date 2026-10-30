@@ -16,6 +16,7 @@ class SlpExerciseRequest extends FormRequest
         if ($user === null || ($this->isMethod('post') && $this->input('scope', 'private') === 'shared' && $user->profile?->role->value === 'clinician')) {
             return false;
         }
+
         return $user->can($this->isMethod('post') ? 'create' : 'update', $exercise instanceof SlpExercise ? $exercise : SlpExercise::class);
     }
 
@@ -23,6 +24,7 @@ class SlpExerciseRequest extends FormRequest
     public function rules(): array
     {
         $create = $this->isMethod('post');
+
         return [
             'scope' => [$create ? 'sometimes' : 'prohibited', Rule::in(['private', 'shared'])],
             'module' => [$create ? 'required' : 'sometimes', 'string', 'max:40', Rule::in(['fluency', 'timing', 'articulation', 'aphasia', 'voice', 'motor_speech'])],
@@ -31,6 +33,7 @@ class SlpExerciseRequest extends FormRequest
             'task_type' => [$create ? 'required' : 'sometimes', 'string', 'max:50'],
             'prompt_text' => [$create ? 'required' : 'sometimes', 'string', 'max:2000'],
             'configuration' => ['sometimes', 'array'],
+            'configuration.patient_visible' => ['sometimes', 'boolean'],
         ];
     }
 }
