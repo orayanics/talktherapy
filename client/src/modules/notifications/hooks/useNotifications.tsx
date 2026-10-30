@@ -28,13 +28,8 @@ export function useNotifications() {
     await queryClient.invalidateQueries({ queryKey })
   }
 
-  const unreadCount = notifications.filter(
-    (notification) => !notification.read_at,
-  ).length
-
   return {
     notifications,
-    unreadCount,
     markRead,
     refresh: () => queryClient.invalidateQueries({ queryKey }),
     isPending: query.isPending,

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Bell, Menu } from 'lucide-react'
+import { Bell, Menu, X } from 'lucide-react'
 
 import type { USER_ROLE } from '#/types/account'
 import { NAV_BY_ROLE } from '#/constants/sidebar'
@@ -7,7 +7,6 @@ import { NAV_BY_ROLE } from '#/constants/sidebar'
 import SidebarItem from './SidebarItem'
 import { authClient } from '#/modules/auth/api/auth-client'
 import NotificationList from '#/modules/notifications/components/NotificationList'
-import { useNotifications } from '#/modules/notifications/hooks/useNotifications'
 
 export interface SidebarProps {
   children: React.ReactNode
@@ -17,7 +16,6 @@ export interface SidebarProps {
 export default function Sidebar(props: SidebarProps) {
   const { children, role } = props
   const [show, setShow] = useState(false)
-  const { unreadCount } = useNotifications()
 
   const navItems = NAV_BY_ROLE[role]
 
@@ -32,34 +30,25 @@ export default function Sidebar(props: SidebarProps) {
   }
 
   return (
-    <aside className="drawer lg:drawer-open font-sans">
+    <aside className="drawer lg:drawer-open">
       <input id="my-drawer-3" type="checkbox" className="drawer-toggle" />
 
       <div className="drawer-content flex flex-col min-h-screen">
-        <div className="bg-white border-b border-slate-300 lg:hidden w-full flex flex-row items-center justify-end px-4 h-16 shrink-0">
+        <div className="bg-white border-b border-border w-full flex flex-row items-center justify-end gap-2 p-4 h-14 shrink-0">
           <label
             htmlFor="my-drawer-3"
-            className="btn btn-square border border-slate-300"
+            className="btn btn-square btn-flat btn-sm lg:hidden"
           >
-            <Menu className="h-5 w-5 text-black" />
+            <Menu size={16} strokeWidth={2.5} />
           </label>
 
-          <div className="items-center justify-end px-4 relative">
+          <div className="items-center justify-end relative">
             <button
-              className="btn btn-square border border-slate-300"
+              className="btn btn-sm btn-flat btn-square"
               onClick={() => setShow((s) => !s)}
-              aria-label={
-                unreadCount > 0
-                  ? `Notifications, ${unreadCount} unread`
-                  : 'Notifications'
-              }
+              aria-label="Notifications"
             >
-              <Bell size={19} strokeWidth={2.2} />
-              {unreadCount > 0 && (
-                <span className="absolute right-2 top-1 badge badge-error badge-xs min-w-4 px-1 text-[10px] text-white">
-                  {unreadCount > 99 ? '99+' : unreadCount}
-                </span>
-              )}
+              <Bell size={16} strokeWidth={2.5} />
             </button>
             {show && (
               <div
@@ -74,18 +63,16 @@ export default function Sidebar(props: SidebarProps) {
                   onClick={() => setShow(false)}
                 />
                 <section className="absolute inset-y-0 right-0 flex w-full max-w-md flex-col bg-white shadow-2xl">
-                  <div className="flex items-center justify-between border-b border-slate-200 px-5 py-4">
-                    <h2 className="text-base font-bold text-slate-900">
-                      Notifications
-                    </h2>
+                  <div className="flex items-center justify-between border-b border-border px-4 py-2">
+                    <p className="my-0!">Notifications</p>
                     <button
-                      className="btn btn-sm btn-ghost"
+                      className="btn btn-sm btn-flat btn-square"
                       onClick={() => setShow(false)}
                     >
-                      Close
+                      <X size={16} />
                     </button>
                   </div>
-                  <div className="min-h-0 flex-1 p-4">
+                  <div className="min-h-0 flex-1 p-4 pt-2">
                     <NotificationList />
                   </div>
                 </section>
@@ -93,7 +80,7 @@ export default function Sidebar(props: SidebarProps) {
             )}
           </div>
         </div>
-        <div className="flex-1 w-full bg-slate-50 lg:z-10 relative overflow-auto">
+        <div className="p-4 bg-base-100 flex-1 h-full w-full lg:z-10 relative overflow-auto scrollbar-none [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
           {children}
         </div>
       </div>
@@ -106,31 +93,7 @@ export default function Sidebar(props: SidebarProps) {
         ></label>
 
         {/* Sidebar Panel */}
-        <div className="w-64 min-h-full bg-white flex flex-col pt-6 pb-4 lg:border-e border-slate-300">
-          {/* Brand Logo */}
-          <div className="px-6 flex items-center gap-2 mb-6">
-            <div className="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center text-white">
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M12 2L2 7l10 5 10-5-10-5z" />
-                <path d="M2 17l10 5 10-5" />
-                <path d="M2 12l10 5 10-5" />
-              </svg>
-            </div>
-            <span className="font-bold text-[18px] tracking-tight text-slate-900">
-              TalkTherapy
-            </span>
-          </div>
-
-          {/* Navigation Links mimicking HR Design */}
+        <div className="w-fit min-h-full bg-base-200 flex flex-col pt-6 pb-4 lg:border-e border-border">
           <div className="overflow-y-auto px-4 flex-1">
             <SidebarItem items={navItems} />
           </div>

@@ -38,13 +38,11 @@ function RouteComponent() {
   return (
     <SessionProvider value={session}>
       <NotificationRealtime key={session.id} />
-      <div className="bg-white flex w-screen h-screen font-sans antialiased">
+      <div className="flex w-screen h-screen">
         <Sidebar role={role}>
-          <div className="min-h-screen w-full flex-1 overflow-auto relative">
-            <main className="flex-1 w-full overflow-y-auto p-4">
-              <Outlet />
-            </main>
-          </div>
+          <main className="flex-1 min-h-full w-full overflow-auto">
+            <Outlet />
+          </main>
         </Sidebar>
       </div>
     </SessionProvider>

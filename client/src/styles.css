@@ -35,12 +35,14 @@
   --border: 1px;
   --depth: 1;
   --noise: 0;
+  --color-border: oklch(95% 0 0);
 }
 
-@theme {
+@theme inline {
   --font-sans: 'Inter Variable', sans-serif;
   --font-serif: 'Crimson Text', serif;
   --font-mono: 'JetBrains Mono Variable', monospace;
+  --color-border: var(--color-border);
 }
 
 body {
@@ -51,6 +53,10 @@ body {
   .border-slate {
     @apply border-slate-300 hover:border-slate-400;
   }
+}
+
+@utility btn-flat {
+  @apply bg-white;
 }
 
 /* Fix MDEditor textarea height when highlightEnable={false} */
