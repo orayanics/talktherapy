@@ -1,55 +1,82 @@
-import { useState } from 'react'
-import { useMutation } from '@tanstack/react-query'
+import { useEffect, useRef, useState } from 'react'
 import { isAxiosError } from 'axios'
-import { assessPronunciation } from '#/modules/slp/api/slp'
-import type { AssessResponse } from '#/modules/slp/api/slp'
+import { assessPronunciation } from '../api/slp'
+import type { AssessResponse } from '../api/slp'
 
 export default function useSlpAssessment() {
   const [result, setResult] = useState<AssessResponse | null>(null)
   const [apiError, setApiError] = useState<string | null>(null)
-
-  const assessMutation = useMutation({
-    mutationFn: async ({
-      audioBlob,
-      referenceText,
-    }: {
-      audioBlob: Blob
-      referenceText: string
-    }) => assessPronunciation(audioBlob, referenceText),
-    onSuccess: (data) => {
-      setApiError(null)
-      setResult(data)
+  const [isSubmitting, setSubmitting] = useState(false)
+  const active = useRef<AbortController | null>(null)
+  useEffect(
+    () => () => {
+      active.current?.abort()
+      active.current = null
     },
-    onError: (error: unknown) => {
-      if (isAxiosError(error)) {
-        const detail =
-          typeof error.response?.data?.detail === 'string'
-            ? error.response.data.detail
-            : undefined
-        setApiError(detail ?? error.message ?? 'Failed to submit assessment.')
-        return
-      }
-
-      setApiError(
-        error instanceof Error ? error.message : 'Failed to submit assessment.',
-      )
-    },
-  })
-
-  const submitAssessment = async (audioBlob: Blob, referenceText: string) => {
-    await assessMutation.mutateAsync({ audioBlob, referenceText })
-  }
+    [],
+  )
 
   const resetAssessment = () => {
+    active.current?.abort()
+    active.current = null
+    setSubmitting(false)
     setApiError(null)
     setResult(null)
   }
-
-  return {
-    result,
-    apiError,
-    submitAssessment,
-    resetAssessment,
-    isSubmitting: assessMutation.isPending,
+  const submitAssessment = async (
+    audio: Blob,
+    reference: string,
+    language: 'en' | 'tl' = 'en',
+  ) => {
+    if (active.current) return null
+    const controller = new AbortController()
+    active.current = controller
+    setSubmitting(true)
+    setApiError(null)
+    setResult(null)
+    try {
+      const data = await assessPronunciation(
+        audio,
+        reference,
+        controller.signal,
+        language,
+      )
+      if (active.current === controller) {
+        setResult(data)
+        return data
+      }
+    } catch (error) {
+      if (active.current !== controller || controller.signal.aborted)
+        return null
+      let message =
+        'We could not send that recording. Check your connection and try again.'
+      if (isAxiosError(error)) {
+        const status = error.response?.status
+        if (status === 413)
+          message = 'That recording was too long. Try a shorter turn.'
+        else if (status === 422)
+          message =
+            'That was hard to hear. Try a new recording somewhere quieter.'
+        else if (status === 429 || status === 503)
+          message =
+            'Practice analysis is busy. You can replay your recording or try again later.'
+        else if (
+          status === 504 ||
+          error.code === 'ECONNABORTED' ||
+          error.code === 'ETIMEDOUT'
+        )
+          message = 'That took too long. Your recording is ready to send again.'
+        else if (status === 502)
+          message = 'The practice result was unavailable. Try again later.'
+      }
+      setApiError(message)
+    } finally {
+      if (active.current === controller) {
+        active.current = null
+        setSubmitting(false)
+      }
+    }
+    return null
   }
+  return { result, apiError, isSubmitting, submitAssessment, resetAssessment }
 }

@@ -43,6 +43,8 @@ import { Route as PrivatesharedAppointmentsAppointmentIdRouteImport } from './ro
 import { Route as PrivatesharedContentIndexRouteImport } from './routes/_private/(shared)/content/index'
 import { Route as PrivatesharedContentContentIdRouteImport } from './routes/_private/(shared)/content/$contentId'
 import { Route as PrivatesharedContentAdmRouteRouteImport } from './routes/_private/(shared)/content/_adm/route'
+import { Route as PrivatesharedSlpAssignmentsRouteImport } from './routes/_private/(shared)/slp/assignments'
+import { Route as PrivatesharedSlpExercisesRouteImport } from './routes/_private/(shared)/slp/exercises'
 import { Route as PublicActivateOtpIndexRouteImport } from './routes/_public/activate/otp.index'
 import { Route as PublicActivateOtpUpdateRouteImport } from './routes/_public/activate/otp.update'
 import { Route as PrivateclinicianPatientsPatientIdIndexRouteImport } from './routes/_private/(clinician)/patients/$patientId.index'
@@ -233,6 +235,18 @@ const PrivatesharedContentAdmRouteRoute =
     path: '/content',
     getParentRoute: () => PrivateRouteRoute,
   } as any)
+const PrivatesharedSlpAssignmentsRoute =
+  PrivatesharedSlpAssignmentsRouteImport.update({
+    id: '/(shared)/slp/assignments',
+    path: '/slp/assignments',
+    getParentRoute: () => PrivateRouteRoute,
+  } as any)
+const PrivatesharedSlpExercisesRoute =
+  PrivatesharedSlpExercisesRouteImport.update({
+    id: '/(shared)/slp/exercises',
+    path: '/slp/exercises',
+    getParentRoute: () => PrivateRouteRoute,
+  } as any)
 const PublicActivateOtpIndexRoute = PublicActivateOtpIndexRouteImport.update({
   id: '/activate/otp/',
   path: '/activate/otp/',
@@ -303,6 +317,8 @@ export interface FileRoutesByFullPath {
   '/records/$soapId': typeof PrivatepatientRecordsSoapIdRoute
   '/appointments/$appointmentId': typeof PrivatesharedAppointmentsAppointmentIdRoute
   '/content/$contentId': typeof PrivatesharedContentContentIdRoute
+  '/slp/assignments': typeof PrivatesharedSlpAssignmentsRoute
+  '/slp/exercises': typeof PrivatesharedSlpExercisesRoute
   '/activate/otp/update': typeof PublicActivateOtpUpdateRoute
   '/users/': typeof PrivateadmSharedUsersIndexRoute
   '/patients/': typeof PrivateclinicianPatientsIndexRoute
@@ -342,6 +358,8 @@ export interface FileRoutesByTo {
   '/records/$soapId': typeof PrivatepatientRecordsSoapIdRoute
   '/appointments/$appointmentId': typeof PrivatesharedAppointmentsAppointmentIdRoute
   '/content/$contentId': typeof PrivatesharedContentContentIdRoute
+  '/slp/assignments': typeof PrivatesharedSlpAssignmentsRoute
+  '/slp/exercises': typeof PrivatesharedSlpExercisesRoute
   '/activate/otp/update': typeof PublicActivateOtpUpdateRoute
   '/users': typeof PrivateadmSharedUsersIndexRoute
   '/patients': typeof PrivateclinicianPatientsIndexRoute
@@ -386,6 +404,8 @@ export interface FileRoutesById {
   '/_private/(patient)/records/$soapId': typeof PrivatepatientRecordsSoapIdRoute
   '/_private/(shared)/appointments/$appointmentId': typeof PrivatesharedAppointmentsAppointmentIdRoute
   '/_private/(shared)/content/$contentId': typeof PrivatesharedContentContentIdRoute
+  '/_private/(shared)/slp/assignments': typeof PrivatesharedSlpAssignmentsRoute
+  '/_private/(shared)/slp/exercises': typeof PrivatesharedSlpExercisesRoute
   '/_public/activate/otp/update': typeof PublicActivateOtpUpdateRoute
   '/_private/(adm-shared)/users/': typeof PrivateadmSharedUsersIndexRoute
   '/_private/(clinician)/patients/': typeof PrivateclinicianPatientsIndexRoute
@@ -427,6 +447,8 @@ export interface FileRouteTypes {
     | '/records/$soapId'
     | '/appointments/$appointmentId'
     | '/content/$contentId'
+    | '/slp/assignments'
+    | '/slp/exercises'
     | '/activate/otp/update'
     | '/users/'
     | '/patients/'
@@ -466,6 +488,8 @@ export interface FileRouteTypes {
     | '/records/$soapId'
     | '/appointments/$appointmentId'
     | '/content/$contentId'
+    | '/slp/assignments'
+    | '/slp/exercises'
     | '/activate/otp/update'
     | '/users'
     | '/patients'
@@ -509,6 +533,8 @@ export interface FileRouteTypes {
     | '/_private/(patient)/records/$soapId'
     | '/_private/(shared)/appointments/$appointmentId'
     | '/_private/(shared)/content/$contentId'
+    | '/_private/(shared)/slp/assignments'
+    | '/_private/(shared)/slp/exercises'
     | '/_public/activate/otp/update'
     | '/_private/(adm-shared)/users/'
     | '/_private/(clinician)/patients/'
@@ -774,6 +800,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivatesharedContentAdmRouteRouteImport
       parentRoute: typeof PrivateRouteRoute
     }
+    '/_private/(shared)/slp/assignments': {
+      id: '/_private/(shared)/slp/assignments'
+      path: '/slp/assignments'
+      fullPath: '/slp/assignments'
+      preLoaderRoute: typeof PrivatesharedSlpAssignmentsRouteImport
+      parentRoute: typeof PrivateRouteRoute
+    }
+    '/_private/(shared)/slp/exercises': {
+      id: '/_private/(shared)/slp/exercises'
+      path: '/slp/exercises'
+      fullPath: '/slp/exercises'
+      preLoaderRoute: typeof PrivatesharedSlpExercisesRouteImport
+      parentRoute: typeof PrivateRouteRoute
+    }
     '/_public/activate/otp/': {
       id: '/_public/activate/otp/'
       path: '/activate/otp'
@@ -930,6 +970,8 @@ interface PrivateRouteRouteChildren {
   PrivatesharedContentAdmRouteRoute: typeof PrivatesharedContentAdmRouteRouteWithChildren
   PrivatesharedAppointmentsAppointmentIdRoute: typeof PrivatesharedAppointmentsAppointmentIdRoute
   PrivatesharedContentContentIdRoute: typeof PrivatesharedContentContentIdRoute
+  PrivatesharedSlpAssignmentsRoute: typeof PrivatesharedSlpAssignmentsRoute
+  PrivatesharedSlpExercisesRoute: typeof PrivatesharedSlpExercisesRoute
   PrivatesharedAppointmentsIndexRoute: typeof PrivatesharedAppointmentsIndexRoute
   PrivatesharedContentIndexRoute: typeof PrivatesharedContentIndexRoute
 }
@@ -947,6 +989,8 @@ const PrivateRouteRouteChildren: PrivateRouteRouteChildren = {
   PrivatesharedAppointmentsAppointmentIdRoute:
     PrivatesharedAppointmentsAppointmentIdRoute,
   PrivatesharedContentContentIdRoute: PrivatesharedContentContentIdRoute,
+  PrivatesharedSlpAssignmentsRoute: PrivatesharedSlpAssignmentsRoute,
+  PrivatesharedSlpExercisesRoute: PrivatesharedSlpExercisesRoute,
   PrivatesharedAppointmentsIndexRoute: PrivatesharedAppointmentsIndexRoute,
   PrivatesharedContentIndexRoute: PrivatesharedContentIndexRoute,
 }

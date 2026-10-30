@@ -1,4 +1,5 @@
 export type SLP_STATUS = 'accurate' | 'mixed' | 'needs_work'
+export type SLP_OVERALL_STATUS = SLP_STATUS | 'unknown'
 
 type Props = {
   status: SLP_STATUS

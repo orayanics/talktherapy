@@ -1,176 +1,402 @@
-import { useRef, useState } from 'react'
-import useSlpAssessment from '#/modules/slp/hooks/useSlpAssessment'
-import FormLabel from '#/components/Form/FormLabel'
-import SlpImprovement from './SlpImprovement'
-import SlpAccurate from './SlpAccurate'
-import SlpBreakdown from './SlpBreakdown'
-import SlpAlert from './SlpAlert'
+import { useEffect, useReducer, useRef, useState } from 'react'
+import { Pause } from 'lucide-react'
+import useSlpAssessment from '../hooks/useSlpAssessment'
+import usePracticeRecorder from '../hooks/usePracticeRecorder'
+import {
+  getPracticeWord,
+  picturePrompts,
+  practiceCategories,
+} from '../data/practiceContent'
+import { practiceThemes } from '../data/practiceThemes'
+import type {
+  PracticeCategory,
+  PracticeLanguage,
+} from '../data/practiceContent'
+import type { PracticeThemeId } from '../data/practiceThemes'
+import PracticePicture from './PracticePicture'
+import PracticeTurn from './PracticeTurn'
+import PracticeReview from './PracticeReview'
+import {
+  Root,
+  ReadyCountdown,
+  RoundPath,
+  RoundRecap,
+  useCalmMotion,
+} from './PracticeRewards'
+import type { WordResult } from './PracticeRewards'
+import {
+  getPracticeStars,
+  getCheckOutcome,
+  practiceGameReducer,
+} from '../data/practiceGame'
+import './practice.css'
 
 export default function SlpAssessmentPage() {
-  const [referenceText, setReferenceText] = useState(
-    'She sells sea shells by the sea shore.',
+  const [index, setIndex] = useState(0)
+  const [lobby, setLobby] = useState(true)
+  const [userCalm, setUserCalm] = useState(false)
+  const calm = useCalmMotion(userCalm)
+  const [language, setLanguage] = useState<PracticeLanguage>('en')
+  const [category, setCategory] = useState<PracticeCategory>('everyday')
+  const [themeId, setThemeId] = useState<PracticeThemeId>('jungle')
+  const [mode, setMode] = useState<'explore' | 'focus'>('explore')
+  const [settingsOpen, setSettingsOpen] = useState(false)
+  const [customWord, setCustomWord] = useState('')
+  const [paused, setPaused] = useState(false)
+  const [finished, setFinished] = useState(false)
+  const [visited, setVisited] = useState<Set<string>>(new Set())
+  const [game, dispatchGame] = useReducer(practiceGameReducer, {})
+  const roundGeneration = useRef(0)
+  const recorder = usePracticeRecorder()
+  const assessment = useSlpAssessment()
+  const prompts = picturePrompts.filter((item) => item.category === category)
+  const prompt = prompts[index]
+  const theme =
+    practiceThemes.find((item) => item.id === themeId) ?? practiceThemes[0]
+  const Buddy = theme.icon
+  const word = customWord.trim() || getPracticeWord(prompt, language)
+  const currentProgress =
+    game[prompt.id]?.word === word ? game[prompt.id] : undefined
+  const completed = new Set(
+    prompts.filter((item) => game[item.id]).map((item) => item.id),
   )
-  const [isRecording, setIsRecording] = useState(false)
-  const [localError, setLocalError] = useState<string | null>(null)
-  const [audioBlob, setAudioBlob] = useState<Blob | null>(null)
-  const [audioUrl, setAudioUrl] = useState<string | null>(null)
-
-  const recorderRef = useRef<MediaRecorder | null>(null)
-  const chunksRef = useRef<Blob[]>([])
-
-  const { result, apiError, submitAssessment, resetAssessment, isSubmitting } =
-    useSlpAssessment()
-
-  const error = localError ?? apiError
-
-  const startRecording = async () => {
-    setLocalError(null)
-    resetAssessment()
-
-    const mediaDevices = Reflect.get(navigator, 'mediaDevices') as
-      MediaDevices | undefined
-    if (typeof mediaDevices?.getUserMedia !== 'function') {
-      setLocalError('Microphone is not available in this browser.')
-      return
+  const rewards: WordResult[] = prompts.map((item) => {
+    const turn = game[item.id]
+    return {
+      word: turn?.word ?? getPracticeWord(item, language),
+      stars: getPracticeStars(turn) as WordResult['stars'],
+      attempts: turn?.attempts ?? 0,
+      replayed: turn?.replayed ?? false,
+      checkIn:
+        turn?.reflection === 'with_help'
+          ? 'helped'
+          : turn?.reflection === 'try_again'
+            ? 'again'
+            : (turn?.reflection ?? null),
+      skipped: !turn,
     }
-
-    try {
-      const stream = await mediaDevices.getUserMedia({ audio: true })
-      const recorder = new MediaRecorder(stream)
-      chunksRef.current = []
-
-      recorder.ondataavailable = (event: BlobEvent) => {
-        if (event.data.size > 0) chunksRef.current.push(event.data)
-      }
-
-      recorder.onstop = () => {
-        const blob = new Blob(chunksRef.current, {
-          type: recorder.mimeType || 'audio/webm',
-        })
-        setAudioBlob(blob)
-
-        if (audioUrl) URL.revokeObjectURL(audioUrl)
-        const url = URL.createObjectURL(blob)
-        setAudioUrl(url)
-
-        for (const track of stream.getTracks()) track.stop()
-      }
-
-      recorderRef.current = recorder
-      recorder.start()
-      setIsRecording(true)
-    } catch {
-      setLocalError('Microphone permission denied or unavailable.')
+  })
+  useEffect(() => {
+    if (recorder.audio && recorder.url) {
+      setVisited((previous) =>
+        previous.has(prompt.id) ? previous : new Set(previous).add(prompt.id),
+      )
+      dispatchGame({
+        type: 'recorded',
+        promptId: prompt.id,
+        word,
+        recordingKey: recorder.url,
+      })
     }
+  }, [recorder.audio, recorder.url, prompt.id, word])
+  const locked =
+    recorder.state === 'recording' ||
+    recorder.state === 'requesting_permission' ||
+    assessment.isSubmitting
+  const capturing =
+    recorder.state === 'recording' || recorder.state === 'requesting_permission'
+  const showingFeedback = !!currentProgress && !capturing
+  const clear = () => {
+    roundGeneration.current++
+    dispatchGame({ type: 'cancel_checks' })
+    recorder.clear()
+    assessment.resetAssessment()
   }
-
-  const stopRecording = () => {
-    if (!recorderRef.current) return
-    recorderRef.current.stop()
-    setIsRecording(false)
+  const restart = () => {
+    clear()
+    setCustomWord('')
+    dispatchGame({ type: 'reset' })
+    setIndex(0)
+    setFinished(false)
+    setVisited(new Set())
+    setLobby(true)
+    setPaused(false)
   }
-
-  const onAssess = async () => {
-    setLocalError(null)
-
-    if (!audioBlob) {
-      setLocalError('Record audio first.')
-      return
-    }
-
-    if (!referenceText.trim()) {
-      setLocalError('Reference text is required.')
-      return
-    }
-
-    try {
-      await submitAssessment(audioBlob, referenceText)
-    } catch {
-      // Error state is handled inside the hook.
-    }
+  const next = () => {
+    setVisited((previous) => new Set(previous).add(prompt.id))
+    clear()
+    setCustomWord('')
+    if (index === prompts.length - 1) setFinished(true)
+    else setIndex(index + 1)
+  }
+  const analyze = async () => {
+    if (!recorder.audio || !recorder.url) return
+    const generation = roundGeneration.current
+    const recordingKey = recorder.url
+    dispatchGame({
+      type: 'check',
+      promptId: prompt.id,
+      recordingKey,
+      outcome: 'checking',
+      transcript: '',
+    })
+    const response = await assessment.submitAssessment(
+      recorder.audio,
+      word,
+      language,
+    )
+    if (roundGeneration.current !== generation) return
+    dispatchGame({
+      type: 'check',
+      promptId: prompt.id,
+      recordingKey,
+      outcome: response ? getCheckOutcome(response) : 'unavailable',
+      transcript: response?.analysis.transcript ?? '',
+    })
+  }
+  const retryWord = (promptId: string) => {
+    const target = prompts.findIndex((item) => item.id === promptId)
+    if (target < 0) return
+    clear()
+    setIndex(target)
+    setFinished(false)
+    setPaused(false)
+    const practicedWord = game[promptId]?.word
+    setCustomWord(
+      practicedWord &&
+        practicedWord !== getPracticeWord(prompts[target], language)
+        ? practicedWord
+        : '',
+    )
   }
 
   return (
-    <div className="space-y-4">
-      <div>
-        <p className="text-lg font-bold text-slate-900 uppercase">
-          Assisted Practice
-        </p>
-        <p className="text-xs text-slate-400 font-medium">
-          Get instant feedback on your pronunciation and tips for improvement.
-        </p>
-      </div>
+    <Root calm={calm}>
+      <section
+        className="slp-practice mx-auto max-w-5xl space-y-5 sm:space-y-6"
+        data-practice-theme={themeId}
+        data-practice-mode={mode}
+        aria-label="Speech practice"
+      >
+        <label className="flex min-h-12 items-center gap-2">
+          <input
+            type="checkbox"
+            checked={userCalm}
+            onChange={(event) => setUserCalm(event.target.checked)}
+          />
+          Calm mode
+        </label>
+        <header className="flex flex-wrap items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            {mode === 'explore' && (
+              <Buddy
+                size={48}
+                strokeWidth={1.5}
+                className="slp-adventure-mark hidden sm:block"
+                aria-hidden="true"
+              />
+            )}
+            <div>
+              <h1 className="text-xl sm:text-2xl font-bold">
+                {mode === 'explore' ? 'Picture adventures' : 'Speech practice'}
+              </h1>
+              <p className="mt-1 text-sm text-slate-600 hidden sm:block">
+                {mode === 'explore'
+                  ? theme.greeting
+                  : 'Record, replay, and practice at your pace.'}
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            className="slp-secondary-button"
+            aria-label={paused ? 'Come back to practice' : 'Take a break'}
+            onClick={() => {
+              clear()
+              setPaused(!paused)
+            }}
+          >
+            <Pause size={18} aria-hidden="true" />
+            <span className="sm:hidden">{paused ? 'Resume' : 'Break'}</span>
+            <span className="hidden sm:inline">
+              {paused ? 'Come back to practice' : 'Take a break'}
+            </span>
+          </button>
+        </header>
 
-      {error && <div className="alert alert-soft alert-error" role="alert">{error}</div>}
+        <button
+          type="button"
+          className="slp-secondary-button"
+          aria-expanded={settingsOpen}
+          aria-controls="practice-activity-settings"
+          onClick={() => setSettingsOpen(!settingsOpen)}
+        >
+          {settingsOpen
+            ? 'Close activity settings'
+            : 'Change theme, language or pictures'}
+        </button>
+        <div
+          id="practice-activity-settings"
+          className={`${settingsOpen ? 'block' : 'hidden'} space-y-5`}
+        >
+          {mode === 'explore' && (
+            <fieldset className="space-y-3">
+              <legend className="slp-section-label mb-3">
+                Pick your adventure
+              </legend>
+              <div className="flex flex-wrap gap-2">
+                {practiceThemes.map((item) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    className="slp-theme-button"
+                    aria-pressed={themeId === item.id}
+                    onClick={() => setThemeId(item.id)}
+                  >
+                    <item.icon size={18} aria-hidden="true" />
+                    {item.label}
+                  </button>
+                ))}
+              </div>
+            </fieldset>
+          )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-        <div className="space-y-4 col-span-4">
-          {/* reference */}
-          <div>
-            <FormLabel title="Reference Text" htmlFor="slp-reference-text" />
-            <input
-              id="slp-reference-text"
-              type="text"
-              className="input w-full"
-              value={referenceText}
-              onChange={(e) => setReferenceText(e.target.value)}
-              disabled={isRecording || isSubmitting}
+          <div className="grid gap-4 sm:grid-cols-3">
+            <label className="space-y-2 text-sm font-medium">
+              <span className="block">Practice language</span>
+              <select
+                className="select min-h-12 w-full bg-white"
+                value={language}
+                disabled={locked}
+                onChange={(event) => {
+                  restart()
+                  setLanguage(event.target.value as PracticeLanguage)
+                }}
+              >
+                <option value="en">English</option>
+                <option value="tl">Filipino (Tagalog)</option>
+              </select>
+            </label>
+            <label className="space-y-2 text-sm font-medium">
+              <span className="block">Picture set</span>
+              <select
+                className="select min-h-12 w-full bg-white"
+                value={category}
+                disabled={locked}
+                onChange={(event) => {
+                  restart()
+                  setCategory(event.target.value as PracticeCategory)
+                }}
+              >
+                {practiceCategories.map((item) => (
+                  <option key={item.id} value={item.id}>
+                    {item[language]}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="space-y-2 text-sm font-medium">
+              <span className="block">Activity style</span>
+              <select
+                className="select min-h-12 w-full bg-white"
+                value={mode}
+                onChange={(event) =>
+                  setMode(event.target.value as 'explore' | 'focus')
+                }
+              >
+                <option value="explore">Explore with pictures</option>
+                <option value="focus">Simple focus</option>
+              </select>
+            </label>
+          </div>
+        </div>
+        <RoundPath
+          results={rewards.map((result, i) =>
+            visited.has(prompts[i].id) ? result : undefined,
+          )}
+          current={finished ? -1 : index}
+          total={prompts.length}
+        />
+        {lobby && !paused ? (
+          <ReadyCountdown calm={calm} onGo={() => setLobby(false)} />
+        ) : paused ? (
+          <div className="slp-rest space-y-5">
+            <Buddy
+              size={72}
+              strokeWidth={1.5}
+              className="slp-adventure-mark mx-auto"
+              aria-hidden="true"
+            />
+            <h2 className="text-2xl font-bold">Time for a little rest</h2>
+            <p>
+              {completed.size} practice{' '}
+              {completed.size === 1 ? 'turn' : 'turns'} tried. Every try is part
+              of learning.
+            </p>
+            <button
+              type="button"
+              className="slp-secondary-button"
+              onClick={() => {
+                setPaused(false)
+              }}
+            >
+              I’m ready
+            </button>
+          </div>
+        ) : finished ? (
+          <RoundRecap
+            results={rewards}
+            calm={calm}
+            onRetryWord={(i) => retryWord(prompts[i].id)}
+            onAgain={restart}
+            onDone={() => setPaused(true)}
+          />
+        ) : (
+          <div
+            className={
+              showingFeedback ? 'slp-feedback-stage' : 'slp-lesson-stage'
+            }
+          >
+            {!showingFeedback && (
+              <PracticePicture
+                key={`${prompt.id}-${language}-${customWord}`}
+                prompt={prompt}
+                language={language}
+                customWord={customWord}
+                focusMode={mode === 'focus'}
+              />
+            )}
+            <PracticeTurn
+              recorder={recorder}
+              assessment={assessment}
+              language={language}
+              last={index === prompts.length - 1}
+              progress={currentProgress}
+              focusMode={mode === 'focus'}
+              onReplayed={() =>
+                dispatchGame({ type: 'replayed', promptId: prompt.id })
+              }
+              onReflect={(reflection) =>
+                dispatchGame({
+                  type: 'reflected',
+                  promptId: prompt.id,
+                  reflection,
+                })
+              }
+              onStart={() => {
+                roundGeneration.current++
+                dispatchGame({ type: 'cancel_checks' })
+                assessment.resetAssessment()
+                void recorder.start()
+              }}
+              onFinish={() => void analyze()}
+              onNext={next}
+              onClear={clear}
             />
           </div>
-
-          {/* recording controls */}
-          <div className="space-y-4">
-            <div className="grid gap-2">
-              <button
-                className="btn btn-neutral"
-                onClick={startRecording}
-                disabled={isRecording || isSubmitting}
-                type="button"
-              >
-                Start
-              </button>
-              <button
-                className="btn btn-neutral"
-                onClick={stopRecording}
-                disabled={!isRecording || isSubmitting}
-                type="button"
-              >
-                Stop
-              </button>
-              <button
-                className="btn btn-primary"
-                onClick={onAssess}
-                disabled={!audioBlob || isRecording || isSubmitting}
-                type="button"
-              >
-                Assess
-              </button>
-            </div>
-
-            {audioUrl && (
-              <div>
-                <FormLabel title="Your Recording" />
-                <audio controls className="w-full" src={audioUrl} />
-              </div>
-            )}
-          </div>
-        </div>
-
-        <div className="col-span-8">
-          {result && (
-            <div className="space-y-4">
-              <div>
-                <p className="uppercase font-medium">Your Results</p>
-                <SlpAlert status={result.analysis.structured.overall.status} />
-              </div>
-
-              <SlpImprovement result={result} />
-              <SlpAccurate result={result} />
-              <SlpBreakdown result={result} />
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
+        )}
+        <PracticeReview
+          prompt={prompt}
+          word={word}
+          customWord={customWord}
+          locked={locked}
+          result={assessment.result}
+          onChange={(value) => {
+            clear()
+            setCustomWord(value)
+          }}
+        />
+      </section>
+    </Root>
   )
 }

@@ -35,4 +35,11 @@ return [
         ],
     ],
 
+    'phoneme' => [
+        'url' => env('PHONEME_SERVICE_URL', 'http://127.0.0.1:8001'),
+        'token' => env('PHONEME_SERVICE_TOKEN'),
+        'connect_timeout' => (int) env('PHONEME_CONNECT_TIMEOUT', 3),
+        'timeout' => (int) env('PHONEME_TIMEOUT', 45),
+    ],
+
 ];
