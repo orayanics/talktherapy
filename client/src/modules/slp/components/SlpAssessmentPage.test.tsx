@@ -1,4 +1,4 @@
-/** @vitest-environment jsdom */
+﻿/** @vitest-environment jsdom */
 import {
   act,
   cleanup,
@@ -77,9 +77,11 @@ function finishRound() {
 
 it('submits the selected Filipino prompt and offers a less playful focus mode', async () => {
   const { rerender } = render(<SlpAssessmentPage />)
+  fireEvent.click(screen.getByRole('button', { name: 'Start now' }))
   fireEvent.change(screen.getByLabelText('Practice language'), {
     target: { value: 'tl' },
   })
+  fireEvent.click(screen.getByRole('button', { name: 'Start now' }))
   fireEvent.click(screen.getByRole('button', { name: 'Ipakita ang salita' }))
   expect(
     screen.getByText('bola', { selector: '#practice-answer' }),
@@ -99,6 +101,7 @@ it('submits the selected Filipino prompt and offers a less playful focus mode', 
 it('break clears capture and assessment but retains earned practice stars', () => {
   recordedTurn()
   render(<SlpAssessmentPage />)
+  fireEvent.click(screen.getByRole('button', { name: 'Start now' }))
   fireEvent.click(screen.getByRole('button', { name: 'Take a break' }))
   expect(mocks.clear).toHaveBeenCalledOnce()
   expect(mocks.reset).toHaveBeenCalledOnce()
@@ -107,13 +110,14 @@ it('break clears capture and assessment but retains earned practice stars', () =
   ).toBeTruthy()
   fireEvent.click(screen.getByRole('button', { name: 'I’m ready' }))
   expect(
-    screen.getByRole('img', { name: '1 of 3 practice stars earned' }),
+    screen.getByRole('img', { name: '1 of 3 practice stars' }),
   ).toBeTruthy()
 })
 
 it('preserves a turn on theme changes and clears capture when the picture set changes', async () => {
   recordedTurn()
   const { container, rerender } = render(<SlpAssessmentPage />)
+  fireEvent.click(screen.getByRole('button', { name: 'Start now' }))
   fireEvent.click(screen.getByRole('button', { name: 'Ocean friends' }))
   expect(container.querySelector('section')?.dataset.practiceTheme).toBe(
     'ocean',
@@ -122,6 +126,7 @@ it('preserves a turn on theme changes and clears capture when the picture set ch
   fireEvent.change(screen.getByLabelText('Picture set'), {
     target: { value: 'nature' },
   })
+  fireEvent.click(screen.getByRole('button', { name: 'Start now' }))
   expect(mocks.clear).toHaveBeenCalledOnce()
   expect(
     screen.getByRole('img', { name: 'Picture to name' }).getAttribute('src'),
@@ -136,6 +141,7 @@ it('preserves a turn on theme changes and clears capture when the picture set ch
 
 it('hides each answer until requested and hides it again on the next picture', () => {
   render(<SlpAssessmentPage />)
+  fireEvent.click(screen.getByRole('button', { name: 'Start now' }))
   expect(
     screen.queryByText('ball', { selector: '#practice-answer' }),
   ).toBeNull()
@@ -156,6 +162,7 @@ it('hides each answer until requested and hides it again on the next picture', (
 
 it('offers a helper fallback if the picture cannot load', () => {
   render(<SlpAssessmentPage />)
+  fireEvent.click(screen.getByRole('button', { name: 'Start now' }))
   fireEvent.error(screen.getByRole('img', { name: 'Picture to name' }))
   expect(screen.getByText(/This picture could not load/)).toBeTruthy()
   fireEvent.click(screen.getByRole('button', { name: 'Show word' }))
@@ -168,10 +175,11 @@ it('collects activity stars and presents a complete word-by-word summary with re
   recordedTurn()
   mocks.submit.mockResolvedValue(matchingResponse)
   render(<SlpAssessmentPage />)
+  fireEvent.click(screen.getByRole('button', { name: 'Start now' }))
   fireEvent.ended(screen.getByLabelText('Listen to my recording'))
-  fireEvent.click(screen.getByRole('button', { name: 'I tried on my own' }))
+  fireEvent.click(screen.getByRole('button', { name: 'I said it on my own' }))
   expect(
-    screen.getByRole('img', { name: '3 of 3 practice stars earned' }),
+    screen.getByRole('img', { name: '3 of 3 practice stars' }),
   ).toBeTruthy()
   await act(async () =>
     fireEvent.click(screen.getByRole('button', { name: 'Check my word' })),
@@ -179,54 +187,52 @@ it('collects activity stars and presents a complete word-by-word summary with re
   expect(screen.getByText('The transcript matched!')).toBeTruthy()
   finishRound()
   const summary = screen.getByRole('region', {
-    name: 'Round performance summary',
+    name: 'Round complete!',
   })
-  expect(within(summary).getByText('Look at what you practiced!')).toBeTruthy()
-  expect(within(summary).getByText('Careful listener')).toBeTruthy()
-  expect(within(summary).getByText(/1 transcript match/)).toBeTruthy()
-  expect(within(summary).getAllByText('Not tried this round')).toHaveLength(4)
+  expect(within(summary).getByText('Round complete!')).toBeTruthy()
+  expect(within(summary).getByText('Listened back')).toBeTruthy()
+  expect(within(summary).getByText(/not a speech score/)).toBeTruthy()
+  expect(within(summary).getAllByText('Skipped')).toHaveLength(4)
   expect(within(summary).queryByText(/100%/)).toBeNull()
   fireEvent.click(
-    within(summary).getByRole('button', { name: 'Practice ball again' }),
+    within(summary).getByRole('button', { name: 'Try ball again' }),
   )
+  expect(screen.queryByRole('region', { name: 'Round complete!' })).toBeNull()
   expect(
-    screen.queryByRole('region', { name: 'Round performance summary' }),
-  ).toBeNull()
-  expect(
-    screen.getByRole('img', { name: '3 of 3 practice stars earned' }),
+    screen.getByRole('img', { name: '3 of 3 practice stars' }),
   ).toBeTruthy()
 })
 
 it('keeps earned stars when the automatic word check is unavailable', async () => {
   recordedTurn()
   render(<SlpAssessmentPage />)
+  fireEvent.click(screen.getByRole('button', { name: 'Start now' }))
   await act(async () =>
     fireEvent.click(screen.getByRole('button', { name: 'Check my word' })),
   )
   expect(screen.getByText('Your practice still counts')).toBeTruthy()
   expect(
-    screen.getByRole('img', { name: '1 of 3 practice stars earned' }),
+    screen.getByRole('img', { name: '1 of 3 practice stars' }),
   ).toBeTruthy()
 })
 
 it('does not award participation badges for skipped pictures', () => {
   render(<SlpAssessmentPage />)
+  fireEvent.click(screen.getByRole('button', { name: 'Start now' }))
   finishRound()
-  expect(screen.getByText('Ready whenever you are')).toBeTruthy()
+  expect(screen.getByText('Round complete!')).toBeTruthy()
   expect(screen.queryByText('Brave first try')).toBeNull()
-  expect(screen.getAllByText('Not tried this round')).toHaveLength(5)
+  expect(screen.getAllByText('Skipped')).toHaveLength(5)
   expect(
     screen
-      .getByRole('progressbar', { name: 'Picture stops visited' })
-      .getAttribute('value'),
+      .getByRole('progressbar', { name: 'Round progress (words visited)' })
+      .getAttribute('aria-valuenow'),
   ).toBe('5')
-  fireEvent.click(
-    screen.getByRole('button', { name: 'Start a fresh adventure' }),
-  )
+  fireEvent.click(screen.getByRole('button', { name: 'New round' }))
   expect(
     screen
-      .getByRole('progressbar', { name: 'Picture stops visited' })
-      .getAttribute('value'),
+      .getByRole('progressbar', { name: 'Round progress (words visited)' })
+      .getAttribute('aria-valuenow'),
   ).toBe('0')
 })
 
@@ -240,6 +246,7 @@ it('does not attach a late automatic check to a new picture', async () => {
   )
   recordedTurn()
   render(<SlpAssessmentPage />)
+  fireEvent.click(screen.getByRole('button', { name: 'Start now' }))
   fireEvent.click(screen.getByRole('button', { name: 'Check my word' }))
   fireEvent.click(screen.getByRole('button', { name: 'Continue' }))
   await act(async () => resolve(matchingResponse))

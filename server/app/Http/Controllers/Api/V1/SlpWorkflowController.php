@@ -30,10 +30,21 @@ class SlpWorkflowController extends Controller
     public function visibility(Request $request, SlpExerciseVersion $version): array
     {
         abort_unless($this->staff($request->user()) && ($version->exercise->owner_id === $request->user()->id || $this->admin($request->user())), 403);
-        $data = $request->validate(['visible' => ['required', 'boolean']]);
-        $version->update(['configuration' => [...($version->configuration ?? []), 'patient_visible' => $data['visible']]]);
+        $data = $request->validate([
+            'visible' => ['required', 'boolean'],
+            'audience' => ['sometimes', Rule::in(['all', 'selected'])],
+            'patient_ids' => ['sometimes', 'array', 'max:1000'],
+            'patient_ids.*' => ['uuid', Rule::exists('users', 'id')],
+        ]);
+        $audience = $data['audience'] ?? (($version->configuration['patient_audience'] ?? 'all'));
+        abort_if($audience === 'selected' && count($data['patient_ids'] ?? []) === 0, 422, 'Select at least one patient.');
+        if ($audience === 'selected') {
+            $ids = array_values(array_unique($data['patient_ids'] ?? []));
+            abort_unless(ClinicianPatient::query()->where('clinician_id', $request->user()->id)->whereIn('patient_id', $ids)->count() === count($ids), 403);
+        }
+        $version->update(['configuration' => [...($version->configuration ?? []), 'patient_visible' => $data['visible'], 'patient_audience' => $audience, 'patient_ids' => $data['patient_ids'] ?? ($version->configuration['patient_ids'] ?? [])]]);
 
-        return ['data' => ['visible' => $data['visible']]];
+        return ['data' => ['visible' => $data['visible'], 'audience' => $audience, 'patient_ids' => $data['patient_ids'] ?? []]];
     }
 
     public function reviewVersion(Request $request, SlpExerciseVersion $version): array
@@ -94,7 +105,15 @@ class SlpWorkflowController extends Controller
         $user = $request->user();
         $query = SlpAssignment::query()->with('version.exercise');
         if ($user->profile?->role === UserRole::Patient) {
-            $query->whereHas('version', fn ($q) => $q->where('configuration->patient_visible', true)->whereHas('exercise', fn ($e) => $e->whereNull('archived_at')));
+            $query->whereHas('version', function ($q) use ($user): void {
+                $q->where('configuration->patient_visible', true)
+                    ->where(function ($audience) use ($user): void {
+                        $audience->whereNull('configuration->patient_audience')
+                            ->orWhere('configuration->patient_audience', 'all')
+                            ->orWhereJsonContains('configuration->patient_ids', $user->id);
+                    })
+                    ->whereHas('exercise', fn ($e) => $e->whereNull('archived_at'));
+            });
         }
         if ($user->profile?->role === UserRole::Patient) {
             $query->where('patient_id', $user->id);
@@ -110,19 +129,30 @@ class SlpWorkflowController extends Controller
     public function storeAssignment(Request $request): JsonResponse
     {
         abort_unless($request->user()->profile?->role === UserRole::Clinician, 403);
-        $data = $request->validate(['patient_id' => ['required', 'uuid', Rule::exists('users', 'id')], 'exercise_version_id' => ['required', 'uuid', Rule::exists('slp_exercise_versions', 'id')], 'schedule' => ['nullable', 'array']]);
-        abort_unless(ClinicianPatient::query()->where('clinician_id', $request->user()->id)->where('patient_id', $data['patient_id'])->exists(), 403);
+        $data = $request->validate(['patient_id' => ['nullable', 'uuid', Rule::exists('users', 'id')], 'patient_ids' => ['nullable', 'array', 'min:1', 'max:1000'], 'patient_ids.*' => ['uuid', Rule::exists('users', 'id')], 'audience' => ['sometimes', Rule::in(['all', 'selected'])], 'exercise_version_id' => ['required', 'uuid', Rule::exists('slp_exercise_versions', 'id')], 'schedule' => ['nullable', 'array']]);
+        $audience = $data['audience'] ?? 'selected';
         $version = SlpExerciseVersion::query()->with('exercise')->findOrFail($data['exercise_version_id']);
         abort_unless($version->exercise->owner_id === $request->user()->id || ($version->exercise->scope === 'shared' && $version->status === 'published'), 403);
         abort_unless($version->exercise->archived_at === null && ($version->configuration['patient_visible'] ?? false) === true, 422, 'Enable patient visibility before assigning this version.');
+        $patientIds = $audience === 'all'
+            ? ClinicianPatient::query()->where('clinician_id', $request->user()->id)->pluck('patient_id')->all()
+            : ($data['patient_ids'] ?? ($data['patient_id'] ? [$data['patient_id']] : []));
+        abort_if(count($patientIds) === 0, 422, 'Select at least one patient.');
+        abort_unless(ClinicianPatient::query()->where('clinician_id', $request->user()->id)->whereIn('patient_id', $patientIds)->count() === count(array_unique($patientIds)), 403);
+        $assignments = collect($patientIds)->unique()->map(fn (string $patientId): SlpAssignment => SlpAssignment::query()->updateOrCreate(
+            ['clinician_id' => $request->user()->id, 'patient_id' => $patientId, 'exercise_version_id' => $version->id],
+            ['status' => 'active', 'schedule' => $data['schedule'] ?? null, 'configuration_snapshot' => $version->configuration],
+        ));
 
-        return response()->json(['data' => SlpAssignment::query()->create([...$data, 'clinician_id' => $request->user()->id, 'status' => 'active', 'configuration_snapshot' => $version->configuration])], 201);
+        return response()->json(['data' => $assignments->values()], 201);
     }
 
     public function storeAttempt(Request $request, SlpAssignment $assignment): JsonResponse
     {
         abort_unless($assignment->patient_id === $request->user()->id, 403);
         abort_unless($assignment->status === 'active' && $assignment->version->exercise->archived_at === null && ($assignment->version->configuration['patient_visible'] ?? false) === true, 409, 'This exercise is not currently available.');
+        $configuration = $assignment->version->configuration ?? [];
+        abort_unless(($configuration['patient_audience'] ?? 'all') === 'all' || in_array($request->user()->id, $configuration['patient_ids'] ?? [], true), 409, 'This exercise is not currently available.');
         $data = $request->validate(['submission_key' => ['required', 'string', 'max:100'], 'consent_id' => ['required', 'uuid', Rule::exists('slp_consents', 'id')]]);
         $consent = SlpConsent::query()->findOrFail($data['consent_id']);
         abort_unless($consent->subject_id === $request->user()->id && $consent->purpose === 'slp_recording' && $consent->withdrawn_at === null, 422);

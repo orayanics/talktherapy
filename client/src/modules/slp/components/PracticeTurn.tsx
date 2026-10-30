@@ -119,11 +119,14 @@ export default function PracticeTurn({
       )}
       {progress && !capturing && (
         <PracticeWordFeedback
+          disabled={locked}
           progress={progress}
           audioUrl={recorder.url}
           onReplayed={onReplayed}
           onReflect={onReflect}
           focusMode={focusMode}
+          onAgain={onStart}
+          onSkip={onNext}
         />
       )}
       {recorder.audio && !result && (

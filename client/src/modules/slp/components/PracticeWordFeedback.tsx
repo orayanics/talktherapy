@@ -1,13 +1,8 @@
 import { useEffect, useRef } from 'react'
 import { Check, Circle, Medal } from 'lucide-react'
-import {
-  checkFeedback,
-  getPracticeStars,
-  reflectionLabels,
-} from '../data/practiceGame'
+import { checkFeedback, getPracticeStars } from '../data/practiceGame'
 import type { PracticeReflection, WordProgress } from '../data/practiceGame'
-import PracticeStars from './PracticeStars'
-import PracticeBuddy from './PracticeBuddy'
+import { StarMeter, Tala, CheckInKeys } from './PracticeRewards'
 
 export default function PracticeWordFeedback({
   progress,
@@ -15,14 +10,20 @@ export default function PracticeWordFeedback({
   onReplayed,
   onReflect,
   focusMode,
+  onAgain,
+  onSkip,
+  disabled,
 }: {
   progress: WordProgress
   audioUrl: string | null
   onReplayed: () => void
   onReflect: (value: PracticeReflection) => void
   focusMode: boolean
+  onAgain: () => void
+  onSkip: () => void
+  disabled: boolean
 }) {
-  const panel = useRef<HTMLDivElement>(null)
+  const panel = useRef<HTMLHeadingElement>(null)
   const stars = getPracticeStars(progress)
   const check = checkFeedback[progress.outcome]
   useEffect(() => {
@@ -31,8 +32,6 @@ export default function PracticeWordFeedback({
   }, [progress.recordingKey, progress.outcome])
   return (
     <div
-      ref={panel}
-      tabIndex={-1}
       className="slp-word-feedback"
       aria-label={`Practice feedback for ${progress.word}`}
     >
@@ -40,17 +39,23 @@ export default function PracticeWordFeedback({
         {focusMode ? (
           <Medal size={36} aria-hidden="true" />
         ) : (
-          <PracticeBuddy size={80} celebrate />
+          <Tala size={80} mood="cheer" />
         )}
         <div>
           <p className="text-sm font-semibold">
             {focusMode ? 'Your turn in review' : 'A word for your collection!'}
           </p>
-          <h3 className="break-words text-3xl font-bold">{progress.word}</h3>
+          <h3
+            ref={panel}
+            tabIndex={-1}
+            className="break-words text-3xl font-bold"
+          >
+            {progress.word}
+          </h3>
         </div>
       </header>
       <div className="slp-star-result" role="status" aria-live="polite">
-        <PracticeStars earned={stars} />
+        <StarMeter stars={stars} justEarned={stars} />
         <p className="font-bold">{stars} of 3 practice stars</p>
       </div>
       <ul
@@ -99,20 +104,31 @@ export default function PracticeWordFeedback({
         <p className="mt-1 text-xs text-slate-600">
           Your check-in, or a helper’s observation.
         </p>
-        <div className="mt-3 flex flex-wrap gap-2">
-          {(Object.keys(reflectionLabels) as PracticeReflection[]).map(
-            (value) => (
-              <button
-                type="button"
-                key={value}
-                className="slp-reflection-button"
-                aria-pressed={progress.reflection === value}
-                onClick={() => onReflect(value)}
-              >
-                {reflectionLabels[value]}
-              </button>
-            ),
-          )}
+        <div className="mt-3">
+          <CheckInKeys
+            disabled={disabled}
+            value={
+              progress.reflection === 'with_help'
+                ? 'helped'
+                : progress.reflection === 'try_again'
+                  ? 'again'
+                  : progress.reflection
+            }
+            onPick={(value) => {
+              if (value === 'skip') {
+                onSkip()
+                return
+              }
+              onReflect(
+                value === 'helped'
+                  ? 'with_help'
+                  : value === 'again'
+                    ? 'try_again'
+                    : value,
+              )
+              if (value === 'again') onAgain()
+            }}
+          />
         </div>
       </fieldset>
       <div className="slp-word-check" data-outcome={progress.outcome}>
