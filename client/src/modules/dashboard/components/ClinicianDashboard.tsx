@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
+import ScheduleCalendar from '#/components/ScheduleCalendar'
 
 import { fetchAppointments } from '#/modules/appointments/api/appointments'
 import { fetchDashboardSummary } from '#/modules/dashboard/api/dashboard'
@@ -19,15 +20,7 @@ import useAcceptAppointment from '#/modules/appointments/hooks/useAcceptAppointm
 import CompleteAppointmentModal from '#/modules/appointments/components/CompleteAppointmentModal'
 import useCompleteAppointment from '#/modules/appointments/hooks/useCompleteAppointment'
 import { ClinicianSummaryCards } from './DashboardSummaryCards'
-
-function todayRange() {
-  const today = formatDate(new Date(), 'yyyy-MM-dd')
-
-  return {
-    from: today,
-    to: today,
-  }
-}
+import ScheduleData from './ScheduleData'
 
 export default function ClinicianDashboard() {
   const [selected, setSelected] = useState<string | null>(null)
@@ -35,21 +28,31 @@ export default function ClinicianDashboard() {
   const [openAccept, setOpenAccept] = useState(false)
   const [openComplete, setOpenComplete] = useState(false)
 
-  const { from, to } = todayRange()
-
-  const q = useQuery(fetchAppointments({}, { from, to }))
-  const appointments = q.data?.data ?? []
-
-  // next 7 days
-  const weekFrom = formatDate(new Date(), 'yyyy-MM-dd')
-  const start = new Date(`${weekFrom}T00:00:00.000Z`)
+  const today = formatDate(new Date(), 'yyyy-MM-dd')
+  const start = new Date(`${today}T00:00:00.000Z`)
+  start.setUTCDate(start.getUTCDate() - ((start.getUTCDay() + 6) % 7))
+  const weekFrom = formatDate(start, 'yyyy-MM-dd')
   const end = new Date(start)
   end.setUTCDate(end.getUTCDate() + 6)
+  const weekTo = formatDate(end, 'yyyy-MM-dd')
+
+  // shortcut: the dashboard loads at most 100 weekly appointments, paginate if weekly volume can exceed that.
+  const q = useQuery(
+    fetchAppointments(
+      { per_page: 100 },
+      { from: weekFrom, to: weekTo, sort: 'asc' },
+    ),
+  )
+  const appointments = q.data?.data ?? []
+  const todayAppointments = appointments.filter(
+    (appointment) =>
+      formatDate(appointment.slot.start_at, 'yyyy-MM-dd') === today,
+  )
 
   const summaryQ = useQuery(
     fetchDashboardSummary({
       date_from: weekFrom,
-      date_to: formatDate(end, 'yyyy-MM-dd'),
+      date_to: weekTo,
     }),
   )
 
@@ -125,36 +128,18 @@ export default function ClinicianDashboard() {
           </p>
         </div>
 
-        <div className="grid grid-cols-3 lg:grid-cols-7 gap-2">
-          {Array.from({ length: 7 }).map((_, i) => {
-            const d = new Date(start)
-            d.setUTCDate(start.getUTCDate() + i)
-            const label = d.toLocaleDateString(undefined, {
-              weekday: 'short',
-              day: 'numeric',
-            })
-            const dateStr = formatDate(d, 'yyyy-MM-dd')
-            const count = summaryQ.data?.appointments.schedule?.[dateStr]
-            return (
-              <Link
-                key={d.toDateString()}
-                to="/schedules"
-                search={{
-                  from: dateStr,
-                }}
-                className="p-4 bg-white border border-slate-200 shadow-xs rounded-lg flex flex-col items-center gap-2"
-              >
-                <div className="text-sm text-slate-900">{label}</div>
-                <div className="text-center">
-                  <p className="text-sm font-bold">{count ?? '—'}</p>
-                  <p className="text-xs text-slate-500">
-                    {count == null ? 'Unavailable' : 'Appointments'}
-                  </p>
-                </div>
-              </Link>
-            )
-          })}
-        </div>
+        <ScheduleCalendar
+          start={today}
+          days={7}
+          renderDay={(date) => (
+            <ScheduleData
+              appointments={appointments.filter(
+                (appointment) =>
+                  formatDate(appointment.slot.start_at, 'yyyy-MM-dd') === date,
+              )}
+            />
+          )}
+        />
       </section>
 
       <section className="space-y-4">
@@ -167,12 +152,12 @@ export default function ClinicianDashboard() {
           </p>
         </div>
 
-        {appointments.length === 0 ? (
+        {todayAppointments.length === 0 ? (
           <StateNull />
         ) : (
           <div className="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden flex flex-col">
             <TableBase
-              data={appointments}
+              data={todayAppointments}
               columns={[
                 {
                   header: 'Patient',

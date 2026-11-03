@@ -23,7 +23,11 @@ describe('fetchAppointments', () => {
             end_at: '2026-10-30T10:00:00.000Z',
             status: 'PENDING',
           },
-          patient: { id: 'patient-1', name: 'Patient', email: 'patient@example.com' },
+          patient: {
+            id: 'patient-1',
+            name: 'Patient',
+            email: 'patient@example.com',
+          },
           clinician: {
             id: 'clinician-1',
             name: 'Clinician',
@@ -43,7 +47,7 @@ describe('fetchAppointments', () => {
     }
     vi.mocked(api).mockResolvedValue(response)
     const query = fetchAppointments(
-      { page: 2 },
+      { page: 2, per_page: 100 },
       { from: '2026-10-29', to: '2026-10-31', sort: 'asc' },
     )
 
@@ -54,6 +58,7 @@ describe('fetchAppointments', () => {
       method: 'GET',
       params: {
         page: 2,
+        per_page: 100,
         date_from: '2026-10-29',
         date_to: '2026-10-31',
         sort: 'asc',

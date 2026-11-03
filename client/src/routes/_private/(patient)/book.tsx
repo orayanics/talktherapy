@@ -5,6 +5,7 @@ import { fetchSlots } from '#/modules/schedules/api/schedules'
 import BookModal from '#/modules/book/components/BookModal'
 import useBookSlot from '#/modules/book/hooks/useBookSlot'
 import { useState } from 'react'
+import ScheduleCalendar from '#/components/ScheduleCalendar'
 
 import StateError from '#/components/State/StateError'
 import StateLoading from '#/components/State/StateLoading'
@@ -80,8 +81,12 @@ function RouteComponent() {
   const { submit, reset, apiError, isLoading: isBooking } = useBookSlot()
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [selectedDate, setSelectedDate] = useState<string | null>(null)
 
   const slots = data?.data ?? []
+  const daySlots = slots.filter(
+    (slot) => formatDate(slot.start_at, 'yyyy-MM-dd') === selectedDate,
+  )
   const meta =
     data?.meta ??
     ({
@@ -109,79 +114,130 @@ function RouteComponent() {
   }
 
   return (
-    <div className="space-y-4">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <ScheduleFilters
-          diagnosis={diagnosis}
-          from={from}
-          sort={sort}
-          updateSearch={updateSearch}
+    <div className="drawer drawer-end">
+      <input
+        id="booking-calendar-drawer"
+        type="checkbox"
+        className="drawer-toggle"
+        checked={Boolean(selectedDate)}
+        onChange={(event) => {
+          if (!event.target.checked) setSelectedDate(null)
+        }}
+      />
+      <div className="drawer-content min-w-0 space-y-4">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <ScheduleFilters
+            diagnosis={diagnosis}
+            from={from}
+            sort={sort}
+            updateSearch={updateSearch}
+          />
+        </div>
+        <ScheduleCalendar
+          start={from ?? formatDate(new Date(), 'yyyy-MM-dd')}
+          onSelect={setSelectedDate}
+          renderDay={(date) => (
+            <span className="opacity-60">
+              {slots.filter(
+                (slot) => formatDate(slot.start_at, 'yyyy-MM-dd') === date,
+              ).length || '—'}{' '}
+              slots on this page
+            </span>
+          )}
+        />
+        <p className="text-sm opacity-60">
+          Select a date to view available sessions. Calendar counts reflect the
+          current results page.
+        </p>
+        <Pagination
+          meta={meta}
+          page={page}
+          updateSearch={(next) => updateSearch({ page: next.page })}
         />
       </div>
-      <div className="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden flex flex-col">
-        {isLoading ? (
-          <StateLoading />
-        ) : isError ? (
-          <StateError />
-        ) : slots.length === 0 ? (
-          <StateNull />
-        ) : (
-          <TableBase
-            data={slots}
-            keyExtractor={(u) => u.id}
-            columns={[
-              {
-                header: 'No',
-                accessor: 'id',
-                render: (row) => slots.indexOf(row) + 1,
-              },
-              {
-                header: 'Date',
-                accessor: 'start_at',
-                render: (row) => formatDate(row.start_at, 'PP'),
-              },
-              {
-                header: 'Time',
-                accessor: 'start_at',
-                render: (row) => (
-                  <div className="flex gap-2">
-                    <div>{formatDate(row.start_at, 'p')}</div>
-                    <div>to</div>
-                    <div>{formatDate(row.end_at, 'p')}</div>
-                  </div>
-                ),
-              },
-              {
-                header: 'Specialization',
-                accessor: 'clinician',
-                render: (row) =>
-                  row.clinician.diagnosis?.label ?? 'Not specified',
-              },
-              { header: 'Status', accessor: 'status' },
-              {
-                header: 'Action',
-                accessor: 'id',
-                render: (row) => (
-                  <div>
-                    <button
-                      className="btn btn-primary"
-                      onClick={() => openBooking(row.id)}
-                      disabled={row.status !== 'FREE' || isBooking}
-                    >
-                      Book
-                    </button>
-                  </div>
-                ),
-              },
-            ]}
-          />
-        )}
+      <div className="drawer-side z-40">
+        <label
+          htmlFor="booking-calendar-drawer"
+          aria-label="Close available sessions"
+          className="drawer-overlay"
+        />
+        <aside
+          className="bg-base-100 text-base-content min-h-full w-[min(36rem,100vw)] p-4"
+          aria-label="Available sessions"
+          onKeyDown={(event) => {
+            if (event.key === 'Escape') setSelectedDate(null)
+          }}
+        >
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="font-bold">Sessions · {selectedDate}</h2>
+            <button
+              className="btn btn-sm"
+              onClick={() => setSelectedDate(null)}
+            >
+              Close
+            </button>
+          </div>
+          <div className="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden flex flex-col">
+            {isLoading ? (
+              <StateLoading />
+            ) : isError ? (
+              <StateError />
+            ) : daySlots.length === 0 ? (
+              <StateNull />
+            ) : (
+              <TableBase
+                data={daySlots}
+                keyExtractor={(u) => u.id}
+                columns={[
+                  {
+                    header: 'No',
+                    accessor: 'id',
+                    render: (row) => slots.indexOf(row) + 1,
+                  },
+                  {
+                    header: 'Date',
+                    accessor: 'start_at',
+                    render: (row) => formatDate(row.start_at, 'PP'),
+                  },
+                  {
+                    header: 'Time',
+                    accessor: 'start_at',
+                    render: (row) => (
+                      <div className="flex gap-2">
+                        <div>{formatDate(row.start_at, 'p')}</div>
+                        <div>to</div>
+                        <div>{formatDate(row.end_at, 'p')}</div>
+                      </div>
+                    ),
+                  },
+                  {
+                    header: 'Specialization',
+                    accessor: 'clinician',
+                    render: (row) =>
+                      row.clinician.diagnosis?.label ?? 'Not specified',
+                  },
+                  { header: 'Status', accessor: 'status' },
+                  {
+                    header: 'Action',
+                    accessor: 'id',
+                    render: (row) => (
+                      <div>
+                        <button
+                          className="btn btn-primary"
+                          onClick={() => openBooking(row.id)}
+                          disabled={row.status !== 'FREE' || isBooking}
+                        >
+                          Book
+                        </button>
+                      </div>
+                    ),
+                  },
+                ]}
+              />
+            )}
+          </div>
+        </aside>
       </div>
-      <Pagination
-        meta={meta}
-        page={page}
-        updateSearch={(next) => updateSearch({ page: next.page })}
-      />
       <BookModal
         isOpen={isModalOpen}
         onClose={closeBooking}

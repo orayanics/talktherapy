@@ -19,6 +19,7 @@ export const fetchAppointments = (
 ) => {
   const query = {
     page: params.page,
+    per_page: params.per_page,
     date_from: searchParams.from,
     date_to: searchParams.to,
     sort: searchParams.sort,
