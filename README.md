@@ -22,6 +22,21 @@ tasks/    Implementation plans and release gates
 - Mailpit for local email testing (SMTP `1025`, web UI `8025`)
 - Redis is optional locally; the default Laravel setup uses database-backed cache, sessions and queues
 
+## Docker setup
+
+Create and configure `server/.env`, `client/.env`, and `py/.env` once, including the same non-placeholder `PHONEME_SERVICE_TOKEN` in `server/.env` and `py/.env`:
+
+```sh
+cp server/.env.example server/.env
+cp client/.env.example client/.env
+cp py/.env.example py/.env
+docker compose up --build
+```
+
+Open the client at `http://localhost:3000` and Mailpit at `http://localhost:8025`. The Compose setup runs the Laravel API, Reverb, queue, scheduler, Vite client, Python service, and Mailpit. Laravel creates its key, database, and seeded development accounts on first start; named volumes preserve dependencies, storage, and the Python model between restarts.
+
+The Compose setup uses PostgreSQL with a named data volume. The default Python image downloads the `base` Whisper artifact during its first build, so the initial build is large and may take several minutes. Keep the Python service private in production and replace the development credentials and secrets in the env files.
+
 For local HTTPS and network-device camera/microphone access, complete the HTTP setup first, then follow [SETUP_SSL.md](SETUP_SSL.md).
 
 ## 1. Laravel API
