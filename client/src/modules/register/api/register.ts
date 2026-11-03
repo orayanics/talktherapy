@@ -45,6 +45,7 @@ export const mutateRegisterClinician = () => {
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['users'] })
       await queryClient.invalidateQueries({ queryKey: ['users-count'] })
+      await queryClient.invalidateQueries({ queryKey: ['dashboardSummary'] })
 
       await queryClient.invalidateQueries({ queryKey: ['logs'] })
 
@@ -67,6 +68,7 @@ export const mutateRegisterAdmin = () => {
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['users'] })
       await queryClient.invalidateQueries({ queryKey: ['users-count'] })
+      await queryClient.invalidateQueries({ queryKey: ['dashboardSummary'] })
       await queryClient.invalidateQueries({ queryKey: ['logs'] })
 
       showAlert('User created. OTP sent to the user email.', 'success')
@@ -88,6 +90,7 @@ export const mutateRegisterPatientInvitation = () => {
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['users'] })
       await queryClient.invalidateQueries({ queryKey: ['users-count'] })
+      await queryClient.invalidateQueries({ queryKey: ['dashboardSummary'] })
       await queryClient.invalidateQueries({ queryKey: ['logs'] })
       showAlert('Patient invited. OTP sent to the user email.', 'success')
     },

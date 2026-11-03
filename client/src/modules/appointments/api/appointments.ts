@@ -60,6 +60,7 @@ const appointmentAction = (
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['appointments'] })
       await queryClient.invalidateQueries({ queryKey: ['appointment'] })
+      await queryClient.invalidateQueries({ queryKey: ['dashboardSummary'] })
       if (action === 'complete')
         await queryClient.invalidateQueries({
           queryKey: ['clinician-patients'],
@@ -71,6 +72,7 @@ const appointmentAction = (
         await queryClient.invalidateQueries({ queryKey: ['appointments'] })
         await queryClient.invalidateQueries({ queryKey: ['appointment'] })
         await queryClient.invalidateQueries({ queryKey: ['slots'] })
+        await queryClient.invalidateQueries({ queryKey: ['dashboardSummary'] })
       }
     },
   })

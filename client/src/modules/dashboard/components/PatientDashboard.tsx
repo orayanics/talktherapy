@@ -3,6 +3,7 @@ import { Link } from '@tanstack/react-router'
 import { ArrowRight, Stethoscope } from 'lucide-react'
 
 import { fetchAppointments } from '#/modules/appointments/api/appointments'
+import { fetchDashboardSummary } from '#/modules/dashboard/api/dashboard'
 import type { Appointment } from '#/modules/appointments/types/appointment'
 
 import { fetchContentList } from '#/modules/content/api/content'
@@ -14,6 +15,7 @@ import StateNull from '#/components/State/StateNull'
 import AppointmentPill from '#/modules/appointments/components/AppointmentPill'
 
 import { formatDate } from '#/utils/useDate'
+import { PatientSummaryCards } from './DashboardSummaryCards'
 
 function upcomingRange() {
   const start = new Date()
@@ -30,6 +32,9 @@ export default function PatientDashboard() {
   const { from, to } = upcomingRange()
 
   const apptQ = useQuery(fetchAppointments({}, { from, to }))
+  const summaryQ = useQuery(
+    fetchDashboardSummary({ date_from: from, date_to: to }),
+  )
   const appts: Appointment[] = apptQ.data?.data ?? []
 
   const contentQ = useQuery(
@@ -37,11 +42,11 @@ export default function PatientDashboard() {
   )
   const bookmarks: Content[] = contentQ.data?.data ?? []
 
-  if (apptQ.isLoading || contentQ.isLoading) return <StateLoading />
-  if (apptQ.isError || contentQ.isError) return <StateError />
+  if (apptQ.isLoading) return <StateLoading />
 
   return (
     <div className="space-y-6">
+      <PatientSummaryCards summary={summaryQ.data} />
       <section className="space-y-4">
         <div>
           <p className="text-lg font-bold text-slate-900 uppercase tracking-tight">
@@ -50,7 +55,9 @@ export default function PatientDashboard() {
           <p className="text-xs text-slate-400 font-medium">Next 30 days</p>
         </div>
 
-        {appts.length === 0 ? (
+        {apptQ.isError ? (
+          <StateError />
+        ) : appts.length === 0 ? (
           <StateNull />
         ) : (
           <ul className="space-y-3">
@@ -110,7 +117,11 @@ export default function PatientDashboard() {
           </p>
         </div>
 
-        {bookmarks.length === 0 ? (
+        {contentQ.isLoading ? (
+          <StateLoading />
+        ) : contentQ.isError ? (
+          <StateError />
+        ) : bookmarks.length === 0 ? (
           <div className="p-6 bg-slate-50/50 rounded-2xl border border-slate-100">
             <p className="text-xs text-slate-500 italic">
               No bookmarks yet. Browse clinical content to save helpful

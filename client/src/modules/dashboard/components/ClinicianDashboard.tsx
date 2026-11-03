@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 
 import { fetchAppointments } from '#/modules/appointments/api/appointments'
+import { fetchDashboardSummary } from '#/modules/dashboard/api/dashboard'
 
 import StateLoading from '#/components/State/StateLoading'
 import StateError from '#/components/State/StateError'
@@ -17,6 +18,7 @@ import AcceptAppointmentModal from '#/modules/appointments/components/AcceptAppo
 import useAcceptAppointment from '#/modules/appointments/hooks/useAcceptAppointment'
 import CompleteAppointmentModal from '#/modules/appointments/components/CompleteAppointmentModal'
 import useCompleteAppointment from '#/modules/appointments/hooks/useCompleteAppointment'
+import { ClinicianSummaryCards } from './DashboardSummaryCards'
 
 function todayRange() {
   const today = formatDate(new Date(), 'yyyy-MM-dd')
@@ -44,26 +46,12 @@ export default function ClinicianDashboard() {
   const end = new Date(start)
   end.setUTCDate(end.getUTCDate() + 6)
 
-  const qWeek = useQuery(
-    fetchAppointments({}, { from: weekFrom, to: formatDate(end, 'yyyy-MM-dd') }),
+  const summaryQ = useQuery(
+    fetchDashboardSummary({
+      date_from: weekFrom,
+      date_to: formatDate(end, 'yyyy-MM-dd'),
+    }),
   )
-
-  const weekAppointments = qWeek.data?.data ?? []
-
-  // init counts
-  const countsByDay: Record<string, number> = {}
-
-  for (let day = 0; day < 7; day += 1) {
-    const date = new Date(start)
-    date.setUTCDate(start.getUTCDate() + day)
-    countsByDay[formatDate(date, 'EEE MMM dd yyyy')] = 0
-  }
-
-  // count
-  for (const appt of weekAppointments) {
-    const key = formatDate(appt.slot.start_at, 'EEE MMM dd yyyy')
-    countsByDay[key] = (countsByDay[key] ?? 0) + 1
-  }
 
   const {
     submit: submitReject,
@@ -126,6 +114,7 @@ export default function ClinicianDashboard() {
 
   return (
     <div className="space-y-6">
+      <ClinicianSummaryCards summary={summaryQ.data} />
       <section className="space-y-4">
         <div>
           <p className="text-lg font-bold text-slate-900 uppercase tracking-tight">
@@ -144,8 +133,8 @@ export default function ClinicianDashboard() {
               weekday: 'short',
               day: 'numeric',
             })
-            const count = countsByDay[formatDate(d, 'EEE MMM dd yyyy')] ?? 0
             const dateStr = formatDate(d, 'yyyy-MM-dd')
+            const count = summaryQ.data?.appointments.schedule?.[dateStr]
             return (
               <Link
                 key={d.toDateString()}
@@ -157,8 +146,10 @@ export default function ClinicianDashboard() {
               >
                 <div className="text-sm text-slate-900">{label}</div>
                 <div className="text-center">
-                  <p className="text-sm font-bold">{count}</p>
-                  <p className="text-xs text-slate-500">Appointments</p>
+                  <p className="text-sm font-bold">{count ?? '—'}</p>
+                  <p className="text-xs text-slate-500">
+                    {count == null ? 'Unavailable' : 'Appointments'}
+                  </p>
                 </div>
               </Link>
             )

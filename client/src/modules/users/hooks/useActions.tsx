@@ -26,6 +26,7 @@ export default function useActions() {
       await queryClient.invalidateQueries({ queryKey: ['users'] })
       await queryClient.invalidateQueries({ queryKey: ['users-count'] })
       await queryClient.invalidateQueries({ queryKey: ['logs'] })
+      await queryClient.invalidateQueries({ queryKey: ['dashboardSummary'] })
       showAlert('Account status updated.', 'success')
     },
     onError: () => showAlert('Unable to update account status.', 'error'),

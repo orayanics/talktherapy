@@ -20,11 +20,11 @@ class UserSeederTest extends TestCase
 
         $users = User::query()->with('profile')->get()->keyBy('email');
 
-        $this->assertCount(4, $users);
+        $this->assertCount(9, $users);
         $this->assertSame('superadmin', $users['sudo@example.com']->profile->role->value);
         $this->assertSame('admin', $users['admin@example.com']->profile->role->value);
         $this->assertSame('clinician', $users['clinician@example.com']->profile->role->value);
-        $this->assertSame('patient', $users['patient@example.com']->profile->role->value);
+        $this->assertSame('patient', $users['patient.aphasia@example.com']->profile->role->value);
 
         foreach ($users as $user) {
             $this->assertSame(UserStatus::Active, $user->profile->status);

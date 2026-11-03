@@ -102,6 +102,7 @@ class SlpWorkflowController extends Controller
 
     public function assignments(Request $request): AnonymousResourceCollection
     {
+        $data = $request->validate(['per_page' => ['sometimes', 'integer', 'min:1', 'max:100']]);
         $user = $request->user();
         $query = SlpAssignment::query()->with('version.exercise');
         if ($user->profile?->role === UserRole::Patient) {
@@ -123,7 +124,7 @@ class SlpWorkflowController extends Controller
             abort(403);
         }
 
-        return SlpAssignmentResource::collection($query->latest()->paginate($request->integer('per_page', 15)));
+        return SlpAssignmentResource::collection($query->latest()->paginate($data['per_page'] ?? 15));
     }
 
     public function storeAssignment(Request $request): JsonResponse
@@ -180,11 +181,11 @@ class SlpWorkflowController extends Controller
     public function attempt(Request $request, SlpAttempt $attempt): array
     {
         $user = $request->user();
-        $allowed = $attempt->assignment->patient_id === $user->id || $attempt->assignment->clinician_id === $user->id || $this->admin($user);
+        $allowed = $attempt->assignment->patient_id === $user->id || $attempt->assignment->clinician_id === $user->id;
         abort_unless($allowed, 403);
         $attempt->load(['analysis', 'recording', 'assignment.version']);
         $data = ['id' => $attempt->id, 'status' => $attempt->status, 'analysis' => $attempt->analysis, 'exercise' => $attempt->assignment->version];
-        if ($attempt->assignment->clinician_id !== $user->id && ! $this->admin($user)) {
+        if ($attempt->assignment->patient_id === $user->id) {
             unset($data['analysis']);
         }
 
@@ -193,7 +194,7 @@ class SlpWorkflowController extends Controller
 
     public function saveReview(Request $request, SlpAttempt $attempt): array
     {
-        abort_unless($attempt->assignment->clinician_id === $request->user()->id || $this->admin($request->user()), 403);
+        abort_unless($attempt->assignment->clinician_id === $request->user()->id, 403);
         $data = $request->validate(['annotations' => ['required', 'array'], 'metrics' => ['nullable', 'array']]);
         $revision = (int) ($attempt->reviews()->max('revision') ?? 0) + 1;
         $review = SlpReview::query()->create(['attempt_id' => $attempt->id, 'revision' => $revision, 'reviewer_id' => $request->user()->id, 'status' => 'draft', 'annotations' => $data['annotations'], 'metrics' => $data['metrics'] ?? []]);
@@ -203,7 +204,7 @@ class SlpWorkflowController extends Controller
 
     public function approveReview(Request $request, SlpReview $review): array
     {
-        abort_unless($review->reviewer_id === $request->user()->id || $this->admin($request->user()), 403);
+        abort_unless($review->attempt->assignment->clinician_id === $request->user()->id, 403);
         $review->update(['status' => 'approved']);
         $review->attempt()->update(['status' => 'approved']);
         $report = SlpReport::query()->create(['review_id' => $review->id, 'created_by' => $request->user()->id, 'snapshot' => ['metrics' => $review->metrics, 'annotations' => $review->annotations, 'approved_at' => now()->toISOString()]]);

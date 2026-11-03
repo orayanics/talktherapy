@@ -63,6 +63,21 @@ class ReportingTest extends TestCase
             ->assertJsonFragment(['value' => $noPatients->value, 'label' => $noPatients->label, 'count' => 0]);
     }
 
+    public function test_dashboard_summary_is_role_scoped_and_validates_date_ranges(): void
+    {
+        foreach (['admin', 'superadmin', 'clinician', 'patient'] as $role) {
+            $this->actingAs($this->createUser($role))
+                ->getJson('/api/v1/dashboard/summary')
+                ->assertOk()
+                ->assertJsonPath('data.role', $role)
+                ->assertJsonPath('data.period.timezone', 'UTC');
+        }
+
+        $this->actingAs($this->createUser('admin'))
+            ->getJson('/api/v1/dashboard/summary?date_from=2026-11-02&date_to=2026-11-01')
+            ->assertUnprocessable();
+    }
+
     public function test_stream_export_records_completion_and_neutralizes_formula_cells(): void
     {
         $admin = $this->createUser('admin');

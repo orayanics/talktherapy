@@ -41,6 +41,7 @@ class SlpWorkflowTest extends TestCase
         $clinician = $this->user(UserRole::Clinician);
         $patient = $this->user(UserRole::Patient);
         ClinicianPatient::factory()->create(['clinician_id' => $clinician->id, 'patient_id' => $patient->id]);
+        $this->actingAs($clinician)->getJson('/api/v1/slp/assignments?per_page=101')->assertUnprocessable();
         $version = SlpExerciseVersion::factory()->create(['status' => 'published', 'configuration' => ['patient_visible' => true]]);
         $assignment = SlpAssignment::factory()->create(['clinician_id' => $clinician->id, 'patient_id' => $patient->id, 'exercise_version_id' => $version->id]);
         $consent = $this->actingAs($patient)->postJson('/api/v1/slp/consents', ['subject_id' => $patient->id, 'purpose' => 'slp_recording', 'policy_version' => 'v1'])->json('data');
@@ -48,6 +49,40 @@ class SlpWorkflowTest extends TestCase
 
         $this->actingAs($patient)->postJson("/api/v1/slp/attempts/{$attempt['id']}/recording", ['recording' => UploadedFile::fake()->create('speech.wav', 10, 'audio/wav')])->assertStatus(202)->assertJsonPath('data.status', 'queued');
         Queue::assertPushed(RunSlpAnalysis::class);
+    }
+
+    public function test_clinical_attempt_access_requires_the_assigned_patient_or_clinician(): void
+    {
+        $admin = $this->user(UserRole::Admin);
+        $clinician = $this->user(UserRole::Clinician);
+        $patient = $this->user(UserRole::Patient);
+        $unrelatedClinician = $this->user(UserRole::Clinician);
+        ClinicianPatient::factory()->create(['clinician_id' => $clinician->id, 'patient_id' => $patient->id]);
+        $version = SlpExerciseVersion::factory()->create(['status' => 'published', 'configuration' => ['patient_visible' => true]]);
+        $assignment = SlpAssignment::factory()->create(['clinician_id' => $clinician->id, 'patient_id' => $patient->id, 'exercise_version_id' => $version->id]);
+        $consent = $this->actingAs($patient)->postJson('/api/v1/slp/consents', [
+            'subject_id' => $patient->id,
+            'purpose' => 'slp_recording',
+            'policy_version' => 'v1',
+        ])->json('data');
+        $attempt = $this->actingAs($patient)->postJson("/api/v1/slp/assignments/{$assignment->id}/attempts", [
+            'submission_key' => 'access-check',
+            'consent_id' => $consent['id'],
+        ])->json('data');
+
+        $this->actingAs($admin)->getJson("/api/v1/slp/attempts/{$attempt['id']}")->assertForbidden();
+        $this->actingAs($unrelatedClinician)->getJson("/api/v1/slp/attempts/{$attempt['id']}")->assertForbidden();
+        $this->actingAs($patient)->getJson("/api/v1/slp/attempts/{$attempt['id']}")->assertOk();
+        $this->actingAs($clinician)->getJson("/api/v1/slp/attempts/{$attempt['id']}")->assertOk();
+
+        $this->actingAs($admin)->putJson("/api/v1/slp/attempts/{$attempt['id']}/review", [
+            'annotations' => [['text' => 'review']],
+        ])->assertForbidden();
+        $review = $this->actingAs($clinician)->putJson("/api/v1/slp/attempts/{$attempt['id']}/review", [
+            'annotations' => [['text' => 'review']],
+        ])->assertOk()->json('data');
+        $this->actingAs($admin)->postJson("/api/v1/slp/reviews/{$review['id']}/approve")->assertForbidden();
+        $this->actingAs($clinician)->postJson("/api/v1/slp/reviews/{$review['id']}/approve")->assertOk();
     }
 
     private function user(UserRole $role): User

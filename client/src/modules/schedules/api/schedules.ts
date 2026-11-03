@@ -54,6 +54,7 @@ export const mutateSchedule = () => {
       }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['slots'] })
+      await queryClient.invalidateQueries({ queryKey: ['dashboardSummary'] })
       showAlert('Schedule created successfully', 'success')
       navigate({ to: '/schedules' })
     },

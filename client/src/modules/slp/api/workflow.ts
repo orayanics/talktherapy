@@ -52,8 +52,10 @@ export const mutateCreateSlpAssignment = () => {
         method: 'POST',
         data: input,
       }),
-    onSuccess: () =>
-      client.invalidateQueries({ queryKey: slpWorkflowKeys.assignments }),
+    onSuccess: async () => {
+      await client.invalidateQueries({ queryKey: slpWorkflowKeys.assignments })
+      await client.invalidateQueries({ queryKey: ['dashboardSummary'] })
+    },
   })
 }
 
@@ -79,8 +81,9 @@ export const mutateCreateSlpAttempt = (assignmentId: string) => {
   })
 }
 
-export const mutateUploadSlpRecording = (attemptId: string) =>
-  useMutation({
+export const mutateUploadSlpRecording = (attemptId: string) => {
+  const client = useQueryClient()
+  return useMutation({
     mutationFn: (recording: Blob) => {
       const data = new FormData()
       data.append('recording', recording, 'recording.webm')
@@ -89,7 +92,12 @@ export const mutateUploadSlpRecording = (attemptId: string) =>
         data,
       })
     },
+    onSuccess: async () => {
+      await client.invalidateQueries({ queryKey: slpWorkflowKeys.assignments })
+      await client.invalidateQueries({ queryKey: ['dashboardSummary'] })
+    },
   })
+}
 
 export const fetchSlpAttempt = (attemptId: string) =>
   queryOptions<{ data: SlpAttemptStatus }>({

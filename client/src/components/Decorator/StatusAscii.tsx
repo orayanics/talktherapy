@@ -37,7 +37,7 @@ const STAT_LABEL_MAP: Record<StatStatus, string> = {
 }
 
 const isStatStatus = (status: string): status is StatStatus =>
-  status in STAT_STYLE_MAP
+  Object.prototype.hasOwnProperty.call(STAT_STYLE_MAP, status)
 
 const getStatStyle = (status: string) =>
   STAT_STYLE_MAP[isStatStatus(status) ? status : 'free']
