@@ -51,7 +51,7 @@ body {
 
 @layer components {
   .border-slate {
-    @apply border-slate-300 hover:border-slate-400;
+    @apply border-border hover:border-slate-400;
   }
 }
 

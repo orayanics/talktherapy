@@ -7,25 +7,25 @@ type RoleTheme = {
 
 const ROLE_THEME: Partial<Record<string, RoleTheme>> = {
   superadmin: {
-    card: 'bg-green-800 text-green-50',
+    card: 'bg-green-50 text-green-700 border-green-200',
     muted: 'text-green-200',
     track: 'text-green-700',
     fill: 'text-green-300',
   },
   admin: {
-    card: 'bg-rose-800 text-rose-50',
+    card: 'bg-rose-50 text-rose-700 border-rose-200',
     muted: 'text-rose-200',
     track: 'text-rose-700',
     fill: 'text-rose-300',
   },
   clinician: {
-    card: 'bg-amber-800 text-amber-50',
+    card: 'bg-amber-50 text-amber-700 border-amber-200',
     muted: 'text-amber-200',
     track: 'text-amber-700',
     fill: 'text-amber-300',
   },
   patient: {
-    card: 'bg-sky-800 text-sky-50',
+    card: 'bg-sky-50 text-sky-700 border-sky-200',
     muted: 'text-sky-200',
     track: 'text-sky-700',
     fill: 'text-sky-300',
@@ -53,7 +53,7 @@ export default function UserCard({ role, count, total }: UserCardProps) {
 
   return (
     <div
-      className={`flex flex-col overflow-hidden rounded-md p-6 shadow-sm ${theme.card}`}
+      className={`flex flex-col overflow-hidden rounded-md p-6 border ${theme.card}`}
     >
       <p className="text-lg uppercase">{role}</p>
 

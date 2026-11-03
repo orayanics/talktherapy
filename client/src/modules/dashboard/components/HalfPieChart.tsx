@@ -77,14 +77,14 @@ export default function HalfPieChart({
     ))
 
   return (
-    <div className="grid gap-5 md:grid-cols-[minmax(0,1fr)_minmax(12rem,0.8fr)] md:items-center">
+    <div className="grid gap-8">
       <div
         className="relative"
         role="img"
         aria-label={`Patients by diagnosis: ${total} total`}
       >
         <svg
-          viewBox="0 0 200 120"
+          viewBox="0 0 200 100"
           className="mx-auto w-full max-w-sm overflow-visible"
           aria-hidden="true"
         >
@@ -110,7 +110,7 @@ export default function HalfPieChart({
             </filter>
           </defs>
 
-          <path
+          {/* <path
             d={ARC}
             fill="none"
             pathLength="100"
@@ -118,7 +118,7 @@ export default function HalfPieChart({
             strokeWidth={thickness}
             strokeLinecap="butt"
             className="text-slate-100"
-          />
+          /> */}
 
           <g filter={`url(#${glowId})`} opacity={0.35}>
             {renderSegments()}
@@ -131,46 +131,50 @@ export default function HalfPieChart({
 
           <text
             x="100"
-            y="96"
+            y="86"
             textAnchor="middle"
-            className="fill-slate-900 font-mono text-[18px] font-bold tabular-nums"
+            className="fill-base font-mono font-bold tabular-nums"
           >
             {total}
           </text>
           <text
             x="100"
-            y="110"
+            y="100"
             textAnchor="middle"
-            className="fill-slate-500 text-[7px] uppercase tracking-[0.18em]"
+            className="fill-neutral text-[7px]"
           >
-            patients
+            Total Patients
           </text>
         </svg>
       </div>
 
       {showLegend && (
-        <ul className="grid grid-cols-1 gap-2 text-sm">
-          {data.map((item) => (
-            <li
-              key={item.label}
-              className="flex items-center justify-between gap-3"
-            >
-              <span className="flex min-w-0 items-center gap-2">
-                <span
-                  className="h-3 w-3 shrink-0 rounded-full"
-                  style={{
-                    backgroundColor: item.color,
-                    boxShadow: `0 0 8px 1px ${item.color}`,
-                  }}
-                />
-                <span className="truncate text-slate-600">{item.label}</span>
-              </span>
-              <span className="font-mono font-bold tabular-nums text-slate-800">
-                {item.value}
-              </span>
-            </li>
-          ))}
-        </ul>
+        <div className="grid grid-cols-1 gap-4 text-sm">
+          {data.map((item) => {
+            if (item.value === 0) return null
+
+            return (
+              <div
+                key={item.label}
+                className="flex items-center justify-between gap-3"
+              >
+                <span className="flex min-w-0 items-center gap-2">
+                  <span
+                    className="h-3 w-3 shrink-0 rounded-full"
+                    style={{
+                      backgroundColor: item.color,
+                      // boxShadow: `0 0 8px 1px ${item.color}`,
+                    }}
+                  />
+                  <span className="truncate text-neutral">{item.label}</span>
+                </span>
+                <span className="font-mono font-bold tabular-nums">
+                  {item.value}
+                </span>
+              </div>
+            )
+          })}
+        </div>
       )}
     </div>
   )
