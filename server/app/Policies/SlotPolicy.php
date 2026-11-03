@@ -11,12 +11,20 @@ class SlotPolicy
 {
     public function viewAny(User $user): bool
     {
+        if ($user->profile?->role === UserRole::Superadmin) {
+            return true;
+        }
+
         return $this->isActiveMember($user)
             && in_array($user->profile?->role, [UserRole::Patient, UserRole::Clinician], true);
     }
 
     public function view(User $user, Slot $slot): bool
     {
+        if ($user->profile?->role === UserRole::Superadmin) {
+            return true;
+        }
+
         if (! $this->isActiveMember($user)) {
             return false;
         }

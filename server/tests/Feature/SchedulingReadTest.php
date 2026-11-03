@@ -114,6 +114,23 @@ class SchedulingReadTest extends TestCase
             ->assertJsonValidationErrors('date_to');
     }
 
+    public function test_superadmin_can_read_all_slots_including_hidden_slots(): void
+    {
+        $firstClinician = $this->createUser(UserRole::Clinician);
+        $secondClinician = $this->createUser(UserRole::Clinician);
+        $hidden = $this->createSlot($firstClinician, now()->subDay(), status: 'CANCELLED', hidden: true);
+        $this->createSlot($secondClinician, now()->addDay());
+        $superadmin = $this->createUser(UserRole::Superadmin);
+
+        $this->actingAs($superadmin)->getJson('/api/v1/slots')
+            ->assertOk()
+            ->assertJsonCount(2, 'data')
+            ->assertJsonFragment(['id' => $hidden->id, 'is_hidden' => true]);
+        $this->getJson("/api/v1/slots/{$hidden->id}")
+            ->assertOk()
+            ->assertJsonPath('data.id', $hidden->id);
+    }
+
     private function createSlot(User $clinician, DateTimeInterface $startsAt, string $status = 'FREE', bool $hidden = false): Slot
     {
         $start = CarbonImmutable::instance($startsAt)->utc();

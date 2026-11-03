@@ -25,7 +25,7 @@ class SlotController extends Controller
 
         if ($user->profile->role === UserRole::Clinician) {
             $query->where('clinician_id', $user->id);
-        } else {
+        } elseif ($user->profile->role === UserRole::Patient) {
             $query->where('status', 'FREE')
                 ->where('is_hidden', false)
                 ->where('start_at', '>', now())

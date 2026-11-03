@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Actions\BookAppointment;
 use App\Actions\TransitionAppointment;
+use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AppointmentReadRequest;
 use App\Http\Requests\StoreAppointmentRequest;
@@ -24,10 +25,13 @@ class AppointmentController extends Controller
         Gate::authorize('viewAny', Appointment::class);
         $user = $request->user();
         $query = Appointment::query()
-            ->with(['slot:id,start_at,end_at,status', 'patient:id,name,email', 'clinician:id,name,email', 'clinician.profile:user_id,diagnosis_id', 'clinician.profile.diagnosis:id,label,value'])
-            ->where(fn (Builder $appointments): Builder => $appointments
+            ->with(['slot:id,start_at,end_at,status', 'patient:id,name,email', 'clinician:id,name,email', 'clinician.profile:user_id,diagnosis_id', 'clinician.profile.diagnosis:id,label,value']);
+
+        if ($user->profile?->role !== UserRole::Superadmin) {
+            $query->where(fn (Builder $appointments): Builder => $appointments
                 ->where('patient_id', $user->id)
                 ->orWhere('clinician_id', $user->id));
+        }
 
         if ($request->filled('date_from')) {
             $query->whereHas('slot', fn (Builder $slots): Builder => $slots->where('start_at', '>=', CarbonImmutable::parse($request->validated('date_from'), 'UTC')->startOfDay()));
@@ -45,13 +49,15 @@ class AppointmentController extends Controller
 
     public function show(AppointmentReadRequest $request, string $appointment): AppointmentResource
     {
-        $record = Appointment::query()
-            ->whereKey($appointment)
-            ->where(fn (Builder $appointments): Builder => $appointments
+        $query = Appointment::query()->whereKey($appointment);
+
+        if ($request->user()->profile?->role !== UserRole::Superadmin) {
+            $query->where(fn (Builder $appointments): Builder => $appointments
                 ->where('patient_id', $request->user()->id)
-                ->orWhere('clinician_id', $request->user()->id))
-            ->with(['slot', 'patient:id,name,email', 'clinician:id,name,email', 'clinician.profile:user_id,diagnosis_id', 'clinician.profile.diagnosis:id,label,value', 'encounter', 'events'])
-            ->firstOrFail();
+                ->orWhere('clinician_id', $request->user()->id));
+        }
+
+        $record = $query->with(['slot', 'patient:id,name,email', 'clinician:id,name,email', 'clinician.profile:user_id,diagnosis_id', 'clinician.profile.diagnosis:id,label,value', 'encounter', 'events'])->firstOrFail();
         Gate::authorize('view', $record);
 
         return AppointmentResource::make($record);

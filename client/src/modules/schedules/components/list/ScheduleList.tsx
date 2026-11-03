@@ -11,9 +11,11 @@ import { formatDate } from '#/utils/useDate'
 
 import ScheduleFilters from './ScheduleFilters'
 import AppointmentPill from '#/modules/appointments/components/AppointmentPill'
+import { useAuthGuard } from '#/modules/auth/hooks/useAuth'
 import { CircleCheck, CircleX, ChevronDown, ChevronUp } from 'lucide-react'
 
 export default function ScheduleList() {
+  const { role } = useAuthGuard()
   const search = useSearch({ from: '/_private/(clinician)/schedules/' })
   const navigate = useNavigate({ from: '/schedules/' })
 
@@ -48,17 +50,25 @@ export default function ScheduleList() {
     <div className="space-y-4">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <ScheduleFilters from={from} sort={sort} updateSearch={updateSearch} />
-        <Link to="/schedules/create" className="btn btn-neutral">
-          Create Schedule
-        </Link>
+        {role === 'clinician' && (
+          <Link to="/schedules/create" className="btn btn-neutral">
+            Create Schedule
+          </Link>
+        )}
       </div>
       <div className="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden flex flex-col">
         {isLoading ? (
-          <StateLoading />
+          <StateLoading message="Loading slots..." />
         ) : isError ? (
-          <StateError />
+          <StateError
+            title="Slots unavailable"
+            message="We couldn't load the slot list. Please try again."
+          />
         ) : slots.length === 0 ? (
-          <StateNull />
+          <StateNull
+            title="No slots found"
+            message="No slots match the selected filters."
+          />
         ) : (
           <TableBase
             data={slots}

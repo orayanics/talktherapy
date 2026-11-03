@@ -27,6 +27,16 @@ export const superadmin_NAV_ITEMS = [
     icon: <User size={16} />,
   },
   {
+    label: 'Appointments',
+    to: '/appointments',
+    icon: <ClipboardClock size={16} />,
+  },
+  {
+    label: 'Slots',
+    to: '/schedules',
+    icon: <Calendar size={16} />,
+  },
+  {
     label: 'Content',
     to: '/content',
     icon: <Clapperboard size={16} />,

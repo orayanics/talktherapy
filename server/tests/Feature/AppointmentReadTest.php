@@ -61,6 +61,24 @@ class AppointmentReadTest extends TestCase
             ->assertJsonPath('meta.per_page', 1)->assertJsonPath('meta.total', 1);
     }
 
+    public function test_superadmin_can_read_all_appointments_without_transition_access(): void
+    {
+        [$patient, $clinician] = $this->users();
+        $first = $this->makeAppointment($patient, $clinician);
+        [$otherPatient, $otherClinician] = $this->users();
+        $this->makeAppointment($otherPatient, $otherClinician);
+        $superadmin = $this->createUser(UserRole::Superadmin);
+
+        $this->actingAs($superadmin)->getJson('/api/v1/appointments')
+            ->assertOk()
+            ->assertJsonCount(2, 'data');
+        $this->getJson("/api/v1/appointments/{$first->id}")
+            ->assertOk()
+            ->assertJsonPath('data.id', $first->id);
+        $this->postJson("/api/v1/appointments/{$first->id}/accept")
+            ->assertNotFound();
+    }
+
     private function appointment(): array
     {
         [$patient, $clinician] = $this->users();

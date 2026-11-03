@@ -54,8 +54,8 @@ export const Route = createFileRoute('/_private/(shared)/appointments/')({
 })
 
 function RouteComponent() {
-  const { is } = useAuthGuard()
-  const isClinician = is('clinician')
+  const { role } = useAuthGuard()
+  const isClinician = role === 'clinician'
 
   const search = useSearch({ from: '/_private/(shared)/appointments/' })
   const navigate = useNavigate({ from: '/appointments/' })
@@ -72,8 +72,11 @@ function RouteComponent() {
     fetchAppointments({ page }, { from, sort }),
   )
 
-  const { submit, reset: resetAction, apiError } =
-    useAppointmentAction(isClinician)
+  const {
+    submit,
+    reset: resetAction,
+    apiError,
+  } = useAppointmentAction(isClinician)
   const acceptAction = useAcceptAppointment()
   const completeAction = useCompleteAppointment()
   const [selected, setSelected] = useState<string | null>(null)
@@ -148,11 +151,17 @@ function RouteComponent() {
 
       <div className="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden flex flex-col">
         {isLoading ? (
-          <StateLoading />
+          <StateLoading message="Loading appointments..." />
         ) : isError ? (
-          <StateError />
+          <StateError
+            title="Appointments unavailable"
+            message="We couldn't load the appointment list. Please try again."
+          />
         ) : appointments.length === 0 ? (
-          <StateNull />
+          <StateNull
+            title="No appointments found"
+            message="No appointments match the selected filters."
+          />
         ) : (
           <TableBase
             data={appointments}
