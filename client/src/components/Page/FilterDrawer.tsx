@@ -1,6 +1,7 @@
-import { useId } from 'react'
+import { useState } from 'react'
 import type { ReactNode } from 'react'
 import { Filter } from 'lucide-react'
+import Drawer from '#/components/Drawer'
 
 export default function FilterDrawer({
   children,
@@ -11,41 +12,28 @@ export default function FilterDrawer({
   label?: string
   showIcon?: boolean
 }) {
-  const id = useId()
+  const [isOpen, setOpen] = useState(false)
   return (
-    <div className="drawer drawer-end w-fit">
-      <input id={id} type="checkbox" className="drawer-toggle" />
-
-      <div className="drawer-content w-fit">
-        <label
-          htmlFor={id}
-          className="btn btn-flat drawer-button"
-          aria-label="Open filters"
+    <Drawer
+      isOpen={isOpen}
+      onClose={() => setOpen(false)}
+      label={label}
+      className="w-fit"
+      contentClassName="w-fit"
+      panelClassName="min-h-full w-100 max-w-full bg-base-100 text-base-content"
+      content={
+        <button
+          type="button"
+          onClick={() => setOpen(true)}
+          className="btn btn-flat"
+          aria-label={`Open ${label}`}
         >
           {showIcon && <Filter size={16} />}
           {label}
-        </label>
-      </div>
-
-      <div className="drawer-side z-40">
-        <label
-          htmlFor={id}
-          aria-label="Close filters"
-          className="drawer-overlay"
-        />
-        <aside
-          aria-label="Filters"
-          className="min-h-full w-100 max-w-lg bg-base-100 text-base-content py-4 px-6"
-        >
-          <div className="flex items-center justify-between gap-4">
-            <p className="font-semibold">{label}</p>
-            <label htmlFor={id} className="btn btn-sm btn-neutral">
-              Close
-            </label>
-          </div>
-          <div>{children}</div>
-        </aside>
-      </div>
-    </div>
+        </button>
+      }
+    >
+      <div className="p-6">{children}</div>
+    </Drawer>
   )
 }
