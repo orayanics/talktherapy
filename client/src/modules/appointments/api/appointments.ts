@@ -23,6 +23,7 @@ export const fetchAppointments = (
     date_from: searchParams.from,
     date_to: searchParams.to,
     sort: searchParams.sort,
+    status: searchParams.status,
   }
   return queryOptions<AppointmentsResponse>({
     queryKey: ['appointments', query],

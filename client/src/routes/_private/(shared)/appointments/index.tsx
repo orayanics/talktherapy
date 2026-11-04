@@ -25,6 +25,7 @@ import { useState } from 'react'
 import { useAuthGuard } from '#/modules/auth/hooks/useAuth'
 import AppointmentPill from '#/modules/appointments/components/AppointmentPill'
 import { ChevronDown, ChevronUp } from 'lucide-react'
+import { toArray } from '#/utils/query'
 
 const searchSchema = z
   .object({
@@ -41,11 +42,24 @@ const searchSchema = z
       .transform((v) => v?.toLowerCase())
       .refine((v) => !v || v === 'asc' || v === 'desc')
       .transform((v) => (v === 'asc' || v === 'desc' ? v : undefined)),
+    status: z
+      .any()
+      .optional()
+      .transform((v) =>
+        toArray(v).filter((value): value is string =>
+          ['PENDING', 'ACCEPTED', 'REJECT', 'CANCELLED', 'COMPLETED'].includes(
+            String(value).toUpperCase(),
+          ),
+        ),
+      ),
   })
   .transform((data) => ({
     ...(data.page !== 1 ? { page: data.page } : {}),
     ...(data.date_from ? { from: data.date_from } : {}),
     ...(data.sort ? { sort: data.sort } : {}),
+    ...(data.status.length
+      ? { status: data.status.map((value) => value.toUpperCase()) }
+      : {}),
   }))
 
 export const Route = createFileRoute('/_private/(shared)/appointments/')({
@@ -63,13 +77,14 @@ function RouteComponent() {
   const page = search.page ?? 1
   const from = search.from
   const sort = search.sort
+  const status = search.status
 
   const updateSearch = (next: Record<string, unknown>) => {
     navigate({ search: (prev) => ({ ...prev, ...next }) })
   }
 
   const { data, isLoading, isError } = useQuery(
-    fetchAppointments({ page }, { from, sort }),
+    fetchAppointments({ page }, { from, sort, status }),
   )
 
   const {

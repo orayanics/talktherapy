@@ -5,13 +5,13 @@ import {
 import { useQuery } from '@tanstack/react-query'
 import StateLoading from '#/components/State/StateLoading'
 import StateError from '#/components/State/StateError'
-import UserDistribution from './UserDistribution'
-import PatientsByDiagnosis from './PatientsByDiagnosis'
-import SlotsSummary from './SlotsSummary'
-import AppointmentsSummary from './AppointmentsSummary'
-import { AdminSummaryCards } from './DashboardSummaryCards'
+import UserDistribution from './admin/UserDistribution'
+import PatientsByDiagnosis from './admin/PatientsByDiagnosis'
+import SlotsSummary from './admin/SlotsSummary'
+import AppointmentsSummary from './admin/AppointmentsSummary'
+import { AdminSummary } from './admin/AdminSummary'
 
-export default function DashboardView() {
+export default function AdminsDashboard() {
   const statsQ = useQuery(fetchAdminStats())
   const summaryQ = useQuery(fetchDashboardSummary())
 
@@ -23,10 +23,10 @@ export default function DashboardView() {
 
   return (
     <div className="space-y-6">
-      <AdminSummaryCards summary={summary} />
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <AdminSummary summary={summary} />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <PatientsByDiagnosis stats={stats} />
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <UserDistribution stats={stats} />
           <SlotsSummary stats={stats} />
           <AppointmentsSummary stats={stats} />

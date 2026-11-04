@@ -15,7 +15,7 @@ import StateNull from '#/components/State/StateNull'
 import AppointmentPill from '#/modules/appointments/components/AppointmentPill'
 
 import { formatDate } from '#/utils/useDate'
-import { PatientSummaryCards } from './DashboardSummaryCards'
+import PatientSummary from './patient/PatientSummary'
 
 function upcomingRange() {
   const start = new Date()
@@ -46,7 +46,7 @@ export default function PatientDashboard() {
 
   return (
     <div className="space-y-6">
-      <PatientSummaryCards summary={summaryQ.data} />
+      <PatientSummary summary={summaryQ.data} />
       <section className="space-y-4">
         <div>
           <p className="text-lg font-bold text-slate-900 uppercase tracking-tight">

@@ -1,5 +1,6 @@
 import { StatusStat } from '#/components/Decorator/StatusAscii'
-import type { AdminStats } from '../api/dashboard'
+import { Link } from '@tanstack/react-router'
+import type { AdminStats } from '../../api/dashboard'
 
 interface AppointmentsSummaryProps {
   stats: AdminStats
@@ -16,6 +17,10 @@ export default function AppointmentsSummary({
           <StatusStat key={status} count={count} status={status} showIcon />
         ))}
       </div>
+
+      <Link to="/appointments" className="btn btn-neutral w-full mt-4">
+        View Appointments
+      </Link>
     </section>
   )
 }

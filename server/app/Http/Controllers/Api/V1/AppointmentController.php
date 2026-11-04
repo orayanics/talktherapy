@@ -39,6 +39,9 @@ class AppointmentController extends Controller
         if ($request->filled('date_to')) {
             $query->whereHas('slot', fn (Builder $slots): Builder => $slots->where('start_at', '<=', CarbonImmutable::parse($request->validated('date_to'), 'UTC')->endOfDay()));
         }
+        if ($request->filled('status')) {
+            $query->whereIn('status', $request->validated('status'));
+        }
 
         return AppointmentResource::collection($query
             ->orderBy('booked_at', $request->validated('sort', 'desc'))

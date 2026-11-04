@@ -61,6 +61,21 @@ class AppointmentReadTest extends TestCase
             ->assertJsonPath('meta.per_page', 1)->assertJsonPath('meta.total', 1);
     }
 
+    public function test_list_status_filter_returns_only_requested_statuses(): void
+    {
+        [$patient, $clinician] = $this->users();
+        $pending = $this->makeAppointment($patient, $clinician, null, 'PENDING');
+        $this->makeAppointment($patient, $clinician, null, 'COMPLETED');
+
+        $this->actingAs($patient)
+            ->getJson('/api/v1/appointments?status[]=COMPLETED')
+            ->assertOk()
+            ->assertJsonCount(1, 'data')
+            ->assertJsonPath('data.0.status', 'COMPLETED')
+            ->assertJsonPath('meta.total', 1)
+            ->assertJsonMissing(['id' => $pending->id]);
+    }
+
     public function test_superadmin_can_read_all_appointments_without_transition_access(): void
     {
         [$patient, $clinician] = $this->users();
@@ -94,7 +109,7 @@ class AppointmentReadTest extends TestCase
         return [$this->createUser(UserRole::Patient), $this->createUser(UserRole::Clinician)];
     }
 
-    private function makeAppointment(User $patient, User $clinician, ?string $start = null): Appointment
+    private function makeAppointment(User $patient, User $clinician, ?string $start = null, string $status = 'PENDING'): Appointment
     {
         $schedule = Schedule::factory()->create(['clinician_id' => $clinician->id]);
         $slotStart = $start === null ? now()->addDays(3) : now()->parse($start);
@@ -102,13 +117,13 @@ class AppointmentReadTest extends TestCase
             'clinician_id' => $clinician->id,
             'start_at' => $slotStart,
             'end_at' => $slotStart->copy()->addHour(),
-            'status' => 'PENDING',
+            'status' => $status,
         ]);
 
         return Appointment::factory()->for($slot)->create([
             'patient_id' => $patient->id,
             'clinician_id' => $clinician->id,
-            'status' => 'PENDING',
+            'status' => $status,
         ]);
     }
 

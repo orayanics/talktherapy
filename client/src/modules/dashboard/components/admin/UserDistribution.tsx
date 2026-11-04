@@ -1,5 +1,5 @@
 import { Link } from '@tanstack/react-router'
-import type { AdminStats } from '../api/dashboard'
+import type { AdminStats } from '../../api/dashboard'
 import { RoleStat } from '#/components/Decorator/RoleAscii'
 
 interface UserDistributionProps {

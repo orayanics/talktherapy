@@ -12,7 +12,7 @@ function LoginRoute() {
   return (
     <div className="min-h-screen h-100">
       <div className="grid grid-cols-6 h-full relative">
-        <img
+        {/* <img
           src={TEMP_IMAGE_URL}
           alt="Therapy Session"
           className="absolute z-1 object-cover w-full h-full blur-sm"
@@ -21,7 +21,7 @@ function LoginRoute() {
           src={TEMP_IMAGE_URL}
           alt="Therapy Session"
           className="absolute z-0 object-cover w-full h-full"
-        />
+        /> */}
 
         <div
           className="z-1

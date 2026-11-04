@@ -19,8 +19,8 @@ import AcceptAppointmentModal from '#/modules/appointments/components/AcceptAppo
 import useAcceptAppointment from '#/modules/appointments/hooks/useAcceptAppointment'
 import CompleteAppointmentModal from '#/modules/appointments/components/CompleteAppointmentModal'
 import useCompleteAppointment from '#/modules/appointments/hooks/useCompleteAppointment'
-import { ClinicianSummaryCards } from './DashboardSummaryCards'
-import ScheduleData from './ScheduleData'
+import ScheduleData from './clinician/ScheduleData'
+import ClinicianSummary from './clinician/ClinicianSummary'
 
 export default function ClinicianDashboard() {
   const [selected, setSelected] = useState<string | null>(null)
@@ -117,7 +117,7 @@ export default function ClinicianDashboard() {
 
   return (
     <div className="space-y-6">
-      <ClinicianSummaryCards summary={summaryQ.data} />
+      <ClinicianSummary summary={summaryQ.data} />
       <section className="space-y-4">
         <div>
           <p className="text-lg font-bold text-slate-900 uppercase tracking-tight">

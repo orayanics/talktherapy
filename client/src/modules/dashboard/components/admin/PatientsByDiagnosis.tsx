@@ -1,6 +1,6 @@
 import { Link } from '@tanstack/react-router'
-import type { AdminStats } from '../api/dashboard'
-import HalfPieChart from './HalfPieChart'
+import type { AdminStats } from '../../api/dashboard'
+import HalfPieChart from '../../../../components/Chart/HalfPieChart'
 
 interface PatientsByDiagnosisProps {
   stats: AdminStats

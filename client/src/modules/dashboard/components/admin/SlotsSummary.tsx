@@ -1,5 +1,6 @@
 import { StatusStat } from '#/components/Decorator/StatusAscii'
-import type { AdminStats } from '../api/dashboard'
+import { Link } from '@tanstack/react-router'
+import type { AdminStats } from '../../api/dashboard'
 
 interface SlotsSummaryProps {
   stats: AdminStats
@@ -14,6 +15,10 @@ export default function SlotsSummary({ stats }: SlotsSummaryProps) {
           <StatusStat key={status} count={count} status={status} showIcon />
         ))}
       </div>
+
+      <Link to="/schedules" className="btn btn-neutral w-full mt-4">
+        View Slots
+      </Link>
     </section>
   )
 }
