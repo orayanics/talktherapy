@@ -12,7 +12,7 @@ export function SearchFilter({
   placeholder?: string
 }) {
   return (
-    <label className="input min-w-0 w-full">
+    <label className="input min-w-0 w-fit">
       <span className="sr-only">{label}</span>
       <input
         type="search"

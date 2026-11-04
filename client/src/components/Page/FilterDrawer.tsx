@@ -2,19 +2,28 @@ import { useId } from 'react'
 import type { ReactNode } from 'react'
 import { Filter } from 'lucide-react'
 
-export default function FilterDrawer({ children }: { children: ReactNode }) {
+export default function FilterDrawer({
+  children,
+  label = 'Filters',
+  showIcon = true,
+}: {
+  children: ReactNode
+  label?: string
+  showIcon?: boolean
+}) {
   const id = useId()
   return (
-    <div className="drawer drawer-end">
+    <div className="drawer drawer-end w-fit">
       <input id={id} type="checkbox" className="drawer-toggle" />
 
-      <div className="drawer-content">
+      <div className="drawer-content w-fit">
         <label
           htmlFor={id}
           className="btn btn-flat drawer-button"
           aria-label="Open filters"
         >
-          <Filter size={16} /> Filters
+          {showIcon && <Filter size={16} />}
+          {label}
         </label>
       </div>
 
@@ -29,7 +38,7 @@ export default function FilterDrawer({ children }: { children: ReactNode }) {
           className="min-h-full w-100 max-w-lg bg-base-100 text-base-content py-4 px-6"
         >
           <div className="flex items-center justify-between gap-4">
-            <p className="font-semibold">Filters</p>
+            <p className="font-semibold">{label}</p>
             <label htmlFor={id} className="btn btn-sm btn-neutral">
               Close
             </label>
