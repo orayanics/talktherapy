@@ -20,7 +20,7 @@ export default function FilterDrawer({
       label={label}
       className="w-fit"
       contentClassName="w-fit"
-      panelClassName="min-h-full w-100 max-w-full bg-base-100 text-base-content"
+      panelClassName="min-h-full w-100 max-w-md bg-base-100 text-base-content"
       content={
         <button
           type="button"

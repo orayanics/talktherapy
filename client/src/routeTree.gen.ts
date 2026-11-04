@@ -32,7 +32,6 @@ import { Route as SessionRoomRoomIdRouteImport } from './routes/_session/room/$r
 import { Route as PrivateadmSharedUsersIndexRouteImport } from './routes/_private/(adm-shared)/users/index'
 import { Route as PrivateclinicianPatientsIndexRouteImport } from './routes/_private/(clinician)/patients/index'
 import { Route as PrivateclinicianSchedulesIndexRouteImport } from './routes/_private/(clinician)/schedules/index'
-import { Route as PrivateclinicianSchedulesSlotIdRouteImport } from './routes/_private/(clinician)/schedules/$slotId'
 import { Route as PrivateclinicianSchedulesCreateRouteImport } from './routes/_private/(clinician)/schedules/create'
 import { Route as PrivatepatientRecordsIndexRouteImport } from './routes/_private/(patient)/records.index'
 import { Route as PrivatepatientRecordsSoapIdRouteImport } from './routes/_private/(patient)/records.$soapId'
@@ -169,12 +168,6 @@ const PrivateclinicianSchedulesIndexRoute =
     path: '/schedules/',
     getParentRoute: () => PrivateclinicianRouteRoute,
   } as any)
-const PrivateclinicianSchedulesSlotIdRoute =
-  PrivateclinicianSchedulesSlotIdRouteImport.update({
-    id: '/schedules/$slotId',
-    path: '/schedules/$slotId',
-    getParentRoute: () => PrivateclinicianRouteRoute,
-  } as any)
 const PrivateclinicianSchedulesCreateRoute =
   PrivateclinicianSchedulesCreateRouteImport.update({
     id: '/schedules/create',
@@ -304,7 +297,6 @@ export interface FileRoutesByFullPath {
   '/room/$roomId': typeof SessionRoomRoomIdRoute
   '/profile/': typeof PrivateProfileIndexRoute
   '/content': typeof PrivatesharedContentAdmRouteRouteWithChildren
-  '/schedules/$slotId': typeof PrivateclinicianSchedulesSlotIdRoute
   '/schedules/create': typeof PrivateclinicianSchedulesCreateRoute
   '/records/$soapId': typeof PrivatepatientRecordsSoapIdRoute
   '/appointments/$appointmentId': typeof PrivatesharedAppointmentsAppointmentIdRoute
@@ -344,7 +336,6 @@ export interface FileRoutesByTo {
   '/room/$roomId': typeof SessionRoomRoomIdRoute
   '/profile': typeof PrivateProfileIndexRoute
   '/content': typeof PrivatesharedContentIndexRoute
-  '/schedules/$slotId': typeof PrivateclinicianSchedulesSlotIdRoute
   '/schedules/create': typeof PrivateclinicianSchedulesCreateRoute
   '/records/$soapId': typeof PrivatepatientRecordsSoapIdRoute
   '/appointments/$appointmentId': typeof PrivatesharedAppointmentsAppointmentIdRoute
@@ -389,7 +380,6 @@ export interface FileRoutesById {
   '/_session/room/$roomId': typeof SessionRoomRoomIdRoute
   '/_private/profile/': typeof PrivateProfileIndexRoute
   '/_private/(shared)/content/_adm': typeof PrivatesharedContentAdmRouteRouteWithChildren
-  '/_private/(clinician)/schedules/$slotId': typeof PrivateclinicianSchedulesSlotIdRoute
   '/_private/(clinician)/schedules/create': typeof PrivateclinicianSchedulesCreateRoute
   '/_private/(patient)/records/$soapId': typeof PrivatepatientRecordsSoapIdRoute
   '/_private/(shared)/appointments/$appointmentId': typeof PrivatesharedAppointmentsAppointmentIdRoute
@@ -431,7 +421,6 @@ export interface FileRouteTypes {
     | '/room/$roomId'
     | '/profile/'
     | '/content'
-    | '/schedules/$slotId'
     | '/schedules/create'
     | '/records/$soapId'
     | '/appointments/$appointmentId'
@@ -471,7 +460,6 @@ export interface FileRouteTypes {
     | '/room/$roomId'
     | '/profile'
     | '/content'
-    | '/schedules/$slotId'
     | '/schedules/create'
     | '/records/$soapId'
     | '/appointments/$appointmentId'
@@ -515,7 +503,6 @@ export interface FileRouteTypes {
     | '/_session/room/$roomId'
     | '/_private/profile/'
     | '/_private/(shared)/content/_adm'
-    | '/_private/(clinician)/schedules/$slotId'
     | '/_private/(clinician)/schedules/create'
     | '/_private/(patient)/records/$soapId'
     | '/_private/(shared)/appointments/$appointmentId'
@@ -710,13 +697,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivateclinicianSchedulesIndexRouteImport
       parentRoute: typeof PrivateclinicianRouteRoute
     }
-    '/_private/(clinician)/schedules/$slotId': {
-      id: '/_private/(clinician)/schedules/$slotId'
-      path: '/schedules/$slotId'
-      fullPath: '/schedules/$slotId'
-      preLoaderRoute: typeof PrivateclinicianSchedulesSlotIdRouteImport
-      parentRoute: typeof PrivateclinicianRouteRoute
-    }
     '/_private/(clinician)/schedules/create': {
       id: '/_private/(clinician)/schedules/create'
       path: '/schedules/create'
@@ -873,7 +853,6 @@ const PrivateadmSharedRouteRouteWithChildren =
   )
 
 interface PrivateclinicianRouteRouteChildren {
-  PrivateclinicianSchedulesSlotIdRoute: typeof PrivateclinicianSchedulesSlotIdRoute
   PrivateclinicianSchedulesCreateRoute: typeof PrivateclinicianSchedulesCreateRoute
   PrivateclinicianPatientsIndexRoute: typeof PrivateclinicianPatientsIndexRoute
   PrivateclinicianSchedulesIndexRoute: typeof PrivateclinicianSchedulesIndexRoute
@@ -884,7 +863,6 @@ interface PrivateclinicianRouteRouteChildren {
 }
 
 const PrivateclinicianRouteRouteChildren: PrivateclinicianRouteRouteChildren = {
-  PrivateclinicianSchedulesSlotIdRoute: PrivateclinicianSchedulesSlotIdRoute,
   PrivateclinicianSchedulesCreateRoute: PrivateclinicianSchedulesCreateRoute,
   PrivateclinicianPatientsIndexRoute: PrivateclinicianPatientsIndexRoute,
   PrivateclinicianSchedulesIndexRoute: PrivateclinicianSchedulesIndexRoute,

@@ -26,6 +26,7 @@ import { useAuthGuard } from '#/modules/auth/hooks/useAuth'
 import AppointmentPill from '#/modules/appointments/components/AppointmentPill'
 import { ChevronDown, ChevronUp } from 'lucide-react'
 import { toArray } from '#/utils/query'
+import AppointmentDetailsDrawer from '#/modules/appointments/components/AppointmentDetailsDrawer'
 
 const searchSchema = z
   .object({
@@ -98,6 +99,9 @@ function RouteComponent() {
   const [open, setOpen] = useState(false)
   const [openAccept, setOpenAccept] = useState(false)
   const [openComplete, setOpenComplete] = useState(false)
+  const [detailsAppointmentId, setDetailsAppointmentId] = useState<
+    string | null
+  >(null)
 
   const appointments = data?.data ?? []
   const meta =
@@ -200,12 +204,13 @@ function RouteComponent() {
                 ),
                 accessor: 'slot',
                 render: (row) => (
-                  <Link
-                    to="/appointments/$appointmentId"
-                    params={{ appointmentId: row.id }}
+                  <button
+                    type="button"
+                    className="link link-hover"
+                    onClick={() => setDetailsAppointmentId(row.id)}
                   >
                     {formatDate(row.slot.start_at)}
-                  </Link>
+                  </button>
                 ),
               },
               {
@@ -309,6 +314,11 @@ function RouteComponent() {
         meta={meta}
         page={page}
         updateSearch={(next) => updateSearch({ page: next.page })}
+      />
+
+      <AppointmentDetailsDrawer
+        appointmentId={detailsAppointmentId}
+        onClose={() => setDetailsAppointmentId(null)}
       />
 
       <AppointmentActionModal

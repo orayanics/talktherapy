@@ -22,7 +22,7 @@ export function TableBase<T>({
 }: TableProps<T>) {
   return (
     <div className="overflow-x-auto w-full">
-      <table className={`table w-full ${className ?? ''}`}>
+      <table className={`table w-full px-4 ${className ?? ''}`}>
         <thead>
           <tr>
             {columns.map((col, i) => (

@@ -13,6 +13,8 @@ import ScheduleFilters from './ScheduleFilters'
 import AppointmentPill from '#/modules/appointments/components/AppointmentPill'
 import { useAuthGuard } from '#/modules/auth/hooks/useAuth'
 import { CircleCheck, CircleX, ChevronDown, ChevronUp } from 'lucide-react'
+import { useState } from 'react'
+import SlotDetailsDrawer from './SlotDetailsDrawer'
 
 export default function ScheduleList() {
   const { role } = useAuthGuard()
@@ -22,6 +24,7 @@ export default function ScheduleList() {
   const page = search.page ?? 1
   const from = search.from
   const sort = search.sort ?? 'asc'
+  const [selectedSlotId, setSelectedSlotId] = useState<string | null>(null)
 
   const updateSearch = (next: Record<string, unknown>) => {
     navigate({
@@ -78,9 +81,13 @@ export default function ScheduleList() {
                 header: 'No',
                 accessor: 'id',
                 render: (row) => (
-                  <Link to="/schedules/$slotId" params={{ slotId: row.id }}>
+                  <button
+                    type="button"
+                    className="link link-hover"
+                    onClick={() => setSelectedSlotId(row.id)}
+                  >
                     {slots.indexOf(row) + 1}
-                  </Link>
+                  </button>
                 ),
               },
               {
@@ -101,9 +108,13 @@ export default function ScheduleList() {
                 ),
                 accessor: 'start_at',
                 render: (row) => (
-                  <Link to="/schedules/$slotId" params={{ slotId: row.id }}>
+                  <button
+                    type="button"
+                    className="link link-hover"
+                    onClick={() => setSelectedSlotId(row.id)}
+                  >
                     {formatDate(row.start_at)}
-                  </Link>
+                  </button>
                 ),
               },
 
@@ -111,15 +122,15 @@ export default function ScheduleList() {
                 header: 'Time Schedule',
                 accessor: 'start_at',
                 render: (row) => (
-                  <Link
-                    to="/schedules/$slotId"
-                    params={{ slotId: row.id }}
+                  <button
+                    type="button"
                     className="flex gap-2"
+                    onClick={() => setSelectedSlotId(row.id)}
                   >
                     <div>{formatDate(row.start_at, 'p')}</div>
                     <div>to</div>
                     <div>{formatDate(row.end_at, 'p')}</div>
-                  </Link>
+                  </button>
                 ),
               },
               {
@@ -146,6 +157,10 @@ export default function ScheduleList() {
         meta={meta}
         page={page}
         updateSearch={(next) => updateSearch({ page: next.page })}
+      />
+      <SlotDetailsDrawer
+        slotId={selectedSlotId}
+        onClose={() => setSelectedSlotId(null)}
       />
     </div>
   )
