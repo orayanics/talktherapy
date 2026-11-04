@@ -26,7 +26,7 @@ const VARIANT_CONFIG: Record<GeneralVariant, VariantConfig> = {
   },
   success: {
     class: 'bg-green-50 text-green-700',
-    icon: <CircleCheck {...ICON_PROPS} className="mx-auto text-success-700" />,
+    icon: <CircleCheck {...ICON_PROPS} className="mx-auto text-green-700" />,
   },
   warning: {
     class: 'bg-amber-50 text-amber-700',
@@ -36,7 +36,9 @@ const VARIANT_CONFIG: Record<GeneralVariant, VariantConfig> = {
 
 interface ModalHeaderProps {
   variant?: GeneralVariant
-  title?: string
+  title?: ReactNode
+  titleId?: string
+  descriptionId?: string
   description?: ReactNode
   showIcon?: boolean
 }
@@ -46,6 +48,8 @@ export default function ModalHeader({
   title = 'Header',
   description,
   showIcon = true,
+  titleId,
+  descriptionId,
 }: ModalHeaderProps) {
   const { class: variantClass, icon } = VARIANT_CONFIG[variant]
 
@@ -53,9 +57,13 @@ export default function ModalHeader({
     <div className={`${variantClass} p-6 text-center flex flex-col gap-4`}>
       {showIcon && icon}
       <div>
-        <p className="text-xl font-bold text-base-content my-0!">{title}</p>
+        <h2 id={titleId} className="text-xl font-bold text-base-content my-0!">
+          {title}
+        </h2>
         {description && (
-          <p className="mt-1 leading-relaxed my-0!">{description}</p>
+          <p id={descriptionId} className="mt-1 leading-relaxed my-0!">
+            {description}
+          </p>
         )}
       </div>
     </div>

@@ -1,15 +1,17 @@
-type Variant = 'default' | 'error' | 'success' | 'warning'
+import type { GeneralVariant } from './ModalHeader'
 
 interface ModalFooterProps {
   onClose: () => void
-  onSubmit: () => void
-  variant?: Variant
+  hasSubmit?: boolean
+  variant?: GeneralVariant
   isDisabled?: boolean
   label?: string
+  closeLabel?: string
 }
 
-const VARIANT_CLASS: Record<Variant, string> = {
+const VARIANT_CLASS: Record<GeneralVariant, string> = {
   default: 'btn-neutral',
+  info: 'btn-info',
   error: 'btn-error',
   success: 'btn-success',
   warning: 'btn-warning',
@@ -17,10 +19,11 @@ const VARIANT_CLASS: Record<Variant, string> = {
 
 export default function ModalFooter({
   onClose,
-  onSubmit,
+  hasSubmit = false,
   variant = 'default',
   isDisabled = false,
   label = 'Submit',
+  closeLabel = 'Close',
 }: ModalFooterProps) {
   return (
     <div className="border-t border-border p-4">
@@ -31,16 +34,17 @@ export default function ModalFooter({
           onClick={onClose}
           disabled={isDisabled}
         >
-          Close
+          {closeLabel}
         </button>
-        <button
-          type="button"
-          className={`btn ${VARIANT_CLASS[variant]}`}
-          onClick={onSubmit}
-          disabled={isDisabled}
-        >
-          {label}
-        </button>
+        {hasSubmit && (
+          <button
+            type="submit"
+            className={`btn ${VARIANT_CLASS[variant]}`}
+            disabled={isDisabled}
+          >
+            {label}
+          </button>
+        )}
       </div>
     </div>
   )

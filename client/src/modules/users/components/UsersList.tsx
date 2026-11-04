@@ -22,8 +22,6 @@ import { ChevronDown, ChevronUp } from 'lucide-react'
 import useActions from '#/modules/users/hooks/useActions'
 import { useSession } from '#/modules/auth/context/SessionContext'
 import Modal from '#/components/Modal/Modal'
-import ModalHeader from '#/components/Modal/ModalHeader'
-import ModalFooter from '#/components/Modal/ModalFooter'
 
 export default function UsersList() {
   const search = useSearch({ from: '/_private/(adm-shared)/users/' })
@@ -165,50 +163,39 @@ export default function UsersList() {
         onClose={() => setPatientModalOpen(false)}
       />
 
-      <Modal isOpen={Boolean(suspendingUser)} onClose={closeSuspension}>
-        <form
-          onSubmit={(event) => {
-            event.preventDefault()
-            void confirmSuspension()
+      <Modal
+        isOpen={Boolean(suspendingUser)}
+        onClose={closeSuspension}
+        title="Suspend Account"
+        description="Suspending an account will prevent the user from logging in or accessing their account. You can reactivate the account later if needed."
+        showIcon={false}
+        onSubmit={() => confirmSuspension()}
+        submitLabel="Suspend"
+        submitVariant="error"
+        isDisabled={isStatusPending}
+      >
+        <label htmlFor="suspension-reason" className="label">
+          Reason
+        </label>
+        <textarea
+          id="suspension-reason"
+          required
+          minLength={3}
+          maxLength={1000}
+          value={suspensionReason}
+          onChange={(event) => {
+            setSuspensionReason(event.target.value)
+            setSuspensionError('')
           }}
-        >
-          <ModalHeader
-            title="Suspend Account"
-            description="Suspending an account will prevent the user from logging in or accessing their account. You can reactivate the account later if needed."
-            showIcon={false}
-          />
-          <div className="p-8 space-y-6">
-            <label htmlFor="suspension-reason" className="label">
-              Reason
-            </label>
-            <textarea
-              id="suspension-reason"
-              required
-              minLength={3}
-              maxLength={1000}
-              value={suspensionReason}
-              onChange={(event) => {
-                setSuspensionReason(event.target.value)
-                setSuspensionError('')
-              }}
-              className="textarea textarea-bordered w-full"
-              rows={4}
-              autoFocus
-            />
-            {suspensionError && (
-              <span role="alert" className="text-sm text-error">
-                {suspensionError}
-              </span>
-            )}
-          </div>
-        </form>
-
-        <ModalFooter
-          onClose={closeSuspension}
-          onSubmit={confirmSuspension}
-          label="Suspend"
-          variant="error"
+          className="textarea textarea-bordered w-full"
+          rows={4}
+          autoFocus
         />
+        {suspensionError && (
+          <span role="alert" className="text-sm text-error">
+            {suspensionError}
+          </span>
+        )}
       </Modal>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
