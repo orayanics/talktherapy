@@ -1,6 +1,8 @@
 import { useForm } from 'react-hook-form'
-import ModalBody from '#/components/Modal/ModalBody'
-import { CircleCheck } from 'lucide-react'
+import Modal from '#/components/Modal/Modal'
+import ModalHeader from '#/components/Modal/ModalHeader'
+import ModalContent from '#/components/Modal/ModalContent'
+import ModalFooter from '#/components/Modal/ModalFooter'
 
 type Props = {
   isOpen: boolean
@@ -30,39 +32,36 @@ export default function AcceptAppointmentModal({
   })
 
   return (
-    <ModalBody isOpen={isOpen} onClose={onClose}>
-      <form
-        onSubmit={submit}
-        className="bg-white overflow-hidden shadow-2xl border border-slate-200"
-      >
-        <div className="bg-emerald-100 p-8 space-y-2 text-center">
-          <CircleCheck size={42} className="text-emerald-600 mx-auto" />
-          <h1 className="text-xl font-bold text-slate-800 tracking-tight">
-            Accept Appointment
-          </h1>
-          <p className="text-emerald-700 text-xs font-semibold uppercase tracking-widest mt-1">
-            Action Required
-          </p>
-        </div>
+    <Modal isOpen={isOpen} onClose={onClose}>
+      <form onSubmit={submit}>
+        <ModalHeader
+          title="Accept Appointment"
+          description="Action Required"
+          variant="info"
+        />
 
         <div className="p-8 space-y-6">
-          {apiError && <div className="alert alert-error" role="alert">{apiError}</div>}
-          <div className="text-center">
-            <p className="text-slate-600 leading-relaxed">
-              Accepting this appointment is <b>irreversible</b>.
-            </p>
-          </div>
-        </div>
+          {apiError && (
+            <div className="alert alert-error" role="alert">
+              {apiError}
+            </div>
+          )}
 
-        <div className="p-2 flex justify-end gap-2">
-          <button type="button" className="btn btn-neutral" onClick={onClose}>
-            Cancel
-          </button>
-          <button disabled={formState.isSubmitting} className="btn btn-success">
-            Accept
-          </button>
+          <ModalContent
+            text={
+              <>
+                Accepting this appointment is <b>irreversible</b>.
+              </>
+            }
+          />
         </div>
       </form>
-    </ModalBody>
+
+      <ModalFooter
+        onClose={onClose}
+        onSubmit={submit}
+        isDisabled={formState.isSubmitting}
+      />
+    </Modal>
   )
 }

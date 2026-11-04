@@ -21,7 +21,9 @@ import { ChevronDown, ChevronUp } from 'lucide-react'
 
 import useActions from '#/modules/users/hooks/useActions'
 import { useSession } from '#/modules/auth/context/SessionContext'
-import ModalBody from '#/components/Modal/ModalBody'
+import Modal from '#/components/Modal/Modal'
+import ModalHeader from '#/components/Modal/ModalHeader'
+import ModalFooter from '#/components/Modal/ModalFooter'
 
 export default function UsersList() {
   const search = useSearch({ from: '/_private/(adm-shared)/users/' })
@@ -74,12 +76,18 @@ export default function UsersList() {
   const [isClinicianModalOpen, setClinicianModalOpen] = useState(false)
   const [isAdminModalOpen, setAdminModalOpen] = useState(false)
   const [isPatientModalOpen, setPatientModalOpen] = useState(false)
-  const [suspendingUser, setSuspendingUser] = useState<(typeof users)[number] | null>(null)
+  const [suspendingUser, setSuspendingUser] = useState<
+    (typeof users)[number] | null
+  >(null)
   const [suspensionReason, setSuspensionReason] = useState('')
   const [suspensionError, setSuspensionError] = useState('')
   const isAsc = sort === 'asc'
 
-  const { suspendUser, reactivateUser, isPending: isStatusPending } = useActions()
+  const {
+    suspendUser,
+    reactivateUser,
+    isPending: isStatusPending,
+  } = useActions()
   const session = useSession()
   const canInviteAdmin = session.role === 'superadmin'
 
@@ -106,7 +114,7 @@ export default function UsersList() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex flex-row md:items-center justify-between gap-4">
         <UserFilters
           searchTerm={searchTerm}
           role={role}
@@ -114,7 +122,7 @@ export default function UsersList() {
           updateSearch={updateSearch}
         />
 
-        <Dropdown label="Add User" btnClassName="lg:w-auto w-full btn-neutral">
+        <Dropdown label="Invite User" btnClassName="btn-neutral">
           <div className="flex flex-col gap-2">
             {canInviteAdmin && (
               <>
@@ -157,29 +165,57 @@ export default function UsersList() {
         onClose={() => setPatientModalOpen(false)}
       />
 
-      <ModalBody isOpen={Boolean(suspendingUser)} onClose={closeSuspension}>
-        <form onSubmit={(event) => { event.preventDefault(); void confirmSuspension() }} className="bg-white p-6 space-y-5">
-          <div>
-            <h2 className="text-lg font-bold text-slate-900">Suspend account</h2>
-            <p className="mt-1 text-sm text-slate-600">This immediately prevents sign-in. The reason will be included in the audit record and email.</p>
-          </div>
-          <div>
-            <label htmlFor="suspension-reason" className="label">Reason</label>
-            <textarea id="suspension-reason" required minLength={3} maxLength={1000} value={suspensionReason} onChange={(event) => { setSuspensionReason(event.target.value); setSuspensionError('') }} className="textarea textarea-bordered w-full" rows={4} autoFocus />
-            {suspensionError && <p role="alert" className="mt-2 text-sm text-error">{suspensionError}</p>}
-          </div>
-          <div className="flex justify-end gap-2">
-            <button type="button" className="btn btn-ghost" onClick={closeSuspension}>Cancel</button>
-            <button type="submit" className="btn btn-error" disabled={isStatusPending}>{isStatusPending ? 'Suspending…' : 'Suspend account'}</button>
+      <Modal isOpen={Boolean(suspendingUser)} onClose={closeSuspension}>
+        <form
+          onSubmit={(event) => {
+            event.preventDefault()
+            void confirmSuspension()
+          }}
+        >
+          <ModalHeader
+            title="Suspend Account"
+            description="Suspending an account will prevent the user from logging in or accessing their account. You can reactivate the account later if needed."
+            showIcon={false}
+          />
+          <div className="p-8 space-y-6">
+            <label htmlFor="suspension-reason" className="label">
+              Reason
+            </label>
+            <textarea
+              id="suspension-reason"
+              required
+              minLength={3}
+              maxLength={1000}
+              value={suspensionReason}
+              onChange={(event) => {
+                setSuspensionReason(event.target.value)
+                setSuspensionError('')
+              }}
+              className="textarea textarea-bordered w-full"
+              rows={4}
+              autoFocus
+            />
+            {suspensionError && (
+              <span role="alert" className="text-sm text-error">
+                {suspensionError}
+              </span>
+            )}
           </div>
         </form>
-      </ModalBody>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <ModalFooter
+          onClose={closeSuspension}
+          onSubmit={confirmSuspension}
+          label="Suspend"
+          variant="error"
+        />
+      </Modal>
+
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {count && !countPending && !countError && <StatCards {...count} />}
       </div>
 
-      <div className="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden flex flex-col">
+      <div className="bg-white rounded-lg border border-border shadow-sm overflow-hidden flex flex-col">
         <div className="w-full p-4">
           {isPending ? (
             <StateLoading />
@@ -270,7 +306,11 @@ export default function UsersList() {
                         ) : user.status === 'active' ? (
                           <button
                             className="btn btn-sm btn-neutral"
-                            onClick={() => { setSuspendingUser(user); setSuspensionReason(''); setSuspensionError('') }}
+                            onClick={() => {
+                              setSuspendingUser(user)
+                              setSuspensionReason('')
+                              setSuspensionError('')
+                            }}
                           >
                             Suspend
                           </button>

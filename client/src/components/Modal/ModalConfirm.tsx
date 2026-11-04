@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import ModalBody from './ModalBody'
+import Modal from './Modal'
 import { XCircle } from 'lucide-react'
 
 interface ModalConfirmProps {
@@ -30,7 +30,7 @@ export default function ModalConfirm(props: ModalConfirmProps) {
   const { isLoading } = states
 
   return (
-    <ModalBody isOpen={isOpen} onClose={onCancel}>
+    <Modal isOpen={isOpen} onClose={onCancel}>
       <form
         onSubmit={(e) => {
           e.preventDefault()
@@ -63,6 +63,6 @@ export default function ModalConfirm(props: ModalConfirmProps) {
           </button>
         </div>
       </form>
-    </ModalBody>
+    </Modal>
   )
 }

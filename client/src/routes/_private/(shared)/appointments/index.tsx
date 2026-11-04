@@ -31,7 +31,7 @@ const searchSchema = z
   .object({
     page: z.preprocess((v) => Number(v ?? 1), z.number().positive()).default(1),
 
-    date_from: z
+    from: z
       .string()
       .optional()
       .transform((v) => (v && v.trim() !== '' ? v.trim() : undefined)),
@@ -55,7 +55,7 @@ const searchSchema = z
   })
   .transform((data) => ({
     ...(data.page !== 1 ? { page: data.page } : {}),
-    ...(data.date_from ? { from: data.date_from } : {}),
+    ...(data.from ? { from: data.from } : {}),
     ...(data.sort ? { sort: data.sort } : {}),
     ...(data.status.length
       ? { status: data.status.map((value) => value.toUpperCase()) }

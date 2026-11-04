@@ -1,9 +1,10 @@
 import { useEffect, useRef } from 'react'
+import type { ReactNode } from 'react'
 
 interface DropdownProps {
   label?: string
   onClick?: () => void
-  children?: React.ReactNode
+  children?: ReactNode
   className?: string
   btnClassName?: string
   position?: string
@@ -27,12 +28,12 @@ export default function Dropdown(props: DropdownProps) {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside)
     }
-  }, [dropdownRef])
+  }, [])
 
   return (
     <details
       ref={dropdownRef}
-      className={`dropdown ${position || 'dropdown-end'}`}
+      className={`shrink-0 dropdown ${position || 'dropdown-end'}`}
       onKeyDown={(event) => {
         if (event.key === 'Escape') {
           dropdownRef.current?.removeAttribute('open')
@@ -41,20 +42,24 @@ export default function Dropdown(props: DropdownProps) {
       }}
     >
       <summary
-        aria-haspopup="menu"
-        className={`btn ${btnClassName || ''}`}
+        className={`whitespace-nowrap btn ${btnClassName || ''}`}
         onClick={onClick}
       >
-        {label || 'Select Option'}
+        {label ?? 'Select Option'}
       </summary>
       <ul
-        className={`mt-2 dropdown-content menu bg-white rounded-lg z-50 p-2 shadow-md border border-slate ${className || ''}`}
+        className={`border border-border! dropdown-content menu bg-base-200 text-base-content rounded-box z-50 mt-0 w-52 p-2 shadow-sm ${className || ''}`}
         onClick={(event) => {
           const option = (event.target as HTMLElement).closest(
             'a, button, [role="menuitem"]',
           )
-          if (option && !option.hasAttribute('disabled')) {
+          if (
+            option &&
+            !option.hasAttribute('disabled') &&
+            option.getAttribute('aria-disabled') !== 'true'
+          ) {
             dropdownRef.current?.removeAttribute('open')
+            dropdownRef.current?.querySelector('summary')?.focus()
           }
         }}
       >

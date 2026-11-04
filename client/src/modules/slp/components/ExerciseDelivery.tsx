@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import Pagination from '#/components/Page/Pagination'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { api } from '#/lib/api/client'
 import { useAuthGuard } from '#/modules/auth/hooks/useAuth'
@@ -156,30 +157,11 @@ export default function ExerciseDelivery({
             </p>
           )}
           {meta && meta.last_page > 1 && (
-            <nav
-              className="flex items-center justify-between"
-              aria-label="Patient pages"
-            >
-              <button
-                type="button"
-                className="btn btn-sm"
-                disabled={page <= 1}
-                onClick={() => setPage((value) => value - 1)}
-              >
-                Previous
-              </button>
-              <span className="text-sm">
-                Page {meta.current_page} of {meta.last_page}
-              </span>
-              <button
-                type="button"
-                className="btn btn-sm"
-                disabled={page >= meta.last_page}
-                onClick={() => setPage((value) => value + 1)}
-              >
-                Next
-              </button>
-            </nav>
+            <Pagination
+              meta={meta}
+              page={page}
+              updateSearch={({ page }) => setPage(page)}
+            />
           )}
         </div>
       )}

@@ -76,7 +76,7 @@ export function RoleStat({
   return (
     <div
       className={cn(
-        'flex flex-col gap-2 rounded-md border border-border px-4 py-2 text-xs font-medium',
+        'flex flex-col gap-2 rounded-lg border border-border px-4 py-2 text-xs font-medium',
         style.pill,
         className,
       )}

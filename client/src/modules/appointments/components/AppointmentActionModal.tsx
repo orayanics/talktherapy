@@ -1,10 +1,12 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
-import ModalBody from '#/components/Modal/ModalBody'
+import Modal from '#/components/Modal/Modal'
 import { AppointmentActionSchema } from '../types/schema'
 import type { TAppointmentAction } from '../types/schema'
-import { CircleX } from 'lucide-react'
+import ModalFooter from '#/components/Modal/ModalFooter'
+import ModalHeader from '#/components/Modal/ModalHeader'
+import ModalContent from '#/components/Modal/ModalContent'
 
 type Props = {
   isOpen: boolean
@@ -69,41 +71,54 @@ export default function AppointmentActionModal({
   })
 
   return (
-    <ModalBody isOpen={isOpen} onClose={onClose}>
-      <form
-        onSubmit={submit}
-        className="bg-white overflow-hidden shadow-2xl border border-slate-200"
-      >
-        <div className="bg-rose-100 p-8 space-y-2 text-center">
-          <CircleX size={42} className="text-rose-600 mx-auto" />
-          <h1 className="text-xl font-bold text-slate-800 tracking-tight">
-            {isClinician
+    <Modal isOpen={isOpen} onClose={onClose}>
+      <form onSubmit={submit}>
+        <ModalHeader
+          title={
+            isClinician
               ? FORM_CONTENT.clinician.header
-              : FORM_CONTENT.patient.header}
-          </h1>
-          <p className="text-rose-700 text-xs font-semibold uppercase tracking-widest mt-1">
-            Action Required
-          </p>
-        </div>
+              : FORM_CONTENT.patient.header
+          }
+          description="Action Required"
+          variant="error"
+        />
 
         <div className="p-8 space-y-6">
           {apiError && (
-            <div className="alert alert-soft alert-error" role="alert">{apiError}</div>
+            <div className="alert alert-soft alert-error" role="alert">
+              {apiError}
+            </div>
           )}
 
-          <div className="text-center">
-            <p className="text-slate-600 leading-relaxed">
-              {isClinician
+          <ModalContent
+            text={
+              isClinician
                 ? FORM_CONTENT.clinician.description
-                : FORM_CONTENT.patient.description}
-            </p>
-          </div>
+                : FORM_CONTENT.patient.description
+            }
+          />
 
           <div className="flex flex-col">
-            <label htmlFor="appointment-action-reason" className="label">Reason</label>
-            <textarea id="appointment-action-reason" {...register('reason')} className="textarea w-full" aria-invalid={Boolean(errors.reason)} aria-describedby={errors.reason ? 'appointment-action-reason-error' : undefined} />
+            <label htmlFor="appointment-action-reason" className="label">
+              Reason
+            </label>
+            <textarea
+              id="appointment-action-reason"
+              {...register('reason')}
+              className="textarea w-full"
+              aria-invalid={Boolean(errors.reason)}
+              aria-describedby={
+                errors.reason ? 'appointment-action-reason-error' : undefined
+              }
+            />
             {errors.reason && (
-              <p id="appointment-action-reason-error" role="alert" className="text-sm text-error">{errors.reason.message}</p>
+              <p
+                id="appointment-action-reason-error"
+                role="alert"
+                className="text-sm text-error"
+              >
+                {errors.reason.message}
+              </p>
             )}
           </div>
 
@@ -111,25 +126,29 @@ export default function AppointmentActionModal({
             <div className="flex items-center gap-2">
               <input
                 type="checkbox"
-                id="appointment-action-hidden" {...register('is_hidden')}
-                className="checkbox"
+                id="appointment-action-hidden"
+                {...register('is_hidden')}
+                className="checkbox checkbox-sm"
               />
-              <label htmlFor="appointment-action-hidden" className="label">Hide from List</label>
+              <label htmlFor="appointment-action-hidden" className="label">
+                Hide from List
+              </label>
             </div>
           )}
         </div>
-
-        <div className="p-2 flex justify-end gap-2">
-          <button type="button" className="btn btn-neutral" onClick={onClose}>
-            Close
-          </button>
-          <button disabled={isSubmitting} className="btn btn-error">
-            {isClinician
-              ? FORM_CONTENT.clinician.submitText
-              : FORM_CONTENT.patient.submitText}
-          </button>
-        </div>
       </form>
-    </ModalBody>
+
+      <ModalFooter
+        onClose={onClose}
+        onSubmit={submit}
+        isDisabled={isSubmitting}
+        label={
+          isClinician
+            ? FORM_CONTENT.clinician.submitText
+            : FORM_CONTENT.patient.submitText
+        }
+        variant="error"
+      />
+    </Modal>
   )
 }

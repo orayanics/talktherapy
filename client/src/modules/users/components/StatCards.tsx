@@ -34,20 +34,21 @@ export default function StatCards(props: UsersCount) {
       ].map((stat, i) => (
         <div
           key={i}
-          className="bg-white rounded-lg border border-slate-200 p-5 shadow-sm flex flex-col gap-3"
+          className="bg-white rounded-md border border-border p-4 flex flex-col gap-4"
         >
-          <div className="flex flex-row justify-between items-start">
-            <div className="w-10 h-10 rounded-full border border-slate-200/60 bg-white flex items-center justify-center shadow-sm">
+          <div className="flex flex-row gap-4 items-center">
+            <div className="w-10 h-10 rounded-full border border-border flex items-center justify-center">
               {stat.icon}
             </div>
+
+            <p className="text-base-content text-sm font-medium my-0!">
+              {stat.label}
+            </p>
           </div>
           <div>
             <div className="flex items-baseline gap-2 mb-1">
-              <h3 className="text-[1.8rem] leading-none font-bold font-serif text-slate-900 tracking-tight">
-                {stat.count}
-              </h3>
+              <span className="text-4xl font-bold">{stat.count}</span>
             </div>
-            <p className="text-slate-500 text-sm font-medium">{stat.label}</p>
           </div>
         </div>
       ))}

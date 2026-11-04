@@ -7,7 +7,7 @@ interface ModalBodyProps {
   onClose: () => void
 }
 
-export default function ModalBody(props: ModalBodyProps) {
+export default function Modal(props: ModalBodyProps) {
   const { children, onClose, className, isOpen } = props
   const dialogRef = useRef<HTMLDialogElement>(null)
 
@@ -24,7 +24,7 @@ export default function ModalBody(props: ModalBodyProps) {
   return (
     <dialog
       ref={dialogRef}
-      className={`modal modal-open modal-middle backdrop-blur-[1px] ${className || ''}`}
+      className={`modal modal-open modal-middle backdrop-blur-[1px] border-0! ${className || ''}`}
       onCancel={(event) => {
         event.preventDefault()
         onClose()

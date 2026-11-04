@@ -40,7 +40,7 @@ function RouteComponent() {
       <NotificationRealtime key={session.id} />
       <div className="flex w-screen h-screen">
         <Sidebar role={role}>
-          <main className="flex-1 min-h-full w-full overflow-auto">
+          <main className="p-2 flex-1 min-h-full w-full overflow-auto">
             <Outlet />
           </main>
         </Sidebar>
