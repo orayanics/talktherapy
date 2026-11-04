@@ -30,7 +30,6 @@ import { Route as PrivateProfileEditRouteImport } from './routes/_private/profil
 import { Route as PrivateProfileEmailChangeRouteImport } from './routes/_private/profile.email-change'
 import { Route as SessionRoomRoomIdRouteImport } from './routes/_session/room/$roomId'
 import { Route as PrivateadmSharedUsersIndexRouteImport } from './routes/_private/(adm-shared)/users/index'
-import { Route as PrivateadmSharedUsersUserIdRouteImport } from './routes/_private/(adm-shared)/users/$userId'
 import { Route as PrivateclinicianPatientsIndexRouteImport } from './routes/_private/(clinician)/patients/index'
 import { Route as PrivateclinicianSchedulesIndexRouteImport } from './routes/_private/(clinician)/schedules/index'
 import { Route as PrivateclinicianSchedulesSlotIdRouteImport } from './routes/_private/(clinician)/schedules/$slotId'
@@ -156,12 +155,6 @@ const PrivateadmSharedUsersIndexRoute =
   PrivateadmSharedUsersIndexRouteImport.update({
     id: '/users/',
     path: '/users/',
-    getParentRoute: () => PrivateadmSharedRouteRoute,
-  } as any)
-const PrivateadmSharedUsersUserIdRoute =
-  PrivateadmSharedUsersUserIdRouteImport.update({
-    id: '/users/$userId',
-    path: '/users/$userId',
     getParentRoute: () => PrivateadmSharedRouteRoute,
   } as any)
 const PrivateclinicianPatientsIndexRoute =
@@ -311,7 +304,6 @@ export interface FileRoutesByFullPath {
   '/room/$roomId': typeof SessionRoomRoomIdRoute
   '/profile/': typeof PrivateProfileIndexRoute
   '/content': typeof PrivatesharedContentAdmRouteRouteWithChildren
-  '/users/$userId': typeof PrivateadmSharedUsersUserIdRoute
   '/schedules/$slotId': typeof PrivateclinicianSchedulesSlotIdRoute
   '/schedules/create': typeof PrivateclinicianSchedulesCreateRoute
   '/records/$soapId': typeof PrivatepatientRecordsSoapIdRoute
@@ -352,7 +344,6 @@ export interface FileRoutesByTo {
   '/room/$roomId': typeof SessionRoomRoomIdRoute
   '/profile': typeof PrivateProfileIndexRoute
   '/content': typeof PrivatesharedContentIndexRoute
-  '/users/$userId': typeof PrivateadmSharedUsersUserIdRoute
   '/schedules/$slotId': typeof PrivateclinicianSchedulesSlotIdRoute
   '/schedules/create': typeof PrivateclinicianSchedulesCreateRoute
   '/records/$soapId': typeof PrivatepatientRecordsSoapIdRoute
@@ -398,7 +389,6 @@ export interface FileRoutesById {
   '/_session/room/$roomId': typeof SessionRoomRoomIdRoute
   '/_private/profile/': typeof PrivateProfileIndexRoute
   '/_private/(shared)/content/_adm': typeof PrivatesharedContentAdmRouteRouteWithChildren
-  '/_private/(adm-shared)/users/$userId': typeof PrivateadmSharedUsersUserIdRoute
   '/_private/(clinician)/schedules/$slotId': typeof PrivateclinicianSchedulesSlotIdRoute
   '/_private/(clinician)/schedules/create': typeof PrivateclinicianSchedulesCreateRoute
   '/_private/(patient)/records/$soapId': typeof PrivatepatientRecordsSoapIdRoute
@@ -441,7 +431,6 @@ export interface FileRouteTypes {
     | '/room/$roomId'
     | '/profile/'
     | '/content'
-    | '/users/$userId'
     | '/schedules/$slotId'
     | '/schedules/create'
     | '/records/$soapId'
@@ -482,7 +471,6 @@ export interface FileRouteTypes {
     | '/room/$roomId'
     | '/profile'
     | '/content'
-    | '/users/$userId'
     | '/schedules/$slotId'
     | '/schedules/create'
     | '/records/$soapId'
@@ -527,7 +515,6 @@ export interface FileRouteTypes {
     | '/_session/room/$roomId'
     | '/_private/profile/'
     | '/_private/(shared)/content/_adm'
-    | '/_private/(adm-shared)/users/$userId'
     | '/_private/(clinician)/schedules/$slotId'
     | '/_private/(clinician)/schedules/create'
     | '/_private/(patient)/records/$soapId'
@@ -709,13 +696,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivateadmSharedUsersIndexRouteImport
       parentRoute: typeof PrivateadmSharedRouteRoute
     }
-    '/_private/(adm-shared)/users/$userId': {
-      id: '/_private/(adm-shared)/users/$userId'
-      path: '/users/$userId'
-      fullPath: '/users/$userId'
-      preLoaderRoute: typeof PrivateadmSharedUsersUserIdRouteImport
-      parentRoute: typeof PrivateadmSharedRouteRoute
-    }
     '/_private/(clinician)/patients/': {
       id: '/_private/(clinician)/patients/'
       path: '/patients'
@@ -877,7 +857,6 @@ interface PrivateadmSharedRouteRouteChildren {
   PrivateadmSharedDiagnosesRoute: typeof PrivateadmSharedDiagnosesRoute
   PrivateadmSharedLogsRoute: typeof PrivateadmSharedLogsRoute
   PrivateadmSharedNotificationsRoute: typeof PrivateadmSharedNotificationsRoute
-  PrivateadmSharedUsersUserIdRoute: typeof PrivateadmSharedUsersUserIdRoute
   PrivateadmSharedUsersIndexRoute: typeof PrivateadmSharedUsersIndexRoute
 }
 
@@ -885,7 +864,6 @@ const PrivateadmSharedRouteRouteChildren: PrivateadmSharedRouteRouteChildren = {
   PrivateadmSharedDiagnosesRoute: PrivateadmSharedDiagnosesRoute,
   PrivateadmSharedLogsRoute: PrivateadmSharedLogsRoute,
   PrivateadmSharedNotificationsRoute: PrivateadmSharedNotificationsRoute,
-  PrivateadmSharedUsersUserIdRoute: PrivateadmSharedUsersUserIdRoute,
   PrivateadmSharedUsersIndexRoute: PrivateadmSharedUsersIndexRoute,
 }
 

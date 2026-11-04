@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { Link, useNavigate, useSearch } from '@tanstack/react-router'
+import { useNavigate, useSearch } from '@tanstack/react-router'
 import { fetchUsers, fetchUsersCount } from '#/modules/users/api/users'
 
 import StateError from '#/components/State/StateError'
@@ -18,6 +18,8 @@ import Dropdown from '#/components/Dropdown'
 import RegisterClinician from '#/modules/register/components/RegisterClinician'
 import RegisterPatientInvitation from '#/modules/register/components/RegisterPatientInvitation'
 import { ChevronDown, ChevronUp } from 'lucide-react'
+import UserDetailsDrawer from './UserDetailsDrawer'
+import type { AdminUser } from '#/modules/users/types/user'
 
 import useActions from '#/modules/users/hooks/useActions'
 import { useSession } from '#/modules/auth/context/SessionContext'
@@ -74,6 +76,7 @@ export default function UsersList() {
   const [isClinicianModalOpen, setClinicianModalOpen] = useState(false)
   const [isAdminModalOpen, setAdminModalOpen] = useState(false)
   const [isPatientModalOpen, setPatientModalOpen] = useState(false)
+  const [selectedUser, setSelectedUser] = useState<AdminUser | null>(null)
   const [suspendingUser, setSuspendingUser] = useState<
     (typeof users)[number] | null
   >(null)
@@ -163,6 +166,13 @@ export default function UsersList() {
         onClose={() => setPatientModalOpen(false)}
       />
 
+      {selectedUser && (
+        <UserDetailsDrawer
+          user={selectedUser}
+          onClose={() => setSelectedUser(null)}
+        />
+      )}
+
       <Modal
         isOpen={Boolean(suspendingUser)}
         onClose={closeSuspension}
@@ -218,7 +228,11 @@ export default function UsersList() {
                 {
                   header: 'Name',
                   render: (user) => (
-                    <div className="flex items-center gap-3">
+                    <button
+                      type="button"
+                      className="flex items-center gap-3 text-left"
+                      onClick={() => setSelectedUser(user)}
+                    >
                       <img
                         className="w-9 h-9 rounded-full"
                         src={`https://ui-avatars.com/api/?name=${encodeURIComponent(
@@ -227,18 +241,12 @@ export default function UsersList() {
                         alt={user.name}
                       />
                       <div>
-                        <Link
-                          to="/users/$userId"
-                          params={{ userId: user.id }}
-                          className="font-bold"
-                        >
-                          {user.name}
-                        </Link>
+                        <span className="font-bold">{user.name}</span>
                         <div className="text-xs text-slate-500">
                           {user.email}
                         </div>
                       </div>
-                    </div>
+                    </button>
                   ),
                 },
                 {
@@ -269,11 +277,7 @@ export default function UsersList() {
                 },
                 {
                   header: 'Status',
-                  render: (user) => (
-                    <>
-                      <StatusPill status={user.status} />
-                    </>
-                  ),
+                  render: (user) => <StatusPill status={user.status} />,
                 },
                 {
                   header: 'Actions',
@@ -285,14 +289,14 @@ export default function UsersList() {
                           ['patient', 'clinician'].includes(user.role))) ? (
                         user.status === 'suspended' ? (
                           <button
-                            className="btn btn-sm btn-neutral"
+                            className="btn btn-sm btn-success"
                             onClick={() => reactivateUser(user.id)}
                           >
                             Reactivate
                           </button>
                         ) : user.status === 'active' ? (
                           <button
-                            className="btn btn-sm btn-neutral"
+                            className="btn btn-sm btn-error"
                             onClick={() => {
                               setSuspendingUser(user)
                               setSuspensionReason('')
