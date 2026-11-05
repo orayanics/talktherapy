@@ -18,7 +18,7 @@ it('uses server pagination metadata and prevents navigation past the final page'
   fireEvent.click(screen.getByRole('button', { name: 'Previous page' }))
   expect(updateSearch).toHaveBeenCalledWith({ page: 2 })
   expect(
-    (screen.getByRole('button', { name: 'Next page' }) as HTMLButtonElement)
+    screen.getByRole<HTMLButtonElement>('button', { name: 'Next page' })
       .disabled,
   ).toBe(true)
 })

@@ -15,7 +15,7 @@ import type {
 } from '#/modules/content/types/schema'
 
 import { CONTENT } from '#/constants/message'
-import type { DiagnosisItem } from '#/modules/diagnoses/api/diagnoses'
+import type { DiagnosisItem } from '#/modules/diagnoses/types/diagnosis'
 
 export interface Tag {
   id: string
@@ -93,7 +93,7 @@ export const mutateCreateContent = () => {
 
   return useMutation({
     mutationFn: async (payload: TContentSchema) => {
-      const { data } = await api('/api/v1/content', {
+      const { data } = await api<{ data: Content }>('/api/v1/content', {
         method: 'POST',
         data: JSON.stringify(payload),
       })
@@ -115,10 +115,13 @@ export const mutateUpdateContent = (contentId: string) => {
 
   return useMutation({
     mutationFn: async (payload: TUpdateContentSchema) => {
-      const { data } = await api(`/api/v1/content/${contentId}`, {
-        method: 'PATCH',
-        data: JSON.stringify(payload),
-      })
+      const { data } = await api<{ data: Content }>(
+        `/api/v1/content/${contentId}`,
+        {
+          method: 'PATCH',
+          data: JSON.stringify(payload),
+        },
+      )
       return data
     },
     onSuccess: async () => {

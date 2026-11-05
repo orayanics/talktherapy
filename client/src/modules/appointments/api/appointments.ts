@@ -53,10 +53,13 @@ const appointmentAction = (
       const appointmentId = typeof payload === 'string' ? payload : payload.id
       const body = typeof payload === 'string' ? undefined : payload.body
       return (
-        await api(`/api/v1/appointments/${appointmentId}/${action}`, {
-          method: 'POST',
-          data: body ? JSON.stringify(body) : undefined,
-        })
+        await api<{ data: Appointment }>(
+          `/api/v1/appointments/${appointmentId}/${action}`,
+          {
+            method: 'POST',
+            data: body ? JSON.stringify(body) : undefined,
+          },
+        )
       ).data
     },
     onSuccess: async () => {

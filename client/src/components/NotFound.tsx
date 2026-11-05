@@ -1,6 +1,7 @@
+import type { ReactNode } from 'react'
 import { Link } from '@tanstack/react-router'
 
-export function NotFound({ children }: { children?: any }) {
+export function NotFound({ children }: { children?: ReactNode }) {
   return (
     <div className="flex h-screen w-screen flex-col items-center justify-center bg-white px-6">
       <div className="absolute inset-0 flex items-center justify-center overflow-hidden pointer-events-none">

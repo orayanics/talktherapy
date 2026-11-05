@@ -1,6 +1,5 @@
-import RowError from '#/components/Table/RowError'
 import useOtpForm from '#/modules/activation/hooks/useOtpForm'
-import FormLabel from '#/components/Form/FormLabel'
+import FormInput from '#/components/Form/FormInput'
 
 export default function FormOtp({ initialEmail }: { initialEmail?: string }) {
   const {
@@ -30,24 +29,35 @@ export default function FormOtp({ initialEmail }: { initialEmail?: string }) {
 
         <div className="p-6 space-y-5">
           {apiError && (
-            <div className="alert alert-soft alert-error" role="alert">{apiError}</div>
+            <div className="alert alert-soft alert-error" role="alert">
+              {apiError}
+            </div>
           )}
 
-          <div className="space-y-1.5">
-            <FormLabel title="Email Address" htmlFor="activation-email" />
+          <FormInput
+            label="Email Address"
+            error={errors.email?.message}
+            errorId="activation-email-error"
+            required
+          >
             <input
               id="activation-email"
               {...register('email')}
               placeholder="Email"
               className="input w-full"
               aria-invalid={Boolean(errors.email)}
-              aria-describedby={errors.email ? 'activation-email-error' : undefined}
+              aria-describedby={
+                errors.email ? 'activation-email-error' : undefined
+              }
             />
-            <RowError id="activation-email-error" message={errors.email?.message} />
-          </div>
+          </FormInput>
 
-          <div className="space-y-1.5">
-            <FormLabel title="One-Time Password (OTP)" htmlFor="activation-otp" />
+          <FormInput
+            label="One-Time Password (OTP)"
+            error={errors.otp_code?.message}
+            errorId="activation-otp-error"
+            required
+          >
             <input
               id="activation-otp"
               type="text"
@@ -55,10 +65,11 @@ export default function FormOtp({ initialEmail }: { initialEmail?: string }) {
               placeholder="000000"
               className="input w-full"
               aria-invalid={Boolean(errors.otp_code)}
-              aria-describedby={errors.otp_code ? 'activation-otp-error' : undefined}
+              aria-describedby={
+                errors.otp_code ? 'activation-otp-error' : undefined
+              }
             />
-            <RowError id="activation-otp-error" message={errors.otp_code?.message} />
-          </div>
+          </FormInput>
 
           <div className="pt-2 space-y-3">
             <button disabled={isLoading} className="btn btn-block btn-neutral">

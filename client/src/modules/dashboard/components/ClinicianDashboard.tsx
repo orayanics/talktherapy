@@ -1,6 +1,7 @@
+import type { TAppointmentAction } from '#/modules/appointments/types/schema'
 import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
-import ScheduleCalendar from '#/components/ScheduleCalendar'
+import ScheduleCalendar from '#/modules/schedules/components/ScheduleCalendar'
 
 import { fetchAppointments } from '#/modules/appointments/api/appointments'
 import { fetchDashboardSummary } from '#/modules/dashboard/api/dashboard'
@@ -79,17 +80,17 @@ export default function ClinicianDashboard() {
     setOpenComplete(true)
   }
 
-  const handleRejectSubmit = async (payload: any) => {
+  const handleRejectSubmit = async (payload: TAppointmentAction) => {
     if (!selected) return
     await submitReject(selected, payload)
   }
 
-  const handleAcceptSubmit = async (payload?: any) => {
+  const handleAcceptSubmit = async (payload?: { is_hidden?: boolean }) => {
     if (!selected) return
     await acceptAction.submit(selected, payload)
   }
 
-  const handleCompleteSubmit = async (payload?: any) => {
+  const handleCompleteSubmit = async (payload?: { is_hidden?: boolean }) => {
     if (!selected) return
     await completeAction.submit(selected, payload)
   }

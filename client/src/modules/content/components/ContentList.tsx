@@ -28,9 +28,7 @@ export default function ContentList() {
   const sort = search.sort ?? 'desc'
   const is_bookmarked = search.is_bookmarked
 
-  const updateSearch = <T extends Record<string, unknown>>(
-    next: Partial<T>,
-  ) => {
+  const updateSearch = (next: Partial<typeof search>) => {
     navigate({
       search: (prev) => ({
         ...prev,

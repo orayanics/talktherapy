@@ -3,7 +3,7 @@ import useRegisterAdmin from '#/modules/register/hooks/useRegisterAdmin'
 import type { ModalProps } from '#/types/component'
 
 import Modal from '#/components/Modal/Modal'
-import RowError from '#/components/Table/RowError'
+import FormInput from '#/components/Form/FormInput'
 
 export default function RegisterAdmin(props: ModalProps) {
   const { isOpen, onClose } = props
@@ -34,31 +34,23 @@ export default function RegisterAdmin(props: ModalProps) {
         </div>
       )}
 
-      <div className="flex flex-col">
-        <label htmlFor="admin-name" className="label">
-          Name
-        </label>
+      <FormInput label="Name" error={errors.name?.message} required>
         <input
           id="admin-name"
           {...register('name')}
           placeholder="Name"
           className="input w-full"
         />
-        <RowError message={errors.name?.message} />
-      </div>
+      </FormInput>
 
-      <div className="flex flex-col">
-        <label htmlFor="admin-email" className="label">
-          Email
-        </label>
+      <FormInput label="Email" error={errors.email?.message} required>
         <input
           id="admin-email"
           {...register('email')}
           placeholder="Email"
           className="input w-full"
         />
-        <RowError message={errors.email?.message} />
-      </div>
+      </FormInput>
 
       <label className="label mb-3 w-fit cursor-pointer gap-2">
         <input

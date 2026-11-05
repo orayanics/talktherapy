@@ -1,4 +1,4 @@
-import { DotGridIcon } from '../Decorator/StatusAscii'
+import { DotGridIcon } from './StatCard'
 import { Link } from '@tanstack/react-router'
 
 export default function SummaryCard({
@@ -15,7 +15,7 @@ export default function SummaryCard({
   return (
     <div className="flex flex-col gap-2 rounded-lg border border-slate-200 bg-white p-4">
       <div className="inline-flex items-start gap-4">
-        <DotGridIcon status="cancelled" />
+        <DotGridIcon className="bg-slate-500" />
         <span>
           {redirect ? (
             <Link

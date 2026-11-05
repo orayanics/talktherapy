@@ -1,4 +1,4 @@
-import type { USER_ROLE } from '#/types/account'
+import type { USER_ROLE } from '#/modules/auth/types/account'
 
 const STATUS_STYLE_MAP: Partial<Record<USER_ROLE, string>> = {
   superadmin: 'bg-green-50 text-green-700 border-green-200',

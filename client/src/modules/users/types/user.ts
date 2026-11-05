@@ -1,4 +1,4 @@
-import type { USER_ROLE, ACCOUNT_STATUS } from '#/types/account'
+import type { USER_ROLE, ACCOUNT_STATUS } from '#/modules/auth/types/account'
 import type { Meta } from '#/types/api'
 
 export interface AdminUser {

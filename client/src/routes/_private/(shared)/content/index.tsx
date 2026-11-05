@@ -15,7 +15,7 @@ const searchSchema = z
       .refine((v) => v === '' || v.length > 0),
 
     diagnosis: z
-      .any()
+      .unknown()
       .optional()
       .transform((v) =>
         toArray(v)

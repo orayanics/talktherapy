@@ -5,7 +5,7 @@ import Modal from '#/components/Modal/Modal'
 
 import { BookSlotSchema } from '../types/schema'
 import type { TBookSlot } from '../types/schema'
-import RowError from '#/components/Table/RowError'
+import FormInput from '#/components/Form/FormInput'
 
 type Props = {
   isOpen: boolean
@@ -70,53 +70,46 @@ export default function BookModal({
         </div>
       )}
 
-      <div className="flex flex-col">
-        <label htmlFor="booking-diagnosis" className="label">
-          Diagnosis
-        </label>
+      <FormInput label="Diagnosis" error={errors.encounter?.diagnosis?.message}>
         <input
           id="booking-diagnosis"
           {...register('encounter.diagnosis')}
           className="input w-full"
         />
-        <RowError message={errors.encounter?.diagnosis?.message} />
-      </div>
+      </FormInput>
 
-      <div className="flex flex-col">
-        <label htmlFor="booking-chief-complaint" className="label">
-          Chief Complaint
-        </label>
+      <FormInput
+        label="Chief Complaint"
+        error={errors.encounter?.chief_complaint?.message}
+      >
         <textarea
           id="booking-chief-complaint"
           {...register('encounter.chief_complaint')}
           className="textarea w-full"
         />
-        <RowError message={errors.encounter?.chief_complaint?.message} />
-      </div>
+      </FormInput>
 
-      <div className="flex flex-col">
-        <label htmlFor="booking-referral-source" className="label">
-          Referral Source
-        </label>
+      <FormInput
+        label="Referral Source"
+        error={errors.encounter?.referral_source?.message}
+      >
         <input
           id="booking-referral-source"
           {...register('encounter.referral_source')}
           className="input w-full"
         />
-        <RowError message={errors.encounter?.referral_source?.message} />
-      </div>
+      </FormInput>
 
-      <div className="flex flex-col">
-        <label htmlFor="booking-referral-url" className="label">
-          Referral URL
-        </label>
+      <FormInput
+        label="Referral URL"
+        error={errors.encounter?.referral_url?.message}
+      >
         <input
           id="booking-referral-url"
           {...register('encounter.referral_url')}
           className="input w-full"
         />
-        <RowError message={errors.encounter?.referral_url?.message} />
-      </div>
+      </FormInput>
     </Modal>
   )
 }

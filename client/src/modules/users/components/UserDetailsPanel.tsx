@@ -1,8 +1,8 @@
 import { Calendar, Mail } from 'lucide-react'
 import type { AdminUser } from '#/modules/users/types/user'
 import { formatDate } from '#/utils/useDate'
-import StatusPill from '#/components/Decorator/StatusPill'
-import RolePill from '#/components/Decorator/RolePill'
+import StatusPill from '#/modules/users/components/StatusPill'
+import RolePill from '#/modules/users/components/RolePill'
 
 export default function UserDetailsPanel({
   user,

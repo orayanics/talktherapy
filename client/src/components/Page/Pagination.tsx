@@ -1,4 +1,5 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react'
+
 type Meta = {
   current_page: number
   last_page: number

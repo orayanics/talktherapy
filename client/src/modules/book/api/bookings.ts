@@ -1,4 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import type { BookSlotPayload } from '../types/schema'
+import type { Appointment } from '#/modules/appointments/types/appointment'
 import { api } from '#/lib/api/client'
 import { useAlert } from '#/context/AlertContext'
 import { APPOINTMENT as APPT_MSG } from '#/constants/message'
@@ -7,10 +9,10 @@ export const mutateBookSlot = () => {
   const queryClient = useQueryClient()
   const { showAlert } = useAlert()
   return useMutation({
-    mutationFn: async (payload: { slot_id: string; [key: string]: any }) => {
+    mutationFn: async (payload: BookSlotPayload) => {
       const { slot_id, ...rest } = payload
       return (
-        await api(`/api/v1/slots/${slot_id}/book`, {
+        await api<{ data: Appointment }>(`/api/v1/slots/${slot_id}/book`, {
           method: 'POST',
           data: JSON.stringify(rest),
         })

@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Bell, Menu } from 'lucide-react'
 
-import type { USER_ROLE } from '#/types/account'
+import type { USER_ROLE } from '#/modules/auth/types/account'
 import { NAV_BY_ROLE } from '#/constants/sidebar'
 
 import SidebarItem from './SidebarItem'

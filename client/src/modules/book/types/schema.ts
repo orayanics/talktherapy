@@ -12,3 +12,10 @@ export const BookSlotSchema = z.object({
 })
 
 export type TBookSlot = z.infer<typeof BookSlotSchema>
+
+export type BookSlotPayload = {
+  slot_id: string
+  encounter: Omit<TBookSlot['encounter'], 'referral_url'> & {
+    referral_url: string | null
+  }
+}

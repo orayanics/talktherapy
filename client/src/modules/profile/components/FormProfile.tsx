@@ -1,6 +1,5 @@
-import FormLabel from '#/components/Form/FormLabel'
 import useUpdateProfileForm from '#/modules/profile/hooks/useUpdateProfileForm'
-import RowError from '#/components/Table/RowError'
+import FormInput from '#/components/Form/FormInput'
 
 export default function FormProfile({
   defaultName,
@@ -16,50 +15,69 @@ export default function FormProfile({
     <form onSubmit={onSubmit}>
       <div className="space-y-6">
         {apiError && (
-          <div className="alert alert-soft alert-error" role="alert">{apiError}</div>
+          <div className="alert alert-soft alert-error" role="alert">
+            {apiError}
+          </div>
         )}
 
-        <div className="space-y-2">
-          <FormLabel title="Display Name" htmlFor="profile-name" />
+        <FormInput
+          label="Display Name"
+          error={errors.name?.message}
+          errorId="profile-name-error"
+        >
           <input
             id="profile-name"
             {...register('name')}
             placeholder="Name"
             className="input w-full"
           />
-          <RowError id="profile-name-error" message={errors.name?.message} />
-        </div>
+        </FormInput>
 
-        <div className="space-y-2">
-          <FormLabel title="Current password" htmlFor="profile-current-password" />
+        <FormInput
+          label="Current password"
+          error={errors.currentPassword?.message}
+          errorId="profile-current-password-error"
+        >
           <p className="text-xs text-slate-500">
             Leave blank to keep current password.
           </p>
           <input
-            id="profile-current-password" {...register('currentPassword')}
+            id="profile-current-password"
+            {...register('currentPassword')}
             type="password"
             placeholder="Current password"
             className="input w-full"
             autoComplete="current-password"
           />
-          <RowError id="profile-current-password-error" message={errors.currentPassword?.message} />
+        </FormInput>
+        <FormInput
+          label="New password"
+          error={errors.newPassword?.message}
+          errorId="profile-new-password-error"
+        >
           <input
-            id="profile-new-password" {...register('newPassword')}
+            id="profile-new-password"
+            {...register('newPassword')}
             type="password"
             placeholder="New password"
             className="input w-full"
             autoComplete="new-password"
           />
-          <RowError id="profile-new-password-error" message={errors.newPassword?.message} />
+        </FormInput>
+        <FormInput
+          label="Confirm new password"
+          error={errors.confirmPassword?.message}
+          errorId="profile-confirm-password-error"
+        >
           <input
-            id="profile-confirm-password" {...register('confirmPassword')}
+            id="profile-confirm-password"
+            {...register('confirmPassword')}
             type="password"
             placeholder="Confirm new password"
             className="input w-full"
             autoComplete="new-password"
           />
-          <RowError id="profile-confirm-password-error" message={errors.confirmPassword?.message} />
-        </div>
+        </FormInput>
 
         <button disabled={isLoading} className="btn btn-neutral w-full">
           {isLoading ? 'Updating...' : 'Update Profile'}

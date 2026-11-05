@@ -7,7 +7,11 @@ import { useQuery } from '@tanstack/react-query'
 import { fetchDiagnoses } from '#/modules/diagnoses/api/diagnoses'
 import FilterDrawer from '#/components/Page/FilterDrawer'
 
-type UpdateSearch = (next: Partial<ContentParams & QueryParams>) => void
+type UpdateSearch = (
+  next: Partial<Omit<ContentParams, 'is_bookmarked'> & QueryParams> & {
+    is_bookmarked?: true
+  },
+) => void
 
 type Props = {
   searchTerm: string

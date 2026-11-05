@@ -1,5 +1,5 @@
 import { SearchFilter, ChoiceFilter } from '#/components/Page/Filters'
-import { ROLE_VALUES, STATUS_VALUES } from '#/constants/account'
+import { ROLE_VALUES, STATUS_VALUES } from '#/modules/auth/constants/account'
 import type { UsersParams } from '../types/params'
 import type { QueryParams } from '#/types/api'
 import FilterDrawer from '#/components/Page/FilterDrawer'

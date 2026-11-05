@@ -160,7 +160,7 @@ export default function ExerciseDelivery({
             <Pagination
               meta={meta}
               page={page}
-              updateSearch={({ page }) => setPage(page)}
+              updateSearch={({ page: nextPage }) => setPage(nextPage)}
             />
           )}
         </div>

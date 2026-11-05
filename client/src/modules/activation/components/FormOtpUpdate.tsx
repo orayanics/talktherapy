@@ -1,12 +1,11 @@
 import useOtpUpdateForm from '#/modules/activation/hooks/useOtpUpdateForm'
 import { useQuery } from '@tanstack/react-query'
 import { fetchDiagnoses } from '#/modules/diagnoses/api/diagnoses'
-import type { DiagnosisItem } from '#/modules/diagnoses/api/diagnoses'
+import type { DiagnosisItem } from '#/modules/diagnoses/types/diagnosis'
 import { Navigate } from '@tanstack/react-router'
 import StateError from '#/components/State/StateError'
 import StateLoading from '#/components/State/StateLoading'
-import RowError from '#/components/Table/RowError'
-import FormLabel from '#/components/Form/FormLabel'
+import FormInput from '#/components/Form/FormInput'
 
 export default function FormOtpUpdate({
   otp,
@@ -63,23 +62,26 @@ export default function FormOtpUpdate({
 
         <div className="p-6 space-y-5">
           {apiError && (
-            <div className="alert alert-soft alert-error" role="alert">{apiError}</div>
+            <div className="alert alert-soft alert-error" role="alert">
+              {apiError}
+            </div>
           )}
 
           <div className="grid grid-cols-1 gap-2">
-            <div>
-              <FormLabel title="Full Name" htmlFor="activation-name" />
+            <FormInput label="Full Name" error={errors.name?.message} required>
               <input
                 id="activation-name"
                 {...register('name')}
                 placeholder="Dr. Jane Doe"
                 className="input w-full"
               />
-              <RowError message={errors.name?.message} />
-            </div>
+            </FormInput>
 
-            <div className="space-y-1.5">
-              <FormLabel title="Email Address" htmlFor="activation-email" />
+            <FormInput
+              label="Email Address"
+              error={errors.email?.message}
+              required
+            >
               <input
                 id="activation-email"
                 {...register('email')}
@@ -87,28 +89,38 @@ export default function FormOtpUpdate({
                 className="input w-full"
                 readOnly
               />
-              <RowError message={errors.email?.message} />
-            </div>
+            </FormInput>
           </div>
 
           {shouldShowDiagnosis && (
-            <div>
-              <FormLabel title="Diagnosis Group" htmlFor="activation-diagnosis" />
-              <select id="activation-diagnosis" className="select w-full" {...register('diagnosis_id')}>
-                <option value="" disabled>Select Specialization</option>
+            <FormInput
+              label="Diagnosis Group"
+              error={errors.diagnosis_id?.message}
+              required
+            >
+              <select
+                id="activation-diagnosis"
+                className="select w-full"
+                {...register('diagnosis_id')}
+              >
+                <option value="" disabled>
+                  Select Specialization
+                </option>
                 {diagnoses.map((item: DiagnosisItem) => (
                   <option key={item.id} value={item.id}>
                     {item.label}
                   </option>
                 ))}
               </select>
-              <RowError message={errors.diagnosis_id?.message} />
-            </div>
+            </FormInput>
           )}
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <FormLabel title="Password" htmlFor="activation-password" />
+            <FormInput
+              label="Password"
+              error={errors.password?.message}
+              required
+            >
               <input
                 id="activation-password"
                 type="password"
@@ -116,11 +128,13 @@ export default function FormOtpUpdate({
                 placeholder="••••••••"
                 className="input w-full"
               />
-              <RowError message={errors.password?.message} />
-            </div>
+            </FormInput>
 
-            <div>
-              <FormLabel title="Confirm Password" htmlFor="activation-password-confirmation" />
+            <FormInput
+              label="Confirm Password"
+              error={errors.password_confirmation?.message}
+              required
+            >
               <input
                 id="activation-password-confirmation"
                 type="password"
@@ -128,9 +142,8 @@ export default function FormOtpUpdate({
                 placeholder="••••••••"
                 className="input w-full"
               />
-            </div>
+            </FormInput>
           </div>
-          <RowError message={errors.password_confirmation?.message} />
 
           <div className="pt-4 space-y-3">
             <button
