@@ -8,11 +8,11 @@ export default function ContentCard({ content }: { content: Content }) {
   const { toggle, isLoading } = useBookmark(content.id)
 
   return (
-    <div className="bg-white p-6 border border-slate-300 rounded-lg shadow-sm col-span-12 md:col-span-6 lg:col-span-4">
+    <div className="bg-white p-4 border border-border rounded-box col-span-12 md:col-span-6 lg:col-span-4">
       <div className="flex items-center justify-between mb-2">
-        <p className="text-xs font-bold uppercase truncate">
+        <div className="badge badge-sm badge-neutral uppercase tracking-wide">
           {content.diagnosis?.label ?? 'General'}
-        </p>
+        </div>
 
         <button
           onClick={() => toggle(content.is_bookmarked)}
@@ -33,17 +33,11 @@ export default function ContentCard({ content }: { content: Content }) {
           />
         </button>
       </div>
-      <Link
-        to="/content/$contentId"
-        params={{ contentId: content.id }}
-        className="text-slate-900 font-serif "
-      >
+      <Link to="/content/$contentId" params={{ contentId: content.id }}>
         {content.title}
       </Link>
 
-      <p className="truncate block text-slate-500 text-sm">
-        {content.description}
-      </p>
+      <p className="truncate block text-muted my-0!">{content.description}</p>
 
       {content.tags.length > 0 && (
         <>
@@ -58,7 +52,7 @@ export default function ContentCard({ content }: { content: Content }) {
         </>
       )}
 
-      <p className="inline-flex gap-2 text-xs text-slate-500 mt-2">
+      <p className="inline-flex gap-2 text-xs text-muted mt-2 mb-0">
         <Calendar size={14} />
         {formatDate(content.created_at)}
       </p>

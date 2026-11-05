@@ -23,18 +23,15 @@ export default function CreateContentPage() {
     <div className="space-y-6">
       <Link
         to="/content"
-        className="flex gap-2 items-center link link-hover text-slate-600"
+        className="flex gap-2 items-center link link-hover text-muted"
       >
         <ArrowLeft size={16} />
         Content
       </Link>
 
       <form onSubmit={onSubmit} className="w-full bg-white">
-        <div
-          className="rounded-lg border border-slate-300
-        shadow-sm flex flex-col gap-4 p-6"
-        >
-          <h2 className="text-sm font-bold uppercase tracking-wide">
+        <div className="rounded-lg border border-slate-300 flex flex-col gap-4 p-6">
+          <h2 className="text-sm font-bold uppercase tracking-wide my-0!">
             New Content
           </h2>
 
@@ -49,7 +46,7 @@ export default function CreateContentPage() {
               id="content-title"
               {...register('title')}
               placeholder="Title"
-              className="input shadow-sm w-full"
+              className="input w-full"
             />
           </FormInput>
 
@@ -62,7 +59,7 @@ export default function CreateContentPage() {
               id="content-description"
               {...register('description')}
               placeholder="Description"
-              className="input shadow-sm w-full"
+              className="input w-full"
             />
           </FormInput>
 
@@ -123,7 +120,7 @@ export default function CreateContentPage() {
                 },
               })}
               placeholder="Tags (comma separated)"
-              className="input w-full shadow-sm"
+              className="input w-full "
             />
           </FormInput>
 

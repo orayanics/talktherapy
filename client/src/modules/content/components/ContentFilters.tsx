@@ -61,7 +61,7 @@ export default function ContentFilters({
 
         <div>
           <button
-            className="btn bg-white shadow-sm"
+            className="btn btn-flat"
             onClick={() =>
               updateSearch({ page: 1, sort: isDesc ? 'asc' : 'desc' })
             }
@@ -73,23 +73,15 @@ export default function ContentFilters({
       </div>
       <FilterDrawer>
         <div className="flex flex-col gap-4">
-          <SearchFilter
-            label="Search content"
-            value={searchTerm}
-            onChange={(search) => updateSearch({ page: 1, search })}
-          />
-
           <div>
             {!isPending && !isError && (
               <div className="space-y-4">
                 <div className="mb-4">
-                  <span className="text-xs text-slate-700 font-bold uppercase mb-2 block tracking-widest">
-                    Diagnosis
-                  </span>
+                  <p className="font-semibold mb-4 mt-0">Diagnosis</p>
                   {diagnoses.map((item) => (
                     <label
                       key={item.id}
-                      className="flex items-center gap-2 mb-2"
+                      className="flex items-center gap-2 mb-4"
                     >
                       <input
                         aria-label={`Filter by diagnosis: ${item.label}`}

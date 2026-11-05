@@ -207,7 +207,7 @@ export default function UsersList() {
         {count && !countPending && !countError && <StatCards {...count} />}
       </div>
 
-      <div className="bg-white rounded-lg border border-border shadow-sm overflow-hidden flex flex-col">
+      <div className="bg-white rounded-lg border border-border overflow-hidden flex flex-col">
         <div className="w-full p-4">
           {isPending ? (
             <StateLoading />

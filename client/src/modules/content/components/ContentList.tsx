@@ -77,7 +77,16 @@ export default function ContentList() {
       ) : isError ? (
         <StateError />
       ) : contents.length == 0 ? (
-        <StateNull />
+        <StateNull
+          title="No Content Found"
+          message="We couldn't find any content meeting your criteria. Try adjusting your filters."
+        >
+          {isAdmin && (
+            <Link to="/content/create" className="btn btn-neutral btn-outline">
+              Add Content to Get Started
+            </Link>
+          )}
+        </StateNull>
       ) : (
         <div className="grid grid-cols-12 gap-4">
           {contents.map((content) => (
