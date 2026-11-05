@@ -7,6 +7,7 @@ import AppointmentPill from '#/modules/appointments/components/AppointmentPill'
 import { CircleCheck, CircleX } from 'lucide-react'
 import { formatDate } from '#/utils/useDate'
 import { fetchSlot } from '#/modules/schedules/api/schedules'
+import { useAuthGuard } from '#/modules/auth/hooks/useAuth'
 
 export default function SlotDetailsDrawer({
   slotId,
@@ -20,6 +21,8 @@ export default function SlotDetailsDrawer({
     enabled: Boolean(slotId),
   })
   const slot = query.data
+  const { role } = useAuthGuard()
+  const isAdmin = role === 'superadmin' || role === 'admin'
 
   return (
     <Drawer
@@ -36,6 +39,7 @@ export default function SlotDetailsDrawer({
         <StateError />
       ) : (
         <div className="space-y-2 p-6">
+          {isAdmin && <Row label="Clinician" value={slot.clinician.name} />}
           <Row label="Start At (UTC)" value={formatDate(slot.start_at, 'p')} />
           <Row label="End At (UTC)" value={formatDate(slot.end_at, 'p')} />
           <Row

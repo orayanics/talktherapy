@@ -32,7 +32,7 @@ export const superadmin_NAV_ITEMS = [
     icon: <ClipboardClock size={16} />,
   },
   {
-    label: 'Slots',
+    label: 'Schedule Slots',
     to: '/schedules',
     icon: <Calendar size={16} />,
   },
@@ -102,11 +102,6 @@ export const CLINICIAN_NAV_ITEMS = [
     icon: <LayoutDashboard size={16} />,
   },
   {
-    label: 'Schedules',
-    to: '/schedules',
-    icon: <Calendar size={16} />,
-  },
-  {
     label: 'Appointments',
     to: '/appointments',
     icon: <ClipboardClock size={16} />,
@@ -116,7 +111,11 @@ export const CLINICIAN_NAV_ITEMS = [
     to: '/patients',
     icon: <User size={16} />,
   },
-
+  {
+    label: 'Schedule Slots',
+    to: '/schedules',
+    icon: <Calendar size={16} />,
+  },
   {
     label: 'Content',
     to: '/content',

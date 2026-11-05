@@ -1,14 +1,13 @@
 import type { TAppointmentAction } from '#/modules/appointments/types/schema'
 
 import { useState } from 'react'
-import { useSearch } from '@tanstack/react-router'
+import { useSearch, useNavigate } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
-import { formatDate } from '#/utils/useDate'
+import { formatDate, getMonthRange } from '#/utils/useDate'
 
 import { fetchAppointments } from '#/modules/appointments/api/appointments'
 import StateError from '#/components/State/StateError'
 import StateLoading from '#/components/State/StateLoading'
-import StateNull from '#/components/State/StateNull'
 import AppointmentActionModal from '#/modules/appointments/components/AppointmentActionModal'
 import useAppointmentAction from '#/modules/appointments/hooks/useAppointmentAction'
 import AcceptAppointmentModal from '#/modules/appointments/components/AcceptAppointmentModal'
@@ -26,14 +25,26 @@ export default function AppointmentsPage() {
   const isClinician = role === 'clinician'
 
   const search = useSearch({ from: '/_private/(shared)/appointments/' })
+  const navigate = useNavigate({ from: '/appointments/' })
 
   const page = search.page ?? 1
   const from = search.from
+  const to = search.to
+  const range = getMonthRange(from ?? new Date())
+  const rangeFrom = from ?? range.from
+  const rangeTo = to ?? range.to
   const sort = search.sort
   const status = search.status
 
+  const updateSearch = (next: Partial<typeof search>) => {
+    navigate({ search: (prev) => ({ ...prev, ...next }) })
+  }
+
   const { data, isLoading, isError } = useQuery(
-    fetchAppointments({ page }, { from, sort, status }),
+    fetchAppointments(
+      { page, per_page: 100 },
+      { from: rangeFrom, to: rangeTo, sort, status },
+    ),
   )
 
   const {
@@ -110,15 +121,14 @@ export default function AppointmentsPage() {
           title="Appointments unavailable"
           message="We couldn't load the appointment list. Please try again."
         />
-      ) : appointments.length === 0 ? (
-        <StateNull
-          title="No appointments found"
-          message="No appointments match the selected filters."
-        />
       ) : (
         <>
           <ScheduleCalendar
-            start={from ?? formatDate(new Date(), 'yyyy-MM-dd')}
+            key={`${rangeFrom}-${rangeTo}`}
+            start={rangeFrom}
+            onRangeChange={({ from: nextFrom, to: nextTo }) =>
+              updateSearch({ page: 1, from: nextFrom, to: nextTo })
+            }
             appointments={appointments}
             isClinician={isClinician}
             onAppointmentClick={(appointment) =>

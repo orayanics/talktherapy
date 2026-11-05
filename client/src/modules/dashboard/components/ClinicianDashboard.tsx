@@ -173,7 +173,7 @@ export default function ClinicianDashboard() {
         {todayAppointments.length === 0 ? (
           <StateNull />
         ) : (
-          <div className="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden flex flex-col">
+          <div className="bg-white rounded-box border border-border overflow-hidden flex flex-col">
             <TableBase
               data={todayAppointments}
               columns={[

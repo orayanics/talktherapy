@@ -11,6 +11,14 @@ const searchSchema = z
       .optional()
       .transform((v) => (v && v.trim() !== '' ? v.trim() : undefined)),
 
+    date_to: z
+      .string()
+      .optional()
+      .transform((v) => (v && v.trim() !== '' ? v.trim() : undefined)),
+
+    from: z.string().optional(),
+    to: z.string().optional(),
+
     sort: z
       .string()
       .optional()
@@ -20,7 +28,10 @@ const searchSchema = z
   })
   .transform((data) => ({
     ...(data.page !== 1 ? { page: data.page } : {}),
-    ...(data.date_from ? { from: data.date_from } : {}),
+    ...((data.from ?? data.date_from)
+      ? { from: data.from ?? data.date_from }
+      : {}),
+    ...((data.to ?? data.date_to) ? { to: data.to ?? data.date_to } : {}),
     ...(data.sort ? { sort: data.sort } : {}),
   }))
 

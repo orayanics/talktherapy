@@ -12,6 +12,11 @@ const searchSchema = z
       .optional()
       .transform((v) => (v && v.trim() !== '' ? v.trim() : undefined)),
 
+    to: z
+      .string()
+      .optional()
+      .transform((v) => (v && v.trim() !== '' ? v.trim() : undefined)),
+
     sort: z
       .string()
       .optional()
@@ -32,6 +37,7 @@ const searchSchema = z
   .transform((data) => ({
     ...(data.page !== 1 ? { page: data.page } : {}),
     ...(data.from ? { from: data.from } : {}),
+    ...(data.to ? { to: data.to } : {}),
     ...(data.sort ? { sort: data.sort } : {}),
     ...(data.status.length
       ? { status: data.status.map((value) => value.toUpperCase()) }

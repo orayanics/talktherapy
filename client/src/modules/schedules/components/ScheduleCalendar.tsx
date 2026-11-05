@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import type { Appointment } from '#/modules/appointments/types/appointment'
+import type { Slot } from '#/modules/schedules/types/slot'
 
 import { useState } from 'react'
 import { formatDate } from '#/utils/useDate'
@@ -8,11 +9,14 @@ import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 export default function ScheduleCalendar({
   start,
-  days = 35,
+  days = 42,
   renderDay,
   onSelect,
+  onRangeChange,
   appointments = [],
   onAppointmentClick,
+  slots = [],
+  onSlotClick,
   isClinician = false,
   onOpenAction,
   onOpenAcceptAction,
@@ -22,8 +26,11 @@ export default function ScheduleCalendar({
   days?: number
   renderDay?: (date: string) => ReactNode
   onSelect?: (date: string) => void
+  onRangeChange?: (range: { from: string; to: string }) => void
   appointments?: Appointment[]
   onAppointmentClick?: (appointment: Appointment) => void
+  slots?: Slot[]
+  onSlotClick?: (slot: Slot) => void
   isClinician?: boolean
   onOpenAction?: (appointment: Appointment) => void
   onOpenAcceptAction?: (appointment: Appointment) => void
@@ -32,8 +39,15 @@ export default function ScheduleCalendar({
   const today = formatDate(new Date(), 'yyyy-MM-dd')
   const [offset, setOffset] = useState(0)
   const [selectedDate, setSelectedDate] = useState(today)
-  const anchor = new Date(`${start}T00:00:00Z`)
-  anchor.setUTCDate(anchor.getUTCDate() + offset)
+  const startDate = new Date(`${start}T00:00:00Z`)
+  const anchor = new Date(
+    Date.UTC(
+      startDate.getUTCFullYear(),
+      startDate.getUTCMonth(),
+      days === 7 ? startDate.getUTCDate() : 1,
+    ),
+  )
+  if (!onRangeChange) anchor.setUTCDate(anchor.getUTCDate() + offset)
   const monday = new Date(anchor)
   monday.setUTCDate(monday.getUTCDate() - ((monday.getUTCDay() + 6) % 7))
   const monthStart = new Date(
@@ -46,6 +60,28 @@ export default function ScheduleCalendar({
     (appointment) =>
       formatDate(appointment.slot.start_at, 'yyyy-MM-dd') === selectedDate,
   )
+  const selectedSlots = slots.filter(
+    (slot) => formatDate(slot.start_at, 'yyyy-MM-dd') === selectedDate,
+  )
+  const updatePeriod = (monthDelta: number) => {
+    if (!onRangeChange) {
+      setOffset(monthDelta === 0 ? 0 : offset + monthDelta * days)
+      return
+    }
+    const nextAnchor =
+      monthDelta === 0 ? new Date(`${today}T00:00:00Z`) : new Date(anchor)
+    nextAnchor.setUTCMonth(nextAnchor.getUTCMonth() + monthDelta)
+    const nextMonthStart = new Date(
+      Date.UTC(nextAnchor.getUTCFullYear(), nextAnchor.getUTCMonth(), 1),
+    )
+    const nextMonthEnd = new Date(
+      Date.UTC(nextAnchor.getUTCFullYear(), nextAnchor.getUTCMonth() + 1, 0),
+    )
+    onRangeChange({
+      from: formatDate(nextMonthStart, 'yyyy-MM-dd'),
+      to: formatDate(nextMonthEnd, 'yyyy-MM-dd'),
+    })
+  }
 
   return (
     <section className="overflow-hidden rounded-box border border-border bg-white">
@@ -66,14 +102,14 @@ export default function ScheduleCalendar({
             type="button"
             className="btn join-item bg-white"
             aria-label="Previous period"
-            onClick={() => setOffset(offset - days)}
+            onClick={() => updatePeriod(-1)}
           >
             <ChevronLeft size={16} aria-hidden="true" />
           </button>
           <button
             type="button"
             className="btn join-item bg-white"
-            onClick={() => setOffset(0)}
+            onClick={() => updatePeriod(0)}
           >
             Today
           </button>
@@ -81,7 +117,7 @@ export default function ScheduleCalendar({
             type="button"
             className="btn join-item bg-white"
             aria-label="Next period"
-            onClick={() => setOffset(offset + days)}
+            onClick={() => updatePeriod(1)}
           >
             <ChevronRight size={16} aria-hidden="true" />
           </button>
@@ -158,9 +194,11 @@ export default function ScheduleCalendar({
             })}
           </div>
         </div>
-        {appointments.length > 0 && (
+        {(appointments.length > 0 || slots.length > 0) && (
           <div className="w-full border-t border-border p-4 lg:w-80 lg:border-l lg:border-t-0">
-            <p className="font-semibold my-0!">Appointments</p>
+            <p className="font-semibold my-0!">
+              {slots.length > 0 ? 'Slots' : 'Appointments'}
+            </p>
             <p className="text-xs text-muted mt-0!">
               {formatDate(
                 new Date(`${selectedDate}T00:00:00Z`),
@@ -219,9 +257,27 @@ export default function ScheduleCalendar({
                   )}
                 </div>
               ))}
-              {selectedAppointments.length === 0 && (
-                <p className="text-sm text-slate-500">No appointments</p>
-              )}
+              {selectedSlots.map((slot) => (
+                <button
+                  key={slot.id}
+                  type="button"
+                  className="w-full rounded-box border border-border p-4 text-left hover:bg-base-200"
+                  onClick={() => onSlotClick?.(slot)}
+                >
+                  <span className="block font-medium text-slate-900">
+                    {formatDate(slot.start_at, 'p')} –{' '}
+                    {formatDate(slot.end_at, 'p')}
+                  </span>
+                  <span className="block text-xs text-slate-500">
+                    {slot.status}
+                    {slot.is_hidden ? ' · Hidden' : ''}
+                  </span>
+                </button>
+              ))}
+              {selectedAppointments.length === 0 &&
+                selectedSlots.length === 0 && (
+                  <p className="text-sm text-slate-500">No appointments</p>
+                )}
             </div>
           </div>
         )}
