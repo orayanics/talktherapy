@@ -36,6 +36,7 @@
   --depth: 0;
   --noise: 0;
   --color-border: oklch(90% 0 0);
+  --color-muted: oklch(50% 0 0);
 }
 
 @theme inline {
@@ -43,6 +44,7 @@
   --font-serif: 'Crimson Text', serif;
   --font-mono: 'JetBrains Mono Variable', monospace;
   --color-border: var(--color-border);
+  --color-muted: var(--color-muted);
 }
 
 body {

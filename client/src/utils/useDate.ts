@@ -3,7 +3,7 @@ import { formatInTimeZone } from 'date-fns-tz'
 // Returns date in this format: 1 January 2024
 // in UTC to avoid local timezone shifting the calendar day
 export function formatDate(
-  date: Date | string | number | undefined,
+  date: Date | string | number | undefined | null,
   formatStr = 'd MMMM yyyy',
 ) {
   if (!date) return ''
