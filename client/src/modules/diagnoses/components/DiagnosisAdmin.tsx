@@ -8,6 +8,7 @@ import StateLoading from '#/components/State/StateLoading'
 import Modal from '#/components/Modal/Modal'
 import { TableBase } from '#/components/Table/TableBase'
 import Pagination from '#/components/Page/Pagination'
+import FormInput from '#/components/Form/FormInput'
 
 const EMPTY_DRAFT = { id: '', label: '', value: '' }
 const PAGE_SIZE = 10
@@ -43,6 +44,7 @@ export default function DiagnosisAdmin() {
   }
   if (query.isPending) return <StateLoading />
   if (query.isError) return <StateError />
+
   const lastPage = Math.max(1, Math.ceil(query.data.length / PAGE_SIZE))
   const currentPage = Math.min(page, lastPage)
   const meta = {
@@ -56,10 +58,10 @@ export default function DiagnosisAdmin() {
     (currentPage - 1) * PAGE_SIZE,
     currentPage * PAGE_SIZE,
   )
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-bold">Diagnoses</h1>
         <button
           className="btn btn-neutral"
           onClick={() => {
@@ -74,53 +76,52 @@ export default function DiagnosisAdmin() {
       <Modal
         isOpen={isModalOpen}
         onClose={closeModal}
-        title={editing ? 'Edit diagnosis' : 'Create diagnosis'}
+        title={editing ? 'Edit Diagnosis' : 'Create Diagnosis'}
         description="Add a diagnosis label and value for users to select."
         onSubmit={() => void save()}
         submitLabel={editing ? 'Save' : 'Create'}
         isDisabled={create.isPending || update.isPending}
       >
         <div className="flex flex-col gap-2">
-          <label className="label" htmlFor="diagnosis-id">
-            ID (optional)
-          </label>
-          <input
-            id="diagnosis-id"
-            className="input input-bordered"
-            placeholder="ID (optional)"
-            value={draft.id}
-            onChange={(event) => setDraft({ ...draft, id: event.target.value })}
-            disabled={Boolean(editing)}
-          />
-          <label className="label" htmlFor="diagnosis-label">
-            Label
-          </label>
-          <input
-            id="diagnosis-label"
-            className="input input-bordered"
-            placeholder="Label"
-            required
-            value={draft.label}
-            onChange={(event) =>
-              setDraft({ ...draft, label: event.target.value })
-            }
-          />
-          <label className="label" htmlFor="diagnosis-value">
-            Value
-          </label>
-          <input
-            id="diagnosis-value"
-            className="input input-bordered"
-            placeholder="Value"
-            required
-            value={draft.value}
-            onChange={(event) =>
-              setDraft({ ...draft, value: event.target.value })
-            }
-          />
+          <FormInput label="ID (optional)">
+            <input
+              id="diagnosis-id"
+              className="input input-bordered w-full"
+              placeholder="ID (optional)"
+              value={draft.id}
+              onChange={(event) =>
+                setDraft({ ...draft, id: event.target.value })
+              }
+              disabled={Boolean(editing)}
+            />
+          </FormInput>
+          <FormInput label="Label" required>
+            <input
+              id="diagnosis-label"
+              className="input input-bordered w-full"
+              placeholder="Label"
+              required
+              value={draft.label}
+              onChange={(event) =>
+                setDraft({ ...draft, label: event.target.value })
+              }
+            />
+          </FormInput>
+          <FormInput label="Value" required>
+            <input
+              id="diagnosis-value"
+              className="input input-bordered w-full"
+              placeholder="Value"
+              required
+              value={draft.value}
+              onChange={(event) =>
+                setDraft({ ...draft, value: event.target.value })
+              }
+            />
+          </FormInput>
         </div>
       </Modal>
-      <div className="overflow-hidden rounded-lg border border-slate-200 bg-white">
+      <div className="overflow-hidden rounded-box border border-border">
         <TableBase
           data={diagnoses}
           keyExtractor={(diagnosis) => diagnosis.id}
@@ -138,7 +139,7 @@ export default function DiagnosisAdmin() {
               render: (diagnosis) => (
                 <div className="flex gap-2 justify-end">
                   <button
-                    className="btn btn-sm btn-neutral"
+                    className="btn btn-xs btn-neutral"
                     onClick={() => {
                       setEditing(diagnosis)
                       setDraft({
@@ -153,7 +154,7 @@ export default function DiagnosisAdmin() {
                   </button>
                   {diagnosis.active === false ? (
                     <button
-                      className="btn btn-sm text-success"
+                      className="btn btn-xs text-success"
                       disabled={update.isPending}
                       onClick={() =>
                         update.mutate({
@@ -168,7 +169,7 @@ export default function DiagnosisAdmin() {
                     </button>
                   ) : (
                     <button
-                      className="btn btn-sm btn-ghost btn-error"
+                      className="btn btn-xs btn-error"
                       disabled={archive.isPending}
                       onClick={() => archive.mutate(diagnosis.id)}
                     >

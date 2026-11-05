@@ -18,7 +18,7 @@ export default function Pagination({ meta, updateSearch }: Props) {
   return (
     <nav
       aria-label="Pagination"
-      className="p-4 flex flex-wrap gap-3 justify-between items-center text-sm"
+      className="p-4 flex flex-wrap gap-4 justify-between items-center text-sm"
     >
       <div className="flex items-center space-x-1">
         <button
@@ -28,7 +28,7 @@ export default function Pagination({ meta, updateSearch }: Props) {
           onClick={() =>
             updateSearch({ page: Math.max(1, meta.current_page - 1) })
           }
-          className="btn btn-square shadow-sm"
+          className="btn btn-square btn-neutral"
         >
           <ChevronLeft size={16} />
         </button>
@@ -46,7 +46,7 @@ export default function Pagination({ meta, updateSearch }: Props) {
               page: Math.min(meta.last_page, meta.current_page + 1),
             })
           }
-          className="btn btn-square shadow-sm"
+          className="btn btn-square btn-neutral"
         >
           <ChevronRight size={16} />
         </button>
