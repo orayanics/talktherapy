@@ -30,7 +30,7 @@ export default function CreateContentPage() {
       </Link>
 
       <form onSubmit={onSubmit} className="w-full bg-white">
-        <div className="rounded-lg border border-slate-300 flex flex-col gap-4 p-6">
+        <div className="rounded-box border border-border flex flex-col gap-4 p-6">
           <h2 className="text-sm font-bold uppercase tracking-wide my-0!">
             New Content
           </h2>

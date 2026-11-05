@@ -52,45 +52,51 @@ export default function ContentDetail({ contentId }: { contentId: string }) {
             />
           )}
 
+          {isAdmin && (
+            <div className="flex gap-2">
+              <Link
+                to="/content/$contentId/edit"
+                params={{ contentId }}
+                className="btn btn-neutral"
+              >
+                Edit
+              </Link>
+
+              <button
+                className="btn btn-error"
+                onClick={() => setShowDeleteModal(true)}
+              >
+                Delete
+              </button>
+            </div>
+          )}
+
           <div className="flex justify-between">
             <div>
-              <h1 className="text-2xl font-bold">{data.title}</h1>
-              <p className="text-sm text-slate-500">{data.description}</p>
-              <p className="inline-flex gap-2 text-xs text-slate-500 mt-2">
-                <Calendar size={14} />
-                {formatDate(data.created_at)}
-              </p>
-              {data.tags.length > 0 && (
-                <div className="space-x-1">
-                  {data.tags.map((tag) => (
-                    <p key={tag.id} className="badge badge-neutral badge-soft">
-                      {tag.name}
-                    </p>
-                  ))}
-                </div>
-              )}
-            </div>
+              <h1 className="text-2xl font-bold my-0!">{data.title}</h1>
+              <p className="my-0!">{data.description}</p>
 
-            {isAdmin && (
-              <div className="space-x-2">
-                <Link
-                  to="/content/$contentId/edit"
-                  params={{ contentId }}
-                  className="btn btn-neutral"
-                >
-                  Edit
-                </Link>
-
-                <button
-                  className="btn btn-error"
-                  onClick={() => setShowDeleteModal(true)}
-                >
-                  Delete
-                </button>
+              <div className="flex gap-2 items-center mt-2">
+                <p className="inline-flex gap-2 text-xs text-muted mt-2 mb-0">
+                  <Calendar size={14} />
+                  {formatDate(data.created_at)}
+                </p>
+                {data.tags.length > 0 && (
+                  <div className="space-x-1">
+                    {data.tags.map((tag) => (
+                      <div
+                        key={tag.id}
+                        className="badge badge-neutral badge-soft"
+                      >
+                        {tag.name}
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
-            )}
+            </div>
           </div>
-          <div className="prose max-w-none p-10 bg-white border border-slate-300 border-dashed rounded-lg">
+          <div className="max-w-none">
             <div data-color-mode="light">
               <ContentBody source={data.body} />
             </div>

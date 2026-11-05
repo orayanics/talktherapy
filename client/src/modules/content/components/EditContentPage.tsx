@@ -35,11 +35,8 @@ export default function EditContentPage() {
       </Link>
 
       <form onSubmit={onSubmit} className="w-full bg-white">
-        <div
-          className="rounded-lg border border-slate-300
-        shadow-sm flex flex-col gap-4 p-6"
-        >
-          <h2 className="text-sm font-bold uppercase tracking-wide">
+        <div className="rounded-box border border-border flex flex-col gap-4 p-6">
+          <h2 className="text-sm font-bold uppercase tracking-wide my-0!">
             Edit Content
           </h2>
 
@@ -54,7 +51,7 @@ export default function EditContentPage() {
               id="content-edit-title"
               {...register('title')}
               placeholder="Title"
-              className="input shadow-sm w-full"
+              className="input  w-full"
             />
           </FormInput>
 
@@ -67,7 +64,7 @@ export default function EditContentPage() {
               id="content-edit-description"
               {...register('description')}
               placeholder="Description"
-              className="input shadow-sm w-full"
+              className="input  w-full"
             />
           </FormInput>
 
@@ -127,7 +124,7 @@ export default function EditContentPage() {
                 },
               })}
               placeholder="Tags (comma separated)"
-              className="input w-full shadow-sm"
+              className="input w-full "
             />
           </FormInput>
 
