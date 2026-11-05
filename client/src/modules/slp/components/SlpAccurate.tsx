@@ -15,7 +15,7 @@ export default function SlpAccurate({ result }: SlpAccurateProps) {
         {result.analysis.structured.accurateUnits.slice(0, 10).map((item) => (
           <li
             key={`acc-${item.unit}`}
-            className="bg-white shadow-sm rounded-box
+            className="bg-white  rounded-box
                 border border-slate-300
                 flex items-start justify-between gap-3 p-3"
           >

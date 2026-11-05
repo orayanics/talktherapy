@@ -106,7 +106,7 @@ export default function RoomSession({ roomId }: RoomSessionProps) {
         )}
 
         {/* Local Video (Floating PiP) */}
-        <div className="absolute top-6 right-6 md:top-8 md:right-8 z-20 w-32 md:w-48 xl:w-60 aspect-3/4 md:aspect-video rounded-box shadow-lg overflow-hidden border border-base-100/30 bg-white">
+        <div className="absolute top-6 right-6 md:top-8 md:right-8 z-20 w-32 md:w-48 xl:w-60 aspect-3/4 md:aspect-video rounded-box  overflow-hidden border border-base-100/30 bg-white">
           <video
             ref={localRef}
             autoPlay
@@ -116,12 +116,12 @@ export default function RoomSession({ roomId }: RoomSessionProps) {
           />
           <div className="absolute bottom-2 left-2 flex gap-1">
             {!cameraEnabled && (
-              <span className="p-2 rounded-full bg-black/60 shadow-lg text-white">
+              <span className="p-2 rounded-full bg-black/60  text-white">
                 <VideoOff />
               </span>
             )}
             {!micEnabled && (
-              <span className="p-2 rounded-full bg-black/60 shadow-lg text-white">
+              <span className="p-2 rounded-full bg-black/60  text-white">
                 <MicOff />
               </span>
             )}
@@ -130,12 +130,12 @@ export default function RoomSession({ roomId }: RoomSessionProps) {
 
         {/* Controls Overlay (FaceTime Style) */}
         <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-30 transition-all duration-300 hover:bottom-12">
-          <div className="rounded-full px-6 py-4 flex items-center gap-5 shadow-lg border border-slate-200 backdrop-blur-xl">
+          <div className="rounded-full px-6 py-4 flex items-center gap-5  border border-slate-200 backdrop-blur-xl">
             <button
               onClick={toggleMic}
               aria-label={micEnabled ? 'Mute microphone' : 'Unmute microphone'}
               aria-pressed={!micEnabled}
-              className={`btn btn-circle btn-lg border border-slate-200/60 shadow-lg shadow-slate-300 ${micEnabled ? 'bg-base-200/90 hover:bg-base-200 text-base-content' : 'bg-error text-error-content hover:bg-error/80'}`}
+              className={`btn btn-circle btn-lg border border-slate-200/60  shadow-slate-300 ${micEnabled ? 'bg-base-200/90 hover:bg-base-200 text-base-content' : 'bg-error text-error-content hover:bg-error/80'}`}
               title={micEnabled ? 'Mute Microphone' : 'Unmute Microphone'}
             >
               {micEnabled ? <Mic /> : <MicOff />}
@@ -144,7 +144,7 @@ export default function RoomSession({ roomId }: RoomSessionProps) {
               onClick={toggleCamera}
               aria-label={cameraEnabled ? 'Turn camera off' : 'Turn camera on'}
               aria-pressed={!cameraEnabled}
-              className={`btn btn-circle btn-lg border border-slate-200/60 shadow-lg shadow-slate-300  ${cameraEnabled ? 'bg-base-200/90 hover:bg-base-200 text-base-content' : 'bg-error text-error-content hover:bg-error/80'}`}
+              className={`btn btn-circle btn-lg border border-slate-200/60  shadow-slate-300  ${cameraEnabled ? 'bg-base-200/90 hover:bg-base-200 text-base-content' : 'bg-error text-error-content hover:bg-error/80'}`}
               title={cameraEnabled ? 'Turn Off Camera' : 'Turn On Camera'}
             >
               {cameraEnabled ? <Video /> : <VideoOff />}
@@ -152,7 +152,7 @@ export default function RoomSession({ roomId }: RoomSessionProps) {
 
             <Link
               to="/dashboard"
-              className="btn btn-circle btn-lg border border-slate-200/60 shadow-lg shadow-slate-300"
+              className="btn btn-circle btn-lg border border-slate-200/60  shadow-slate-300"
               title="Exit to Dashboard"
               aria-label="Exit to dashboard"
             >
@@ -164,7 +164,7 @@ export default function RoomSession({ roomId }: RoomSessionProps) {
               ref={chatTriggerRef}
               aria-label={chatOpen ? 'Close chat' : 'Open chat'}
               aria-expanded={chatOpen}
-              className={`btn btn-circle btn-lg border border-slate-200/60 shadow-lg shadow-slate-300 transition-colors ${chatOpen ? 'bg-primary text-primary-content hover:bg-primary/80' : 'bg-base-200/90 hover:bg-base-200 text-base-content'}`}
+              className={`btn btn-circle btn-lg border border-slate-200/60  shadow-slate-300 transition-colors ${chatOpen ? 'bg-primary text-primary-content hover:bg-primary/80' : 'bg-base-200/90 hover:bg-base-200 text-base-content'}`}
               title="Toggle Chat"
             >
               <MessageCircle />

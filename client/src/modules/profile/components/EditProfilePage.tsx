@@ -19,7 +19,7 @@ export default function EditProfilePage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         <div className="lg:col-span-4 space-y-4">
           <div
-            className="bg-white rounded-box p-8 text-slate-900 shadow-sm
+            className="bg-white rounded-box p-8 text-slate-900 
           border border-slate-300
           relative overflow-hidden"
           >
@@ -35,7 +35,7 @@ export default function EditProfilePage() {
             </div>
           </div>
 
-          <div className="alert alert-info alert-soft shadow-sm">
+          <div className="alert alert-info alert-soft ">
             <p>
               <strong>Security Tip:</strong> Your profile information is visible
               to clinical staff. Ensure your display name matches your legal
@@ -45,7 +45,7 @@ export default function EditProfilePage() {
         </div>
 
         <div className="lg:col-span-8">
-          <div className="bg-white border border-slate-300 rounded-box shadow-sm p-7 space-y-4">
+          <div className="bg-white border border-slate-300 rounded-box  p-7 space-y-4">
             <div>
               <h2 className="text-lg font-bold text-slate-800">
                 Account Settings

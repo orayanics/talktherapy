@@ -31,11 +31,7 @@ export default function SoapFields({
         error={errors[name]?.message}
       >
         {name === 'activity_plan' || name === 'session_type' ? (
-          <input
-            id={id}
-            {...register(name)}
-            className="input shadow-sm w-full"
-          />
+          <input id={id} {...register(name)} className="input  w-full" />
         ) : (
           <textarea id={id} {...register(name)} className="textarea w-full" />
         )}

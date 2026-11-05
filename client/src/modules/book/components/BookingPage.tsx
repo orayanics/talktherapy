@@ -116,7 +116,7 @@ export default function BookingPage() {
           </>
         }
       >
-        <div className="m-4 bg-white rounded-box border border-slate-200 shadow-sm overflow-hidden flex flex-col">
+        <div className="m-4 bg-white rounded-box border border-slate-200  overflow-hidden flex flex-col">
           {isLoading ? (
             <StateLoading />
           ) : isError ? (

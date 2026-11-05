@@ -70,7 +70,7 @@ export default function Sidebar(props: SidebarProps) {
                   className="fixed inset-0 z-50"
                   sideClassName="z-50"
                   panelProps={{ role: 'dialog', 'aria-modal': true }}
-                  panelClassName="flex h-full w-full max-w-md flex-col bg-white shadow-2xl"
+                  panelClassName="flex h-full w-full max-w-md flex-col bg-white "
                 >
                   <div className="min-h-0 flex-1 p-4 pt-2">
                     <NotificationList />

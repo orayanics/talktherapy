@@ -46,7 +46,7 @@ export default function RoomChat({
       className="pointer-events-none absolute inset-0 z-40"
       contentClassName="pointer-events-none"
       panelProps={{ id: 'session-chat', role: 'dialog', 'aria-modal': open }}
-      panelClassName="pointer-events-auto flex h-full w-80 flex-col border-l border-slate-200 bg-base-100 shadow-lg shadow-slate-200 lg:w-96"
+      panelClassName="pointer-events-auto flex h-full w-80 flex-col border-l border-slate-200 bg-base-100  shadow-slate-200 lg:w-96"
     >
       <div className="flex-1 overflow-hidden">
         <div className="flex h-full flex-col bg-base-100/50">
@@ -69,7 +69,7 @@ export default function RoomChat({
                       {isLocal ? 'You' : 'Peer'}
                     </div>
                     <div
-                      className={`chat-bubble text-sm shadow-sm ${isLocal ? 'chat-bubble-primary' : 'chat-bubble-neutral'}`}
+                      className={`chat-bubble text-sm  ${isLocal ? 'chat-bubble-primary' : 'chat-bubble-neutral'}`}
                     >
                       {msg.text}
                     </div>
@@ -93,7 +93,7 @@ export default function RoomChat({
                 type="button"
                 aria-label="Send chat message"
                 onClick={submit}
-                className="btn btn-neutral btn-sm px-4 shadow-sm"
+                className="btn btn-neutral btn-sm px-4 "
               >
                 Send
               </button>

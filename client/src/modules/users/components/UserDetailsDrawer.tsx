@@ -16,7 +16,7 @@ export default function UserDetailsDrawer({
       label={`${user.name} details`}
       title="User Information"
       className="fixed inset-0 z-40"
-      panelClassName="min-h-full w-full max-w-md overflow-y-auto bg-base-100 text-base-content shadow-2xl"
+      panelClassName="min-h-full w-full max-w-md overflow-y-auto bg-base-100 text-base-content "
     >
       <UserDetailsPanel user={user} />
     </Drawer>

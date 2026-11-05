@@ -45,7 +45,7 @@ export default function PatientsPage() {
     <div className="space-y-4">
       <CpFilters searchTerm={searchTerm} updateSearch={updateSearch} />
 
-      <div className="bg-white rounded-box border border-slate-200 shadow-sm overflow-hidden flex flex-col p-4">
+      <div className="bg-white rounded-box border border-slate-200  overflow-hidden flex flex-col p-4">
         {isPending ? (
           <StateLoading />
         ) : isError ? (

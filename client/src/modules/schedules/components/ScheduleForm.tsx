@@ -39,7 +39,7 @@ export default function ScheduleForm() {
 
   return (
     <form onSubmit={onSubmit} className="w-full bg-white">
-      <div className="rounded-box border border-slate-300 shadow-sm space-y-4 p-6">
+      <div className="rounded-box border border-slate-300  space-y-4 p-6">
         <h2 className="text-sm font-bold uppercase tracking-wide">
           New Schedule
         </h2>
@@ -68,7 +68,7 @@ export default function ScheduleForm() {
                   id="schedule-start-at"
                   {...register('start_at')}
                   type="datetime-local"
-                  className="w-full input shadow-sm"
+                  className="w-full input "
                 />
               </FormInput>
 
@@ -81,7 +81,7 @@ export default function ScheduleForm() {
                   id="schedule-end-at"
                   {...register('end_at')}
                   type="datetime-local"
-                  className="w-full input shadow-sm"
+                  className="w-full input "
                 />
               </FormInput>
             </div>
@@ -147,7 +147,7 @@ export default function ScheduleForm() {
                     max={365}
                     value={count}
                     onChange={(e) => setCount(Number(e.target.value))}
-                    className="input shadow-sm w-24 ml-4"
+                    className="input  w-24 ml-4"
                   />
                 </FormInput>
 

@@ -48,7 +48,7 @@ export default function Dropdown(props: DropdownProps) {
         {label ?? 'Select Option'}
       </summary>
       <ul
-        className={`border border-border! dropdown-content menu bg-base-200 text-base-content rounded-box z-50 mt-0 w-52 p-2 shadow-sm ${className || ''}`}
+        className={`border border-border! dropdown-content menu bg-base-200 text-base-content rounded-box z-50 mt-0 w-52 p-2  ${className || ''}`}
         onClick={(event) => {
           const option = (event.target as HTMLElement).closest(
             'a, button, [role="menuitem"]',

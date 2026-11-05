@@ -14,7 +14,7 @@ export default function SlpBreakdown({ result }: SlpBreakdownProps) {
       <div
         className="mt-2 overflow-x-auto
         border border-slate-300 rounded-box
-        bg-white shadow-sm"
+        bg-white "
       >
         <table className="table">
           <thead>

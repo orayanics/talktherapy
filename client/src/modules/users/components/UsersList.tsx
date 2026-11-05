@@ -129,13 +129,13 @@ export default function UsersList() {
             {canInviteAdmin && (
               <>
                 <button
-                  className="btn btn-neutral shadow-sm"
+                  className="btn btn-neutral "
                   onClick={() => setAdminModalOpen(true)}
                 >
                   Admin
                 </button>
                 <button
-                  className="btn btn-neutral shadow-sm"
+                  className="btn btn-neutral "
                   onClick={() => setPatientModalOpen(true)}
                 >
                   Patient
@@ -143,7 +143,7 @@ export default function UsersList() {
               </>
             )}
             <button
-              className="btn btn-neutral shadow-sm"
+              className="btn btn-neutral "
               onClick={() => setClinicianModalOpen(true)}
             >
               Clinician

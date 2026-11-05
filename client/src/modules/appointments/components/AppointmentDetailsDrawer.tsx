@@ -116,7 +116,7 @@ export default function AppointmentDetailsDrawer({
             <div className="relative ml-3 space-y-10 border-l-2 border-slate-100">
               {events.map((event) => (
                 <div key={event.id} className="group relative pl-8">
-                  <div className="absolute -left-1.75 h-3 w-3 rounded-full border-2 border-primary bg-white shadow-sm" />
+                  <div className="absolute -left-1.75 h-3 w-3 rounded-full border-2 border-primary bg-white " />
 
                   <div className="flex flex-col gap-1">
                     <time className="text-xs uppercase text-muted">

@@ -19,7 +19,7 @@ export default function ProfilePage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
         <div className="lg:col-span-4">
           <div
-            className="bg-white rounded-box p-4 text-slate-900 shadow-sm
+            className="bg-white rounded-box p-4 text-slate-900 
           border border-slate-300 space-y-2"
           >
             <div className="relative z-1">
@@ -36,7 +36,7 @@ export default function ProfilePage() {
         </div>
 
         <div className="lg:col-span-8 space-y-4">
-          <div className="bg-white border border-slate-300 rounded-box shadow-sm">
+          <div className="bg-white border border-slate-300 rounded-box ">
             <div className="p-4 border-b border-slate-200 flex items-center gap-2">
               <ShieldCheck size={16} />
               <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider">
@@ -72,7 +72,7 @@ export default function ProfilePage() {
               event.preventDefault()
               void preferences.update(draft)
             }}
-            className="bg-white border border-slate-300 rounded-box shadow-sm p-4 space-y-3"
+            className="bg-white border border-slate-300 rounded-box  p-4 space-y-3"
           >
             <h3 className="font-bold">Notification preferences</h3>
             <label className="flex items-center justify-between">

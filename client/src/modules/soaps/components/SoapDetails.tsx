@@ -21,7 +21,7 @@ export default function SoapDetails({ soapId }: { soapId: string }) {
       ) : !data ? (
         <StateNull />
       ) : (
-        <div className="bg-white border border-slate-300 rounded-box shadow-sm p-6 space-y-2">
+        <div className="bg-white border border-slate-300 rounded-box  p-6 space-y-2">
           <h1 className="text-xl font-bold pb-2 mb-2 border-b border-slate-300">
             SOAP Details
           </h1>
