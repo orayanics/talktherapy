@@ -37,7 +37,6 @@ import { Route as PrivatepatientRecordsIndexRouteImport } from './routes/_privat
 import { Route as PrivatepatientRecordsSoapIdRouteImport } from './routes/_private/(patient)/records.$soapId'
 import { Route as PrivatepatientSlpIndexRouteImport } from './routes/_private/(patient)/slp.index'
 import { Route as PrivatesharedAppointmentsIndexRouteImport } from './routes/_private/(shared)/appointments/index'
-import { Route as PrivatesharedAppointmentsAppointmentIdRouteImport } from './routes/_private/(shared)/appointments/$appointmentId'
 import { Route as PrivatesharedContentIndexRouteImport } from './routes/_private/(shared)/content/index'
 import { Route as PrivatesharedContentContentIdRouteImport } from './routes/_private/(shared)/content/$contentId'
 import { Route as PrivatesharedContentAdmRouteRouteImport } from './routes/_private/(shared)/content/_adm/route'
@@ -197,12 +196,6 @@ const PrivatesharedAppointmentsIndexRoute =
     path: '/appointments/',
     getParentRoute: () => PrivateRouteRoute,
   } as any)
-const PrivatesharedAppointmentsAppointmentIdRoute =
-  PrivatesharedAppointmentsAppointmentIdRouteImport.update({
-    id: '/(shared)/appointments/$appointmentId',
-    path: '/appointments/$appointmentId',
-    getParentRoute: () => PrivateRouteRoute,
-  } as any)
 const PrivatesharedContentIndexRoute =
   PrivatesharedContentIndexRouteImport.update({
     id: '/(shared)/content/',
@@ -299,7 +292,6 @@ export interface FileRoutesByFullPath {
   '/content': typeof PrivatesharedContentAdmRouteRouteWithChildren
   '/schedules/create': typeof PrivateclinicianSchedulesCreateRoute
   '/records/$soapId': typeof PrivatepatientRecordsSoapIdRoute
-  '/appointments/$appointmentId': typeof PrivatesharedAppointmentsAppointmentIdRoute
   '/content/$contentId': typeof PrivatesharedContentContentIdRoute
   '/slp/assignments': typeof PrivatesharedSlpAssignmentsRoute
   '/slp/exercises': typeof PrivatesharedSlpExercisesRoute
@@ -338,7 +330,6 @@ export interface FileRoutesByTo {
   '/content': typeof PrivatesharedContentIndexRoute
   '/schedules/create': typeof PrivateclinicianSchedulesCreateRoute
   '/records/$soapId': typeof PrivatepatientRecordsSoapIdRoute
-  '/appointments/$appointmentId': typeof PrivatesharedAppointmentsAppointmentIdRoute
   '/content/$contentId': typeof PrivatesharedContentContentIdRoute
   '/slp/assignments': typeof PrivatesharedSlpAssignmentsRoute
   '/slp/exercises': typeof PrivatesharedSlpExercisesRoute
@@ -382,7 +373,6 @@ export interface FileRoutesById {
   '/_private/(shared)/content/_adm': typeof PrivatesharedContentAdmRouteRouteWithChildren
   '/_private/(clinician)/schedules/create': typeof PrivateclinicianSchedulesCreateRoute
   '/_private/(patient)/records/$soapId': typeof PrivatepatientRecordsSoapIdRoute
-  '/_private/(shared)/appointments/$appointmentId': typeof PrivatesharedAppointmentsAppointmentIdRoute
   '/_private/(shared)/content/$contentId': typeof PrivatesharedContentContentIdRoute
   '/_private/(shared)/slp/assignments': typeof PrivatesharedSlpAssignmentsRoute
   '/_private/(shared)/slp/exercises': typeof PrivatesharedSlpExercisesRoute
@@ -423,7 +413,6 @@ export interface FileRouteTypes {
     | '/content'
     | '/schedules/create'
     | '/records/$soapId'
-    | '/appointments/$appointmentId'
     | '/content/$contentId'
     | '/slp/assignments'
     | '/slp/exercises'
@@ -462,7 +451,6 @@ export interface FileRouteTypes {
     | '/content'
     | '/schedules/create'
     | '/records/$soapId'
-    | '/appointments/$appointmentId'
     | '/content/$contentId'
     | '/slp/assignments'
     | '/slp/exercises'
@@ -505,7 +493,6 @@ export interface FileRouteTypes {
     | '/_private/(shared)/content/_adm'
     | '/_private/(clinician)/schedules/create'
     | '/_private/(patient)/records/$soapId'
-    | '/_private/(shared)/appointments/$appointmentId'
     | '/_private/(shared)/content/$contentId'
     | '/_private/(shared)/slp/assignments'
     | '/_private/(shared)/slp/exercises'
@@ -732,13 +719,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivatesharedAppointmentsIndexRouteImport
       parentRoute: typeof PrivateRouteRoute
     }
-    '/_private/(shared)/appointments/$appointmentId': {
-      id: '/_private/(shared)/appointments/$appointmentId'
-      path: '/appointments/$appointmentId'
-      fullPath: '/appointments/$appointmentId'
-      preLoaderRoute: typeof PrivatesharedAppointmentsAppointmentIdRouteImport
-      parentRoute: typeof PrivateRouteRoute
-    }
     '/_private/(shared)/content/': {
       id: '/_private/(shared)/content/'
       path: '/content'
@@ -924,7 +904,6 @@ interface PrivateRouteRouteChildren {
   PrivateProfileEmailChangeRoute: typeof PrivateProfileEmailChangeRoute
   PrivateProfileIndexRoute: typeof PrivateProfileIndexRoute
   PrivatesharedContentAdmRouteRoute: typeof PrivatesharedContentAdmRouteRouteWithChildren
-  PrivatesharedAppointmentsAppointmentIdRoute: typeof PrivatesharedAppointmentsAppointmentIdRoute
   PrivatesharedContentContentIdRoute: typeof PrivatesharedContentContentIdRoute
   PrivatesharedSlpAssignmentsRoute: typeof PrivatesharedSlpAssignmentsRoute
   PrivatesharedSlpExercisesRoute: typeof PrivatesharedSlpExercisesRoute
@@ -942,8 +921,6 @@ const PrivateRouteRouteChildren: PrivateRouteRouteChildren = {
   PrivateProfileIndexRoute: PrivateProfileIndexRoute,
   PrivatesharedContentAdmRouteRoute:
     PrivatesharedContentAdmRouteRouteWithChildren,
-  PrivatesharedAppointmentsAppointmentIdRoute:
-    PrivatesharedAppointmentsAppointmentIdRoute,
   PrivatesharedContentContentIdRoute: PrivatesharedContentContentIdRoute,
   PrivatesharedSlpAssignmentsRoute: PrivatesharedSlpAssignmentsRoute,
   PrivatesharedSlpExercisesRoute: PrivatesharedSlpExercisesRoute,

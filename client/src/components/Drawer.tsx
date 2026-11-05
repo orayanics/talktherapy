@@ -68,7 +68,7 @@ export default function Drawer({
             <div
               className={`flex shrink-0 items-center justify-between gap-4 border-b border-border p-6 ${headerClassName}`}
             >
-              <p className="my-0! min-w-0">{title}</p>
+              <p className="my-0! min-w-0 font-medium">{title}</p>
               <button
                 ref={closeButtonRef}
                 type="button"

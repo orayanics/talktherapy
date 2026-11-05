@@ -225,11 +225,11 @@ export default function UsersList() {
                   render: (user) => (
                     <button
                       type="button"
-                      className="flex items-center gap-3 text-left"
+                      className="flex items-center gap-2 text-left"
                       onClick={() => setSelectedUser(user)}
                     >
                       <img
-                        className="w-9 h-9 rounded-full"
+                        className="w-9 h-9 rounded-full my-1!"
                         src={`https://ui-avatars.com/api/?name=${encodeURIComponent(
                           user.name,
                         )}&background=1e293b&color=fff&rounded=true&font-size=0.35`}

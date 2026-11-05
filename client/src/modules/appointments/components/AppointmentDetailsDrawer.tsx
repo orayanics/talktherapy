@@ -1,11 +1,13 @@
 import { useQuery } from '@tanstack/react-query'
-import Drawer from '#/components/Drawer'
-import StateError from '#/components/State/StateError'
-import StateLoading from '#/components/State/StateLoading'
-import { Row } from '#/components/Table/Row'
-import RolePill from '#/modules/users/components/RolePill'
 import { formatDate } from '#/utils/useDate'
 import { fetchAppointment } from '../api/appointments'
+
+import { Row } from '#/components/Table/Row'
+import StateError from '#/components/State/StateError'
+import StateLoading from '#/components/State/StateLoading'
+import AppointmentPill from './AppointmentPill'
+import RolePill from '#/modules/users/components/RolePill'
+import Drawer from '#/components/Drawer'
 
 export default function AppointmentDetailsDrawer({
   appointmentId,
@@ -29,7 +31,7 @@ export default function AppointmentDetailsDrawer({
       label="Appointment details"
       title="Appointment Details"
       className={appointmentId ? 'fixed inset-0 z-40' : 'hidden'}
-      panelClassName="min-h-full w-full max-w-md overflow-y-auto bg-base-100 text-base-content"
+      panelClassName="min-h-full w-full max-w-lg overflow-y-auto bg-base-100 text-base-content"
     >
       {query.isPending ? (
         <StateLoading />
@@ -37,8 +39,14 @@ export default function AppointmentDetailsDrawer({
         <StateError />
       ) : (
         <div className="space-y-4 p-6">
-          <div className="space-y-2 rounded-lg border border-slate-300 bg-white p-6 shadow-sm">
-            <Row label="Status" value={appointment.status} />
+          <div className="space-y-4">
+            <p className=" border-b border-dashed border-border pb-4 text-xl font-bold my-0! mb-4!">
+              Details
+            </p>
+            <Row label="Status">
+              <AppointmentPill status={appointment.status} />
+            </Row>
+
             {appointment.status !== 'COMPLETED' && (
               <Row label="Room ID" value={appointment.room_id} />
             )}
@@ -62,13 +70,25 @@ export default function AppointmentDetailsDrawer({
           </div>
 
           {encounter && (
-            <div className="space-y-2 rounded-lg border border-slate-300 bg-white p-6 shadow-sm">
-              <h3 className="mb-2 border-b border-slate-300 pb-2 text-xl font-bold">
+            <div className="space-y-4">
+              <p className=" border-y border-dashed border-border py-4 text-xl font-bold my-0! mb-4!">
                 Patient Complaint
-              </h3>
-              <Row label="Diagnosis" value={encounter.diagnosis} />
-              <Row label="Chief Complaint" value={encounter.chief_complaint} />
-              <Row label="Referral Source" value={encounter.referral_source} />
+              </p>
+              <Row
+                textClassName="text-right"
+                label="Diagnosis"
+                value={encounter.diagnosis}
+              />
+              <Row
+                textClassName="text-right"
+                label="Chief Complaint"
+                value={encounter.chief_complaint}
+              />
+              <Row
+                textClassName="text-right"
+                label="Referral Source"
+                value={encounter.referral_source}
+              />
               <Row
                 label="Referral Document"
                 value={
@@ -77,7 +97,7 @@ export default function AppointmentDetailsDrawer({
                       href={encounter.referral_url}
                       target="_blank"
                       rel="noreferrer"
-                      className="text-sm text-primary hover:underline"
+                      className="text-sm text-primary hover:underline text-right"
                     >
                       View Referral Document
                     </a>
@@ -89,33 +109,34 @@ export default function AppointmentDetailsDrawer({
             </div>
           )}
 
-          <div className="space-y-6 rounded-lg border border-slate-300 bg-white p-6">
-            <h3 className="mb-6 border-b border-slate-300 pb-2 text-xl font-bold">
+          <div>
+            <p className=" border-y border-dashed border-border py-4 text-xl font-bold my-0! mb-4!">
               Appointment Events
-            </h3>
+            </p>
             <div className="relative ml-3 space-y-10 border-l-2 border-slate-100">
               {events.map((event) => (
                 <div key={event.id} className="group relative pl-8">
-                  <div className="absolute -left-1.75 h-3 w-3 rounded-full border-2 border-neutral/80 bg-white shadow-sm" />
+                  <div className="absolute -left-1.75 h-3 w-3 rounded-full border-2 border-primary bg-white shadow-sm" />
+
                   <div className="flex flex-col gap-1">
-                    <time className="text-xs font-medium uppercase text-slate-500">
+                    <time className="text-xs uppercase text-muted">
                       {formatDate(event.created_at)}
                     </time>
+
                     <div className="flex items-center gap-2">
-                      <h4 className="text-sm font-semibold capitalize text-slate-900">
+                      <h4 className="text-sm font-semibold capitalize my-0!">
                         {event.to_status.toLowerCase().replace('_', ' ')}
                       </h4>
-                      <span className="text-slate-300">•</span>
+                      <span className="text-muted">•</span>
                       <RolePill role={event.actor_type} />
                     </div>
+
                     {event.reason && (
-                      <div className="rounded-lg border border-slate-300 bg-slate-50 p-2 shadow-sm">
-                        <p className="text-sm leading-relaxed text-slate-900">
-                          <span className="font-medium text-slate-600">
-                            Reason:
-                          </span>{' '}
-                          {event.reason}
+                      <div className="rounded-box border border-border bg-slate-50 p-4">
+                        <p className="text-xs leading-relaxed uppercase font-bold my-0!">
+                          Reason
                         </p>
+                        <p className="leading-relaxed my-0!">{event.reason}</p>
                       </div>
                     )}
                   </div>

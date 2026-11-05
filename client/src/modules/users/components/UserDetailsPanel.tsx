@@ -1,6 +1,5 @@
 import type { AdminUser } from '#/modules/users/types/user'
 
-import { Calendar } from 'lucide-react'
 import { formatDate } from '#/utils/useDate'
 import StatusPill from '#/modules/users/components/StatusPill'
 import RolePill from '#/modules/users/components/RolePill'

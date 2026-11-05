@@ -20,6 +20,7 @@ import { useAuthGuard } from '#/modules/auth/hooks/useAuth'
 import AppointmentPill from '#/modules/appointments/components/AppointmentPill'
 import { ChevronDown, ChevronUp } from 'lucide-react'
 import AppointmentDetailsDrawer from '#/modules/appointments/components/AppointmentDetailsDrawer'
+import type { Appointment } from '#/modules/appointments/types/appointment'
 
 export default function AppointmentsPage() {
   const { role } = useAuthGuard()
@@ -119,7 +120,7 @@ export default function AppointmentsPage() {
         <ScheduleFilters from={from} updateSearch={updateSearch} />
       </div>
 
-      <div className="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden flex flex-col">
+      <div className="bg-white rounded-box border border-border overflow-hidden flex flex-col">
         {isLoading ? (
           <StateLoading message="Loading appointments..." />
         ) : isError ? (
@@ -160,7 +161,7 @@ export default function AppointmentsPage() {
                     className="link link-hover"
                     onClick={() => setDetailsAppointmentId(row.id)}
                   >
-                    {formatDate(row.slot.start_at)}
+                    {formatDate(row.slot.start_at, 'MMMM d, yyyy')}
                   </button>
                 ),
               },
@@ -175,22 +176,26 @@ export default function AppointmentsPage() {
                   </div>
                 ),
               },
-              {
-                header: 'Room',
-                accessor: 'room_id',
-                render: (row) =>
-                  row.status === 'ACCEPTED' && row.room_id ? (
-                    <Link
-                      to="/room/$roomId"
-                      params={{ roomId: row.id }}
-                      className="btn btn-neutral"
-                    >
-                      Join Session
-                    </Link>
-                  ) : (
-                    <span>N/A</span>
-                  ),
-              },
+              ...(isClinician
+                ? [
+                    {
+                      header: 'Room',
+                      accessor: 'room_id' as const,
+                      render: (row: Appointment) =>
+                        row.status === 'ACCEPTED' && row.room_id ? (
+                          <Link
+                            to="/room/$roomId"
+                            params={{ roomId: row.id }}
+                            className="btn btn-neutral"
+                          >
+                            Join Session
+                          </Link>
+                        ) : (
+                          <span>N/A</span>
+                        ),
+                    },
+                  ]
+                : []),
               {
                 header: 'Patient',
                 accessor: 'patient',
@@ -206,56 +211,49 @@ export default function AppointmentsPage() {
                 accessor: 'status',
                 render: (row) => <AppointmentPill status={row.status} />,
               },
-              {
-                header: 'Action',
-                accessor: 'id',
-                render: (row) => {
-                  if (row.status === 'PENDING') {
-                    return (
-                      <div className="flex gap-2">
-                        {isClinician ? (
-                          <>
-                            <button
-                              className="btn btn-neutral"
-                              onClick={() => openAcceptAction(row.id)}
-                            >
-                              Accept
-                            </button>
-                            <button
-                              className="btn btn-error"
-                              onClick={() => openAction(row.id)}
-                            >
-                              Reject
-                            </button>
-                          </>
-                        ) : (
-                          <button
-                            className="btn btn-error"
-                            onClick={() => openAction(row.id)}
-                          >
-                            Cancel
-                          </button>
-                        )}
-                      </div>
-                    )
-                  }
+              ...(isClinician
+                ? [
+                    {
+                      header: 'Action',
+                      accessor: 'id' as const,
+                      render: (row: Appointment) => {
+                        if (row.status === 'PENDING') {
+                          return (
+                            <div className="flex gap-2">
+                              <button
+                                className="btn btn-neutral"
+                                onClick={() => openAcceptAction(row.id)}
+                              >
+                                Accept
+                              </button>
+                              <button
+                                className="btn btn-error"
+                                onClick={() => openAction(row.id)}
+                              >
+                                Reject
+                              </button>
+                            </div>
+                          )
+                        }
 
-                  if (row.status === 'ACCEPTED') {
-                    return isClinician ? (
-                      <div className="flex gap-2">
-                        <button
-                          className="btn btn-success"
-                          onClick={() => openCompleteAction(row.id)}
-                        >
-                          Complete
-                        </button>
-                      </div>
-                    ) : null
-                  }
+                        if (row.status === 'ACCEPTED') {
+                          return (
+                            <div className="flex gap-2">
+                              <button
+                                className="btn btn-success"
+                                onClick={() => openCompleteAction(row.id)}
+                              >
+                                Complete
+                              </button>
+                            </div>
+                          )
+                        }
 
-                  return <p className="text-slate-600">N/A</p>
-                },
-              },
+                        return <p className="text-slate-600">N/A</p>
+                      },
+                    },
+                  ]
+                : []),
             ]}
           />
         )}

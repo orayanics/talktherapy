@@ -22,12 +22,16 @@ import CompleteAppointmentModal from '#/modules/appointments/components/Complete
 import useCompleteAppointment from '#/modules/appointments/hooks/useCompleteAppointment'
 import ScheduleData from './clinician/ScheduleData'
 import ClinicianSummary from './clinician/ClinicianSummary'
+import AppointmentDetailsDrawer from '#/modules/appointments/components/AppointmentDetailsDrawer'
 
 export default function ClinicianDashboard() {
   const [selected, setSelected] = useState<string | null>(null)
   const [openReject, setOpenReject] = useState(false)
   const [openAccept, setOpenAccept] = useState(false)
   const [openComplete, setOpenComplete] = useState(false)
+  const [detailsAppointmentId, setDetailsAppointmentId] = useState<
+    string | null
+  >(null)
 
   const today = formatDate(new Date(), 'yyyy-MM-dd')
   const start = new Date(`${today}T00:00:00.000Z`)
@@ -164,13 +168,13 @@ export default function ClinicianDashboard() {
                   header: 'Patient',
                   accessor: 'patient',
                   render: (row) => (
-                    <Link
-                      to="/appointments/$appointmentId"
-                      params={{ appointmentId: row.id }}
+                    <button
+                      type="button"
                       className="link link-hover"
+                      onClick={() => setDetailsAppointmentId(row.id)}
                     >
                       {row.patient.name}
-                    </Link>
+                    </button>
                   ),
                 },
                 {
@@ -249,6 +253,11 @@ export default function ClinicianDashboard() {
           </div>
         )}
       </section>
+
+      <AppointmentDetailsDrawer
+        appointmentId={detailsAppointmentId}
+        onClose={() => setDetailsAppointmentId(null)}
+      />
 
       <AppointmentActionModal
         isOpen={openReject}
