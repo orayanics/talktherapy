@@ -14,24 +14,27 @@ const STATUS_COLOR_MAP: Record<APPOINTMENT_STATUS, string> = {
 
 export default function ScheduleData({
   appointments,
+  onAppointmentClick,
 }: {
   appointments: Array<Appointment>
+  onAppointmentClick?: (appointment: Appointment) => void
 }) {
   return (
-    <div className="space-y-1" role="list">
+    <div className="space-y-1">
       {appointments.map((appointment) => (
-        <div
+        <button
           key={appointment.id}
-          role="listitem"
-          className={`flex min-w-0 items-center justify-between gap-2 rounded-md border px-2 py-1.5 font-medium ${STATUS_COLOR_MAP[appointment.status]}`}
+          type="button"
+          className={`flex flex-col w-full gap-2 rounded-md border p-2 text-left  ${STATUS_COLOR_MAP[appointment.status]}`}
           title={`${appointment.patient.name} · ${appointment.status}`}
+          onClick={() => onAppointmentClick?.(appointment)}
         >
           <span className="truncate">{appointment.patient.name}</span>
           <time className="shrink-0" dateTime={appointment.slot.start_at}>
             {formatDate(appointment.slot.start_at, 'p')}
           </time>
-          <span className="sr-only">{appointment.status}</span>
-        </div>
+          <span className="font-bold">{appointment.status}</span>
+        </button>
       ))}
     </div>
   )

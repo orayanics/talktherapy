@@ -1,20 +1,37 @@
-import { useState } from 'react'
 import type { ReactNode } from 'react'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import type { Appointment } from '#/modules/appointments/types/appointment'
+
+import { useState } from 'react'
 import { formatDate } from '#/utils/useDate'
+
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 export default function ScheduleCalendar({
   start,
   days = 35,
   renderDay,
   onSelect,
+  appointments = [],
+  onAppointmentClick,
+  isClinician = false,
+  onOpenAction,
+  onOpenAcceptAction,
+  onOpenCompleteAction,
 }: {
   start: string
   days?: number
   renderDay?: (date: string) => ReactNode
   onSelect?: (date: string) => void
+  appointments?: Appointment[]
+  onAppointmentClick?: (appointment: Appointment) => void
+  isClinician?: boolean
+  onOpenAction?: (appointment: Appointment) => void
+  onOpenAcceptAction?: (appointment: Appointment) => void
+  onOpenCompleteAction?: (appointment: Appointment) => void
 }) {
+  const today = formatDate(new Date(), 'yyyy-MM-dd')
   const [offset, setOffset] = useState(0)
+  const [selectedDate, setSelectedDate] = useState(today)
   const anchor = new Date(`${start}T00:00:00Z`)
   anchor.setUTCDate(anchor.getUTCDate() + offset)
   const monday = new Date(anchor)
@@ -25,17 +42,20 @@ export default function ScheduleCalendar({
   const monthEnd = new Date(
     Date.UTC(anchor.getUTCFullYear(), anchor.getUTCMonth() + 1, 0),
   )
-  const today = formatDate(new Date(), 'yyyy-MM-dd')
+  const selectedAppointments = appointments.filter(
+    (appointment) =>
+      formatDate(appointment.slot.start_at, 'yyyy-MM-dd') === selectedDate,
+  )
 
   return (
-    <section className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
-      <div className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-3">
+    <section className="overflow-hidden rounded-box border border-border bg-white">
+      <div className="flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center">
           <div>
-            <h3 className="font-bold text-slate-900">
+            <h3 className="font-bold my-0!">
               {formatDate(anchor, 'MMMM yyyy')}
             </h3>
-            <p className="mt-1 text-xs text-slate-500">
+            <p className="text-xs text-muted">
               {formatDate(monthStart, 'MMM d, yyyy')} –{' '}
               {formatDate(monthEnd, 'MMM d, yyyy')}
             </p>
@@ -67,45 +87,144 @@ export default function ScheduleCalendar({
           </button>
         </div>
       </div>
-      <div className="overflow-x-auto border-t border-slate-200">
-        <div className="grid min-w-4xl grid-cols-7 gap-px bg-slate-200">
-          {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day) => (
-            <div
-              key={day}
-              className="bg-white py-3 text-center text-xs font-medium text-slate-600"
-            >
-              {day}
-            </div>
-          ))}
-          {Array.from({ length: days }, (_, i) => {
-            const date = new Date(monday)
-            date.setUTCDate(date.getUTCDate() + i)
-            const key = formatDate(date, 'yyyy-MM-dd')
-            const outsideMonth = date.getUTCMonth() !== anchor.getUTCMonth()
-
-            return (
-              <div key={key} className="min-h-32 overflow-hidden bg-white p-2">
-                <button
-                  type="button"
-                  className={`flex size-6 items-center justify-center rounded-full text-xs font-semibold transition-colors hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 ${
-                    key === today
-                      ? 'bg-slate-900 text-white hover:bg-slate-800'
-                      : outsideMonth
-                        ? 'text-slate-400'
-                        : 'text-slate-700'
-                  }`}
-                  aria-label={formatDate(date, 'EEEE, MMMM d, yyyy')}
-                  onClick={() => onSelect?.(key)}
-                >
-                  {date.getUTCDate()}
-                </button>
-                <div className="mt-2 space-y-1 overflow-hidden text-xs">
-                  {renderDay?.(key)}
-                </div>
+      <div className="flex flex-col border-t border-border lg:flex-row">
+        <div className="min-w-0 flex-1 overflow-x-auto">
+          <div className="grid min-w-4xl grid-cols-7 gap-px bg-slate-200">
+            {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day) => (
+              <div
+                key={day}
+                className="bg-white py-3 text-center text-xs font-medium text-slate-600"
+              >
+                {day}
               </div>
-            )
-          })}
+            ))}
+            {Array.from({ length: days }, (_, i) => {
+              const date = new Date(monday)
+              date.setUTCDate(date.getUTCDate() + i)
+              const key = formatDate(date, 'yyyy-MM-dd')
+              const outsideMonth = date.getUTCMonth() !== anchor.getUTCMonth()
+              const dayAppointments = appointments.filter(
+                (appointment) =>
+                  formatDate(appointment.slot.start_at, 'yyyy-MM-dd') === key,
+              )
+
+              return (
+                <div
+                  key={key}
+                  className="min-h-32 overflow-hidden bg-white p-2"
+                >
+                  <button
+                    type="button"
+                    className={`flex size-6 items-center justify-center rounded-full text-xs font-semibold transition-colors hover:bg-primary/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 ${
+                      key === today
+                        ? 'bg-primary text-white hover:bg-primary/80'
+                        : outsideMonth
+                          ? 'text-slate-400'
+                          : 'text-slate-700'
+                    }`}
+                    aria-label={formatDate(date, 'EEEE, MMMM d, yyyy')}
+                    onClick={() => {
+                      setSelectedDate(key)
+                      onSelect?.(key)
+                    }}
+                  >
+                    {date.getUTCDate()}
+                  </button>
+                  <div className="mt-2 space-y-1 overflow-hidden text-xs">
+                    {renderDay ? (
+                      renderDay(key)
+                    ) : (
+                      <>
+                        {dayAppointments.slice(0, 3).map((appointment) => (
+                          <button
+                            key={appointment.id}
+                            type="button"
+                            className="block w-full truncate rounded px-1 py-0.5 text-left text-slate-600 hover:bg-slate-100"
+                            onClick={() => onAppointmentClick?.(appointment)}
+                          >
+                            {appointment.patient.name}
+                          </button>
+                        ))}
+                        {dayAppointments.length > 3 && (
+                          <span className="block px-1 text-slate-400">
+                            +{dayAppointments.length - 3} more
+                          </span>
+                        )}
+                      </>
+                    )}
+                  </div>
+                </div>
+              )
+            })}
+          </div>
         </div>
+        {appointments.length > 0 && (
+          <div className="w-full border-t border-border p-4 lg:w-80 lg:border-l lg:border-t-0">
+            <p className="font-semibold my-0!">Appointments</p>
+            <p className="text-xs text-muted mt-0!">
+              {formatDate(
+                new Date(`${selectedDate}T00:00:00Z`),
+                'MMMM d, yyyy',
+              )}
+            </p>
+            <div className="space-y-2">
+              {selectedAppointments.map((appointment) => (
+                <div
+                  key={appointment.id}
+                  className="rounded-box border border-border p-4"
+                >
+                  <button
+                    type="button"
+                    className="w-full text-left transition-colors hover:text-slate-600"
+                    onClick={() => onAppointmentClick?.(appointment)}
+                  >
+                    <span className="block font-medium text-slate-900">
+                      {appointment.patient.name}
+                    </span>
+                    <span className="block text-xs text-slate-500">
+                      {formatDate(appointment.slot.start_at, 'MMM d, p')} ·{' '}
+                      {appointment.status}
+                    </span>
+                  </button>
+                  {isClinician && (
+                    <div className="mt-2 flex gap-2">
+                      {appointment.status === 'PENDING' && (
+                        <>
+                          <button
+                            type="button"
+                            className="btn btn-xs btn-neutral"
+                            onClick={() => onOpenAcceptAction?.(appointment)}
+                          >
+                            Accept
+                          </button>
+                          <button
+                            type="button"
+                            className="btn btn-xs btn-error"
+                            onClick={() => onOpenAction?.(appointment)}
+                          >
+                            Reject
+                          </button>
+                        </>
+                      )}
+                      {appointment.status === 'ACCEPTED' && (
+                        <button
+                          type="button"
+                          className="btn btn-xs btn-success"
+                          onClick={() => onOpenCompleteAction?.(appointment)}
+                        >
+                          Complete
+                        </button>
+                      )}
+                    </div>
+                  )}
+                </div>
+              ))}
+              {selectedAppointments.length === 0 && (
+                <p className="text-sm text-slate-500">No appointments</p>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </section>
   )

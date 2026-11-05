@@ -136,12 +136,25 @@ export default function ClinicianDashboard() {
         <ScheduleCalendar
           start={today}
           days={7}
+          appointments={appointments}
+          isClinician
+          onOpenAction={(appointment) => openRejectAction(appointment.id)}
+          onOpenAcceptAction={(appointment) => openAcceptAction(appointment.id)}
+          onOpenCompleteAction={(appointment) =>
+            openCompleteAction(appointment.id)
+          }
+          onAppointmentClick={(appointment) =>
+            setDetailsAppointmentId(appointment.id)
+          }
           renderDay={(date) => (
             <ScheduleData
               appointments={appointments.filter(
                 (appointment) =>
                   formatDate(appointment.slot.start_at, 'yyyy-MM-dd') === date,
               )}
+              onAppointmentClick={(appointment) =>
+                setDetailsAppointmentId(appointment.id)
+              }
             />
           )}
         />
