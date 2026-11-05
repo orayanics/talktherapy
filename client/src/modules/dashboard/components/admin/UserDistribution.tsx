@@ -8,7 +8,7 @@ interface UserDistributionProps {
 
 export default function UserDistribution({ stats }: UserDistributionProps) {
   return (
-    <section className="bg-white border border-border rounded-md p-4 md:col-span-2 flex flex-col justify-between">
+    <section className="bg-white border border-border rounded-box p-4 md:col-span-2 flex flex-col justify-between">
       <p className="font-bold mt-0">User Distribution</p>
       <div className="flex justify-between">
         <div>

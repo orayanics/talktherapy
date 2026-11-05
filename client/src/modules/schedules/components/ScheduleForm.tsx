@@ -39,7 +39,7 @@ export default function ScheduleForm() {
 
   return (
     <form onSubmit={onSubmit} className="w-full bg-white">
-      <div className="rounded-lg border border-slate-300 shadow-sm space-y-4 p-6">
+      <div className="rounded-box border border-slate-300 shadow-sm space-y-4 p-6">
         <h2 className="text-sm font-bold uppercase tracking-wide">
           New Schedule
         </h2>

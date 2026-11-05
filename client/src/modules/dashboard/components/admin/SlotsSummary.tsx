@@ -8,7 +8,7 @@ interface SlotsSummaryProps {
 
 export default function SlotsSummary({ stats }: SlotsSummaryProps) {
   return (
-    <section className="bg-white border border-border rounded-md p-4 md:col-span-2 flex flex-col justify-between">
+    <section className="bg-white border border-border rounded-box p-4 md:col-span-2 flex flex-col justify-between">
       <p className="font-bold mt-0">Slots</p>
       <div className="grid grid-cols-2 gap-4 mt-3">
         {Object.entries(stats.slots).map(([status, count]) => (

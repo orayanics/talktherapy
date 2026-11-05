@@ -25,7 +25,7 @@ export default function ScheduleData({
         <button
           key={appointment.id}
           type="button"
-          className={`flex flex-col w-full gap-2 rounded-md border p-2 text-left  ${STATUS_COLOR_MAP[appointment.status]}`}
+          className={`flex flex-col w-full gap-2 rounded-box border p-2 text-left  ${STATUS_COLOR_MAP[appointment.status]}`}
           title={`${appointment.patient.name} · ${appointment.status}`}
           onClick={() => onAppointmentClick?.(appointment)}
         >

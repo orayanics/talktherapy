@@ -34,7 +34,7 @@ export default function StatCards(props: UsersCount) {
       ].map((stat, i) => (
         <div
           key={i}
-          className="bg-white rounded-md border border-border p-4 flex flex-col gap-4"
+          className="bg-white rounded-box border border-border p-4 flex flex-col gap-4"
         >
           <div className="flex flex-row gap-4 items-center">
             <div className="w-10 h-10 rounded-full border border-border flex items-center justify-center">

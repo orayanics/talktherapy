@@ -49,7 +49,7 @@ export default function FormOtpUpdate({
     <div className="flex items-center justify-center min-h-screen bg-slate-50 p-4">
       <form
         onSubmit={onSubmit}
-        className="w-full max-w-120 bg-white border border-slate-200 rounded-lg shadow-lg shadow-slate-300 overflow-hidden"
+        className="w-full max-w-120 bg-white border border-slate-200 rounded-box shadow-lg shadow-slate-300 overflow-hidden"
       >
         <div className="p-6 border-b border-slate-200">
           <h2 className="text-xl font-bold text-slate-900 tracking-tight">

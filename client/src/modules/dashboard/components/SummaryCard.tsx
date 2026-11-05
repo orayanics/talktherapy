@@ -13,7 +13,7 @@ export default function SummaryCard({
   redirect?: { to: string; search?: Record<string, unknown> }
 }) {
   return (
-    <div className="flex flex-col gap-2 rounded-lg border border-slate-200 bg-white p-4">
+    <div className="flex flex-col gap-2 rounded-box border border-slate-200 bg-white p-4">
       <div className="inline-flex items-start gap-4">
         <DotGridIcon className="bg-slate-500" />
         <span>

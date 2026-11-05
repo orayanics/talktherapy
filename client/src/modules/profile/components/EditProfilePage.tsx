@@ -19,14 +19,14 @@ export default function EditProfilePage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         <div className="lg:col-span-4 space-y-4">
           <div
-            className="bg-white rounded-lg p-8 text-slate-900 shadow-sm
+            className="bg-white rounded-box p-8 text-slate-900 shadow-sm
           border border-slate-300
           relative overflow-hidden"
           >
             <div className="relative z-1">
               <div
                 className="w-16 h-16 bg-slate-900
-              rounded-lg flex items-center justify-center
+              rounded-box flex items-center justify-center
                text-2xl font-bold text-white mb-4 "
               >
                 {name.charAt(0)}
@@ -45,7 +45,7 @@ export default function EditProfilePage() {
         </div>
 
         <div className="lg:col-span-8">
-          <div className="bg-white border border-slate-300 rounded-lg shadow-sm p-7 space-y-4">
+          <div className="bg-white border border-slate-300 rounded-box shadow-sm p-7 space-y-4">
             <div>
               <h2 className="text-lg font-bold text-slate-800">
                 Account Settings

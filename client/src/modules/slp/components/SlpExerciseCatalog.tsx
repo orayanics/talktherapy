@@ -59,7 +59,7 @@ export default function SlpExerciseCatalog() {
       </div>
       <form
         onSubmit={submit}
-        className="space-y-3 rounded-lg border border-slate-300 bg-white p-5"
+        className="space-y-3 rounded-box border border-slate-300 bg-white p-5"
       >
         <h2 className="font-semibold">New draft</h2>
         <label className="flex gap-2">

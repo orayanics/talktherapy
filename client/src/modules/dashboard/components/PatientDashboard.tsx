@@ -64,10 +64,10 @@ export default function PatientDashboard() {
             {appts.map((a) => (
               <li
                 key={a.id}
-                className="flex items-center justify-between p-4 bg-white border border-slate-200 rounded-lg"
+                className="flex items-center justify-between p-4 bg-white border border-slate-200 rounded-box"
               >
                 <div className="flex items-center gap-4">
-                  <div className="flex flex-col items-center justify-center w-12 h-12 bg-slate-50 rounded-xl border border-slate-200">
+                  <div className="flex flex-col items-center justify-center w-12 h-12 bg-slate-50 rounded-box border border-slate-200">
                     <span className="text-xs font-bold text-slate-500 uppercase leading-none ">
                       {formatDate(a.slot.start_at, 'MMM')}
                     </span>
@@ -122,7 +122,7 @@ export default function PatientDashboard() {
         ) : contentQ.isError ? (
           <StateError />
         ) : bookmarks.length === 0 ? (
-          <div className="p-6 bg-slate-50/50 rounded-2xl border border-slate-100">
+          <div className="p-6 bg-slate-50/50 rounded-box border border-slate-100">
             <p className="text-xs text-slate-500 italic">
               No bookmarks yet. Browse clinical content to save helpful
               articles.
@@ -137,7 +137,7 @@ export default function PatientDashboard() {
                 key={c.id}
                 className="group hover:border-slate-400 transition-border
                 flex items-end-safe justify-between
-                p-4 bg-white border border-slate-200 rounded-lg"
+                p-4 bg-white border border-slate-200 rounded-box"
               >
                 <div className="space-y-1">
                   <div className="text-sm font-bold text-slate-900 font-serif">

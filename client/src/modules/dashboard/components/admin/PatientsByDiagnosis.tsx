@@ -24,7 +24,7 @@ export default function PatientsByDiagnosis({
   stats,
 }: PatientsByDiagnosisProps) {
   return (
-    <section className="bg-white border border-border rounded-md p-4 flex flex-col h-fit">
+    <section className="bg-white border border-border rounded-box p-4 flex flex-col h-fit">
       <p className="font-bold mt-0">Patients</p>
       <div>
         <HalfPieChart

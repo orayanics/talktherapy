@@ -24,14 +24,14 @@ export default function Values() {
         <img
           src={TEMP_IMAGE_URL}
           alt="Therapy session"
-          className="w-full lg:h-auto h-screen object-cover rounded-lg shadow-lg blur-[1px]"
+          className="w-full lg:h-auto h-screen object-cover rounded-box shadow-lg blur-[1px]"
           loading="lazy"
         />
 
         <div
           className="absolute translate-y-[-50%] top-1/2
         bg-white/60  backdrop-blur-md
-        h-fit rounded-lg p-6
+        h-fit rounded-box p-6
         border border-white/30 shadow-lg shadow-primary/10
         w-full max-w-md md:max-w-2xl lg:max-w-6xl"
         >

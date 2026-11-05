@@ -63,7 +63,7 @@ export default function PatientDetailsPage() {
         </Link>
       </div>
 
-      <div className="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden flex flex-col p-4">
+      <div className="bg-white rounded-box border border-slate-200 shadow-sm overflow-hidden flex flex-col p-4">
         {isPending ? (
           <StateLoading />
         ) : isError ? (

@@ -10,7 +10,7 @@ export default function ClinicianSummary({
 }) {
   if (!summary) {
     return (
-      <div className="rounded-lg border border-warning/30 bg-warning/10 p-4 text-sm text-warning-content">
+      <div className="rounded-box border border-warning/30 bg-warning/10 p-4 text-sm text-warning-content">
         Workload summary is temporarily unavailable. Today’s appointments are
         still shown below.
       </div>

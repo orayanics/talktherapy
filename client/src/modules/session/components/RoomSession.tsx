@@ -106,7 +106,7 @@ export default function RoomSession({ roomId }: RoomSessionProps) {
         )}
 
         {/* Local Video (Floating PiP) */}
-        <div className="absolute top-6 right-6 md:top-8 md:right-8 z-20 w-32 md:w-48 xl:w-60 aspect-3/4 md:aspect-video rounded-lg shadow-lg overflow-hidden border border-base-100/30 bg-white">
+        <div className="absolute top-6 right-6 md:top-8 md:right-8 z-20 w-32 md:w-48 xl:w-60 aspect-3/4 md:aspect-video rounded-box shadow-lg overflow-hidden border border-base-100/30 bg-white">
           <video
             ref={localRef}
             autoPlay

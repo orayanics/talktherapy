@@ -22,7 +22,7 @@ export default function UpdateSoapPage() {
       </Link>
 
       <div className="w-full bg-white">
-        <div className="rounded-lg border border-slate-300 shadow-sm flex flex-col gap-4 p-6">
+        <div className="rounded-box border border-slate-300 shadow-sm flex flex-col gap-4 p-6">
           <h2 className="text-sm font-bold uppercase tracking-wide">
             Update SOAP
           </h2>

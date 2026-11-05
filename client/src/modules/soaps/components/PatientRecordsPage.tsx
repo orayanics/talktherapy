@@ -45,7 +45,7 @@ export default function PatientRecordsPage() {
 
   return (
     <div className="space-y-4">
-      <div className="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden flex flex-col p-4">
+      <div className="bg-white rounded-box border border-slate-200 shadow-sm overflow-hidden flex flex-col p-4">
         {isPending ? (
           <StateLoading />
         ) : isError ? (

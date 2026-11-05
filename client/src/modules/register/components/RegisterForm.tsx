@@ -19,7 +19,7 @@ export default function RegisterForm() {
     <form onSubmit={onSubmit} className="w-full max-w-md lg:max-w-xl mx-auto">
       <div className="p-6 h-full space-y-4">
         <div className="flex items-center gap-2">
-          <div className="w-10 h-10 bg-slate-800 rounded-lg flex items-center justify-center text-white">
+          <div className="w-10 h-10 bg-slate-800 rounded-box flex items-center justify-center text-white">
             <svg
               width="16"
               height="16"

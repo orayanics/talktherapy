@@ -33,7 +33,7 @@ export default function StatCard({
   return (
     <div
       className={cn(
-        'flex flex-col gap-2 rounded-lg border border-border px-4 py-2 text-xs font-medium',
+        'flex flex-col gap-2 rounded-box border border-border px-4 py-2 text-xs font-medium',
         textClassName,
         className,
       )}

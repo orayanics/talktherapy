@@ -76,7 +76,7 @@ export default function LogsPage() {
       ) : (
         <div
           className="bg-white
-        border border-slate-300 rounded-lg p-4
+        border border-slate-300 rounded-box p-4
         "
         >
           <TableBase

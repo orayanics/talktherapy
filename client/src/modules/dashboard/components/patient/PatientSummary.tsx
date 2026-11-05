@@ -12,7 +12,7 @@ export default function PatientSummary({
 }) {
   if (!summary) {
     return (
-      <div className="rounded-lg border border-warning/30 bg-warning/10 p-4 text-sm text-warning-content">
+      <div className="rounded-box border border-warning/30 bg-warning/10 p-4 text-sm text-warning-content">
         Your dashboard summary is temporarily unavailable. Your schedule is
         still shown below.
       </div>

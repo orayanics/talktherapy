@@ -21,7 +21,7 @@ export default function SidebarItem(props: SidebarItemProps) {
               className: 'opacity-70 hover:opacity-100',
             }}
             activeProps={{
-              className: 'rounded-md font-medium bg-base-300',
+              className: 'rounded-box font-medium bg-base-300',
             }}
           >
             <span className="mr-4">{icon}</span>
