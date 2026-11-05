@@ -2,9 +2,9 @@ import useRegisterForm from '#/modules/register/hooks/useRegisterForm'
 import { useQuery } from '@tanstack/react-query'
 import { fetchDiagnoses } from '#/modules/diagnoses/api/diagnoses'
 import type { DiagnosisItem } from '#/modules/diagnoses/types/diagnosis'
-import RowError from '#/components/Table/RowError'
 import { Link } from '@tanstack/react-router'
-import FormLabel from '#/components/Form/FormLabel'
+import FormInput from '#/components/Form/FormInput'
+import RowError from '#/components/Table/RowError'
 import StateLoading from '#/components/State/StateLoading'
 import StateError from '#/components/State/StateError'
 
@@ -49,19 +49,16 @@ export default function RegisterForm() {
           </div>
         )}
 
-        <div className="flex flex-col">
-          <FormLabel title="Name" htmlFor="register-name" />
+        <FormInput label="Name" error={errors.name?.message} required>
           <input
             id="register-name"
             {...register('name')}
             placeholder="Name"
             className="input w-full"
           />
-          <RowError message={errors.name?.message} />
-        </div>
+        </FormInput>
 
-        <div className="flex flex-col">
-          <FormLabel title="Email" htmlFor="register-email" />
+        <FormInput label="Email" error={errors.email?.message} required>
           <input
             id="register-email"
             {...register('email')}
@@ -69,11 +66,13 @@ export default function RegisterForm() {
             type="email"
             className="input w-full"
           />
-          <RowError message={errors.email?.message} />
-        </div>
+        </FormInput>
 
-        <div className="flex flex-col">
-          <FormLabel title="Diagnosis Group" htmlFor="register-diagnosis" />
+        <FormInput
+          label="Diagnosis Group"
+          error={errors.diagnosis_id?.message}
+          required
+        >
           <select
             id="register-diagnosis"
             className="select w-full"
@@ -88,11 +87,9 @@ export default function RegisterForm() {
               </option>
             ))}
           </select>
-          <RowError message={errors.diagnosis_id?.message} />
-        </div>
+        </FormInput>
 
-        <div className="flex flex-col">
-          <FormLabel title="Password" htmlFor="register-password" />
+        <FormInput label="Password" error={errors.password?.message} required>
           <input
             id="register-password"
             {...register('password')}
@@ -100,14 +97,13 @@ export default function RegisterForm() {
             className="input w-full"
             type="password"
           />
-          <RowError message={errors.password?.message} />
-        </div>
+        </FormInput>
 
-        <div className="flex flex-col">
-          <FormLabel
-            title="Confirm Password"
-            htmlFor="register-password-confirmation"
-          />
+        <FormInput
+          label="Confirm Password"
+          error={errors.password_confirmation?.message}
+          required
+        >
           <input
             id="register-password-confirmation"
             {...register('password_confirmation')}
@@ -115,8 +111,7 @@ export default function RegisterForm() {
             className="input w-full"
             type="password"
           />
-          <RowError message={errors.password_confirmation?.message} />
-        </div>
+        </FormInput>
 
         <div className="flex gap-2">
           <input

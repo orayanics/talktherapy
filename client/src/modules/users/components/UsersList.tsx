@@ -24,6 +24,7 @@ import type { AdminUser } from '#/modules/users/types/user'
 import useActions from '#/modules/users/hooks/useActions'
 import { useSession } from '#/modules/auth/context/SessionContext'
 import Modal from '#/components/Modal/Modal'
+import FormInput from '#/components/Form/FormInput'
 
 export default function UsersList() {
   const search = useSearch({ from: '/_private/(adm-shared)/users/' })
@@ -184,28 +185,22 @@ export default function UsersList() {
         submitVariant="error"
         isDisabled={isStatusPending}
       >
-        <label htmlFor="suspension-reason" className="label">
-          Reason
-        </label>
-        <textarea
-          id="suspension-reason"
-          required
-          minLength={3}
-          maxLength={1000}
-          value={suspensionReason}
-          onChange={(event) => {
-            setSuspensionReason(event.target.value)
-            setSuspensionError('')
-          }}
-          className="textarea textarea-bordered w-full"
-          rows={4}
-          autoFocus
-        />
-        {suspensionError && (
-          <span role="alert" className="text-sm text-error">
-            {suspensionError}
-          </span>
-        )}
+        <FormInput label="Reason" error={suspensionError} required>
+          <textarea
+            id="suspension-reason"
+            required
+            minLength={3}
+            maxLength={1000}
+            value={suspensionReason}
+            onChange={(event) => {
+              setSuspensionReason(event.target.value)
+              setSuspensionError('')
+            }}
+            className="textarea textarea-bordered w-full"
+            rows={4}
+            autoFocus
+          />
+        </FormInput>
       </Modal>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">

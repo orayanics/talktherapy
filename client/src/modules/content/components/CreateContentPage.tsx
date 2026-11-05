@@ -9,7 +9,7 @@ import { ArrowLeft } from 'lucide-react'
 import useContentForm from '#/modules/content/hooks/useContentForm'
 import StateLoading from '#/components/State/StateLoading'
 import StateError from '#/components/State/StateError'
-import RowError from '#/components/Table/RowError'
+import FormInput from '#/components/Form/FormInput'
 
 export default function CreateContentPage() {
   const { register, onSubmit, control, errors, apiError, isLoading } =
@@ -44,41 +44,29 @@ export default function CreateContentPage() {
             </div>
           )}
 
-          <div>
-            <label htmlFor="content-title">
-              <span className="text-xs font-mono text-gray-400">Title</span>
-              <input
-                id="content-title"
-                {...register('title')}
-                placeholder="Title"
-                className="input shadow-sm w-full"
-              />
-            </label>
-            <RowError message={errors.title?.message} />
-          </div>
+          <FormInput label="Title" error={errors.title?.message} required>
+            <input
+              id="content-title"
+              {...register('title')}
+              placeholder="Title"
+              className="input shadow-sm w-full"
+            />
+          </FormInput>
 
-          <div>
-            <label htmlFor="content-description">
-              <span className="text-xs font-mono text-gray-400">
-                Description
-              </span>
-              <input
-                id="content-description"
-                {...register('description')}
-                placeholder="Description"
-                className="input shadow-sm w-full"
-              />
-            </label>
-            <RowError message={errors.description?.message} />
-          </div>
+          <FormInput
+            label="Description"
+            error={errors.description?.message}
+            required
+          >
+            <input
+              id="content-description"
+              {...register('description')}
+              placeholder="Description"
+              className="input shadow-sm w-full"
+            />
+          </FormInput>
 
-          <div>
-            <label
-              htmlFor="content-body"
-              className="text-xs font-mono text-gray-400"
-            >
-              Content Body
-            </label>
+          <FormInput label="Content Body" error={errors.body?.message} required>
             <Controller
               name="body"
               control={control}
@@ -97,54 +85,47 @@ export default function CreateContentPage() {
                 </div>
               )}
             />
-            <RowError message={errors.body?.message} />
-          </div>
+          </FormInput>
 
-          <div>
-            <label htmlFor="content-diagnosis">
-              <span className="text-xs font-mono text-gray-400">
-                Diagonis Category
-              </span>
-              <select
-                id="content-diagnosis"
-                className="select w-full"
-                {...register('diagnosis_id')}
-              >
-                <option value="" disabled>
-                  Select Diagnosis
+          <FormInput
+            label="Diagnosis Category"
+            error={errors.diagnosis_id?.message}
+            required
+          >
+            <select
+              id="content-diagnosis"
+              className="select w-full"
+              {...register('diagnosis_id')}
+            >
+              <option value="" disabled>
+                Select Diagnosis
+              </option>
+              {diagnoses.map((item: DiagnosisItem) => (
+                <option key={item.id} value={item.id}>
+                  {item.label}
                 </option>
-                {diagnoses.map((item: DiagnosisItem) => (
-                  <option key={item.id} value={item.id}>
-                    {item.label}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <RowError message={errors.diagnosis_id?.message} />
-          </div>
+              ))}
+            </select>
+          </FormInput>
 
-          <div>
-            <label htmlFor="content-tags">
-              <span className="text-xs font-mono text-gray-400">Tags</span>
-              <input
-                id="content-tags"
-                {...register('tag_names', {
-                  setValueAs: (value) => {
-                    if (Array.isArray(value)) return value
-                    if (typeof value !== 'string') return []
+          <FormInput label="Tags" error={errors.tag_names?.message}>
+            <input
+              id="content-tags"
+              {...register('tag_names', {
+                setValueAs: (value) => {
+                  if (Array.isArray(value)) return value
+                  if (typeof value !== 'string') return []
 
-                    return value
-                      .split(',')
-                      .map((t) => t.trim())
-                      .filter(Boolean)
-                  },
-                })}
-                placeholder="Tags (comma separated)"
-                className="input w-full shadow-sm"
-              />
-            </label>
-            <RowError message={errors.tag_names?.message} />
-          </div>
+                  return value
+                    .split(',')
+                    .map((t) => t.trim())
+                    .filter(Boolean)
+                },
+              })}
+              placeholder="Tags (comma separated)"
+              className="input w-full shadow-sm"
+            />
+          </FormInput>
 
           <button disabled={isLoading} className="btn btn-neutral">
             Publish

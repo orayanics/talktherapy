@@ -3,7 +3,7 @@ import useScheduleForm from '#/modules/schedules/hooks/useScheduleForm'
 import useRecurrenceBuilder from '#/modules/schedules/hooks/useRecurrenceBuilder'
 import type { TFrequency } from '../types/schema'
 import { formatDate } from '#/utils/useDate'
-import RowError from '#/components/Table/RowError'
+import FormInput from '#/components/Form/FormInput'
 
 const FREQ_BUTTONS: ReadonlyArray<{ freq: TFrequency; label: string }> = [
   { freq: 'none', label: 'One-Time' },
@@ -45,7 +45,9 @@ export default function ScheduleForm() {
         </h2>
 
         {apiError && (
-          <div className="alert alert-soft alert-error" role="alert">{apiError}</div>
+          <div className="alert alert-soft alert-error" role="alert">
+            {apiError}
+          </div>
         )}
 
         <div>
@@ -57,35 +59,31 @@ export default function ScheduleForm() {
               <p className="text-xs text-slate-500 lg:col-span-2">
                 Schedule times and previews use UTC.
               </p>
-              <div>
-                  <label htmlFor="schedule-start-at">
-                  <span className="text-xs font-mono text-gray-400">
-                    Start (UTC)
-                  </span>
-                  <input id="schedule-start-at"
-                    {...register('start_at')}
-                    type="datetime-local"
-                    className="w-full input shadow-sm"
-                  />
-                </label>
+              <FormInput
+                label="Start (UTC)"
+                error={errors.start_at?.message}
+                required
+              >
+                <input
+                  id="schedule-start-at"
+                  {...register('start_at')}
+                  type="datetime-local"
+                  className="w-full input shadow-sm"
+                />
+              </FormInput>
 
-                <RowError message={errors.start_at?.message} />
-              </div>
-
-              <div>
-                <label htmlFor="schedule-end-at">
-                  <span className="text-xs font-mono text-gray-400">
-                    End (UTC)
-                  </span>
-                  <input id="schedule-end-at"
-                    {...register('end_at')}
-                    type="datetime-local"
-                    className="w-full input shadow-sm"
-                  />
-                </label>
-
-                <RowError message={errors.end_at?.message} />
-              </div>
+              <FormInput
+                label="End (UTC)"
+                error={errors.end_at?.message}
+                required
+              >
+                <input
+                  id="schedule-end-at"
+                  {...register('end_at')}
+                  type="datetime-local"
+                  className="w-full input shadow-sm"
+                />
+              </FormInput>
             </div>
           </div>
 
@@ -141,12 +139,9 @@ export default function ScheduleForm() {
 
             {freq !== 'none' && (
               <div className="space-x-4">
-                <label htmlFor="schedule-occurrences">
-                  <span className="text-xs font-mono text-gray-400">
-                    Occurrences
-                  </span>
-
-                  <input id="schedule-occurrences"
+                <FormInput label="Occurrences" className="inline-flex" required>
+                  <input
+                    id="schedule-occurrences"
                     type="number"
                     min={1}
                     max={365}
@@ -154,7 +149,7 @@ export default function ScheduleForm() {
                     onChange={(e) => setCount(Number(e.target.value))}
                     className="input shadow-sm w-24 ml-4"
                   />
-                </label>
+                </FormInput>
 
                 <span className="text-xs text-slate-400 font-mono uppercase">
                   max 365

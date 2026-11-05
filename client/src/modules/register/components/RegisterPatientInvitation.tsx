@@ -3,7 +3,7 @@ import useRegisterPatientInvitation from '#/modules/register/hooks/useRegisterPa
 import type { ModalProps } from '#/types/component'
 
 import Modal from '#/components/Modal/Modal'
-import RowError from '#/components/Table/RowError'
+import FormInput from '#/components/Form/FormInput'
 
 export default function RegisterPatientInvitation({
   isOpen,
@@ -34,30 +34,22 @@ export default function RegisterPatientInvitation({
           {apiError}
         </div>
       )}
-      <div className="flex flex-col">
-        <label htmlFor="patient-name" className="label">
-          Name
-        </label>
+      <FormInput label="Name" error={errors.name?.message} required>
         <input
           id="patient-name"
           {...register('name')}
           placeholder="Name"
           className="input w-full"
         />
-        <RowError message={errors.name?.message} />
-      </div>
-      <div className="flex flex-col">
-        <label htmlFor="patient-email" className="label">
-          Email
-        </label>
+      </FormInput>
+      <FormInput label="Email" error={errors.email?.message} required>
         <input
           id="patient-email"
           {...register('email')}
           placeholder="Email"
           className="input w-full"
         />
-        <RowError message={errors.email?.message} />
-      </div>
+      </FormInput>
       <p className="text-sm text-slate-500">
         The patient will choose a password and diagnosis during activation
       </p>
