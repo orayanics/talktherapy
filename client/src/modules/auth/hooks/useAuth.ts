@@ -1,4 +1,4 @@
-import type { USER_ROLE } from '#/types/account'
+import type { USER_ROLE } from '#/modules/auth/types/account'
 import { useSession } from '#/modules/auth/context/SessionContext'
 import { hasRole } from '#/modules/auth/lib/auth-guard'
 

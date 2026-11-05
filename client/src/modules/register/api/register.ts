@@ -1,3 +1,4 @@
+import type { AdminUser } from '#/modules/users/types/user'
 import { api } from '#/lib/api/client'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
@@ -16,7 +17,9 @@ export const mutateRegisterPatient = () => {
   const { showAlert } = useAlert()
   return useMutation({
     mutationFn: async (payload: TRegisterPatient) => {
-      const { data } = await api('/api/v1/registrations/patient', {
+      const { data } = await api<{
+        data: { email: string; status: 'pending' }
+      }>('/api/v1/registrations/patient', {
         method: 'POST',
         data: JSON.stringify(payload),
       })
@@ -36,7 +39,7 @@ export const mutateRegisterClinician = () => {
   const { showAlert } = useAlert()
   return useMutation({
     mutationFn: async (payload: TRegisterClinician) => {
-      const { data } = await api('/api/v1/users', {
+      const { data } = await api<{ data: AdminUser }>('/api/v1/users', {
         method: 'POST',
         data: JSON.stringify({ ...payload, role: 'clinician' }),
       })
@@ -59,7 +62,7 @@ export const mutateRegisterAdmin = () => {
   const { showAlert } = useAlert()
   return useMutation({
     mutationFn: async (payload: TRegisterAdmin) => {
-      const { data } = await api('/api/v1/users', {
+      const { data } = await api<{ data: AdminUser }>('/api/v1/users', {
         method: 'POST',
         data: JSON.stringify({ ...payload, role: 'admin' }),
       })
@@ -81,7 +84,7 @@ export const mutateRegisterPatientInvitation = () => {
   const { showAlert } = useAlert()
   return useMutation({
     mutationFn: async (payload: TRegisterPatientInvitation) => {
-      const { data } = await api('/api/v1/users', {
+      const { data } = await api<{ data: AdminUser }>('/api/v1/users', {
         method: 'POST',
         data: JSON.stringify({ ...payload, role: 'patient' }),
       })

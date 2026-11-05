@@ -1,4 +1,6 @@
+import FilterDrawer from '#/components/Page/FilterDrawer'
 import { SearchFilter } from '#/components/Page/Filters'
+
 export default function CpFilters({
   searchTerm,
   updateSearch,
@@ -17,4 +19,3 @@ export default function CpFilters({
     </FilterDrawer>
   )
 }
-import FilterDrawer from '#/components/Page/FilterDrawer'

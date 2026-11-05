@@ -5,7 +5,9 @@ import StateError from '#/components/State/StateError'
 import StateLoading from '#/components/State/StateLoading'
 import AppointmentDetailsDrawer from '#/modules/appointments/components/AppointmentDetailsDrawer'
 
-export const Route = createFileRoute('/_private/(shared)/appointments/$appointmentId')({
+export const Route = createFileRoute(
+  '/_private/(shared)/appointments/$appointmentId',
+)({
   component: RouteComponent,
 })
 
@@ -16,5 +18,10 @@ function RouteComponent() {
   if (isPending) return <StateLoading />
   if (isError) return <StateError />
 
-  return <AppointmentDetailsDrawer appointmentId={appointmentId} onClose={() => window.history.back()} />
+  return (
+    <AppointmentDetailsDrawer
+      appointmentId={appointmentId}
+      onClose={() => window.history.back()}
+    />
+  )
 }

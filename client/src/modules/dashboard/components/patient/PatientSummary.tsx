@@ -1,9 +1,9 @@
-import SummaryCard from '#/components/Dashboard/SummaryCard'
+import SummaryCard from '#/modules/dashboard/components/SummaryCard'
 import { formatDate } from '#/utils/useDate'
 import { Link } from '@tanstack/react-router'
 import type { DashboardSummary } from '../../api/dashboard'
 import { pendingCount } from '../../hooks/count'
-import UnavailableCard from '#/components/Dashboard/UnavailableCard'
+import UnavailableCard from '#/modules/dashboard/components/UnavailableCard'
 
 export default function PatientSummary({
   summary,

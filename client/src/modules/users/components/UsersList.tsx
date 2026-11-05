@@ -7,8 +7,8 @@ import StateError from '#/components/State/StateError'
 import StateLoading from '#/components/State/StateLoading'
 import StateNull from '#/components/State/StateNull'
 import StatCards from './StatCards'
-import StatusPill from '#/components/Decorator/StatusPill'
-import RolePill from '#/components/Decorator/RolePill'
+import StatusPill from '#/modules/users/components/StatusPill'
+import RolePill from '#/modules/users/components/RolePill'
 import { formatDate } from '#/utils/useDate'
 import UserFilters from './UserFilters'
 import UserPagination from './UserPagination'
@@ -35,7 +35,7 @@ export default function UsersList() {
   const accountStatus = search.account_status ?? []
   const sort = search.sort
 
-  const updateSearch = (next: Record<string, unknown>) => {
+  const updateSearch = (next: Partial<typeof search>) => {
     navigate({
       search: (prev) => ({
         ...prev,

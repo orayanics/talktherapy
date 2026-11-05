@@ -1,4 +1,4 @@
-import SummaryCard from '#/components/Dashboard/SummaryCard'
+import SummaryCard from '#/modules/dashboard/components/SummaryCard'
 import { formatDate } from '#/utils/useDate'
 import type { DashboardSummary } from '../../api/dashboard'
 import { pendingCount, periodTotal, rateLabel } from '../../hooks/count'

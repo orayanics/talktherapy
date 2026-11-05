@@ -29,7 +29,8 @@ export const fetchSoapById = (soapId: string) =>
   queryOptions<Soap | undefined>({
     queryKey: ['soap', soapId],
     queryFn: async () =>
-      (await api<{ data: Soap }>(`/api/v1/soaps/${soapId}`, { method: 'GET' })).data,
+      (await api<{ data: Soap }>(`/api/v1/soaps/${soapId}`, { method: 'GET' }))
+        .data,
     staleTime: 1000 * 60 * 5,
     retry: false,
   })
@@ -40,7 +41,7 @@ export const mutateCreateSoap = (patientId: string) => {
   return useMutation({
     mutationFn: async (payload: Partial<Soap>) =>
       (
-        await api(`/api/v1/soaps/${patientId}`, {
+        await api<{ data: Soap }>(`/api/v1/soaps/${patientId}`, {
           method: 'POST',
           data: JSON.stringify(payload),
         })
@@ -60,7 +61,7 @@ export const mutateUpdateSoap = (soapId: string, patientId: string) => {
   return useMutation({
     mutationFn: async (payload: Partial<Soap>) =>
       (
-        await api(`/api/v1/soaps/${soapId}`, {
+        await api<{ data: Soap }>(`/api/v1/soaps/${soapId}`, {
           method: 'PATCH',
           data: JSON.stringify(payload),
         })

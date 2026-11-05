@@ -1,15 +1,3 @@
-export interface Permissions {
-  'user.create': boolean
-  'user.read': boolean
-  'user.update': boolean
-  'user.delete': boolean
-  'content.create': boolean
-  'content.read': boolean
-  'content.update': boolean
-  'content.delete': boolean
-  'system.audit': boolean
-}
-
 export enum PermissionKey {
   USERS_CREATE = 'user.create',
   USERS_READ = 'user.read',
@@ -21,6 +9,8 @@ export enum PermissionKey {
   CONTENT_DELETE = 'content.delete',
   SYSTEM_MAINTENANCE = 'system.audit',
 }
+
+export type Permissions = Record<PermissionKey, boolean>
 
 export const PermissionLabels: Record<PermissionKey, string> = {
   [PermissionKey.USERS_CREATE]: 'Create Users',

@@ -1,7 +1,7 @@
 import useRegisterForm from '#/modules/register/hooks/useRegisterForm'
 import { useQuery } from '@tanstack/react-query'
 import { fetchDiagnoses } from '#/modules/diagnoses/api/diagnoses'
-import type { DiagnosisItem } from '#/modules/diagnoses/api/diagnoses'
+import type { DiagnosisItem } from '#/modules/diagnoses/types/diagnosis'
 import RowError from '#/components/Table/RowError'
 import { Link } from '@tanstack/react-router'
 import FormLabel from '#/components/Form/FormLabel'
@@ -44,7 +44,9 @@ export default function RegisterForm() {
         </div>
 
         {apiError && (
-          <div className="alert alert-soft alert-error" role="alert">{apiError}</div>
+          <div className="alert alert-soft alert-error" role="alert">
+            {apiError}
+          </div>
         )}
 
         <div className="flex flex-col">
@@ -72,8 +74,14 @@ export default function RegisterForm() {
 
         <div className="flex flex-col">
           <FormLabel title="Diagnosis Group" htmlFor="register-diagnosis" />
-          <select id="register-diagnosis" className="select w-full" {...register('diagnosis_id')}>
-            <option value="" disabled>Select Diagnosis</option>
+          <select
+            id="register-diagnosis"
+            className="select w-full"
+            {...register('diagnosis_id')}
+          >
+            <option value="" disabled>
+              Select Diagnosis
+            </option>
             {diagnoses.map((item: DiagnosisItem) => (
               <option key={item.id} value={item.id}>
                 {item.label}
@@ -96,7 +104,10 @@ export default function RegisterForm() {
         </div>
 
         <div className="flex flex-col">
-          <FormLabel title="Confirm Password" htmlFor="register-password-confirmation" />
+          <FormLabel
+            title="Confirm Password"
+            htmlFor="register-password-confirmation"
+          />
           <input
             id="register-password-confirmation"
             {...register('password_confirmation')}
@@ -108,12 +119,15 @@ export default function RegisterForm() {
         </div>
 
         <div className="flex gap-2">
-          <input id="register-consent"
+          <input
+            id="register-consent"
             {...register('consent')}
             className="checkbox bg-white"
             type="checkbox"
           />
-          <label htmlFor="register-consent" className="label">I consent to the terms and conditions</label>
+          <label htmlFor="register-consent" className="label">
+            I consent to the terms and conditions
+          </label>
         </div>
         <RowError message={errors.consent?.message} />
 

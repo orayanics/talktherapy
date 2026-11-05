@@ -26,7 +26,7 @@ export default function ScheduleList() {
   const sort = search.sort ?? 'asc'
   const [selectedSlotId, setSelectedSlotId] = useState<string | null>(null)
 
-  const updateSearch = (next: Record<string, unknown>) => {
+  const updateSearch = (next: Partial<typeof search>) => {
     navigate({
       search: (prev) => ({
         ...prev,
@@ -39,15 +39,13 @@ export default function ScheduleList() {
   )
 
   const slots = data?.data ?? []
-  const meta =
-    data?.meta ??
-    ({
-      current_page: 1,
-      last_page: 1,
-      total: 0,
-      from: null,
-      per_page: 0,
-    } as any)
+  const meta = data?.meta ?? {
+    current_page: 1,
+    last_page: 1,
+    total: 0,
+    from: null,
+    per_page: 0,
+  }
 
   return (
     <div className="space-y-4">

@@ -1,7 +1,9 @@
+import FilterDrawer from '#/components/Page/FilterDrawer'
 import { useQuery } from '@tanstack/react-query'
 import { fetchDiagnoses } from '#/modules/diagnoses/api/diagnoses'
 import { DateFilter, ChoiceFilter } from '#/components/Page/Filters'
 import type { ScheduleParams } from '../../types/params'
+
 export default function ScheduleFilters({
   from,
   diagnosis,
@@ -17,8 +19,8 @@ export default function ScheduleFilters({
         <DateFilter
           label="From date"
           value={from}
-          onChange={(from) =>
-            updateSearch({ page: 1, from: from || undefined })
+          onChange={(value) =>
+            updateSearch({ page: 1, from: value || undefined })
           }
         />
         {diagnosis !== undefined &&
@@ -34,11 +36,10 @@ export default function ScheduleFilters({
                 label: item.label,
               }))}
               value={diagnosis}
-              onChange={(diagnosis) => updateSearch({ page: 1, diagnosis })}
+              onChange={(value) => updateSearch({ page: 1, diagnosis: value })}
             />
           ))}
       </div>
     </FilterDrawer>
   )
 }
-import FilterDrawer from '#/components/Page/FilterDrawer'

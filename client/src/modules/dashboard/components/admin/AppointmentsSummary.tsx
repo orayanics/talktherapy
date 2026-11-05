@@ -1,4 +1,4 @@
-import { StatusStat } from '#/components/Decorator/StatusAscii'
+import { StatusStat } from '#/modules/dashboard/components/StatusStats'
 import { Link } from '@tanstack/react-router'
 import type { AdminStats } from '../../api/dashboard'
 

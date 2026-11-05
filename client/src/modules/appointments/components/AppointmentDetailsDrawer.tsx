@@ -3,7 +3,7 @@ import Drawer from '#/components/Drawer'
 import StateError from '#/components/State/StateError'
 import StateLoading from '#/components/State/StateLoading'
 import { Row } from '#/components/Table/Row'
-import RolePill from '#/components/Decorator/RolePill'
+import RolePill from '#/modules/users/components/RolePill'
 import { formatDate } from '#/utils/useDate'
 import { fetchAppointment } from '../api/appointments'
 

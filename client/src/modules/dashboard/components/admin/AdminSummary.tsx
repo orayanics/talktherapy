@@ -1,4 +1,4 @@
-import SummaryCard from '#/components/Dashboard/SummaryCard'
+import SummaryCard from '#/modules/dashboard/components/SummaryCard'
 import type { DashboardSummary } from '../../api/dashboard'
 import { appointmentRedirect, pendingCount, rateLabel } from '../../hooks/count'
 

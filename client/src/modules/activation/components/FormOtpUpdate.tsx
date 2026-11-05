@@ -1,7 +1,7 @@
 import useOtpUpdateForm from '#/modules/activation/hooks/useOtpUpdateForm'
 import { useQuery } from '@tanstack/react-query'
 import { fetchDiagnoses } from '#/modules/diagnoses/api/diagnoses'
-import type { DiagnosisItem } from '#/modules/diagnoses/api/diagnoses'
+import type { DiagnosisItem } from '#/modules/diagnoses/types/diagnosis'
 import { Navigate } from '@tanstack/react-router'
 import StateError from '#/components/State/StateError'
 import StateLoading from '#/components/State/StateLoading'
@@ -63,7 +63,9 @@ export default function FormOtpUpdate({
 
         <div className="p-6 space-y-5">
           {apiError && (
-            <div className="alert alert-soft alert-error" role="alert">{apiError}</div>
+            <div className="alert alert-soft alert-error" role="alert">
+              {apiError}
+            </div>
           )}
 
           <div className="grid grid-cols-1 gap-2">
@@ -93,9 +95,18 @@ export default function FormOtpUpdate({
 
           {shouldShowDiagnosis && (
             <div>
-              <FormLabel title="Diagnosis Group" htmlFor="activation-diagnosis" />
-              <select id="activation-diagnosis" className="select w-full" {...register('diagnosis_id')}>
-                <option value="" disabled>Select Specialization</option>
+              <FormLabel
+                title="Diagnosis Group"
+                htmlFor="activation-diagnosis"
+              />
+              <select
+                id="activation-diagnosis"
+                className="select w-full"
+                {...register('diagnosis_id')}
+              >
+                <option value="" disabled>
+                  Select Specialization
+                </option>
                 {diagnoses.map((item: DiagnosisItem) => (
                   <option key={item.id} value={item.id}>
                     {item.label}
@@ -120,7 +131,10 @@ export default function FormOtpUpdate({
             </div>
 
             <div>
-              <FormLabel title="Confirm Password" htmlFor="activation-password-confirmation" />
+              <FormLabel
+                title="Confirm Password"
+                htmlFor="activation-password-confirmation"
+              />
               <input
                 id="activation-password-confirmation"
                 type="password"

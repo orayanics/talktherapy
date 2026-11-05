@@ -1,13 +1,11 @@
 import { z } from 'zod'
-
 import { createFileRoute } from '@tanstack/react-router'
+import { toArray } from '#/utils/query'
+import { ROLE_VALUES, STATUS_VALUES } from '#/modules/auth/constants/account'
 import UsersList from '#/modules/users/components/UsersList'
 
-import { toArray } from '#/utils/query'
-import { ROLE_VALUES, STATUS_VALUES } from '#/constants/account'
-
 const roleSchema = z
-  .any()
+  .unknown()
   .optional()
   .transform((v) => toArray(v))
   .transform((arr) =>
@@ -17,7 +15,7 @@ const roleSchema = z
   )
 
 const statusSchema = z
-  .any()
+  .unknown()
   .optional()
   .transform((v) => toArray(v))
   .transform((arr) =>
@@ -60,9 +58,5 @@ const searchSchema = z
 
 export const Route = createFileRoute('/_private/(adm-shared)/users/')({
   validateSearch: (search) => searchSchema.parse(search),
-  component: RouteComponent,
+  component: UsersList,
 })
-
-function RouteComponent() {
-  return <UsersList />
-}

@@ -43,7 +43,7 @@ export default function useOtpForm({
       // get role from response and navigate accordingly
       const result = await verifyOtpMutation.mutateAsync(data)
 
-      if (result?.role === 'patient' && !result.requires_credentials) {
+      if (result.role === 'patient' && !result.requires_credentials) {
         await activateAccountMutation.mutateAsync({
           email: data.email,
           otp_code: data.otp_code,
