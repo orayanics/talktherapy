@@ -20,7 +20,7 @@ export default function FormInput({
 }: FormInputProps) {
   return (
     <fieldset className={`fieldset ${className ?? ''}`}>
-      <legend className="fieldset-legend">
+      <legend className="fieldset-legend text-base font-normal">
         {label}
         {required && (
           <span className="text-error" aria-hidden="true">

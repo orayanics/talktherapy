@@ -1,148 +1,153 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { useAuthGuard } from '#/modules/auth/hooks/useAuth'
-import RowError from '#/components/Table/RowError'
+import { Link } from '@tanstack/react-router'
+import { TableBase } from '#/components/Table/TableBase'
+import Pagination from '#/components/Page/Pagination'
+import FilterDrawer from '#/components/Page/FilterDrawer'
+import { SearchFilter } from '#/components/Page/Filters'
 import FormInput from '#/components/Form/FormInput'
+import StateLoading from '#/components/State/StateLoading'
+import StateError from '#/components/State/StateError'
+import StateNull from '#/components/State/StateNull'
 import ExerciseDelivery from './ExerciseDelivery'
-import { fetchSlpExercises, mutateCreateSlpExercise } from '../api/exercises'
-import type { SlpExerciseModule } from '../api/exercises'
-
-const modules: SlpExerciseModule[] = [
-  'fluency',
-  'timing',
-  'articulation',
-  'aphasia',
-  'voice',
-  'motor_speech',
-]
+import { fetchSlpExercises } from '../api/exercises'
+import type { SlpExerciseFilters } from '../api/exercises'
+import { slpExerciseModules } from '../types/exercises'
 
 export default function SlpExerciseCatalog() {
-  const { is } = useAuthGuard()
-  const canShare = is('admin') || is('superadmin')
-  const { data, isPending, isError } = useQuery(fetchSlpExercises())
-  const create = mutateCreateSlpExercise()
-  const [module, setModule] = useState<SlpExerciseModule>('fluency')
-  const [language, setLanguage] = useState('en')
-  const [taskType, setTaskType] = useState('passage_reading')
-  const [prompt, setPrompt] = useState('')
-  const [scope, setScope] = useState<'private' | 'shared'>('private')
-  const [visible, setVisible] = useState(false)
-
-  const submit = async (event: React.FormEvent) => {
-    event.preventDefault()
-    try {
-      await create.mutateAsync({
-        module,
-        language,
-        task_type: taskType,
-        prompt_text: prompt,
-        scope,
-        configuration: { patient_visible: visible },
-      })
-      setPrompt('')
-    } catch {
-      /* Mutation state displays the error and preserves the draft. */
-    }
+  const [page, setPage] = useState(1)
+  const [filters, setFilters] = useState<SlpExerciseFilters>({})
+  const { data, isPending, isError } = useQuery(
+    fetchSlpExercises(page, filters),
+  )
+  const updateFilters = (next: Partial<SlpExerciseFilters>) => {
+    setFilters((current) => ({ ...current, ...next }))
+    setPage(1)
   }
 
-  if (isPending) return <div>Loading exercises…</div>
-  if (isError) return <div role="alert">Could not load exercises.</div>
-
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-xl font-semibold">SLP exercise catalog</h1>
-        <p className="text-sm text-slate-600">
-          Draft content is versioned and remains clinician-reviewed before
-          publication.
-        </p>
-      </div>
-      <form
-        onSubmit={submit}
-        className="space-y-3 rounded-box border border-slate-300 bg-white p-5"
-      >
-        <h2 className="font-semibold">New draft</h2>
-        <label className="flex gap-2">
-          <input
-            type="checkbox"
-            checked={visible}
-            onChange={(event) => setVisible(event.target.checked)}
+    <div className="space-y-4">
+      <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+        <div className="flex flex-col gap-4 md:flex-row md:items-end">
+          <SearchFilter
+            label="Language code"
+            placeholder="Language code (e.g. en, tl)"
+            value={filters.language ?? ''}
+            onChange={(language) =>
+              updateFilters({ language: language.trim() || undefined })
+            }
           />
-          Allow assigned patients to test this draft
-        </label>
-        <div className="grid gap-3 md:grid-cols-2">
-          <FormInput label="Module">
-            <select
-              className="select w-full"
-              value={module}
-              onChange={(event) =>
-                setModule(event.target.value as SlpExerciseModule)
-              }
-            >
-              {modules.map((item) => (
-                <option key={item}>{item}</option>
-              ))}
-            </select>
-          </FormInput>
-          <FormInput label="Language">
-            <input
-              className="input w-full"
-              value={language}
-              onChange={(event) => setLanguage(event.target.value)}
-              maxLength={16}
-            />
-          </FormInput>
-          <FormInput label="Task type">
-            <input
-              className="input w-full"
-              value={taskType}
-              onChange={(event) => setTaskType(event.target.value)}
-              maxLength={50}
-            />
-          </FormInput>
-          {canShare && (
-            <FormInput label="Scope">
-              <select
-                className="select w-full"
-                value={scope}
-                onChange={(event) =>
-                  setScope(event.target.value as 'private' | 'shared')
-                }
+          <FilterDrawer>
+            <div className="space-y-6">
+              <FormInput label="Module">
+                <select
+                  aria-label="Module"
+                  className="select w-full"
+                  value={filters.module ?? ''}
+                  onChange={(event) =>
+                    updateFilters({
+                      module:
+                        (event.target.value as SlpExerciseFilters['module']) ||
+                        undefined,
+                    })
+                  }
+                >
+                  <option value="">All modules</option>
+                  {slpExerciseModules.map((module) => (
+                    <option key={module} value={module}>
+                      {module.replaceAll('_', ' ')}
+                    </option>
+                  ))}
+                </select>
+              </FormInput>
+              <FormInput label="Scope">
+                <select
+                  aria-label="Scope"
+                  className="select w-full"
+                  value={filters.scope ?? ''}
+                  onChange={(event) =>
+                    updateFilters({
+                      scope:
+                        (event.target.value as SlpExerciseFilters['scope']) ||
+                        undefined,
+                    })
+                  }
+                >
+                  <option value="">All scopes</option>
+                  <option value="private">Private</option>
+                  <option value="shared">Shared catalog</option>
+                </select>
+              </FormInput>
+              <button
+                type="button"
+                className="btn"
+                onClick={() => {
+                  setFilters({})
+                  setPage(1)
+                }}
               >
-                <option value="private">Private</option>
-                <option value="shared">Shared catalog</option>
-              </select>
-            </FormInput>
-          )}
+                Clear filters
+              </button>
+            </div>
+          </FilterDrawer>
         </div>
-        <FormInput label="Prompt" required>
-          <textarea
-            className="textarea w-full"
-            required
-            value={prompt}
-            onChange={(event) => setPrompt(event.target.value)}
-            maxLength={2000}
+        <Link to="/slp/exercises/create" className="btn btn-neutral">
+          New draft
+        </Link>
+      </div>
+
+      <div className="bg-white rounded-box border border-border overflow-hidden flex flex-col">
+        {isPending ? (
+          <StateLoading />
+        ) : isError ? (
+          <StateError />
+        ) : data.data.length === 0 ? (
+          <StateNull
+            title="No exercises found"
+            message="Try adjusting the module, language, or scope filters."
           />
-        </FormInput>
-        {create.isError && <RowError message="Could not save this draft." />}
-        <button className="btn btn-neutral" disabled={create.isPending}>
-          Save draft
-        </button>
-      </form>
-      <ul className="space-y-2">
-        {data.data.map((exercise) => (
-          <li key={exercise.id} className="rounded border border-slate-200 p-3">
-            <div className="font-medium">
-              {exercise.latest_version?.prompt_text}
-            </div>
-            <div className="text-xs text-slate-500">
-              {exercise.module} · {exercise.latest_version?.language} · revision{' '}
-              {exercise.latest_version?.revision}
-            </div>
-            <ExerciseDelivery exercise={exercise} />
-          </li>
-        ))}
-      </ul>
+        ) : (
+          <TableBase
+            data={data.data}
+            keyExtractor={(exercise) => exercise.id}
+            columns={[
+              {
+                header: 'Exercise',
+                render: (exercise) => exercise.latest_version?.prompt_text,
+              },
+              {
+                header: 'Module',
+                render: (exercise) => exercise.module.replaceAll('_', ' '),
+              },
+              {
+                header: 'Language',
+                render: (exercise) => exercise.latest_version?.language,
+              },
+              { header: 'Scope', accessor: 'scope' },
+              {
+                header: 'Revision',
+                render: (exercise) => exercise.latest_version?.revision,
+              },
+              {
+                header: 'Delivery',
+                render: (exercise) => (
+                  <ExerciseDelivery
+                    key={exercise.latest_version?.id}
+                    exercise={exercise}
+                  />
+                ),
+              },
+            ]}
+          />
+        )}
+        {data && !isError && (
+          <Pagination
+            meta={data.meta}
+            page={page}
+            updateSearch={({ page: next }) => setPage(next)}
+          />
+        )}
+      </div>
     </div>
   )
 }
