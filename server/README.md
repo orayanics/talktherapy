@@ -52,4 +52,4 @@ php artisan boost:install --guidelines --skills --mcp --no-interaction
 
 `boost.json` selects Codex. Guidelines: `AGENTS.md`; skills: `.agents/skills`; MCP: `.codex/config.toml`. Open `server/` as the agent workspace to discover its MCP configuration. The server runs through `php artisan boost:mcp`; application-info, database-schema and search-docs were exercised during this phase. Project rules in `.ai/guidelines/talktherapy.md` survive regeneration. Exclude development packages in production with `composer install --no-dev`.
 
-See [phase evidence](../tasks/phase-1.md), [overall plan](../tasks/plan.md) and [module specs](../docs/migration/README.md).
+See the [documentation index](../docs/INDEX.md), [architecture](../docs/migration/ARCHITECTURE.md), [module specs](../docs/migration/README.md), and [task ledger](../tasks/todo.md).

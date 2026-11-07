@@ -139,7 +139,7 @@ python -m ruff check src tests
 python -m compileall -q src tests
 ```
 
-See [the phoneme-analysis specification](../docs/migration/modules/SPEC-phoneme-analysis.md) and [PLAN_SLP.md](../PLAN_SLP.md). The proxy, bounded process inference and decoded-duration validation are implemented. Reproducible model/image locks, measured resource budgets and clinical validation remain release work.
+See the [documentation index](../docs/INDEX.md) and [phoneme-analysis specification](../docs/migration/modules/SPEC-phoneme-analysis.md). The proxy and bounded inference path are implemented. Reproducible artifacts, resource budgets, and clinical validation remain release work.
 
 ## Version-2 proof of concept
 

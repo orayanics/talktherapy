@@ -2,12 +2,11 @@
 
 This setup terminates HTTPS in Laragon's Nginx while keeping the development services on local HTTP ports:
 
-```text
-https://172.30.204.234:8443
- ├── /api/*, /sanctum/*, /login, /logout -> Laravel :8080
- ├── /app/*                             -> Reverb :8081
- └── everything else                    -> Vite :3000
-```
+| HTTPS path                                  | Upstream        | Purpose                    |
+| ------------------------------------------- | --------------- | -------------------------- |
+| `/api/*`, `/sanctum/*`, `/login`, `/logout` | Laravel `:8080` | API and session requests   |
+| `/app/*`                                    | Reverb `:8081`  | Realtime WebSocket traffic |
+| Everything else                             | Vite `:3000`    | Frontend and HMR           |
 
 HTTPS is required for camera and microphone access when the frontend is opened through a LAN address.
 

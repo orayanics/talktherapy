@@ -58,12 +58,12 @@ Use the matching LAN IP instead of `localhost` when testing from another device,
 
 Running `php artisan migrate --seed` creates local-only accounts with password `password`:
 
-| Role | Email |
-|---|---|
-| Superadmin | `sudo@example.com` |
-| Admin | `admin@example.com` |
-| Clinician | `clinician@example.com` |
-| Patient | `patient.aphasia@example.com` (also `patient.stuttering@example.com`, `patient.autism@example.com`, `patient.adhd@example.com`, `patient.gdd@example.com`, `patient.down@example.com`) |
+| Role       | Email                                                                                                                                                                                  |
+| ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Superadmin | `sudo@example.com`                                                                                                                                                                     |
+| Admin      | `admin@example.com`                                                                                                                                                                    |
+| Clinician  | `clinician@example.com`                                                                                                                                                                |
+| Patient    | `patient.aphasia@example.com` (also `patient.stuttering@example.com`, `patient.autism@example.com`, `patient.adhd@example.com`, `patient.gdd@example.com`, `patient.down@example.com`) |
 
 Never use these credentials outside local development. Invited users do not use this default; they set their password through the emailed activation flow.
 
@@ -122,16 +122,16 @@ Set a long random `PHONEME_SERVICE_TOKEN` in the process environment and start t
 uvicorn phoneme_service.main:app --host 127.0.0.1 --port 8001
 ```
 
-Provision Whisper model artifacts before startup using the development instructions in [py/README.md](py/README.md). Startup and worker recovery load local artifacts only and fail when weights are missing. Production requires verified artifacts and the remaining gates in [tasks/todo.md](tasks/todo.md#phoneme-analysis).
+Provision Whisper model artifacts before startup using the development instructions in [py/README.md](py/README.md). Startup and worker recovery load local artifacts only and fail when weights are missing. Production requires verified artifacts and the remaining gates in [tasks/todo.md](tasks/todo.md#speech-service-gates).
 
 ## Development URLs
 
-| Component | URL |
-|---|---|
-| Client | `http://localhost:3000` |
-| Laravel API | `http://localhost:8080` |
-| Reverb WebSocket | `ws://localhost:8081` |
-| Mailpit UI | `http://localhost:8025` |
+| Component           | URL                     |
+| ------------------- | ----------------------- |
+| Client              | `http://localhost:3000` |
+| Laravel API         | `http://localhost:8080` |
+| Reverb WebSocket    | `ws://localhost:8081`   |
+| Mailpit UI          | `http://localhost:8025` |
 | Python internal API | `http://127.0.0.1:8001` |
 
 ## Verification
@@ -168,12 +168,13 @@ python -m compileall -q src tests
 
 CI runs the Laravel and client checks on pushes and pull requests. Python CI and a hash-locked clean-image inference test are still tracked release work.
 
-## Architecture and release status
+## Documentation and release status
 
+- [Documentation index](docs/INDEX.md)
 - [Migration architecture](docs/migration/ARCHITECTURE.md)
 - [Module specifications](docs/migration/README.md)
 - [Current task ledger](tasks/todo.md)
 - [Laravel-specific setup](server/README.md)
 - [Local TLS/nginx setup](SETUP_SSL.md)
 
-Do not expose the Python service publicly, commit `.env` files, use production credentials locally, or describe phoneme scores as clinically validated until the scientific and licensing gates are complete.
+Do not expose Python publicly, commit `.env` files, reuse demo credentials, or describe speech feedback as clinically validated.

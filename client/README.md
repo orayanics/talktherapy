@@ -1,6 +1,6 @@
 # TalkTherapy client
 
-React 19 and TanStack Start frontend for the Laravel API. See [the root setup guide](../README.md) for prerequisites, environment values, local accounts and service startup; see [STRUCTURE.md](STRUCTURE.md) for source ownership.
+React 19 and TanStack Start frontend for the Laravel API. See the [repository guide](../README.md), [documentation index](../docs/INDEX.md), and [source structure](STRUCTURE.md).
 
 From this directory:
 
@@ -20,6 +20,6 @@ npm run lint
 npm run build
 ```
 
-Routes live in `src/routes` and delegate UI and state to feature modules. Session queries run in browser-only `beforeLoad` guards and supply typed route context; role guards run before protected child loading. Mounted sessions revalidate on focus/reconnect. Business API functions supply `/api/v1` explicitly; the shared HTTP client uses the API origin so authentication and CSRF requests remain unversioned. Keep API calls separate from mutation hooks and preserve editor drafts across background refreshes.
+Routes live in `src/routes` and delegate UI and state to feature modules. Parent guards provide typed session context to child routes. Critical list and detail routes preload their Query options before rendering. Mounted sessions revalidate on focus and reconnect. Business API functions use `/api/v1`; authentication and CSRF remain unversioned.
 
 Styling uses Tailwind CSS 4 and daisyUI 5. Reuse the existing shared fields, modals, tables and state components rather than introducing another component system.

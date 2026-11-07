@@ -5,7 +5,7 @@
 
 This is the Laravel 13 API in `server/`; the React client is in `../client` and private speech inference is in `../py`. Legacy Bun reference code is in `../_server` and must not be restored into this application.
 
-Follow `../tasks/phase-1.md`, the migration specs in `../docs/migration/modules`, and the user's decisions at the end of `../docs/migration/ARCHITECTURE.md`. Local database is SQLite; Redis client is Predis. There is no legacy data import or Bun password conversion. Use Laravel hashing and new UUIDs.
+Follow `../docs/INDEX.md`, the migration specs in `../docs/migration/modules`, and the task ledger in `../tasks/todo.md`. Local database is SQLite; Redis uses Predis when configured. There is no legacy data import or Bun password conversion.
 
 Use conventional Laravel controllers, Form Requests, explicit API Resources, policies and transactions. Business routes use `/api/v1`. Clinical access requires the actual patient/clinician relationship; administrator status does not grant clinical access. Do not exempt the API from request-forgery protection.
 
@@ -22,6 +22,7 @@ Test changes using `php artisan test --compact` and format with `php vendor/bin/
 This application is a Laravel application supporting PHP 8.4 and 8.5 (Composer platform: PHP 8.4.0). Always use the APIs that match the installed major version of each package — do not assume a version.
 
 Before relying on a package's API, confirm its installed version:
+
 - PHP packages: run `composer show --direct` to list direct dependencies with versions, or `composer show <vendor/package>` for a single package.
 - JS packages: check `package.json` for the installed versions.
 
@@ -92,7 +93,7 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
 
 - Execute PHP in app context for debugging and testing code. Do not create models without user approval, prefer tests with factories instead. Prefer existing Artisan commands over custom tinker code.
 - Always use single quotes to prevent shell expansion: `php artisan tinker --execute 'Your::code();'`
-  - Double quotes for PHP strings inside: `php artisan tinker --execute 'User::where("active", true)->count();'`
+    - Double quotes for PHP strings inside: `php artisan tinker --execute 'User::where("active", true)->count();'`
 
 === php rules ===
 
