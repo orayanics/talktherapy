@@ -20,6 +20,6 @@ npm run lint
 npm run build
 ```
 
-Routes live in `src/routes` and delegate UI and state to feature modules. Session queries run in the browser. Business API functions supply `/api/v1` explicitly; the shared HTTP client uses the API origin so authentication and CSRF requests remain unversioned. Keep API calls separate from mutation hooks and preserve editor drafts across background refreshes.
+Routes live in `src/routes` and delegate UI and state to feature modules. Session queries run in browser-only `beforeLoad` guards and supply typed route context; role guards run before protected child loading. Mounted sessions revalidate on focus/reconnect. Business API functions supply `/api/v1` explicitly; the shared HTTP client uses the API origin so authentication and CSRF requests remain unversioned. Keep API calls separate from mutation hooks and preserve editor drafts across background refreshes.
 
 Styling uses Tailwind CSS 4 and daisyUI 5. Reuse the existing shared fields, modals, tables and state components rather than introducing another component system.

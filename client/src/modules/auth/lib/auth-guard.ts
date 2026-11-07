@@ -3,10 +3,10 @@ import type { USER_ROLE } from '#/modules/auth/types/account'
 import type { UserResponse } from '#/modules/auth/types/session'
 
 /**
- * Call inside a route loader. Throws a redirect to /unauthorized if the check fails.
+ * Call inside beforeLoad. Throws a redirect to /unauthorized if the check fails.
  * Returns the user for convenience (avoids re-fetching).
  */
-// Example: requireRole(session, 'admin') - only allows admins
+// Superadmins retain the existing role bypass; other users need an allowed role.
 // Example: requireRole(session, 'admin', 'clinician') - allows admins and clinicians
 export function requireRole(
   user: UserResponse,

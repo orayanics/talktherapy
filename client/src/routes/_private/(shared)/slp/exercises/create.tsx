@@ -1,16 +1,12 @@
-import { createFileRoute, Navigate } from '@tanstack/react-router'
-import { useAuthGuard } from '#/modules/auth/hooks/useAuth'
+import { createFileRoute } from '@tanstack/react-router'
+import { requireRole } from '#/modules/auth/lib/auth-guard'
 import CreateSlpExercisePage from '#/modules/slp/components/CreateSlpExercisePage'
 
 export const Route = createFileRoute('/_private/(shared)/slp/exercises/create')(
   {
-    component: RouteComponent,
+    beforeLoad: ({ context }) => {
+      requireRole(context.user, 'clinician', 'admin')
+    },
+    component: CreateSlpExercisePage,
   },
 )
-
-function RouteComponent() {
-  const { is } = useAuthGuard()
-  if (!(is('clinician') || is('admin') || is('superadmin')))
-    return <Navigate to="/unauthorized" />
-  return <CreateSlpExercisePage />
-}

@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
 import { Bell, Menu } from 'lucide-react'
 
 import type { USER_ROLE } from '#/modules/auth/types/account'
@@ -19,16 +20,12 @@ export default function Sidebar(props: SidebarProps) {
   const [show, setShow] = useState(false)
   const [isMenuOpen, setMenuOpen] = useState(false)
 
+  const queryClient = useQueryClient()
   const navItems = NAV_BY_ROLE[role]
 
   const handleLogout = async () => {
-    await authClient.signOut({
-      fetchOptions: {
-        onSuccess: () => {
-          window.location.href = '/login'
-        },
-      },
-    })
+    await authClient.signOut(queryClient)
+    window.location.href = '/login'
   }
 
   return (

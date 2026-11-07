@@ -1,11 +1,9 @@
-import { useAuthGuard } from '#/modules/auth/hooks/useAuth'
-import { createFileRoute, Navigate, Outlet } from '@tanstack/react-router'
+import { createFileRoute, Outlet } from '@tanstack/react-router'
+import { requireRole } from '#/modules/auth/lib/auth-guard'
 
 export const Route = createFileRoute('/_private/(adm-shared)')({
-  component: () => {
-    const { is } = useAuthGuard()
-    const isAllowed = is('admin') || is('superadmin')
-    if (!isAllowed) return <Navigate to="/unauthorized" />
-    return <Outlet />
+  beforeLoad: ({ context }) => {
+    requireRole(context.user, 'admin')
   },
+  component: Outlet,
 })
