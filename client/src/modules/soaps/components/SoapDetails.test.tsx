@@ -53,7 +53,10 @@ it('loads a SOAP record and displays its clinical details', async () => {
   ]) {
     expect(screen.getByText(value)).toBeTruthy()
   }
-  expect(api).toHaveBeenCalledWith('/api/v1/soaps/soap-1', { method: 'GET' })
+  expect(api).toHaveBeenCalledWith('/api/v1/soaps/soap-1', {
+    method: 'GET',
+    signal: expect.objectContaining({ aborted: false }),
+  })
 })
 
 it('shows an error when loading the record fails', async () => {

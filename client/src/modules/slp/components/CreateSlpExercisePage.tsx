@@ -3,7 +3,8 @@ import { Link } from '@tanstack/react-router'
 import { useAuthGuard } from '#/modules/auth/hooks/useAuth'
 import RowError from '#/components/Table/RowError'
 import FormInput from '#/components/Form/FormInput'
-import { mutateCreateSlpExercise } from '../api/exercises'
+import { useCreateSlpExerciseMutation } from '#/modules/slp/hooks/useExerciseMutations'
+
 import type { SlpExerciseModule } from '../api/exercises'
 
 import { slpExerciseModules } from '../types/exercises'
@@ -11,7 +12,7 @@ import { slpExerciseModules } from '../types/exercises'
 export default function CreateSlpExercisePage() {
   const { is } = useAuthGuard()
   const canShare = is('admin') || is('superadmin')
-  const create = mutateCreateSlpExercise()
+  const create = useCreateSlpExerciseMutation()
   const [module, setModule] = useState<SlpExerciseModule>('fluency')
   const [language, setLanguage] = useState('en')
   const [taskType, setTaskType] = useState('passage_reading')

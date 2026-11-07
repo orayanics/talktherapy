@@ -1,8 +1,8 @@
-import { mutateCompleteAppointment } from '#/modules/appointments/api/appointments'
+import { useCompleteAppointmentMutation } from '#/modules/appointments/hooks/useAppointmentMutations'
 import { errMsg } from '#/lib/errorMessage'
 
 export default function useCompleteAppointment() {
-  const mutation = mutateCompleteAppointment()
+  const mutation = useCompleteAppointmentMutation()
 
   const submit = async (
     appointmentId: string,

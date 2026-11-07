@@ -4,10 +4,11 @@ import { VerifyOtpSchema } from '../types/schema'
 import type { TVerifyOtp } from '../types/schema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
-  mutateActivateAccount,
-  mutateResendOtp,
-  mutateVerifyOtp,
-} from '#/modules/activation/api/activate'
+  useActivateAccountMutation,
+  useResendOtpMutation,
+  useVerifyOtpMutation,
+} from '#/modules/activation/hooks/useActivationMutations'
+
 import { useNavigate } from '@tanstack/react-router'
 import { errMsg } from '#/lib/errorMessage'
 
@@ -32,9 +33,9 @@ export default function useOtpForm({
     },
   })
 
-  const verifyOtpMutation = mutateVerifyOtp()
-  const activateAccountMutation = mutateActivateAccount()
-  const resendOtpMutation = mutateResendOtp()
+  const verifyOtpMutation = useVerifyOtpMutation()
+  const activateAccountMutation = useActivateAccountMutation()
+  const resendOtpMutation = useResendOtpMutation()
 
   const onSubmit = handleSubmit(async (data) => {
     setApiError(null)

@@ -1,3 +1,4 @@
+import { retryApiQuery } from '#/lib/api/query'
 import { api } from '#/lib/api/client'
 import { queryOptions } from '@tanstack/react-query'
 
@@ -54,9 +55,11 @@ export const fetchContentList = (
     meta: Meta
   }>({
     queryKey: ['content', path, query],
-    queryFn: () =>
+    retry: retryApiQuery,
+    queryFn: ({ signal }) =>
       api<{ data: Content[]; meta: Meta }>(path, {
         method: 'GET',
+        signal,
         params: query,
       }),
     staleTime: 1000 * 60 * 30,
@@ -66,11 +69,13 @@ export const fetchContentList = (
 export const fetchContentById = (contentId: string) => {
   return queryOptions<Content>({
     queryKey: ['content', contentId],
-    queryFn: async () => {
+    retry: retryApiQuery,
+    queryFn: async ({ signal }) => {
       const response = await api<{ data: Content }>(
         `/api/v1/content/${contentId}`,
         {
           method: 'GET',
+          signal,
         },
       )
       return response.data

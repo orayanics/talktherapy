@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { api } from '#/lib/api/client'
-import { useDiagnosisActions } from '#/modules/diagnoses/api/diagnoses'
+import { useDiagnosisActions } from '#/modules/diagnoses/hooks/useDiagnosisActions'
 import type { DiagnosisItem } from '#/modules/diagnoses/types/diagnosis'
 import StateError from '#/components/State/StateError'
 import StateLoading from '#/components/State/StateLoading'

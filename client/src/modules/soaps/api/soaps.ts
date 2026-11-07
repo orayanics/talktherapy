@@ -1,3 +1,4 @@
+import { retryApiQuery } from '#/lib/api/query'
 import { queryOptions } from '@tanstack/react-query'
 import { api } from '#/lib/api/client'
 import type { QueryParams } from '#/types/api'
@@ -11,9 +12,11 @@ export const fetchSoapsByPatient = (
   const query = { page: params.page, sort: searchParams.sort }
   return queryOptions<SoapsResponse>({
     queryKey: ['soaps', patientId, query],
-    queryFn: () =>
+    retry: retryApiQuery,
+    queryFn: ({ signal }) =>
       api<SoapsResponse>(`/api/v1/soaps/patient/${patientId}`, {
         method: 'GET',
+        signal,
         params: query,
       }),
     staleTime: 1000 * 60 * 5,
@@ -22,11 +25,15 @@ export const fetchSoapsByPatient = (
 export const fetchSoapById = (soapId: string) =>
   queryOptions<Soap | undefined>({
     queryKey: ['soap', soapId],
-    queryFn: async () =>
-      (await api<{ data: Soap }>(`/api/v1/soaps/${soapId}`, { method: 'GET' }))
-        .data,
+    retry: retryApiQuery,
+    queryFn: async ({ signal }) =>
+      (
+        await api<{ data: Soap }>(`/api/v1/soaps/${soapId}`, {
+          method: 'GET',
+          signal,
+        })
+      ).data,
     staleTime: 1000 * 60 * 5,
-    retry: false,
   })
 
 export const mutateCreateSoap = async (

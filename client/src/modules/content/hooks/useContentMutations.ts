@@ -19,8 +19,10 @@ export const useCreateContent = () => {
   return useMutation({
     mutationFn: (payload: TContentSchema) => mutateCreateContent(payload),
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['content'] })
-      await queryClient.invalidateQueries({ queryKey: ['logs'] })
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['content'] }),
+        queryClient.invalidateQueries({ queryKey: ['logs'] }),
+      ])
       showAlert(CONTENT.create.success, 'success')
       navigate({ to: '/content' })
     },
@@ -36,8 +38,10 @@ export const useUpdateContent = (contentId: string) => {
     mutationFn: (payload: TUpdateContentSchema) =>
       mutateUpdateContent(contentId, payload),
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['content'] })
-      await queryClient.invalidateQueries({ queryKey: ['logs'] })
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['content'] }),
+        queryClient.invalidateQueries({ queryKey: ['logs'] }),
+      ])
       showAlert(CONTENT.update.success, 'success')
       navigate({ to: '/content/$contentId', params: { contentId } })
     },
@@ -52,8 +56,10 @@ export const useDeleteContent = (contentId: string) => {
   return useMutation({
     mutationFn: () => mutateDeleteContent(contentId),
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['content'] })
-      await queryClient.invalidateQueries({ queryKey: ['logs'] })
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['content'] }),
+        queryClient.invalidateQueries({ queryKey: ['logs'] }),
+      ])
       showAlert(CONTENT.delete.success, 'success')
       navigate({ to: '/content' })
     },

@@ -5,7 +5,7 @@ import { createElement } from 'react'
 import type { PropsWithChildren } from 'react'
 import { expect, it, vi } from 'vitest'
 import { api } from '#/lib/api/client'
-import { mutateResendOtp } from './activate'
+import { useResendOtpMutation } from './useActivationMutations'
 
 vi.mock('#/lib/api/client', () => ({ api: vi.fn() }))
 vi.mock('#/context/AlertContext', () => ({ useAlert: vi.fn() }))
@@ -16,7 +16,7 @@ it('accepts the empty 202 response when resending an activation code', async () 
   const client = new QueryClient({
     defaultOptions: { mutations: { retry: false } },
   })
-  const { result, unmount } = renderHook(() => mutateResendOtp(), {
+  const { result, unmount } = renderHook(() => useResendOtpMutation(), {
     wrapper: ({ children }: PropsWithChildren) =>
       createElement(QueryClientProvider, { client }, children),
   })

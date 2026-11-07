@@ -1,3 +1,4 @@
+import { retryApiQuery } from '#/lib/api/query'
 import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query'
 import { useSession } from '#/modules/auth/context/SessionContext'
 import { api } from '#/lib/api/client'
@@ -9,9 +10,12 @@ export function useNotifications() {
   const queryKey = ['notifications', userId] as const
   const query = useInfiniteQuery({
     queryKey,
+    retry: retryApiQuery,
     initialPageParam: 1,
-    queryFn: async ({ pageParam }) =>
-      api<NotificationPage>(`/api/v1/notifications?page=${pageParam}`),
+    queryFn: async ({ pageParam, signal }) =>
+      api<NotificationPage>(`/api/v1/notifications?page=${pageParam}`, {
+        signal,
+      }),
     getNextPageParam: ({ meta }) =>
       meta.current_page < meta.last_page ? meta.current_page + 1 : undefined,
   })

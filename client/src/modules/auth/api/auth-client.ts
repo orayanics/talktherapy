@@ -1,5 +1,3 @@
-import { queryOptions } from '@tanstack/react-query'
-import type { QueryClient } from '@tanstack/react-query'
 import { isAxiosError } from 'axios'
 import { api, initializeCsrf } from '#/lib/api/client'
 import type { UserResponse } from '#/modules/auth/types/session'
@@ -32,40 +30,19 @@ export const toUser = (user: UserResource): UserResponse => ({
 
 export type Session = { user: UserResponse } | null
 
-export const sessionQueryOptions = queryOptions({
-  queryKey: ['session'],
-  retry: false,
-  staleTime: 0,
-  queryFn: async ({ signal, client }): Promise<Session> => {
-    if (typeof window === 'undefined')
-      throw new Error('Session checks require a browser')
-    let session: Session
-    try {
-      const { data } = await api<{ data: UserResource }>('/api/v1/me', {
-        signal,
-      })
-      session = { user: toUser(data) }
-    } catch (error) {
-      if (!isAxiosError(error) || error.response?.status !== 401) throw error
-      session = null
-    }
-    const previous = client.getQueryData<Session>(['session'])
-    if (
-      previous?.user.id !== session?.user.id ||
-      previous?.user.role !== session?.user.role
-    ) {
-      client.removeQueries({
-        predicate: (query) => query.queryKey[0] !== 'session',
-      })
-    }
-    return session
-  },
-})
+export async function fetchSession(signal?: AbortSignal): Promise<Session> {
+  if (typeof window === 'undefined')
+    throw new Error('Session checks require a browser')
+  try {
+    const { data } = await api<{ data: UserResource }>('/api/v1/me', { signal })
+    return { user: toUser(data) }
+  } catch (error) {
+    if (!isAxiosError(error) || error.response?.status !== 401) throw error
+    return null
+  }
+}
 
-export const authClient = {
-  signOut: async (queryClient: QueryClient) => {
-    await initializeCsrf()
-    await api('/logout', { method: 'POST' })
-    queryClient.clear()
-  },
+export async function mutateSignOut() {
+  await initializeCsrf()
+  await api('/logout', { method: 'POST' })
 }

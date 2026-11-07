@@ -1,7 +1,6 @@
 import type { AdminUser } from '#/modules/users/types/user'
+
 import { api } from '#/lib/api/client'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { useNavigate } from '@tanstack/react-router'
 
 import type {
   TRegisterPatient,
@@ -10,92 +9,38 @@ import type {
   TRegisterPatientInvitation,
 } from '#/modules/register/types/schema'
 
-import { useAlert } from '#/context/AlertContext'
-
-export const mutateRegisterPatient = () => {
-  const navigate = useNavigate()
-  const { showAlert } = useAlert()
-  return useMutation({
-    mutationFn: async (payload: TRegisterPatient) => {
-      const { data } = await api<{
-        data: { email: string; status: 'pending' }
-      }>('/api/v1/registrations/patient', {
-        method: 'POST',
-        data: JSON.stringify(payload),
-      })
-      return data
-    },
-    onSuccess: async () => {
-      showAlert('Registration successful. OTP sent to your email.', 'success')
-      navigate({
-        to: '/activate/otp',
-      })
-    },
+export const mutateRegisterPatient = async (payload: TRegisterPatient) => {
+  const { data } = await api<{
+    data: { email: string; status: 'pending' }
+  }>('/api/v1/registrations/patient', {
+    method: 'POST',
+    data: JSON.stringify(payload),
   })
+  return data
 }
 
-export const mutateRegisterClinician = () => {
-  const queryClient = useQueryClient()
-  const { showAlert } = useAlert()
-  return useMutation({
-    mutationFn: async (payload: TRegisterClinician) => {
-      const { data } = await api<{ data: AdminUser }>('/api/v1/users', {
-        method: 'POST',
-        data: JSON.stringify({ ...payload, role: 'clinician' }),
-      })
-      return data
-    },
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['users'] })
-      await queryClient.invalidateQueries({ queryKey: ['users-count'] })
-      await queryClient.invalidateQueries({ queryKey: ['dashboardSummary'] })
-
-      await queryClient.invalidateQueries({ queryKey: ['logs'] })
-
-      showAlert('User created. OTP sent to the user email.', 'success')
-    },
+export const mutateRegisterClinician = async (payload: TRegisterClinician) => {
+  const { data } = await api<{ data: AdminUser }>('/api/v1/users', {
+    method: 'POST',
+    data: JSON.stringify({ ...payload, role: 'clinician' }),
   })
+  return data
 }
 
-export const mutateRegisterAdmin = () => {
-  const queryClient = useQueryClient()
-  const { showAlert } = useAlert()
-  return useMutation({
-    mutationFn: async (payload: TRegisterAdmin) => {
-      const { data } = await api<{ data: AdminUser }>('/api/v1/users', {
-        method: 'POST',
-        data: JSON.stringify({ ...payload, role: 'admin' }),
-      })
-      return data
-    },
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['users'] })
-      await queryClient.invalidateQueries({ queryKey: ['users-count'] })
-      await queryClient.invalidateQueries({ queryKey: ['dashboardSummary'] })
-      await queryClient.invalidateQueries({ queryKey: ['logs'] })
-
-      showAlert('User created. OTP sent to the user email.', 'success')
-    },
+export const mutateRegisterAdmin = async (payload: TRegisterAdmin) => {
+  const { data } = await api<{ data: AdminUser }>('/api/v1/users', {
+    method: 'POST',
+    data: JSON.stringify({ ...payload, role: 'admin' }),
   })
+  return data
 }
 
-export const mutateRegisterPatientInvitation = () => {
-  const queryClient = useQueryClient()
-  const { showAlert } = useAlert()
-  return useMutation({
-    mutationFn: async (payload: TRegisterPatientInvitation) => {
-      const { data } = await api<{ data: AdminUser }>('/api/v1/users', {
-        method: 'POST',
-        data: JSON.stringify({ ...payload, role: 'patient' }),
-      })
-      return data
-    },
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['users'] })
-      await queryClient.invalidateQueries({ queryKey: ['users-count'] })
-      await queryClient.invalidateQueries({ queryKey: ['dashboardSummary'] })
-      await queryClient.invalidateQueries({ queryKey: ['logs'] })
-      showAlert('Patient invited. OTP sent to the user email.', 'success')
-    },
+export const mutateRegisterPatientInvitation = async (
+  payload: TRegisterPatientInvitation,
+) => {
+  const { data } = await api<{ data: AdminUser }>('/api/v1/users', {
+    method: 'POST',
+    data: JSON.stringify({ ...payload, role: 'patient' }),
   })
+  return data
 }

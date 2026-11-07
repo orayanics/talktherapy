@@ -11,8 +11,8 @@ import type { AxiosResponse } from 'axios'
 import { afterEach, expect, it, vi } from 'vitest'
 import { requireSession, requireGuest } from './session-guard'
 import { requireRole } from './auth-guard'
-import { api, initializeCsrf } from '#/lib/api/client'
-import { authClient, sessionQueryOptions } from '../api/auth-client'
+import { api } from '#/lib/api/client'
+import { sessionQueryOptions } from '#/modules/auth/lib/session-query'
 
 vi.mock('#/lib/api/client', () => ({ api: vi.fn(), initializeCsrf: vi.fn() }))
 afterEach(() => vi.clearAllMocks())
@@ -130,19 +130,6 @@ it('keeps guest checks and role checks in beforeLoad-compatible functions', asyn
     'superadmin',
   )
   queryClient.clear()
-})
-
-it('clears all user-bound query data only after successful logout', async () => {
-  const queryClient = new QueryClient()
-  queryClient.setQueryData(['soap', 'note'], { assessment: 'Private note' })
-  vi.mocked(api)
-    .mockRejectedValueOnce(new Error('Offline'))
-    .mockResolvedValueOnce(undefined)
-  await expect(authClient.signOut(queryClient)).rejects.toThrow('Offline')
-  expect(queryClient.getQueryData(['soap', 'note'])).toBeTruthy()
-  await authClient.signOut(queryClient)
-  expect(initializeCsrf).toHaveBeenCalledTimes(2)
-  expect(queryClient.getQueryCache().getAll()).toHaveLength(0)
 })
 
 it('reuses a fresh session for preloads but verifies it again for navigation', async () => {

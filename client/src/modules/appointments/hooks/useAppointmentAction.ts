@@ -1,14 +1,14 @@
 import {
-  mutateCancelAppointment,
-  mutateRejectAppointment,
-} from '#/modules/appointments/api/appointments'
+  useCancelAppointmentMutation,
+  useRejectAppointmentMutation,
+} from '#/modules/appointments/hooks/useAppointmentMutations'
 import type { TAppointmentAction } from '../types/schema'
 import { errMsg } from '#/lib/errorMessage'
 
 export default function useAppointmentAction(isClinician = false) {
   const mutation = isClinician
-    ? mutateRejectAppointment()
-    : mutateCancelAppointment()
+    ? useRejectAppointmentMutation()
+    : useCancelAppointmentMutation()
 
   const submit = async (appointmentId: string, data: TAppointmentAction) => {
     await mutation.mutateAsync({

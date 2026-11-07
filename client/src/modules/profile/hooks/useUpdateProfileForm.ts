@@ -3,7 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { useRouter } from '@tanstack/react-router'
-import { sessionQueryOptions } from '#/modules/auth/api/auth-client'
+import { sessionQueryOptions } from '#/modules/auth/lib/session-query'
 
 import { ProfileSchema } from '../types/schema'
 import type { TProfileUpdate } from '../types/schema'

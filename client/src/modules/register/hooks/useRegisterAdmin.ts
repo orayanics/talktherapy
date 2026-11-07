@@ -5,7 +5,8 @@ import { useState } from 'react'
 import { RegisterAdminSchema } from '../types/schema'
 import type { TRegisterAdmin } from '../types/schema'
 
-import { mutateRegisterAdmin } from '#/modules/register/api/register'
+import { useRegisterAdminMutation } from '#/modules/register/hooks/useRegistrationMutations'
+
 import { errMsg } from '#/lib/errorMessage'
 
 export default function useRegisterAdmin(onSuccess?: () => void) {
@@ -24,7 +25,7 @@ export default function useRegisterAdmin(onSuccess?: () => void) {
     },
   })
 
-  const registerMutation = mutateRegisterAdmin()
+  const registerMutation = useRegisterAdminMutation()
 
   const onSubmit = handleSubmit(async (data) => {
     setApiError(null)

@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useRouter } from '@tanstack/react-router'
-import { sessionQueryOptions } from '../api/auth-client'
+import { sessionQueryOptions } from '#/modules/auth/lib/session-query'
 import type { UserResponse } from '../types/session'
 
 export function useSessionRevalidation(user: UserResponse) {

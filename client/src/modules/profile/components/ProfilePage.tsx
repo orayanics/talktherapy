@@ -2,7 +2,7 @@ import { Link } from '@tanstack/react-router'
 import { Calendar, Mail, User, ShieldCheck } from 'lucide-react'
 import { formatDate } from '#/utils/useDate'
 import { useSession } from '#/modules/auth/context/SessionContext'
-import { useNotificationPreferences } from '#/modules/notifications/api/preferences'
+import { useNotificationPreferences } from '#/modules/notifications/hooks/useNotificationPreferences'
 import { useEffect, useState } from 'react'
 
 export default function ProfilePage() {

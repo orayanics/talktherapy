@@ -1,8 +1,5 @@
-import {
-  useMutation,
-  useQueryClient,
-  queryOptions,
-} from '@tanstack/react-query'
+import { queryOptions } from '@tanstack/react-query'
+
 import { api } from '#/lib/api/client'
 
 export interface SlpAssignment {
@@ -38,64 +35,42 @@ export const fetchSlpAssignments = () =>
     queryFn: () => api<ListResponse<SlpAssignment>>('/api/v1/slp/assignments'),
   })
 
-export const mutateCreateSlpAssignment = () => {
-  const client = useQueryClient()
-  return useMutation({
-    mutationFn: (input: {
-      audience?: 'all' | 'selected'
-      patient_id?: string
-      patient_ids?: string[]
-      exercise_version_id: string
-      schedule?: Record<string, unknown>
-    }) =>
-      api<{ data: SlpAssignment[] }>('/api/v1/slp/assignments', {
-        method: 'POST',
-        data: input,
-      }),
-    onSuccess: async () => {
-      await client.invalidateQueries({ queryKey: slpWorkflowKeys.assignments })
-      await client.invalidateQueries({ queryKey: ['dashboardSummary'] })
-    },
-  })
-}
-
-export const mutateCreateSlpConsent = () =>
-  useMutation({
-    mutationFn: (input: {
-      subject_id: string
-      purpose: 'slp_recording'
-      policy_version: string
-    }) => api('/api/v1/slp/consents', { method: 'POST', data: input }),
+export const mutateCreateSlpAssignment = (input: {
+  audience?: 'all' | 'selected'
+  patient_id?: string
+  patient_ids?: string[]
+  exercise_version_id: string
+  schedule?: Record<string, unknown>
+}) =>
+  api<{ data: SlpAssignment[] }>('/api/v1/slp/assignments', {
+    method: 'POST',
+    data: input,
   })
 
-export const mutateCreateSlpAttempt = (assignmentId: string) => {
-  const client = useQueryClient()
-  return useMutation({
-    mutationFn: (input: { submission_key: string; consent_id: string }) =>
-      api<{ data: SlpAttemptStatus }>(
-        `/api/v1/slp/assignments/${assignmentId}/attempts`,
-        { method: 'POST', data: input },
-      ),
-    onSuccess: () =>
-      client.invalidateQueries({ queryKey: slpWorkflowKeys.assignments }),
-  })
-}
+export const mutateCreateSlpConsent = (input: {
+  subject_id: string
+  purpose: 'slp_recording'
+  policy_version: string
+}) => api('/api/v1/slp/consents', { method: 'POST', data: input })
 
-export const mutateUploadSlpRecording = (attemptId: string) => {
-  const client = useQueryClient()
-  return useMutation({
-    mutationFn: (recording: Blob) => {
-      const data = new FormData()
-      data.append('recording', recording, 'recording.webm')
-      return api(`/api/v1/slp/attempts/${attemptId}/recording`, {
-        method: 'POST',
-        data,
-      })
-    },
-    onSuccess: async () => {
-      await client.invalidateQueries({ queryKey: slpWorkflowKeys.assignments })
-      await client.invalidateQueries({ queryKey: ['dashboardSummary'] })
-    },
+export const mutateCreateSlpAttempt = (
+  assignmentId: string,
+  input: { submission_key: string; consent_id: string },
+) =>
+  api<{ data: SlpAttemptStatus }>(
+    `/api/v1/slp/assignments/${assignmentId}/attempts`,
+    { method: 'POST', data: input },
+  )
+
+export const mutateUploadSlpRecording = (
+  attemptId: string,
+  recording: Blob,
+) => {
+  const data = new FormData()
+  data.append('recording', recording, 'recording.webm')
+  return api(`/api/v1/slp/attempts/${attemptId}/recording`, {
+    method: 'POST',
+    data,
   })
 }
 
@@ -111,20 +86,17 @@ export const fetchSlpAttempt = (attemptId: string) =>
         : false,
   })
 
-export const mutateSaveSlpReview = (attemptId: string) =>
-  useMutation({
-    mutationFn: (input: {
-      annotations: Record<string, unknown>[]
-      metrics?: Record<string, unknown>
-    }) =>
-      api(`/api/v1/slp/attempts/${attemptId}/review`, {
-        method: 'PUT',
-        data: input,
-      }),
+export const mutateSaveSlpReview = (
+  attemptId: string,
+  input: {
+    annotations: Record<string, unknown>[]
+    metrics?: Record<string, unknown>
+  },
+) =>
+  api(`/api/v1/slp/attempts/${attemptId}/review`, {
+    method: 'PUT',
+    data: input,
   })
 
 export const mutateApproveSlpReview = (reviewId: string) =>
-  useMutation({
-    mutationFn: () =>
-      api(`/api/v1/slp/reviews/${reviewId}/approve`, { method: 'POST' }),
-  })
+  api(`/api/v1/slp/reviews/${reviewId}/approve`, { method: 'POST' })

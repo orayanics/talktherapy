@@ -1,3 +1,4 @@
+import { retryApiQuery } from '#/lib/api/query'
 import { useCallback, useEffect, useMemo, useRef } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useConnectionStatus, useEcho } from '@laravel/echo-react'
@@ -18,9 +19,14 @@ export default function NotificationRealtime() {
   )
   const { data } = useQuery({
     queryKey: channelQueryKey,
-    queryFn: async () =>
-      (await api<{ data: ChannelDescriptor }>('/api/v1/notifications/channel'))
-        .data,
+    retry: retryApiQuery,
+    queryFn: async ({ signal }) =>
+      (
+        await api<{ data: ChannelDescriptor }>(
+          '/api/v1/notifications/channel',
+          { signal },
+        )
+      ).data,
   })
   const connectionStatus = useConnectionStatus()
 
@@ -54,31 +60,34 @@ function NotificationChannel({
 }) {
   const queryClient = useQueryClient()
   const seenIds = useRef(new Set<string>())
-  const announce = useCallback((event: NotificationEvent) => {
-    const { notification_id, type } = event
-    if (seenIds.current.has(notification_id)) return
-    seenIds.current.add(notification_id)
-    if (seenIds.current.size > 200) {
-      const oldestId = seenIds.current.values().next().value
-      if (oldestId) seenIds.current.delete(oldestId)
-    }
-    void queryClient.invalidateQueries({ queryKey: ['notifications', userId] })
-    showAlertGlobal(
-      type === 'appointment'
-        ? 'New appointment notification received.'
-        : type === 'clinical_record'
-          ? 'New clinical record notification received.'
-          : 'New notification received.',
-      'info',
-    )
-  }, [queryClient, userId])
-
-  useEcho<NotificationEvent>(
-    channel,
-    '.UserNotificationAvailable',
-    announce,
-    [channel, announce],
+  const announce = useCallback(
+    (event: NotificationEvent) => {
+      const { notification_id, type } = event
+      if (seenIds.current.has(notification_id)) return
+      seenIds.current.add(notification_id)
+      if (seenIds.current.size > 200) {
+        const oldestId = seenIds.current.values().next().value
+        if (oldestId) seenIds.current.delete(oldestId)
+      }
+      void queryClient.invalidateQueries({
+        queryKey: ['notifications', userId],
+      })
+      showAlertGlobal(
+        type === 'appointment'
+          ? 'New appointment notification received.'
+          : type === 'clinical_record'
+            ? 'New clinical record notification received.'
+            : 'New notification received.',
+        'info',
+      )
+    },
+    [queryClient, userId],
   )
+
+  useEcho<NotificationEvent>(channel, '.UserNotificationAvailable', announce, [
+    channel,
+    announce,
+  ])
 
   // Keep compatibility with broadcasters that serialize the PHP event name.
   useEcho<NotificationEvent>(

@@ -12,8 +12,10 @@ export const useCreateSoap = (patientId: string) => {
     mutationFn: (payload: Partial<Soap>) =>
       mutateCreateSoap(patientId, payload),
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['soaps'] })
-      await queryClient.invalidateQueries({ queryKey: ['soap'] })
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['soaps'] }),
+        queryClient.invalidateQueries({ queryKey: ['soap'] }),
+      ])
       showAlert('SOAP created successfully', 'success')
       navigate({ to: '/patients/$patientId', params: { patientId } })
     },
@@ -26,8 +28,10 @@ export const useUpdateSoap = (soapId: string, patientId: string) => {
   return useMutation({
     mutationFn: (payload: Partial<Soap>) => mutateUpdateSoap(soapId, payload),
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['soaps'] })
-      await queryClient.invalidateQueries({ queryKey: ['soap'] })
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['soaps'] }),
+        queryClient.invalidateQueries({ queryKey: ['soap'] }),
+      ])
       showAlert('SOAP updated', 'success')
       navigate({ to: '/patients/$patientId', params: { patientId } })
     },

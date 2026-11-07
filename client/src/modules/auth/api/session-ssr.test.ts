@@ -2,7 +2,7 @@
 import { QueryClient } from '@tanstack/react-query'
 import { expect, it, vi } from 'vitest'
 import { api } from '#/lib/api/client'
-import { sessionQueryOptions } from './auth-client'
+import { sessionQueryOptions } from '../lib/session-query'
 
 vi.mock('#/lib/api/client', () => ({ api: vi.fn() }))
 

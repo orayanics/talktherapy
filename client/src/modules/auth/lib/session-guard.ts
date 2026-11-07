@@ -1,6 +1,6 @@
 import { redirect } from '@tanstack/react-router'
 import type { QueryClient } from '@tanstack/react-query'
-import { sessionQueryOptions } from '../api/auth-client'
+import { sessionQueryOptions } from '#/modules/auth/lib/session-query'
 
 type GuardContext = { context: { queryClient: QueryClient }; preload?: boolean }
 
