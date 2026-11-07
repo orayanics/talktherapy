@@ -1,6 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { z } from 'zod'
 import PatientsPage from '#/modules/patients/components/PatientsPage'
+import { fetchClinicianPatients } from '#/modules/patients/api/patients'
+import StateLoading from '#/components/State/StateLoading'
 
 const searchSchema = z
   .object({
@@ -26,5 +28,18 @@ const searchSchema = z
 
 export const Route = createFileRoute('/_private/(clinician)/patients/')({
   validateSearch: (search) => searchSchema.parse(search),
+  loaderDeps: ({ search }) => ({
+    page: search.page,
+    search: search.search,
+    sort: search.sort,
+  }),
+  loader: ({ context, deps }) =>
+    context.queryClient.query(
+      fetchClinicianPatients(
+        { page: deps.page },
+        { search: deps.search || undefined, sort: deps.sort ?? 'desc' },
+      ),
+    ),
+  pendingComponent: StateLoading,
   component: PatientsPage,
 })
