@@ -15,5 +15,6 @@ export type NotificationPage = {
   meta: {
     current_page: number
     last_page: number
+    total: number
   }
 }

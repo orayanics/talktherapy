@@ -5,7 +5,7 @@ import type { Session } from '../api/auth-client'
 export const sessionQueryOptions = queryOptions({
   queryKey: ['session'],
   retry: false,
-  staleTime: 0,
+  staleTime: 30_000,
   queryFn: async ({ signal, client }): Promise<Session> => {
     const session = await fetchSession(signal)
     const previous = client.getQueryData<Session>(['session'])

@@ -5,7 +5,7 @@ import { useConnectionStatus, useEcho } from '@laravel/echo-react'
 import { api } from '#/lib/api/client'
 import { useSession } from '#/modules/auth/context/SessionContext'
 import '#/modules/notifications/api/echo'
-import { showAlertGlobal } from '#/context/AlertContext'
+import { useAlert } from '#/context/AlertContext'
 
 type ChannelDescriptor = { channel: string }
 type NotificationEvent = { notification_id: string; type: string }
@@ -59,6 +59,7 @@ function NotificationChannel({
   userId: string
 }) {
   const queryClient = useQueryClient()
+  const { showAlert } = useAlert()
   const seenIds = useRef(new Set<string>())
   const announce = useCallback(
     (event: NotificationEvent) => {
@@ -72,7 +73,7 @@ function NotificationChannel({
       void queryClient.invalidateQueries({
         queryKey: ['notifications', userId],
       })
-      showAlertGlobal(
+      showAlert(
         type === 'appointment'
           ? 'New appointment notification received.'
           : type === 'clinical_record'
@@ -81,7 +82,7 @@ function NotificationChannel({
         'info',
       )
     },
-    [queryClient, userId],
+    [queryClient, showAlert, userId],
   )
 
   useEcho<NotificationEvent>(channel, '.UserNotificationAvailable', announce, [
@@ -92,7 +93,7 @@ function NotificationChannel({
   // Keep compatibility with broadcasters that serialize the PHP event name.
   useEcho<NotificationEvent>(
     channel,
-    'App\\Events\\UserNotificationAvailable',
+    '.App\\Events\\UserNotificationAvailable',
     announce,
     [channel, announce],
   )

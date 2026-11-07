@@ -7,6 +7,7 @@ import { NAV_BY_ROLE } from '#/constants/sidebar'
 import SidebarItem from './SidebarItem'
 import { useLogoutMutation } from '#/modules/auth/hooks/useLogoutMutation'
 import NotificationList from '#/modules/notifications/components/NotificationList'
+import { useUnreadNotificationCount } from '#/modules/notifications/hooks/useNotifications'
 import Drawer from '#/components/Drawer'
 
 export interface SidebarProps {
@@ -18,6 +19,7 @@ export default function Sidebar(props: SidebarProps) {
   const { children, role } = props
   const [show, setShow] = useState(false)
   const [isMenuOpen, setMenuOpen] = useState(false)
+  const { data: unreadCount = 0 } = useUnreadNotificationCount()
 
   const logout = useLogoutMutation()
   const navItems = NAV_BY_ROLE[role]
@@ -52,11 +54,26 @@ export default function Sidebar(props: SidebarProps) {
 
             <div className="items-center justify-end relative">
               <button
-                className="btn btn-sm btn-flat btn-square"
+                type="button"
+                className={`btn btn-sm btn-flat btn-square relative ${unreadCount > 0 ? 'bg-primary/10 text-primary ring-1 ring-primary/30' : ''}`}
                 onClick={() => setShow((s) => !s)}
-                aria-label="Notifications"
+                aria-label={
+                  unreadCount > 0
+                    ? `Notifications, ${unreadCount} unread`
+                    : 'Notifications'
+                }
+                aria-expanded={show}
+                aria-haspopup="dialog"
               >
                 <Bell size={16} strokeWidth={2.5} />
+                {unreadCount > 0 && (
+                  <span
+                    aria-hidden="true"
+                    className="absolute -top-1 -right-1 min-w-4 rounded-full bg-error px-1 text-[10px] font-bold leading-4 text-error-content"
+                  >
+                    {unreadCount > 99 ? '99+' : unreadCount}
+                  </span>
+                )}
               </button>
               {show && (
                 <Drawer

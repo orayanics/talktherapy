@@ -11,6 +11,8 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Mockery;
+use Pusher\Pusher;
 use Tests\TestCase;
 
 class NotificationInboxTest extends TestCase
@@ -138,6 +140,33 @@ class NotificationInboxTest extends TestCase
         $this->assertFalse($callback($owner, $owner->id, 1));
         $owner->profile->update(['status' => UserStatus::Suspended]);
         $this->assertFalse($callback($owner->fresh(), $owner->id, 0));
+    }
+
+    public function test_admin_and_superadmin_broadcasts_publish_to_the_recipient_channel_immediately(): void
+    {
+        config(['broadcasting.default' => 'reverb']);
+        config(['broadcasting.connections.reverb.key' => 'test-key', 'broadcasting.connections.reverb.secret' => 'test-secret', 'broadcasting.connections.reverb.app_id' => 'test-app']);
+
+        foreach ([UserRole::Admin, UserRole::Superadmin] as $role) {
+            $sender = $this->user($role);
+            $recipient = $this->user(UserRole::Patient)->refresh();
+            $pusher = Mockery::mock(Pusher::class);
+            $pusher->shouldReceive('trigger')->once()->withArgs(function (array $channels, string $event, array $payload, array $parameters) use ($recipient): bool {
+                $notification = $recipient->inboxNotifications()->sole();
+
+                return $channels === ["private-users.{$recipient->id}.{$recipient->session_version}"]
+                    && $event === 'UserNotificationAvailable'
+                    && $payload === ['notification_id' => $notification->id, 'type' => $notification->type]
+                    && $parameters === [];
+            })->andReturn((object) []);
+            Broadcast::connection()->setPusher($pusher);
+
+            $this->actingAs($sender)->postJson('/api/v1/notifications', [
+                'recipient_ids' => [$recipient->id], 'channels' => ['in_app'],
+                'title' => 'Reminder', 'message' => 'Please review your account.',
+            ])->assertCreated()->assertJsonPath('data.in_app', 1);
+
+        }
     }
 
     private function notification(User $user): UserNotification

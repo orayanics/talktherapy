@@ -1,8 +1,25 @@
 import { retryApiQuery } from '#/lib/api/query'
-import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query'
+import {
+  useInfiniteQuery,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query'
 import { useSession } from '#/modules/auth/context/SessionContext'
 import { api } from '#/lib/api/client'
 import type { NotificationPage } from '#/modules/notifications/types/notification'
+
+export function useUnreadNotificationCount() {
+  const { id: userId } = useSession()
+  return useQuery({
+    queryKey: ['notifications', userId, 'unread-count'],
+    retry: retryApiQuery,
+    queryFn: ({ signal }) =>
+      api<NotificationPage>('/api/v1/notifications?unread=true&per_page=1', {
+        signal,
+      }),
+    select: (page) => page.meta.total,
+  })
+}
 
 export function useNotifications() {
   const { id: userId } = useSession()

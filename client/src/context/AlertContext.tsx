@@ -1,10 +1,4 @@
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from 'react'
+import { createContext, useCallback, useContext, useState } from 'react'
 import type {
   ALERT_TYPE,
   AlertContextValue,
@@ -13,15 +7,6 @@ import type {
 import { AlertToast } from '#/components/AlertToast'
 
 export const AlertContext = createContext<AlertContextValue | null>(null)
-
-// Module-level store for use outside the React tree (e.g. axios interceptors, queryFns)
-let _globalShowAlert: AlertContextValue['showAlert'] | null = null
-const pendingAlerts: Array<Parameters<AlertContextValue['showAlert']>> = []
-
-export const showAlertGlobal = (message: string, type: ALERT_TYPE) => {
-  if (_globalShowAlert) _globalShowAlert(message, type)
-  else pendingAlerts.push([message, type])
-}
 
 export const useAlert = () => {
   const context = useContext(AlertContext)
@@ -54,14 +39,6 @@ export const AlertProvider = ({ children }: { children: React.ReactNode }) => {
       id: prev.id + 1,
     }))
   }, [])
-
-  useEffect(() => {
-    _globalShowAlert = showAlert
-    pendingAlerts.splice(0).forEach(([message, type]) => showAlert(message, type))
-    return () => {
-      _globalShowAlert = null
-    }
-  }, [showAlert])
 
   return (
     <AlertContext.Provider value={{ showAlert, hideAlert }}>

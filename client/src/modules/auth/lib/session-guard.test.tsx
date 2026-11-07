@@ -99,6 +99,10 @@ it('redirects only a confirmed 401 and revalidates previously authenticated cach
     .mockRejectedValueOnce(httpError(401))
   const { router, childLoad, queryClient } = testRouter()
   await queryClient.query(sessionQueryOptions)
+  await queryClient.invalidateQueries({
+    queryKey: ['session'],
+    refetchType: 'none',
+  })
   await router.load()
   expect(childLoad).not.toHaveBeenCalled()
   expect(router.state.location.pathname).toBe('/login')
@@ -132,14 +136,19 @@ it('keeps guest checks and role checks in beforeLoad-compatible functions', asyn
   queryClient.clear()
 })
 
-it('reuses a fresh session for preloads but verifies it again for navigation', async () => {
+it('shares a fresh session across preloads and navigation, and rechecks once stale', async () => {
   const queryClient = new QueryClient()
   vi.mocked(api)
     .mockResolvedValueOnce({ data: user })
     .mockRejectedValueOnce(httpError(401))
   await requireSession({ context: { queryClient }, preload: true })
   await requireSession({ context: { queryClient }, preload: true })
+  await requireSession({ context: { queryClient } })
   expect(api).toHaveBeenCalledOnce()
+  const session = queryClient.getQueryData(sessionQueryOptions.queryKey)
+  queryClient.setQueryData(sessionQueryOptions.queryKey, session, {
+    updatedAt: Date.now() - 30_001,
+  })
   await expect(
     requireSession({ context: { queryClient } }),
   ).rejects.toMatchObject({ options: { to: '/login' } })
@@ -154,7 +163,21 @@ it("drops another user's cached resources when the session identity changes", as
     .mockResolvedValueOnce({ data: { ...user, id: 'patient-2' } })
   await requireSession({ context: { queryClient } })
   queryClient.setQueryData(['soaps', 'patient-1'], ['Sensitive note'])
+  await queryClient.invalidateQueries({
+    queryKey: ['session'],
+    refetchType: 'none',
+  })
   await requireSession({ context: { queryClient } })
   expect(queryClient.getQueryData(['soaps', 'patient-1'])).toBeUndefined()
+  queryClient.clear()
+})
+
+it('does not hide a failed background session check behind recently cached user data', async () => {
+  const queryClient = new QueryClient()
+  const error = httpError(403)
+  vi.mocked(api).mockResolvedValueOnce({ data: user }).mockRejectedValue(error)
+  await requireSession({ context: { queryClient } })
+  await queryClient.refetchQueries({ queryKey: ['session'] })
+  await expect(requireSession({ context: { queryClient } })).rejects.toBe(error)
   queryClient.clear()
 })
