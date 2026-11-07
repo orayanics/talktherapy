@@ -9,6 +9,8 @@ use App\Models\User;
 use App\Models\UserNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Broadcast;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Tests\TestCase;
 
 class NotificationInboxTest extends TestCase
@@ -32,6 +34,49 @@ class NotificationInboxTest extends TestCase
         $this->assertSame($readAt->toISOString(), $notification->fresh()->read_at->toISOString());
         $this->actingAs($owner)->getJson('/api/v1/notifications?unread=true')->assertJsonCount(0, 'data');
         $this->actingAs($owner)->getJson('/api/v1/notifications?unread=false')->assertJsonCount(1, 'data');
+    }
+
+    public function test_inbox_order_index_preserves_scope_and_tied_timestamp_order(): void
+    {
+        $this->freezeTime();
+        $owner = $this->user(UserRole::Patient);
+        $other = $this->user(UserRole::Patient);
+        $older = UserNotification::factory()->for($owner)->create(['id' => '00000000-0000-4000-8000-000000000001']);
+        $newer = UserNotification::factory()->for($owner)->create(['id' => '00000000-0000-4000-8000-000000000002', 'read_at' => now()]);
+        $this->notification($other);
+
+        DB::enableQueryLog();
+        try {
+            $this->actingAs($owner)->getJson('/api/v1/notifications?per_page=1')
+                ->assertOk()->assertJsonPath('meta.total', 2)->assertJsonPath('data.0.id', $newer->id);
+            $queries = DB::getQueryLog();
+        } finally {
+            DB::disableQueryLog();
+            DB::flushQueryLog();
+        }
+        $query = collect($queries)->first(fn (array $query): bool => str_starts_with($query['query'], 'select * from "notifications"'));
+        $this->assertNotNull($query);
+        $plan = implode(' ', array_column(DB::select('EXPLAIN QUERY PLAN '.$query['query'], $query['bindings']), 'detail'));
+        $this->assertStringContainsString('notifications_user_created_id_index', $plan);
+        $this->assertStringNotContainsString('TEMP B-TREE', $plan);
+
+        $this->getJson('/api/v1/notifications?per_page=1&page=2')->assertOk()->assertJsonPath('data.0.id', $older->id);
+        $this->getJson('/api/v1/notifications?unread=true')->assertOk()->assertJsonCount(1, 'data')->assertJsonPath('data.0.id', $older->id);
+        $this->getJson('/api/v1/notifications?unread=false')->assertOk()->assertJsonCount(1, 'data')->assertJsonPath('data.0.id', $newer->id);
+    }
+
+    public function test_inbox_order_index_rolls_back_without_removing_data_or_unread_index(): void
+    {
+        $this->notification($this->user(UserRole::Patient));
+        $migration = require database_path('migrations/2026_11_07_064952_add_notification_inbox_order_index_to_notifications_table.php');
+
+        $migration->down();
+
+        $this->assertDatabaseCount('notifications', 1);
+        $this->assertFalse(Schema::hasIndex('notifications', 'notifications_user_created_id_index'));
+        $this->assertTrue(Schema::hasIndex('notifications', 'notifications_user_id_read_at_created_at_id_index'));
+        $migration->up();
+        $this->assertTrue(Schema::hasIndex('notifications', 'notifications_user_created_id_index'));
     }
 
     public function test_only_administrators_can_send_and_audit_does_not_contain_message(): void
