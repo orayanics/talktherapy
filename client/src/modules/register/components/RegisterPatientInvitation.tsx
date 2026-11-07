@@ -34,7 +34,12 @@ export default function RegisterPatientInvitation({
           {apiError}
         </div>
       )}
-      <FormInput label="Name" error={errors.name?.message} required>
+      <FormInput
+        htmlFor="patient-name"
+        label="Name"
+        error={errors.name?.message}
+        required
+      >
         <input
           id="patient-name"
           {...register('name')}
@@ -42,7 +47,12 @@ export default function RegisterPatientInvitation({
           className="input w-full"
         />
       </FormInput>
-      <FormInput label="Email" error={errors.email?.message} required>
+      <FormInput
+        htmlFor="patient-email"
+        label="Email"
+        error={errors.email?.message}
+        required
+      >
         <input
           id="patient-email"
           {...register('email')}

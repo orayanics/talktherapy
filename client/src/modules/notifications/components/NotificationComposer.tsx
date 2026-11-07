@@ -134,7 +134,11 @@ export default function NotificationComposer() {
             ) : (
               <>
                 {/* Users selection */}
-                <FormInput label="Search active users" className="my-2">
+                <FormInput
+                  htmlFor="notification-user-search"
+                  label="Search active users"
+                  className="my-2"
+                >
                   <input
                     id="notification-user-search"
                     className="input input-bordered w-full"
@@ -237,7 +241,11 @@ export default function NotificationComposer() {
             </fieldset>
 
             {channels.includes('in_app') && (
-              <FormInput label="In-app title" required>
+              <FormInput
+                htmlFor="notification-title"
+                label="In-app title"
+                required
+              >
                 <input
                   id="notification-title"
                   className="input input-bordered w-full"
@@ -249,7 +257,11 @@ export default function NotificationComposer() {
               </FormInput>
             )}
             {channels.includes('email') && (
-              <FormInput label="Email subject" required>
+              <FormInput
+                htmlFor="notification-subject"
+                label="Email subject"
+                required
+              >
                 <input
                   id="notification-subject"
                   className="input input-bordered w-full"
@@ -260,7 +272,7 @@ export default function NotificationComposer() {
                 />
               </FormInput>
             )}
-            <FormInput label="Message" required>
+            <FormInput htmlFor="notification-message" label="Message" required>
               <textarea
                 id="notification-message"
                 className="textarea textarea-bordered w-full"

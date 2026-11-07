@@ -46,7 +46,12 @@ export default function EditContentPage() {
             </div>
           )}
 
-          <FormInput label="Title" error={errors.title?.message} required>
+          <FormInput
+            htmlFor="content-edit-title"
+            label="Title"
+            error={errors.title?.message}
+            required
+          >
             <input
               id="content-edit-title"
               {...register('title')}
@@ -56,6 +61,7 @@ export default function EditContentPage() {
           </FormInput>
 
           <FormInput
+            htmlFor="content-edit-description"
             label="Description"
             error={errors.description?.message}
             required
@@ -68,13 +74,19 @@ export default function EditContentPage() {
             />
           </FormInput>
 
-          <FormInput label="Content Body" error={errors.body?.message} required>
+          <FormInput
+            htmlFor="content-edit-body"
+            label="Content Body"
+            error={errors.body?.message}
+            required
+          >
             <Controller
               name="body"
               control={control}
               render={({ field }) => (
-                <div id="content-edit-body" data-color-mode="light">
+                <div data-color-mode="light">
                   <MDEditor
+                    textareaProps={{ id: 'content-edit-body' }}
                     value={field.value}
                     onChange={field.onChange}
                     height={400}
@@ -89,6 +101,7 @@ export default function EditContentPage() {
           </FormInput>
 
           <FormInput
+            htmlFor="content-edit-diagnosis"
             label="Diagnosis Category"
             error={errors.diagnosis_id?.message}
             required
@@ -109,7 +122,11 @@ export default function EditContentPage() {
             </select>
           </FormInput>
 
-          <FormInput label="Tags" error={errors.tag_names?.message}>
+          <FormInput
+            htmlFor="content-edit-tags"
+            label="Tags"
+            error={errors.tag_names?.message}
+          >
             <input
               id="content-edit-tags"
               {...register('tag_names', {

@@ -41,7 +41,12 @@ export default function CreateContentPage() {
             </div>
           )}
 
-          <FormInput label="Title" error={errors.title?.message} required>
+          <FormInput
+            htmlFor="content-title"
+            label="Title"
+            error={errors.title?.message}
+            required
+          >
             <input
               id="content-title"
               {...register('title')}
@@ -51,6 +56,7 @@ export default function CreateContentPage() {
           </FormInput>
 
           <FormInput
+            htmlFor="content-description"
             label="Description"
             error={errors.description?.message}
             required
@@ -63,14 +69,20 @@ export default function CreateContentPage() {
             />
           </FormInput>
 
-          <FormInput label="Content Body" error={errors.body?.message} required>
+          <FormInput
+            htmlFor="content-body"
+            label="Content Body"
+            error={errors.body?.message}
+            required
+          >
             <Controller
               name="body"
               control={control}
               defaultValue=""
               render={({ field }) => (
-                <div id="content-body" data-color-mode="light">
+                <div data-color-mode="light">
                   <MDEditor
+                    textareaProps={{ id: 'content-body' }}
                     value={field.value}
                     onChange={field.onChange}
                     height={400}
@@ -85,6 +97,7 @@ export default function CreateContentPage() {
           </FormInput>
 
           <FormInput
+            htmlFor="content-diagnosis"
             label="Diagnosis Category"
             error={errors.diagnosis_id?.message}
             required
@@ -105,7 +118,11 @@ export default function CreateContentPage() {
             </select>
           </FormInput>
 
-          <FormInput label="Tags" error={errors.tag_names?.message}>
+          <FormInput
+            htmlFor="content-tags"
+            label="Tags"
+            error={errors.tag_names?.message}
+          >
             <input
               id="content-tags"
               {...register('tag_names', {

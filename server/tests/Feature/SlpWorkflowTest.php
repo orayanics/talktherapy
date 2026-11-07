@@ -29,8 +29,13 @@ class SlpWorkflowTest extends TestCase
         $version = SlpExerciseVersion::factory()->for(SlpExercise::factory()->for($clinician, 'owner')->create(), 'exercise')->create(['created_by' => $clinician->id, 'configuration' => ['patient_visible' => true]]);
         ClinicianPatient::factory()->create(['clinician_id' => $clinician->id, 'patient_id' => $patient->id]);
 
+        $this->actingAs($clinician)->postJson('/api/v1/slp/assignments', ['patient_id' => $patient->id, 'exercise_version_id' => $version->id])->assertUnprocessable();
+        $this->assertDatabaseCount('slp_assignments', 0);
+        $unrelatedClinician = $this->user(UserRole::Clinician);
+        $this->actingAs($unrelatedClinician)->postJson("/api/v1/slp/exercise-versions/{$version->id}/review")->assertForbidden();
         $this->actingAs($clinician)->postJson("/api/v1/slp/exercise-versions/{$version->id}/review")->assertOk();
         $this->actingAs($admin)->postJson("/api/v1/slp/exercise-versions/{$version->id}/publish")->assertOk();
+        $this->actingAs($clinician)->postJson("/api/v1/slp/exercise-versions/{$version->id}/review")->assertConflict();
         $this->actingAs($clinician)->postJson('/api/v1/slp/assignments', ['patient_id' => $patient->id, 'exercise_version_id' => $version->id])->assertCreated();
     }
 
@@ -83,6 +88,8 @@ class SlpWorkflowTest extends TestCase
         ])->assertOk()->json('data');
         $this->actingAs($admin)->postJson("/api/v1/slp/reviews/{$review['id']}/approve")->assertForbidden();
         $this->actingAs($clinician)->postJson("/api/v1/slp/reviews/{$review['id']}/approve")->assertOk();
+        $this->actingAs($clinician)->postJson("/api/v1/slp/reviews/{$review['id']}/approve")->assertOk();
+        $this->assertDatabaseCount('slp_reports', 1);
     }
 
     private function user(UserRole $role): User

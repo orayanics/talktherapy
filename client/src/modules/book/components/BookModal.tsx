@@ -70,7 +70,11 @@ export default function BookModal({
         </div>
       )}
 
-      <FormInput label="Diagnosis" error={errors.encounter?.diagnosis?.message}>
+      <FormInput
+        htmlFor="booking-diagnosis"
+        label="Diagnosis"
+        error={errors.encounter?.diagnosis?.message}
+      >
         <input
           id="booking-diagnosis"
           {...register('encounter.diagnosis')}
@@ -79,6 +83,7 @@ export default function BookModal({
       </FormInput>
 
       <FormInput
+        htmlFor="booking-chief-complaint"
         label="Chief Complaint"
         error={errors.encounter?.chief_complaint?.message}
       >
@@ -90,6 +95,7 @@ export default function BookModal({
       </FormInput>
 
       <FormInput
+        htmlFor="booking-referral-source"
         label="Referral Source"
         error={errors.encounter?.referral_source?.message}
       >
@@ -101,6 +107,7 @@ export default function BookModal({
       </FormInput>
 
       <FormInput
+        htmlFor="booking-referral-url"
         label="Referral URL"
         error={errors.encounter?.referral_url?.message}
       >

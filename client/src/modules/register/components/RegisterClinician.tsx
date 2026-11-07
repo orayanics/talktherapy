@@ -35,7 +35,12 @@ export default function RegisterClinician(props: ModalProps) {
         </div>
       )}
 
-      <FormInput label="Name" error={errors.name?.message} required>
+      <FormInput
+        htmlFor="clinician-name"
+        label="Name"
+        error={errors.name?.message}
+        required
+      >
         <input
           id="clinician-name"
           {...register('name')}
@@ -43,7 +48,12 @@ export default function RegisterClinician(props: ModalProps) {
           className="input w-full"
         />
       </FormInput>
-      <FormInput label="Email" error={errors.email?.message} required>
+      <FormInput
+        htmlFor="clinician-email"
+        label="Email"
+        error={errors.email?.message}
+        required
+      >
         <input
           id="clinician-email"
           {...register('email')}

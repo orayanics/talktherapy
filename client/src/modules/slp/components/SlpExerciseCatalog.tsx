@@ -39,8 +39,9 @@ export default function SlpExerciseCatalog() {
           />
           <FilterDrawer>
             <div className="space-y-6">
-              <FormInput label="Module">
+              <FormInput htmlFor="slpexercisecatalog-field-1" label="Module">
                 <select
+                  id="slpexercisecatalog-field-1"
                   aria-label="Module"
                   className="select w-full"
                   value={filters.module ?? ''}
@@ -60,8 +61,9 @@ export default function SlpExerciseCatalog() {
                   ))}
                 </select>
               </FormInput>
-              <FormInput label="Scope">
+              <FormInput htmlFor="slpexercisecatalog-field-2" label="Scope">
                 <select
+                  id="slpexercisecatalog-field-2"
                   aria-label="Scope"
                   className="select w-full"
                   value={filters.scope ?? ''}

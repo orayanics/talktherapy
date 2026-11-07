@@ -1,20 +1,13 @@
 import { api } from '#/lib/api/client'
-import {
-  useMutation,
-  queryOptions,
-  useQueryClient,
-} from '@tanstack/react-query'
-import { useNavigate } from '@tanstack/react-router'
+import { queryOptions } from '@tanstack/react-query'
 
 import type { QueryParams, Meta } from '#/types/api'
 import type { ContentParams } from '#/modules/content/types/params'
-import { useAlert } from '#/context/AlertContext'
 import type {
   TContentSchema,
   TUpdateContentSchema,
 } from '#/modules/content/types/schema'
 
-import { CONTENT } from '#/constants/message'
 import type { DiagnosisItem } from '#/modules/diagnoses/types/diagnosis'
 
 export interface Tag {
@@ -86,103 +79,42 @@ export const fetchContentById = (contentId: string) => {
   })
 }
 
-export const mutateCreateContent = () => {
-  const navigate = useNavigate()
-  const { showAlert } = useAlert()
-  const queryClient = useQueryClient()
+export const mutateCreateContent = async (payload: TContentSchema) => {
+  const { data } = await api<{ data: Content }>('/api/v1/content', {
+    method: 'POST',
+    data: payload,
+  })
+  return data
+}
 
-  return useMutation({
-    mutationFn: async (payload: TContentSchema) => {
-      const { data } = await api<{ data: Content }>('/api/v1/content', {
-        method: 'POST',
-        data: JSON.stringify(payload),
-      })
-      return data
+export const mutateUpdateContent = async (
+  contentId: string,
+  payload: TUpdateContentSchema,
+) => {
+  const { data } = await api<{ data: Content }>(
+    `/api/v1/content/${contentId}`,
+    {
+      method: 'PATCH',
+      data: payload,
     },
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['content'] })
-      await queryClient.invalidateQueries({ queryKey: ['logs'] })
-      showAlert(CONTENT.create.success, 'success')
-      navigate({ to: '/content' })
-    },
+  )
+  return data
+}
+
+export const mutateDeleteContent = async (contentId: string) => {
+  await api(`/api/v1/content/${contentId}`, {
+    method: 'DELETE',
   })
 }
 
-export const mutateUpdateContent = (contentId: string) => {
-  const navigate = useNavigate()
-  const { showAlert } = useAlert()
-  const queryClient = useQueryClient()
-
-  return useMutation({
-    mutationFn: async (payload: TUpdateContentSchema) => {
-      const { data } = await api<{ data: Content }>(
-        `/api/v1/content/${contentId}`,
-        {
-          method: 'PATCH',
-          data: JSON.stringify(payload),
-        },
-      )
-      return data
-    },
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['content'] })
-      await queryClient.invalidateQueries({ queryKey: ['logs'] })
-      showAlert(CONTENT.update.success, 'success')
-      navigate({ to: '/content/$contentId', params: { contentId } })
-    },
+export const mutateBookmarkContent = async (contentId: string) => {
+  await api(`/api/v1/content/${contentId}/bookmark`, {
+    method: 'PUT',
   })
 }
 
-export const mutateDeleteContent = (contentId: string) => {
-  const navigate = useNavigate()
-  const { showAlert } = useAlert()
-  const queryClient = useQueryClient()
-
-  return useMutation({
-    mutationFn: async () => {
-      await api(`/api/v1/content/${contentId}`, {
-        method: 'DELETE',
-      })
-    },
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['content'] })
-      await queryClient.invalidateQueries({ queryKey: ['logs'] })
-      showAlert(CONTENT.delete.success, 'success')
-      navigate({ to: '/content' })
-    },
-  })
-}
-
-export const mutateBookmarkContent = (contentId: string) => {
-  const queryClient = useQueryClient()
-  const { showAlert } = useAlert()
-
-  return useMutation({
-    mutationFn: async () => {
-      await api(`/api/v1/content/${contentId}/bookmark`, {
-        method: 'PUT',
-      })
-    },
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['content'] })
-      showAlert(CONTENT.bookmark.add.success, 'success')
-    },
-  })
-}
-
-export const mutateRemoveBookmark = (contentId: string) => {
-  const queryClient = useQueryClient()
-  const { showAlert } = useAlert()
-
-  return useMutation({
-    mutationFn: async () => {
-      await api(`/api/v1/content/${contentId}/bookmark`, {
-        method: 'DELETE',
-      })
-    },
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['content'] })
-      showAlert(CONTENT.bookmark.remove.success, 'success')
-    },
+export const mutateRemoveBookmark = async (contentId: string) => {
+  await api(`/api/v1/content/${contentId}/bookmark`, {
+    method: 'DELETE',
   })
 }

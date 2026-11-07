@@ -1,15 +1,13 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useQuery } from '@tanstack/react-query'
 
 import { UpdateContentSchema } from '../types/schema'
 import type { TUpdateContentInput, TUpdateContentSchema } from '../types/schema'
 
-import {
-  mutateUpdateContent,
-  fetchContentById,
-} from '#/modules/content/api/content'
+import { fetchContentById } from '#/modules/content/api/content'
+import { useUpdateContent } from './useContentMutations'
 import { errMsg } from '#/lib/errorMessage'
 
 export default function useUpdateContentForm({
@@ -22,6 +20,9 @@ export default function useUpdateContentForm({
     enabled: !!contentId,
   })
 
+  const initializedId = useRef<string | null>(null)
+  const currentId = useRef(contentId)
+  currentId.current = contentId
   const [apiError, setApiError] = useState<string | null>(null)
 
   const {
@@ -42,11 +43,17 @@ export default function useUpdateContentForm({
     },
   })
 
-  const updateMutation = mutateUpdateContent(contentId)
+  const updateMutation = useUpdateContent(contentId)
 
   const onSubmit = handleSubmit(async (data) => {
     setApiError(null)
     try {
+      if (
+        currentId.current !== contentId ||
+        initializedId.current !== contentId ||
+        content?.id !== contentId
+      )
+        return
       await updateMutation.mutateAsync(data)
     } catch (error: unknown) {
       setApiError(errMsg(error, 'Update content failed'))
@@ -54,7 +61,18 @@ export default function useUpdateContentForm({
   })
 
   useEffect(() => {
-    if (!content) return
+    if (initializedId.current !== contentId) {
+      reset({
+        title: '',
+        description: '',
+        body: '',
+        diagnosis_id: '',
+        tag_names: [],
+      })
+      setApiError(null)
+    }
+    if (content?.id !== contentId || initializedId.current === contentId) return
+    initializedId.current = contentId
 
     reset({
       title: content.title,
@@ -63,14 +81,19 @@ export default function useUpdateContentForm({
       diagnosis_id: content.diagnosis?.id ?? '',
       tag_names: content.tags.map((tag) => tag.name),
     })
-  }, [content, reset])
+  }, [content, contentId, reset])
 
   return {
     register,
     onSubmit,
     errors,
     apiError,
-    isLoading: updateMutation.isPending || isSubmitting,
+    isLoading:
+      updateMutation.isPending ||
+      isSubmitting ||
+      isPending ||
+      content?.id !== contentId ||
+      initializedId.current !== contentId,
     control,
     watch,
     reset,

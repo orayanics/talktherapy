@@ -89,7 +89,8 @@ export default function ExerciseDelivery({
     onSuccess: () => client.invalidateQueries({ queryKey: ['slp-workflow'] }),
   })
   if (!version) return null
-  const canAssign = audience === 'all' || selected.size > 0
+  const canAssign =
+    version.status === 'published' && (audience === 'all' || selected.size > 0)
   const togglePatient = (id: string) =>
     setSelected((current) => {
       const next = new Set(current)
@@ -275,6 +276,13 @@ export default function ExerciseDelivery({
                 </button>
               )}
           </div>
+          {version.status !== 'published' && (
+            <p role="status">
+              Assignments require this version to be reviewed and published by
+              an administrator. Patient visibility alone does not publish an
+              exercise.
+            </p>
+          )}
           {assign.isSuccess && <p role="status">Exercise assigned.</p>}
           {(visibility.isError || assign.isError || patients.isError) && (
             <p role="alert">

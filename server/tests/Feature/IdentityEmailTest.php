@@ -14,6 +14,26 @@ class IdentityEmailTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_invalid_confirmation_commits_attempts_and_exhausts_the_code(): void
+    {
+        Notification::fake();
+        $user = User::factory()->create(['password' => 'Current-Horse-9!']);
+        UserProfile::factory()->for($user)->create();
+        $this->actingAs($user)->postJson('/api/v1/me/email-change', ['new_email' => 'new@example.com', 'current_password' => 'Current-Horse-9!'])->assertAccepted();
+        $code = '';
+        Notification::assertSentOnDemand(ActivationCodeNotification::class, function ($notification) use (&$code): bool {
+            $code = $notification->code;
+
+            return true;
+        });
+        for ($attempt = 1; $attempt <= 5; $attempt++) {
+            $this->postJson('/api/v1/email-change/confirm', ['otp_code' => $code === '000000' ? '111111' : '000000'])->assertUnprocessable();
+        }
+        $this->assertSame(5, ActivationChallenge::query()->whereBelongsTo($user)->sole()->attempts);
+        $this->postJson('/api/v1/email-change/confirm', ['otp_code' => $code])->assertUnprocessable();
+        $this->assertNotSame('new@example.com', $user->fresh()->email);
+    }
+
     public function test_new_email_is_not_applied_until_its_code_is_confirmed(): void
     {
         Notification::fake();

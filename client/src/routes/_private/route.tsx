@@ -1,50 +1,30 @@
-import { createFileRoute, Navigate, Outlet } from '@tanstack/react-router'
+import { createFileRoute, Outlet } from '@tanstack/react-router'
 import NotificationRealtime from '#/modules/notifications/components/NotificationRealtime'
-
 import Sidebar from '#/components/Page/Sidebar'
-import { authClient } from '#/modules/auth/api/auth-client'
-
-import { SessionProvider } from '#/modules/auth/context/SessionContext'
-import type { SessionContextValue } from '#/modules/auth/context/SessionContext'
-
-import StateLoading from '#/components/State/StateLoading'
+import SessionBoundary from '#/modules/auth/components/SessionBoundary'
+import { useSession } from '#/modules/auth/context/SessionContext'
 
 export const Route = createFileRoute('/_private')({
   ssr: false,
-  component: RouteComponent,
+  component: () => (
+    <SessionBoundary>
+      <PrivateLayout />
+    </SessionBoundary>
+  ),
 })
 
-function RouteComponent() {
-  const { data, isPending } = authClient.useSession()
-
-  if (isPending) return <StateLoading fullpage />
-  if (!data) {
-    return <Navigate to="/login" />
-  }
-
-  const user = data.user
-  const session: SessionContextValue = {
-    ...user,
-    image: user.image ?? null,
-    role: user.role,
-    banned: user.banned ?? false,
-    banExpires: user.banExpires ?? null,
-    banReason: user.banReason ?? null,
-    createdAt: user.createdAt,
-    updatedAt: user.updatedAt,
-  }
-  const role = data.user.role
-
+function PrivateLayout() {
+  const user = useSession()
   return (
-    <SessionProvider value={session}>
-      <NotificationRealtime key={session.id} />
+    <>
+      <NotificationRealtime key={user.id} />
       <div className="flex w-screen h-screen">
-        <Sidebar role={role}>
+        <Sidebar role={user.role}>
           <main className="p-2 flex-1 min-h-full w-full overflow-auto">
             <Outlet />
           </main>
         </Sidebar>
       </div>
-    </SessionProvider>
+    </>
   )
 }

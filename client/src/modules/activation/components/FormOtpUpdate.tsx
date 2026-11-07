@@ -68,7 +68,12 @@ export default function FormOtpUpdate({
           )}
 
           <div className="grid grid-cols-1 gap-2">
-            <FormInput label="Full Name" error={errors.name?.message} required>
+            <FormInput
+              htmlFor="activation-name"
+              label="Full Name"
+              error={errors.name?.message}
+              required
+            >
               <input
                 id="activation-name"
                 {...register('name')}
@@ -78,6 +83,7 @@ export default function FormOtpUpdate({
             </FormInput>
 
             <FormInput
+              htmlFor="activation-email"
               label="Email Address"
               error={errors.email?.message}
               required
@@ -94,6 +100,7 @@ export default function FormOtpUpdate({
 
           {shouldShowDiagnosis && (
             <FormInput
+              htmlFor="activation-diagnosis"
               label="Diagnosis Group"
               error={errors.diagnosis_id?.message}
               required
@@ -117,6 +124,7 @@ export default function FormOtpUpdate({
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <FormInput
+              htmlFor="activation-password"
               label="Password"
               error={errors.password?.message}
               required
@@ -131,6 +139,7 @@ export default function FormOtpUpdate({
             </FormInput>
 
             <FormInput
+              htmlFor="activation-password-confirmation"
               label="Confirm Password"
               error={errors.password_confirmation?.message}
               required

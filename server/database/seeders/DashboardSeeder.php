@@ -20,6 +20,9 @@ class DashboardSeeder extends Seeder
 {
     public function run(): void
     {
+        if (! app()->environment(['local', 'testing'])) {
+            return;
+        }
         $clinician = User::query()->where('email', 'clinician@example.com')->firstOrFail();
         $patients = User::query()->whereIn('email', [
             'patient.aphasia@example.com',

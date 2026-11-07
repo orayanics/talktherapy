@@ -22,8 +22,10 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
+use Throwable;
 
 class SlpWorkflowController extends Controller
 {
@@ -49,8 +51,9 @@ class SlpWorkflowController extends Controller
 
     public function reviewVersion(Request $request, SlpExerciseVersion $version): array
     {
-        abort_unless($this->staff($request->user()), 403);
-        $version->update(['status' => 'reviewed', 'reviewed_by' => $request->user()->id]);
+        abort_unless($this->staff($request->user()) && ($version->exercise->owner_id === $request->user()->id || $this->admin($request->user())), 403);
+        abort_unless(SlpExerciseVersion::query()->whereKey($version->id)->where('status', 'draft')->update(['status' => 'reviewed', 'reviewed_by' => $request->user()->id]) === 1, 409);
+        $version->refresh();
 
         return ['data' => ['id' => $version->id, 'status' => $version->status, 'reviewed_by' => $version->reviewed_by]];
     }
@@ -58,7 +61,8 @@ class SlpWorkflowController extends Controller
     public function publishVersion(Request $request, SlpExerciseVersion $version): array
     {
         abort_unless($this->admin($request->user()) && $version->status === 'reviewed', 403);
-        $version->update(['status' => 'published']);
+        abort_unless(SlpExerciseVersion::query()->whereKey($version->id)->where('status', 'reviewed')->update(['status' => 'published']) === 1, 409);
+        $version->refresh();
 
         return ['data' => ['id' => $version->id, 'status' => $version->status]];
     }
@@ -133,11 +137,12 @@ class SlpWorkflowController extends Controller
         $data = $request->validate(['patient_id' => ['nullable', 'uuid', Rule::exists('users', 'id')], 'patient_ids' => ['nullable', 'array', 'min:1', 'max:1000'], 'patient_ids.*' => ['uuid', Rule::exists('users', 'id')], 'audience' => ['sometimes', Rule::in(['all', 'selected'])], 'exercise_version_id' => ['required', 'uuid', Rule::exists('slp_exercise_versions', 'id')], 'schedule' => ['nullable', 'array']]);
         $audience = $data['audience'] ?? 'selected';
         $version = SlpExerciseVersion::query()->with('exercise')->findOrFail($data['exercise_version_id']);
+        abort_unless($version->status === 'published', 422, 'Publish this version before assigning it.');
         abort_unless($version->exercise->owner_id === $request->user()->id || ($version->exercise->scope === 'shared' && $version->status === 'published'), 403);
         abort_unless($version->exercise->archived_at === null && ($version->configuration['patient_visible'] ?? false) === true, 422, 'Enable patient visibility before assigning this version.');
         $patientIds = $audience === 'all'
             ? ClinicianPatient::query()->where('clinician_id', $request->user()->id)->pluck('patient_id')->all()
-            : ($data['patient_ids'] ?? ($data['patient_id'] ? [$data['patient_id']] : []));
+            : ($data['patient_ids'] ?? (! empty($data['patient_id']) ? [$data['patient_id']] : []));
         abort_if(count($patientIds) === 0, 422, 'Select at least one patient.');
         abort_unless(ClinicianPatient::query()->where('clinician_id', $request->user()->id)->whereIn('patient_id', $patientIds)->count() === count(array_unique($patientIds)), 403);
         $assignments = collect($patientIds)->unique()->map(fn (string $patientId): SlpAssignment => SlpAssignment::query()->updateOrCreate(
@@ -151,9 +156,7 @@ class SlpWorkflowController extends Controller
     public function storeAttempt(Request $request, SlpAssignment $assignment): JsonResponse
     {
         abort_unless($assignment->patient_id === $request->user()->id, 403);
-        abort_unless($assignment->status === 'active' && $assignment->version->exercise->archived_at === null && ($assignment->version->configuration['patient_visible'] ?? false) === true, 409, 'This exercise is not currently available.');
-        $configuration = $assignment->version->configuration ?? [];
-        abort_unless(($configuration['patient_audience'] ?? 'all') === 'all' || in_array($request->user()->id, $configuration['patient_ids'] ?? [], true), 409, 'This exercise is not currently available.');
+        abort_unless($assignment->availableToPatient($request->user()->id), 409, 'This exercise is not currently available.');
         $data = $request->validate(['submission_key' => ['required', 'string', 'max:100'], 'consent_id' => ['required', 'uuid', Rule::exists('slp_consents', 'id')]]);
         $consent = SlpConsent::query()->findOrFail($data['consent_id']);
         abort_unless($consent->subject_id === $request->user()->id && $consent->purpose === 'slp_recording' && $consent->withdrawn_at === null, 422);
@@ -165,17 +168,45 @@ class SlpWorkflowController extends Controller
     public function uploadRecording(Request $request, SlpAttempt $attempt): JsonResponse
     {
         abort_unless($attempt->assignment->patient_id === $request->user()->id, 403);
-        abort_unless($attempt->consent->withdrawn_at === null && $attempt->assignment->status === 'active' && $attempt->assignment->version->exercise->archived_at === null && ($attempt->assignment->version->configuration['patient_visible'] ?? false) === true, 409, 'Consent or exercise availability has changed.');
         $data = $request->validate(['recording' => ['required', 'file', 'max:20480', 'mimetypes:audio/mpeg,audio/wav,audio/mp4,audio/webm']]);
-        abort_if($attempt->recording()->exists(), 409);
-        $file = $data['recording'];
-        $path = $file->store('slp-recordings', 'local');
-        $recording = SlpRecording::query()->create(['attempt_id' => $attempt->id, 'path' => $path, 'mime_type' => $file->getMimeType(), 'bytes' => $file->getSize(), 'checksum' => hash_file('sha256', $file->getRealPath()), 'retention_until' => now()->addDays(30)]);
-        $attempt->update(['status' => 'queued']);
-        $run = SlpAnalysisRun::query()->create(['attempt_id' => $attempt->id, 'status' => 'queued']);
-        RunSlpAnalysis::dispatch($run->id);
+        $path = null;
+        try {
+            [$recording, $run] = DB::transaction(function () use ($request, $attempt, $data, &$path): array {
+                $locked = SlpAttempt::query()->lockForUpdate()->findOrFail($attempt->id);
+                $consent = $locked->consent()->lockForUpdate()->firstOrFail();
+                abort_unless($consent->withdrawn_at === null && $locked->assignment->availableToPatient($request->user()->id), 409, 'Consent or exercise availability has changed.');
+                $file = $data['recording'];
+                $checksum = hash_file('sha256', $file->getRealPath());
+                $existing = $locked->recording;
+                if ($existing !== null) {
+                    abort_unless(hash_equals($existing->checksum, $checksum), 409);
 
-        return response()->json(['data' => ['attempt_id' => $attempt->id, 'recording_id' => $recording->id, 'analysis_run_id' => $run->id, 'status' => 'queued']], 202);
+                    return [$existing, $locked->analysis()->firstOrFail()];
+                }
+                abort_unless($locked->status === 'created', 409);
+                $path = $file->store('slp-recordings', 'local');
+                abort_unless(is_string($path) && $path !== '', 503, 'Recording storage is unavailable.');
+                $recording = SlpRecording::query()->create(['attempt_id' => $locked->id, 'path' => $path, 'mime_type' => $file->getMimeType(), 'bytes' => $file->getSize(), 'checksum' => $checksum, 'retention_until' => now()->addDays(30)]);
+                $locked->update(['status' => 'queued']);
+                $run = SlpAnalysisRun::query()->create(['attempt_id' => $locked->id, 'status' => 'queued']);
+
+                return [$recording, $run];
+            });
+        } catch (Throwable $exception) {
+            if (is_string($path) && $path !== '') {
+                Storage::disk('local')->delete($path);
+            }
+            throw $exception;
+        }
+        if ($run->status === 'queued') {
+            try {
+                RunSlpAnalysis::dispatch($run->id);
+            } catch (Throwable $exception) {
+                Log::warning('SLP analysis dispatch deferred to recovery.', ['exception_type' => $exception::class]);
+            }
+        }
+
+        return response()->json(['data' => ['attempt_id' => $attempt->id, 'recording_id' => $recording->id, 'analysis_run_id' => $run->id, 'status' => $run->status]], 202);
     }
 
     public function attempt(Request $request, SlpAttempt $attempt): array
@@ -196,8 +227,12 @@ class SlpWorkflowController extends Controller
     {
         abort_unless($attempt->assignment->clinician_id === $request->user()->id, 403);
         $data = $request->validate(['annotations' => ['required', 'array'], 'metrics' => ['nullable', 'array']]);
-        $revision = (int) ($attempt->reviews()->max('revision') ?? 0) + 1;
-        $review = SlpReview::query()->create(['attempt_id' => $attempt->id, 'revision' => $revision, 'reviewer_id' => $request->user()->id, 'status' => 'draft', 'annotations' => $data['annotations'], 'metrics' => $data['metrics'] ?? []]);
+        $review = DB::transaction(function () use ($attempt, $request, $data): SlpReview {
+            $locked = SlpAttempt::query()->lockForUpdate()->findOrFail($attempt->id);
+            $revision = (int) ($locked->reviews()->max('revision') ?? 0) + 1;
+
+            return SlpReview::query()->create(['attempt_id' => $locked->id, 'revision' => $revision, 'reviewer_id' => $request->user()->id, 'status' => 'draft', 'annotations' => $data['annotations'], 'metrics' => $data['metrics'] ?? []]);
+        });
 
         return ['data' => $review];
     }
@@ -205,11 +240,20 @@ class SlpWorkflowController extends Controller
     public function approveReview(Request $request, SlpReview $review): array
     {
         abort_unless($review->attempt->assignment->clinician_id === $request->user()->id, 403);
-        $review->update(['status' => 'approved']);
-        $review->attempt()->update(['status' => 'approved']);
-        $report = SlpReport::query()->create(['review_id' => $review->id, 'created_by' => $request->user()->id, 'snapshot' => ['metrics' => $review->metrics, 'annotations' => $review->annotations, 'approved_at' => now()->toISOString()]]);
 
-        return ['data' => ['review' => $review, 'report' => $report]];
+        return DB::transaction(function () use ($review, $request): array {
+            $attempt = SlpAttempt::query()->lockForUpdate()->findOrFail($review->attempt_id);
+            $locked = SlpReview::query()->lockForUpdate()->findOrFail($review->id);
+            $report = SlpReport::query()->where('review_id', $locked->id)->first();
+            if ($report === null) {
+                abort_unless($locked->status === 'draft', 409);
+                $locked->update(['status' => 'approved']);
+                $attempt->update(['status' => 'approved']);
+                $report = SlpReport::query()->create(['review_id' => $locked->id, 'created_by' => $request->user()->id, 'snapshot' => ['metrics' => $locked->metrics, 'annotations' => $locked->annotations, 'approved_at' => now()->toISOString()]]);
+            }
+
+            return ['data' => ['review' => $locked, 'report' => $report]];
+        });
     }
 
     private function staff(User $user): bool

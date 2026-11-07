@@ -1,11 +1,5 @@
-import {
-  queryOptions,
-  useMutation,
-  useQueryClient,
-} from '@tanstack/react-query'
-import { useNavigate } from '@tanstack/react-router'
+import { queryOptions } from '@tanstack/react-query'
 import { api } from '#/lib/api/client'
-import { useAlert } from '#/context/AlertContext'
 import type { QueryParams } from '#/types/api'
 import type { Soap, SoapsResponse } from '#/modules/soaps/types/soap'
 
@@ -34,43 +28,25 @@ export const fetchSoapById = (soapId: string) =>
     staleTime: 1000 * 60 * 5,
     retry: false,
   })
-export const mutateCreateSoap = (patientId: string) => {
-  const navigate = useNavigate()
-  const { showAlert } = useAlert()
-  const queryClient = useQueryClient()
-  return useMutation({
-    mutationFn: async (payload: Partial<Soap>) =>
-      (
-        await api<{ data: Soap }>(`/api/v1/soaps/${patientId}`, {
-          method: 'POST',
-          data: JSON.stringify(payload),
-        })
-      ).data,
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['soaps'] })
-      await queryClient.invalidateQueries({ queryKey: ['soap'] })
-      showAlert('SOAP created successfully', 'success')
-      navigate({ to: '/patients/$patientId', params: { patientId } })
-    },
-  })
-}
-export const mutateUpdateSoap = (soapId: string, patientId: string) => {
-  const navigate = useNavigate()
-  const { showAlert } = useAlert()
-  const queryClient = useQueryClient()
-  return useMutation({
-    mutationFn: async (payload: Partial<Soap>) =>
-      (
-        await api<{ data: Soap }>(`/api/v1/soaps/${soapId}`, {
-          method: 'PATCH',
-          data: JSON.stringify(payload),
-        })
-      ).data,
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['soaps'] })
-      await queryClient.invalidateQueries({ queryKey: ['soap'] })
-      showAlert('SOAP updated', 'success')
-      navigate({ to: '/patients/$patientId', params: { patientId } })
-    },
-  })
-}
+
+export const mutateCreateSoap = async (
+  patientId: string,
+  payload: Partial<Soap>,
+) =>
+  (
+    await api<{ data: Soap }>(`/api/v1/soaps/${patientId}`, {
+      method: 'POST',
+      data: payload,
+    })
+  ).data
+
+export const mutateUpdateSoap = async (
+  soapId: string,
+  payload: Partial<Soap>,
+) =>
+  (
+    await api<{ data: Soap }>(`/api/v1/soaps/${soapId}`, {
+      method: 'PATCH',
+      data: payload,
+    })
+  ).data

@@ -34,7 +34,12 @@ export default function RegisterAdmin(props: ModalProps) {
         </div>
       )}
 
-      <FormInput label="Name" error={errors.name?.message} required>
+      <FormInput
+        htmlFor="admin-name"
+        label="Name"
+        error={errors.name?.message}
+        required
+      >
         <input
           id="admin-name"
           {...register('name')}
@@ -43,7 +48,12 @@ export default function RegisterAdmin(props: ModalProps) {
         />
       </FormInput>
 
-      <FormInput label="Email" error={errors.email?.message} required>
+      <FormInput
+        htmlFor="admin-email"
+        label="Email"
+        error={errors.email?.message}
+        required
+      >
         <input
           id="admin-email"
           {...register('email')}

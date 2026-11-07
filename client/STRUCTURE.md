@@ -10,4 +10,6 @@ Feature code lives in `src/modules/<feature>/`. Keep its API calls in `api/`, do
 
 Before extracting a helper or component, look for an existing equivalent and actual repeated behavior. Share the common presentation or logic while keeping domain-specific labels, permissions, and mappings with the feature. Avoid forwarding barrels, compatibility re-exports, and generic frameworks for single uses.
 
-Validate changes with `bun run test`, `bunx tsc --noEmit`, `bun run lint`, and `bun run build`. Keep regression tests beside the feature or shared component they exercise.
+Validate changes with `npm test`, `npx tsc --noEmit`, `npm run lint`, and `npm run build`. Keep regression tests beside the feature or shared component they exercise.
+
+Detail queries must not reuse previous-resource placeholder data. Scope pagination placeholders to the same resource and owner. Editors retain their initial draft and version until save, identity change, or explicit reload; background query refreshes must not reset a draft.

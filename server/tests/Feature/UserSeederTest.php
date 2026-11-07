@@ -13,6 +13,13 @@ class UserSeederTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_demo_seeding_is_disabled_outside_local_and_testing(): void
+    {
+        $this->app->instance('env', 'production');
+        $this->artisan('db:seed', ['--class' => DatabaseSeeder::class, '--force' => true])->assertSuccessful();
+        $this->assertDatabaseCount('users', 0);
+    }
+
     public function test_seeds_repeatable_active_users_for_each_role_with_the_default_password(): void
     {
         $this->seed(DatabaseSeeder::class);

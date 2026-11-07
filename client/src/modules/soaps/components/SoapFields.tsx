@@ -26,6 +26,7 @@ export default function SoapFields({
     const id = `${idPrefix}-${name.replaceAll('_', '-')}`
     return (
       <FormInput
+        htmlFor={id}
         key={name}
         label={<span className="text-xs font-mono text-gray-400">{label}</span>}
         error={errors[name]?.message}

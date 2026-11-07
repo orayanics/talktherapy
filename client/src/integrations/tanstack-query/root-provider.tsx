@@ -1,15 +1,5 @@
-import { keepPreviousData, QueryClient } from '@tanstack/react-query'
+import { QueryClient } from '@tanstack/react-query'
 
 export function getContext() {
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        placeholderData: keepPreviousData,
-      },
-    },
-  })
-  return {
-    queryClient,
-  }
+  return { queryClient: new QueryClient() }
 }
-export default function TanstackQueryProvider() {}

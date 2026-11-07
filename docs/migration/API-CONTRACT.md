@@ -1,10 +1,10 @@
 # API migration contract
 
-Status: proposed versioned replacement, not an implemented compatibility adapter. The browser and Laravel API ship together. No legacy response alias is promised unless an external consumer is discovered. Before coding a module, capture synthetic request/response fixtures for its current consumers and maintain the replacement OpenAPI contract alongside its tests.
+Status: the versioned Laravel API and migrated browser modules are implemented; the historical route inventory below records migration intent. The browser and Laravel API ship together. Existing code and tested contracts take precedence over historical proposals. No legacy response alias is promised unless an external consumer is discovered.
 
 ## Common representation
 
-Business base URL: `/api/v1`. Authentication's session endpoints live at the API origin outside that prefix. `API_URL` must mean the origin in one shared config; the shared HTTP client adds `/api/v1` for business calls. CSRF, login/logout and broadcasting auth use origin-relative paths. Do not concatenate `/api/v1` twice or send login to a nonexistent versioned URL.
+Business base URL: `/api/v1`. Authentication's session endpoints live at the API origin outside that prefix. `API_URL` means the origin; business callers explicitly include `/api/v1` in their paths, and the shared HTTP client does not add a prefix. CSRF, login/logout and broadcasting auth use origin-relative paths. Do not concatenate `/api/v1` twice or send login to a nonexistent versioned URL.
 
 Successful detail/create/update: `{"data": {...}}`; list: `{"data": [...], "links": {...}, "meta": {...}}`. Use paginated Laravel Resources with `current_page`, `from`, `last_page`, `per_page`, `to`, `total`; resource pagination may include additional standard fields. Empty data is `[]`, never `items` or an extra nested `data`. All public fields are snake_case. Resource names and relation cardinality are explicit, not Prisma model dumps. No `success` wrapper. DELETE/logout/read-marker mutations that return 204 have no body. Creation returns 201; accepted synchronous updates return 200. Exceptions: auth failure and validation are error objects, not successful envelopes. [API Resources](https://laravel.com/framework/docs/13.x/eloquent-resources).
 
@@ -14,7 +14,7 @@ Shared query rules: `page` integer >= 1; `per_page` integer 1..100/default 15; `
 
 ## Existing-to-target route inventory
 
-`{id}` means an opaque legacy-compatible string key. This inventory includes routes with no active client caller; implementing a missing historical feature is not implied. Current Better Auth mounts under `/auth` with base path `/api`; the client uses `/auth/api`. Its generated administrative API must be inventoried from the resolved package/schema before retirement, not assumed to match custom routes.
+`{id}` means an opaque string key. This historical inventory includes routes with no active client caller; implementing a missing historical feature is not implied. The retired Better Auth implementation mounted under `/auth` with base path `/api`; its client used `/auth/api`. The current client uses Laravel session authentication.
 
 | Existing route / capability | Proposed replacement | Access and contract note |
 |---|---|---|
@@ -75,9 +75,9 @@ Shared query rules: `page` integer >= 1; `per_page` integer 1..100/default 15; `
 
 ## Speech response contract
 
-Outer Laravel response is `{data: AssessResponse}`. For the migration, preserve Python's existing nested camelCase response to avoid changing scoring semantics and clients simultaneously. This is the one explicitly documented serialization exception. The Python DTO is authoritative for fields; Laravel validates it before returning it and OpenAPI describes the exception.
+Outer Laravel response is `{data: AssessResponse}`. The nested Python response uses camelCase as an explicit serialization exception. The active version-2 practice endpoint reports `meta.schemaVersion="2.0"`, `alignmentSource="none"`, `status=review_required|task_mismatch|unscorable`, `measurement="transcript_agreement_only"`, model identity, `calibrationVersion="none"`, `learningEligible=false` and `language=en|tl`. Laravel validates it before returning it. Both transcript strings may be empty for `unscorable`, but must be present strings. Corrective-score arrays are empty and overall status is `unknown`; numeric zeros are compatibility placeholders, not pronunciation measurements.
 
-`AssessResponse` has `meta: {alignmentSource: "reference"|"transcript", cer: finite number >= 0}`, `analysis: {transcript, lowScoring: [{phoneme, score: 0..100, word: string|null, wordIndex: integer|null}], structured: {reference, transcript, overall: {avgScore, percentAboveNeedsWork, status}, words, accurateUnits, needsWorkUnits}}`, and `feedback: {text}`. Scores/percentages must be finite 0..100; `status` includes `accurate`, `mixed`, `needs_work`, `unknown`. CER can exceed 1; do not cap it as a probability. Bound list/string sizes as well as types.
+The legacy compatibility shape accepted by Laravel has `meta: {alignmentSource: "reference"|"transcript"|"none", cer: finite number >= 0}`, `analysis: {transcript, lowScoring: [{phoneme, score: 0..100, word: string|null, wordIndex: integer|null}], structured: {reference, transcript, overall: {avgScore, percentAboveNeedsWork, status}, words, accurateUnits, needsWorkUnits}}`, and `feedback: {text}`. Scores/percentages must be finite 0..100; overall `status` includes `accurate`, `mixed`, `needs_work`, `unknown`. The active endpoint uses the version-2 restrictions above. CER can exceed 1; do not cap it as a probability. Bound list/string sizes as well as types.
 
 No full `phonemeScores` array exists in the current response. Do not invent it from a commented DTO line. Unsupported/silent input needs an explicit unscorable outcome or 422; never fabricate a diagnostic score. Additive `model_version`, `scoring_version`, and `request_id` metadata may be introduced under a tested contract update. Algorithm changes require versioned fixtures and clinical review.
 

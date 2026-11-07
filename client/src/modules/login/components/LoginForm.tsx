@@ -41,6 +41,7 @@ export default function LoginForm() {
         )}
 
         <FormInput
+          htmlFor="login-email"
           label="Email"
           error={errors.email?.message}
           errorId="login-email-error"
@@ -58,6 +59,7 @@ export default function LoginForm() {
         </FormInput>
 
         <FormInput
+          htmlFor="login-password"
           label="Password"
           error={errors.password?.message}
           errorId="login-password-error"

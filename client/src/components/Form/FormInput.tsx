@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 import RowError from '#/components/Table/RowError'
 
 type FormInputProps = {
+  htmlFor: string
   label: ReactNode
   children: ReactNode
   error?: string
@@ -12,6 +13,7 @@ type FormInputProps = {
 
 export default function FormInput({
   label,
+  htmlFor,
   children,
   error,
   errorId,
@@ -21,7 +23,7 @@ export default function FormInput({
   return (
     <fieldset className={`fieldset ${className ?? ''}`}>
       <legend className="fieldset-legend text-base font-normal">
-        {label}
+        <label htmlFor={htmlFor}>{label}</label>
         {required && (
           <span className="text-error" aria-hidden="true">
             *

@@ -18,7 +18,7 @@ tasks/    Implementation plans and release gates
 - Composer 2
 - Node.js 24 and npm
 - Python 3.11-3.13 for phoneme analysis
-- FFmpeg and espeak-ng for phoneme analysis
+- FFmpeg for practice analysis; espeak-ng only for retained phonemization research modules
 - Mailpit for local email testing (SMTP `1025`, web UI `8025`)
 - Redis is optional locally; the default Laravel setup uses database-backed cache, sessions and queues
 
@@ -63,7 +63,7 @@ Running `php artisan migrate --seed` creates local-only accounts with password `
 | Superadmin | `sudo@example.com` |
 | Admin | `admin@example.com` |
 | Clinician | `clinician@example.com` |
-| Patient | `patient@example.com` |
+| Patient | `patient.aphasia@example.com` (also `patient.stuttering@example.com`, `patient.autism@example.com`, `patient.adhd@example.com`, `patient.gdd@example.com`, `patient.down@example.com`) |
 
 Never use these credentials outside local development. Invited users do not use this default; they set their password through the emailed activation flow.
 
@@ -100,13 +100,13 @@ VITE_REVERB_PORT=8081
 VITE_REVERB_SCHEME=http
 ```
 
-Restart Vite after changing environment variables. For LAN testing, replace every browser-facing `localhost` host with the development computer's LAN IP.
+Restart Vite after changing environment variables. Vite enables HTTPS when both `certs/localhost-key.pem` and `certs/localhost.pem` exist; `HTTPS=false` does not override certificate detection. For LAN testing, replace every browser-facing `localhost` host with the development computer's LAN IP.
 
 ## 4. Phoneme-analysis service
 
-This service is experimental and is not yet connected through the required Laravel proxy. Its scores are heuristic and must not be treated as a diagnosis or enabled for production clinical decisions.
+This experimental service is connected through the authenticated, rate-limited Laravel `/api/v1/slp/assess` proxy. The active version-2 endpoint returns transcript agreement and neutral practice feedback, including an unscorable outcome when no usable transcript is available. It does not measure pronunciation correctness or provide a diagnosis.
 
-Install FFmpeg and espeak-ng, then from `py/`:
+Install FFmpeg (and espeak-ng only if running the research modules), then from `py/`:
 
 ```sh
 python -m venv .venv
@@ -122,7 +122,7 @@ Set a long random `PHONEME_SERVICE_TOKEN` in the process environment and start t
 uvicorn phoneme_service.main:app --host 127.0.0.1 --port 8001
 ```
 
-The first startup may download large model weights. Production requires pre-provisioned, verified artifacts and the remaining gates in [tasks/todo.md](tasks/todo.md#phoneme-analysis). Detailed service instructions are in [py/README.md](py/README.md).
+Provision Whisper model artifacts before startup using the development instructions in [py/README.md](py/README.md). Startup and worker recovery load local artifacts only and fail when weights are missing. Production requires verified artifacts and the remaining gates in [tasks/todo.md](tasks/todo.md#phoneme-analysis).
 
 ## Development URLs
 

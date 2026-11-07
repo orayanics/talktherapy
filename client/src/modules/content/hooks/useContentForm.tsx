@@ -5,7 +5,7 @@ import { useState } from 'react'
 import { ContentSchema } from '../types/schema'
 import type { TContentSchema } from '../types/schema'
 
-import { mutateCreateContent } from '#/modules/content/api/content'
+import { useCreateContent } from './useContentMutations'
 import { errMsg } from '#/lib/errorMessage'
 
 export default function useContentForm() {
@@ -28,7 +28,7 @@ export default function useContentForm() {
     },
   })
 
-  const createMutation = mutateCreateContent()
+  const createMutation = useCreateContent()
 
   const onSubmit = handleSubmit(async (data) => {
     setApiError(null)

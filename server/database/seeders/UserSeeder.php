@@ -16,6 +16,9 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
+        if (! app()->environment(['local', 'testing'])) {
+            return;
+        }
         $users = [
             ['name' => 'Sudo User', 'email' => 'sudo@example.com', 'role' => UserRole::Superadmin],
             ['name' => 'Admin User', 'email' => 'admin@example.com', 'role' => UserRole::Admin],

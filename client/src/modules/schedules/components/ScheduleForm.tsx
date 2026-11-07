@@ -60,6 +60,7 @@ export default function ScheduleForm() {
                 Schedule times and previews use UTC.
               </p>
               <FormInput
+                htmlFor="schedule-start-at"
                 label="Start (UTC)"
                 error={errors.start_at?.message}
                 required
@@ -73,6 +74,7 @@ export default function ScheduleForm() {
               </FormInput>
 
               <FormInput
+                htmlFor="schedule-end-at"
                 label="End (UTC)"
                 error={errors.end_at?.message}
                 required
@@ -139,7 +141,12 @@ export default function ScheduleForm() {
 
             {freq !== 'none' && (
               <div className="space-x-4">
-                <FormInput label="Occurrences" className="inline-flex" required>
+                <FormInput
+                  htmlFor="schedule-occurrences"
+                  label="Occurrences"
+                  className="inline-flex"
+                  required
+                >
                   <input
                     id="schedule-occurrences"
                     type="number"

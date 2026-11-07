@@ -91,14 +91,8 @@ export default function PatientDashboard() {
                   </div>
                 </div>
 
-                <Link
-                  to="/appointments/$appointmentId"
-                  params={{
-                    appointmentId: a.id,
-                  }}
-                  className="btn btn-sm btn-neutral"
-                >
-                  Details
+                <Link to="/appointments" className="btn btn-sm btn-neutral">
+                  Appointments
                 </Link>
               </li>
             ))}

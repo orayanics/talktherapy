@@ -96,3 +96,41 @@ it('opens the visibility drawer, saves visibility and audience, and restores foc
   ).toBeNull()
   expect(document.activeElement).toBe(trigger)
 })
+
+it.each(['draft', 'published'] as const)(
+  'only enables assignment for a published version (%s)',
+  (status) => {
+    const exercise = {
+      id: 'exercise',
+      owner_id: 'clinician',
+      scope: 'private',
+      module: 'voice',
+      archived_at: null,
+      created_at: '',
+      updated_at: '',
+      latest_version: {
+        id: 'version',
+        revision: 1,
+        language: 'en',
+        dialect: null,
+        task_type: 'reading',
+        status,
+        prompt_text: 'Read aloud',
+        configuration: { patient_visible: true },
+      },
+    } satisfies SlpExercise
+    render(
+      <QueryClientProvider client={new QueryClient()}>
+        <ExerciseDelivery exercise={exercise} />
+      </QueryClientProvider>,
+    )
+    fireEvent.click(screen.getByRole('button', { name: 'Patient visibility' }))
+    expect(
+      screen.getByRole<HTMLButtonElement>('button', {
+        name: 'Assign to all patients',
+      }).disabled,
+    ).toBe(status !== 'published')
+    if (status === 'draft')
+      expect(screen.getByText(/reviewed and published/)).toBeTruthy()
+  },
+)

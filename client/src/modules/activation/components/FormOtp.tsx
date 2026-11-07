@@ -35,6 +35,7 @@ export default function FormOtp({ initialEmail }: { initialEmail?: string }) {
           )}
 
           <FormInput
+            htmlFor="activation-email"
             label="Email Address"
             error={errors.email?.message}
             errorId="activation-email-error"
@@ -53,6 +54,7 @@ export default function FormOtp({ initialEmail }: { initialEmail?: string }) {
           </FormInput>
 
           <FormInput
+            htmlFor="activation-otp"
             label="One-Time Password (OTP)"
             error={errors.otp_code?.message}
             errorId="activation-otp-error"

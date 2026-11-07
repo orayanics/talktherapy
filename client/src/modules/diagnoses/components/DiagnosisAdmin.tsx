@@ -83,7 +83,7 @@ export default function DiagnosisAdmin() {
         isDisabled={create.isPending || update.isPending}
       >
         <div className="flex flex-col gap-2">
-          <FormInput label="ID (optional)">
+          <FormInput htmlFor="diagnosis-id" label="ID (optional)">
             <input
               id="diagnosis-id"
               className="input input-bordered w-full"
@@ -95,7 +95,7 @@ export default function DiagnosisAdmin() {
               disabled={Boolean(editing)}
             />
           </FormInput>
-          <FormInput label="Label" required>
+          <FormInput htmlFor="diagnosis-label" label="Label" required>
             <input
               id="diagnosis-label"
               className="input input-bordered w-full"
@@ -107,7 +107,7 @@ export default function DiagnosisAdmin() {
               }
             />
           </FormInput>
-          <FormInput label="Value" required>
+          <FormInput htmlFor="diagnosis-value" label="Value" required>
             <input
               id="diagnosis-value"
               className="input input-bordered w-full"

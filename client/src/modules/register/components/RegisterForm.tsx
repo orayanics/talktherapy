@@ -49,7 +49,12 @@ export default function RegisterForm() {
           </div>
         )}
 
-        <FormInput label="Name" error={errors.name?.message} required>
+        <FormInput
+          htmlFor="register-name"
+          label="Name"
+          error={errors.name?.message}
+          required
+        >
           <input
             id="register-name"
             {...register('name')}
@@ -58,7 +63,12 @@ export default function RegisterForm() {
           />
         </FormInput>
 
-        <FormInput label="Email" error={errors.email?.message} required>
+        <FormInput
+          htmlFor="register-email"
+          label="Email"
+          error={errors.email?.message}
+          required
+        >
           <input
             id="register-email"
             {...register('email')}
@@ -69,6 +79,7 @@ export default function RegisterForm() {
         </FormInput>
 
         <FormInput
+          htmlFor="register-diagnosis"
           label="Diagnosis Group"
           error={errors.diagnosis_id?.message}
           required
@@ -89,7 +100,12 @@ export default function RegisterForm() {
           </select>
         </FormInput>
 
-        <FormInput label="Password" error={errors.password?.message} required>
+        <FormInput
+          htmlFor="register-password"
+          label="Password"
+          error={errors.password?.message}
+          required
+        >
           <input
             id="register-password"
             {...register('password')}
@@ -100,6 +116,7 @@ export default function RegisterForm() {
         </FormInput>
 
         <FormInput
+          htmlFor="register-password-confirmation"
           label="Confirm Password"
           error={errors.password_confirmation?.message}
           required

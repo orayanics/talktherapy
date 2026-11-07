@@ -1,9 +1,11 @@
 import { CircleAlert } from 'lucide-react'
 
 export default function StateError({
+  onRetry,
   title = 'Something went wrong!',
   message = "We couldn't retrieve the requested information. Please try refreshing.",
 }: {
+  onRetry?: () => void
   title?: string
   message?: string
 }) {
@@ -15,6 +17,11 @@ export default function StateError({
       <CircleAlert className="text-error" />
       <p className="text-error font-medium mb-0!">{title}</p>
       <p className="opacity-60 text-sm text-center max-w-sm my-0!">{message}</p>
+      {onRetry && (
+        <button type="button" className="btn btn-sm mt-3" onClick={onRetry}>
+          Try again
+        </button>
+      )}
     </div>
   )
 }

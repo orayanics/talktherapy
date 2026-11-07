@@ -38,4 +38,14 @@ class SlpAssignment extends Model
     {
         return $this->hasMany(SlpAttempt::class, 'assignment_id');
     }
+
+    public function availableToPatient(string $patientId): bool
+    {
+        $configuration = $this->version->configuration ?? [];
+
+        return $this->patient_id === $patientId && $this->status === 'active'
+            && $this->version->status === 'published' && $this->version->exercise->archived_at === null
+            && ($configuration['patient_visible'] ?? false) === true
+            && (($configuration['patient_audience'] ?? 'all') === 'all' || in_array($patientId, $configuration['patient_ids'] ?? [], true));
+    }
 }

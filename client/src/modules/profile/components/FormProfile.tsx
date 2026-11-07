@@ -21,6 +21,7 @@ export default function FormProfile({
         )}
 
         <FormInput
+          htmlFor="profile-name"
           label="Display Name"
           error={errors.name?.message}
           errorId="profile-name-error"
@@ -34,6 +35,7 @@ export default function FormProfile({
         </FormInput>
 
         <FormInput
+          htmlFor="profile-current-password"
           label="Current password"
           error={errors.currentPassword?.message}
           errorId="profile-current-password-error"
@@ -51,6 +53,7 @@ export default function FormProfile({
           />
         </FormInput>
         <FormInput
+          htmlFor="profile-new-password"
           label="New password"
           error={errors.newPassword?.message}
           errorId="profile-new-password-error"
@@ -65,6 +68,7 @@ export default function FormProfile({
           />
         </FormInput>
         <FormInput
+          htmlFor="profile-confirm-password"
           label="Confirm new password"
           error={errors.confirmPassword?.message}
           errorId="profile-confirm-password-error"

@@ -52,8 +52,9 @@ export default function CreateSlpExercisePage() {
           </p>
         </div>
         <div className="grid gap-3 md:grid-cols-2">
-          <FormInput label="Module">
+          <FormInput htmlFor="createslpexercisepage-field-1" label="Module">
             <select
+              id="createslpexercisepage-field-1"
               className="select w-full"
               value={module}
               onChange={(event) =>
@@ -65,16 +66,18 @@ export default function CreateSlpExercisePage() {
               ))}
             </select>
           </FormInput>
-          <FormInput label="Language">
+          <FormInput htmlFor="createslpexercisepage-field-2" label="Language">
             <input
+              id="createslpexercisepage-field-2"
               className="input w-full"
               value={language}
               onChange={(event) => setLanguage(event.target.value)}
               maxLength={16}
             />
           </FormInput>
-          <FormInput label="Task type">
+          <FormInput htmlFor="createslpexercisepage-field-3" label="Task type">
             <input
+              id="createslpexercisepage-field-3"
               className="input w-full"
               value={taskType}
               onChange={(event) => setTaskType(event.target.value)}
@@ -82,8 +85,9 @@ export default function CreateSlpExercisePage() {
             />
           </FormInput>
           {canShare && (
-            <FormInput label="Scope">
+            <FormInput htmlFor="createslpexercisepage-field-4" label="Scope">
               <select
+                id="createslpexercisepage-field-4"
                 className="select w-full"
                 value={scope}
                 onChange={(event) =>
@@ -96,8 +100,13 @@ export default function CreateSlpExercisePage() {
             </FormInput>
           )}
         </div>
-        <FormInput label="Prompt" required>
+        <FormInput
+          htmlFor="createslpexercisepage-field-5"
+          label="Prompt"
+          required
+        >
           <textarea
+            id="createslpexercisepage-field-5"
             className="textarea w-full"
             required
             value={prompt}

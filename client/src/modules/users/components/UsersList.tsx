@@ -185,7 +185,12 @@ export default function UsersList() {
         submitVariant="error"
         isDisabled={isStatusPending}
       >
-        <FormInput label="Reason" error={suspensionError} required>
+        <FormInput
+          htmlFor="suspension-reason"
+          label="Reason"
+          error={suspensionError}
+          required
+        >
           <textarea
             id="suspension-reason"
             required
