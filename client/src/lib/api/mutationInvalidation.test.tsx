@@ -9,6 +9,16 @@ import { useScheduleMutation } from '#/modules/schedules/hooks/useScheduleMutati
 
 import { useCompleteAppointmentMutation } from '#/modules/appointments/hooks/useAppointmentMutations'
 import { useBookSlotMutation } from '#/modules/book/hooks/useBookSlotMutation'
+import useActions from '#/modules/users/hooks/useActions'
+import {
+  useRegisterAdminMutation,
+  useRegisterClinicianMutation,
+  useRegisterPatientInvitationMutation,
+} from '#/modules/register/hooks/useRegistrationMutations'
+import {
+  useCreateSlpAssignmentMutation,
+  useUploadSlpRecordingMutation,
+} from '#/modules/slp/hooks/useWorkflowMutations'
 
 import { api } from './client'
 
@@ -31,6 +41,7 @@ const cases = [
     {},
     ['soaps', 'soap'],
     false,
+    true,
   ],
   [
     'content update',
@@ -38,6 +49,7 @@ const cases = [
     {},
     ['content', 'logs'],
     false,
+    true,
   ],
   [
     'schedule creation',
@@ -45,6 +57,7 @@ const cases = [
     {},
     ['slots', 'dashboardSummary'],
     false,
+    true,
   ],
   [
     'appointment completion',
@@ -52,6 +65,7 @@ const cases = [
     'appointment',
     ['appointments', 'appointment', 'dashboardSummary', 'clinician-patients'],
     false,
+    true,
   ],
   [
     'booking conflict',
@@ -59,21 +73,75 @@ const cases = [
     { slot_id: 'slot' },
     ['slots', 'appointments', 'dashboardSummary'],
     true,
+    false,
+  ],
+  [
+    'account reactivation',
+    () => ({ mutateAsync: useActions().reactivateUser }),
+    'user',
+    ['users', 'users-count', 'logs', 'dashboardSummary'],
+    false,
+    true,
+  ],
+  [
+    'account suspension',
+    () => {
+      const { suspendUser } = useActions()
+      return { mutateAsync: (id: string) => suspendUser(id, 'Review required') }
+    },
+    'user',
+    ['users', 'users-count', 'logs', 'dashboardSummary'],
+    false,
+    true,
+  ],
+  ...(
+    [
+      ['admin invitation', useRegisterAdminMutation],
+      ['clinician invitation', useRegisterClinicianMutation],
+      ['patient invitation', useRegisterPatientInvitationMutation],
+    ] as const
+  ).map(
+    ([name, hook]) =>
+      [
+        name,
+        hook,
+        { name: 'New user', email: 'user@example.com' },
+        ['users', 'users-count', 'dashboardSummary', 'logs'],
+        false,
+        true,
+      ] as const,
+  ),
+  [
+    'SLP assignment creation',
+    useCreateSlpAssignmentMutation,
+    { exercise_version_id: 'version', patient_id: 'patient' },
+    ['slp-workflow', 'dashboardSummary'],
+    false,
+    false,
+  ],
+  [
+    'SLP recording upload',
+    () => useUploadSlpRecordingMutation('attempt'),
+    new Blob(['recording']),
+    ['slp-workflow', 'dashboardSummary'],
+    false,
+    false,
   ],
 ] as const
 
 it.each(cases)(
   'starts independent %s invalidations together and waits for all',
-  async (_name, hook, payload, expectedKeys, conflict) => {
+  async (_name, hook, payload, expectedKeys, conflict, alerts) => {
     const queryClient = new QueryClient()
-    let release!: () => void
-    const first = new Promise<void>((resolve) => {
-      release = resolve
-    })
+    const releases: Array<() => void> = []
     const invalidations = vi
       .spyOn(queryClient, 'invalidateQueries')
-      .mockResolvedValue(undefined)
-      .mockReturnValueOnce(first)
+      .mockImplementation(
+        () =>
+          new Promise<void>((resolve) => {
+            releases.push(resolve)
+          }),
+      )
     if (conflict)
       vi.mocked(api).mockRejectedValue({ response: { status: 409 } })
     else vi.mocked(api).mockResolvedValue({ data: {} })
@@ -81,9 +149,13 @@ it.each(cases)(
       <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
     )
     const { result, unmount } = renderHook(() => hook(), { wrapper })
+    let settled = false
     const pending = result.current
       .mutateAsync(payload as never)
       .catch(() => undefined)
+      .finally(() => {
+        settled = true
+      })
     try {
       await vi.waitFor(() =>
         expect(invalidations).toHaveBeenCalledTimes(expectedKeys.length),
@@ -93,14 +165,47 @@ it.each(cases)(
       ).toEqual(expectedKeys)
       expect(showAlert).not.toHaveBeenCalled()
       expect(navigate).not.toHaveBeenCalled()
-    } finally {
+      expect(settled).toBe(false)
       await act(async () => {
-        release()
+        releases.slice(0, -1).forEach((release) => release())
+      })
+      expect(settled).toBe(false)
+      expect(showAlert).not.toHaveBeenCalled()
+      expect(navigate).not.toHaveBeenCalled()
+    } finally {
+      invalidations.mockResolvedValue(undefined)
+      await act(async () => {
+        releases.forEach((release) => release())
         await pending
       })
       unmount()
       queryClient.clear()
     }
-    if (!conflict) expect(showAlert).toHaveBeenCalledOnce()
+    if (alerts) expect(showAlert).toHaveBeenCalledOnce()
+    else expect(showAlert).not.toHaveBeenCalled()
   },
 )
+
+it('does not refresh caches or show success when a status mutation fails', async () => {
+  const queryClient = new QueryClient()
+  const invalidations = vi.spyOn(queryClient, 'invalidateQueries')
+  const error = new Error('Request failed')
+  vi.mocked(api).mockRejectedValue(error)
+  const wrapper = ({ children }: { children: ReactNode }) => (
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+  )
+  const { result, unmount } = renderHook(useActions, { wrapper })
+  try {
+    await act(async () => {
+      await expect(result.current.reactivateUser('user')).rejects.toBe(error)
+    })
+    expect(invalidations).not.toHaveBeenCalled()
+    expect(showAlert).toHaveBeenCalledExactlyOnceWith(
+      'Unable to update account status.',
+      'error',
+    )
+  } finally {
+    unmount()
+    queryClient.clear()
+  }
+})

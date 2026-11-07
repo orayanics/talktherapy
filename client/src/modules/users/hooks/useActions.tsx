@@ -23,10 +23,12 @@ export default function useActions() {
       })
     },
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['users'] })
-      await queryClient.invalidateQueries({ queryKey: ['users-count'] })
-      await queryClient.invalidateQueries({ queryKey: ['logs'] })
-      await queryClient.invalidateQueries({ queryKey: ['dashboardSummary'] })
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['users'] }),
+        queryClient.invalidateQueries({ queryKey: ['users-count'] }),
+        queryClient.invalidateQueries({ queryKey: ['logs'] }),
+        queryClient.invalidateQueries({ queryKey: ['dashboardSummary'] }),
+      ])
       showAlert('Account status updated.', 'success')
     },
     onError: () => showAlert('Unable to update account status.', 'error'),

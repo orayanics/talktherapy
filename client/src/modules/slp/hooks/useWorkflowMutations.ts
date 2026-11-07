@@ -15,8 +15,10 @@ export const useCreateSlpAssignmentMutation = () => {
   return useMutation({
     mutationFn: mutateCreateSlpAssignment,
     onSuccess: async () => {
-      await client.invalidateQueries({ queryKey: slpWorkflowKeys.assignments })
-      await client.invalidateQueries({ queryKey: ['dashboardSummary'] })
+      await Promise.all([
+        client.invalidateQueries({ queryKey: slpWorkflowKeys.assignments }),
+        client.invalidateQueries({ queryKey: ['dashboardSummary'] }),
+      ])
     },
   })
 }
@@ -42,8 +44,10 @@ export const useUploadSlpRecordingMutation = (attemptId: string) => {
     mutationFn: (recording: Parameters<typeof mutateUploadSlpRecording>[1]) =>
       mutateUploadSlpRecording(attemptId, recording),
     onSuccess: async () => {
-      await client.invalidateQueries({ queryKey: slpWorkflowKeys.assignments })
-      await client.invalidateQueries({ queryKey: ['dashboardSummary'] })
+      await Promise.all([
+        client.invalidateQueries({ queryKey: slpWorkflowKeys.assignments }),
+        client.invalidateQueries({ queryKey: ['dashboardSummary'] }),
+      ])
     },
   })
 }
