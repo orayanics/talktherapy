@@ -24,6 +24,21 @@ tasks/    Implementation plans and release gates
 
 For local HTTPS and network-device camera/microphone access, complete the HTTP setup first, then follow [SETUP_SSL.md](SETUP_SSL.md).
 
+## Run all development services
+
+After completing each service's setup below (including [Python setup](py/README.md)), run from the repository root:
+
+```sh
+bash dev.sh
+```
+
+```sh
+# If running without the py service
+bash dev-nopy.sh
+```
+
+On Windows, use Git Bash. This runs the client, the backend's full `composer run dev` stack, and Python on `127.0.0.1:8001` using `py/.venv` and `py/.env`. Ctrl+C stops the services; if one exits, the others stop too. The runner uses `npx` to fetch/cache `concurrently`, so the first run needs network access.
+
 ## 1. Laravel API
 
 From `server/`:
@@ -133,6 +148,34 @@ Provision Whisper model artifacts before startup using the development instructi
 | Reverb WebSocket    | `ws://localhost:8081`   |
 | Mailpit UI          | `http://localhost:8025` |
 | Python internal API | `http://127.0.0.1:8001` |
+
+## Troubleshooting: localhost CSRF mismatch
+
+If login works through the HTTPS nginx network IP but returns `CSRF token mismatch` on `http://localhost:3000`, check that the client API URL also uses localhost. A localhost page cannot read the network IP's `XSRF-TOKEN` cookie to send the CSRF header. Secure session cookies can also prevent direct HTTP development from working.
+
+For direct localhost development, set these values in `client/.env`:
+
+```dotenv
+VITE_APP_API_URL=http://localhost:8080
+```
+
+Set these values in `server/.env`:
+
+```dotenv
+SESSION_SECURE_COOKIE=false
+SESSION_DOMAIN=null
+```
+
+Ensure `CORS_ALLOWED_ORIGINS` includes `http://localhost:3000` and `SANCTUM_STATEFUL_DOMAINS` includes `localhost:3000`. Preserve any network IP entries you still use.
+
+Clear Laravel's cached configuration from the repository root:
+
+```sh
+cd server
+php artisan config:clear
+```
+
+Restart the client and backend, clear localhost cookies in the browser, and retry. Use `localhost` consistently rather than mixing it with `127.0.0.1` or the network IP. For the HTTPS nginx setup, keep `SESSION_SECURE_COOKIE=true` and use the same HTTPS origin for the page and API; see [SETUP_SSL.md](SETUP_SSL.md).
 
 ## Verification
 
