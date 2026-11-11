@@ -20,7 +20,7 @@ export default function ScheduleData({
   onAppointmentClick?: (appointment: Appointment) => void
 }) {
   return (
-    <div className="space-y-1">
+    <div className="space-y-2">
       {appointments.map((appointment) => (
         <button
           key={appointment.id}

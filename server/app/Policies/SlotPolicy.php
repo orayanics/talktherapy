@@ -42,6 +42,13 @@ class SlotPolicy
             && $slot->clinician?->profile?->status === UserStatus::Active;
     }
 
+    public function hide(User $user, Slot $slot): bool
+    {
+        return $this->isActiveMember($user)
+            && $user->profile?->role === UserRole::Clinician
+            && $slot->clinician_id === $user->id;
+    }
+
     private function isActiveMember(User $user): bool
     {
         return $user->email_verified_at !== null

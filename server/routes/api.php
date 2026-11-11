@@ -99,6 +99,7 @@ Route::middleware(['auth:sanctum', 'account.active', 'verified'])->group(functio
     Route::post('/schedules', [ScheduleController::class, 'store'])->name('schedules.store');
     Route::get('/slots', [SlotController::class, 'index'])->name('slots.index');
     Route::get('/slots/{slot}', [SlotController::class, 'show'])->name('slots.show');
+    Route::post('/slots/{slot}/hide', [SlotController::class, 'hide'])->name('slots.hide');
     Route::post('/slots/{slot}/book', [AppointmentController::class, 'store'])->name('slots.book');
     Route::get('/appointments', [AppointmentController::class, 'index'])->name('appointments.index');
     Route::get('/appointments/{appointment}', [AppointmentController::class, 'show'])->name('appointments.show');

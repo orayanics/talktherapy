@@ -55,6 +55,9 @@ body {
   .border-slate {
     @apply border-border hover:border-slate-400;
   }
+  .border-primary {
+    @apply border-primary hover:bg-primary/60;
+  }
 }
 
 @utility btn-flat {

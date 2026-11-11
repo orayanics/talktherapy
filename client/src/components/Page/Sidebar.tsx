@@ -92,7 +92,7 @@ export default function Sidebar(props: SidebarProps) {
               )}
             </div>
           </div>
-          <div className="p-4 bg-base-100 flex-1 h-full w-full lg:z-10 relative overflow-auto scrollbar-none [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+          <div className="bg-base-100 flex-1 h-full w-full lg:z-10 relative overflow-auto scrollbar-none [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
             {children}
           </div>
         </>

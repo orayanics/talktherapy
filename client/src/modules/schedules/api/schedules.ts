@@ -57,3 +57,6 @@ export const mutateSchedule = async (payload: CreateSchedulePayload) =>
     method: 'POST',
     data: JSON.stringify(payload),
   })
+
+export const mutateHideSlot = async (slotId: string) =>
+  api(`/api/v1/slots/${slotId}/hide`, { method: 'POST' })

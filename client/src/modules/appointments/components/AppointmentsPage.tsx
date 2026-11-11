@@ -113,7 +113,7 @@ export default function AppointmentsPage() {
   }
 
   return (
-    <div className="space-y-4">
+    <div>
       {isLoading ? (
         <StateLoading message="Loading appointments..." />
       ) : isError ? (

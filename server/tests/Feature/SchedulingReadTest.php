@@ -131,6 +131,40 @@ class SchedulingReadTest extends TestCase
             ->assertJsonPath('data.id', $hidden->id);
     }
 
+    public function test_owner_can_hide_free_slot_idempotently_and_patients_no_longer_see_it(): void
+    {
+        $clinician = $this->createUser(UserRole::Clinician);
+        $slot = $this->createSlot($clinician, now()->addDays(3));
+
+        $this->actingAs($clinician)->postJson("/api/v1/slots/{$slot->id}/hide")
+            ->assertOk()->assertJsonPath('data.is_hidden', true);
+        $this->postJson("/api/v1/slots/{$slot->id}/hide")->assertOk();
+        $this->assertDatabaseHas('slots', ['id' => $slot->id, 'is_hidden' => true, 'status' => 'FREE']);
+        $this->assertDatabaseHas('audit_logs', ['action' => 'slot.hidden', 'entity_id' => $slot->id]);
+        $this->assertDatabaseCount('audit_logs', 1);
+        $this->actingAs($this->createUser(UserRole::Patient))->getJson('/api/v1/slots')
+            ->assertOk()->assertJsonCount(0, 'data');
+    }
+
+    public function test_hiding_requires_active_owner_and_free_slot(): void
+    {
+        $clinician = $this->createUser(UserRole::Clinician);
+        $slot = $this->createSlot($clinician, now()->addDays(3));
+        $this->postJson("/api/v1/slots/{$slot->id}/hide")->assertUnauthorized();
+        foreach ([UserRole::Patient, UserRole::Admin, UserRole::Superadmin, UserRole::Clinician] as $role) {
+            $this->actingAs($this->createUser($role))->postJson("/api/v1/slots/{$slot->id}/hide")->assertForbidden();
+        }
+        $clinician->profile->update(['status' => UserStatus::Suspended]);
+        $this->actingAs($clinician)->postJson("/api/v1/slots/{$slot->id}/hide")->assertForbidden();
+        $clinician->profile->update(['status' => UserStatus::Active]);
+        foreach (['PENDING', 'ACCEPTED', 'REJECT', 'CANCELLED', 'COMPLETED'] as $status) {
+            $slot->update(['status' => $status]);
+            $this->postJson("/api/v1/slots/{$slot->id}/hide")->assertConflict();
+        }
+        $this->assertDatabaseHas('slots', ['id' => $slot->id, 'is_hidden' => false]);
+        $this->assertDatabaseCount('audit_logs', 0);
+    }
+
     private function createSlot(User $clinician, DateTimeInterface $startsAt, string $status = 'FREE', bool $hidden = false): Slot
     {
         $start = CarbonImmutable::instance($startsAt)->utc();

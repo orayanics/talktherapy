@@ -6,6 +6,7 @@ import { afterEach, expect, it, vi } from 'vitest'
 import { useCreateSoap } from '#/modules/soaps/hooks/useSoapsMutations'
 import { useUpdateContent } from '#/modules/content/hooks/useContentMutations'
 import { useScheduleMutation } from '#/modules/schedules/hooks/useScheduleMutation'
+import { useHideSlotMutation } from '#/modules/schedules/hooks/useHideSlotMutation'
 
 import { useCompleteAppointmentMutation } from '#/modules/appointments/hooks/useAppointmentMutations'
 import { useBookSlotMutation } from '#/modules/book/hooks/useBookSlotMutation'
@@ -35,6 +36,14 @@ afterEach(() => {
 })
 
 const cases = [
+  [
+    'slot hiding',
+    useHideSlotMutation,
+    'slot',
+    ['slots', 'slot', 'dashboardSummary'],
+    false,
+    true,
+  ],
   [
     'SOAP creation',
     () => useCreateSoap('patient'),

@@ -8,6 +8,8 @@ import { CircleCheck, CircleX } from 'lucide-react'
 import { formatDate } from '#/utils/useDate'
 import { fetchSlot } from '#/modules/schedules/api/schedules'
 import { useAuthGuard } from '#/modules/auth/hooks/useAuth'
+import { useHideSlotMutation } from '#/modules/schedules/hooks/useHideSlotMutation'
+import { errMsg } from '#/lib/errorMessage'
 
 export default function SlotDetailsDrawer({
   slotId,
@@ -21,6 +23,7 @@ export default function SlotDetailsDrawer({
     enabled: Boolean(slotId),
   })
   const slot = query.data
+  const hideSlot = useHideSlotMutation()
   const { role } = useAuthGuard()
   const isAdmin = role === 'superadmin' || role === 'admin'
 
@@ -56,6 +59,23 @@ export default function SlotDetailsDrawer({
               )
             }
           />
+          {role === 'clinician' &&
+            slot.status === 'FREE' &&
+            !slot.is_hidden && (
+              <button
+                type="button"
+                className="btn btn-neutral w-full"
+                disabled={hideSlot.isPending}
+                onClick={() => hideSlot.mutate(slot.id)}
+              >
+                {hideSlot.isPending ? 'Hiding slot…' : 'Hide slot'}
+              </button>
+            )}
+          {hideSlot.isError && hideSlot.variables === slot.id && (
+            <p role="alert" className="text-error">
+              {errMsg(hideSlot.error, 'Unable to hide slot.')}
+            </p>
+          )}
         </div>
       )}
     </Drawer>

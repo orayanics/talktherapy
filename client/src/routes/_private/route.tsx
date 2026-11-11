@@ -23,7 +23,7 @@ function PrivateLayout() {
       <NotificationRealtime key={user.id} />
       <div className="flex w-screen h-screen">
         <Sidebar role={user.role}>
-          <main className="p-2 flex-1 min-h-full w-full overflow-auto">
+          <main className="flex-1 min-h-full w-full overflow-auto">
             <Outlet />
           </main>
         </Sidebar>
