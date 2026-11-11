@@ -13,6 +13,13 @@ class UserSeederTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_demo_seeding_is_disabled_outside_local_and_testing(): void
+    {
+        $this->app->instance('env', 'production');
+        $this->artisan('db:seed', ['--class' => DatabaseSeeder::class, '--force' => true])->assertSuccessful();
+        $this->assertDatabaseCount('users', 0);
+    }
+
     public function test_seeds_repeatable_active_users_for_each_role_with_the_default_password(): void
     {
         $this->seed(DatabaseSeeder::class);
@@ -20,11 +27,11 @@ class UserSeederTest extends TestCase
 
         $users = User::query()->with('profile')->get()->keyBy('email');
 
-        $this->assertCount(4, $users);
+        $this->assertCount(9, $users);
         $this->assertSame('superadmin', $users['sudo@example.com']->profile->role->value);
         $this->assertSame('admin', $users['admin@example.com']->profile->role->value);
         $this->assertSame('clinician', $users['clinician@example.com']->profile->role->value);
-        $this->assertSame('patient', $users['patient@example.com']->profile->role->value);
+        $this->assertSame('patient', $users['patient.aphasia@example.com']->profile->role->value);
 
         foreach ($users as $user) {
             $this->assertSame(UserStatus::Active, $user->profile->status);

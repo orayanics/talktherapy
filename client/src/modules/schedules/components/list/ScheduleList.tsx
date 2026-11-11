@@ -4,24 +4,28 @@ import { fetchSlots } from '#/modules/schedules/api/schedules'
 
 import StateError from '#/components/State/StateError'
 import StateLoading from '#/components/State/StateLoading'
-import StateNull from '#/components/State/StateNull'
-import Pagination from '#/components/Page/Pagination'
-import { TableBase } from '#/components/Table/TableBase'
-import { formatDate } from '#/utils/useDate'
+import { formatDate, getMonthRange } from '#/utils/useDate'
 
-import ScheduleFilters from './ScheduleFilters'
-import AppointmentPill from '#/modules/appointments/components/AppointmentPill'
-import { CircleCheck, CircleX, ChevronDown, ChevronUp } from 'lucide-react'
+import { useAuthGuard } from '#/modules/auth/hooks/useAuth'
+import { useState } from 'react'
+import SlotDetailsDrawer from './SlotDetailsDrawer'
+import ScheduleCalendar from '../ScheduleCalendar'
 
 export default function ScheduleList() {
+  const { role } = useAuthGuard()
   const search = useSearch({ from: '/_private/(clinician)/schedules/' })
   const navigate = useNavigate({ from: '/schedules/' })
 
   const page = search.page ?? 1
   const from = search.from
+  const to = search.to
+  const range = getMonthRange(from ?? new Date())
+  const rangeFrom = from ?? range.from
+  const rangeTo = to ?? range.to
   const sort = search.sort ?? 'asc'
+  const [selectedSlotId, setSelectedSlotId] = useState<string | null>(null)
 
-  const updateSearch = (next: Record<string, unknown>) => {
+  const updateSearch = (next: Partial<typeof search>) => {
     navigate({
       search: (prev) => ({
         ...prev,
@@ -30,112 +34,64 @@ export default function ScheduleList() {
     })
   }
   const { data, isLoading, isError } = useQuery(
-    fetchSlots({ page }, { from, sort }),
+    fetchSlots({ page, per_page: 100 }, { from: rangeFrom, to: rangeTo, sort }),
   )
-
   const slots = data?.data ?? []
-  const meta =
-    data?.meta ??
-    ({
-      current_page: 1,
-      last_page: 1,
-      total: 0,
-      from: null,
-      per_page: 0,
-    } as any)
 
   return (
-    <div className="space-y-4">
+    <div>
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <ScheduleFilters from={from} sort={sort} updateSearch={updateSearch} />
-        <Link to="/schedules/create" className="btn btn-neutral">
-          Create Schedule
-        </Link>
+        {role === 'clinician' && (
+          <Link to="/schedules/create" className="btn btn-neutral">
+            Create Schedule
+          </Link>
+        )}
       </div>
-      <div className="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden flex flex-col">
+      <div className="overflow-hidden flex flex-col">
         {isLoading ? (
-          <StateLoading />
+          <StateLoading message="Loading slots..." />
         ) : isError ? (
-          <StateError />
-        ) : slots.length === 0 ? (
-          <StateNull />
-        ) : (
-          <TableBase
-            data={slots}
-            keyExtractor={(u) => u.id}
-            columns={[
-              {
-                header: 'No',
-                accessor: 'id',
-                render: (row) => (
-                  <Link to="/schedules/$slotId" params={{ slotId: row.id }}>
-                    {slots.indexOf(row) + 1}
-                  </Link>
-                ),
-              },
-              {
-                header: (
-                  <button
-                    className="flex items-center gap-1 cursor-pointer"
-                    onClick={() =>
-                      updateSearch({ sort: sort === 'desc' ? 'asc' : 'desc' })
-                    }
-                  >
-                    Date
-                    {sort === 'desc' ? (
-                      <ChevronDown size={14} />
-                    ) : (
-                      <ChevronUp size={14} />
-                    )}
-                  </button>
-                ),
-                accessor: 'start_at',
-                render: (row) => (
-                  <Link to="/schedules/$slotId" params={{ slotId: row.id }}>
-                    {formatDate(row.start_at)}
-                  </Link>
-                ),
-              },
-
-              {
-                header: 'Time Schedule',
-                accessor: 'start_at',
-                render: (row) => (
-                  <Link
-                    to="/schedules/$slotId"
-                    params={{ slotId: row.id }}
-                    className="flex gap-2"
-                  >
-                    <div>{formatDate(row.start_at, 'p')}</div>
-                    <div>to</div>
-                    <div>{formatDate(row.end_at, 'p')}</div>
-                  </Link>
-                ),
-              },
-              {
-                header: 'Status',
-                accessor: 'status',
-                render: (row) => <AppointmentPill status={row.status} />,
-              },
-              {
-                header: 'Hidden',
-                accessor: 'is_hidden',
-                render: (row) =>
-                  row.is_hidden ? (
-                    <CircleCheck className="text-emerald-600" />
-                  ) : (
-                    <CircleX className="text-rose-600" />
-                  ),
-              },
-            ]}
+          <StateError
+            title="Slots unavailable"
+            message="We couldn't load the slot list. Please try again."
           />
+        ) : (
+          <>
+            <ScheduleCalendar
+              key={`${rangeFrom}-${rangeTo}`}
+              start={rangeFrom}
+              slots={slots}
+              onSlotClick={(slot) => setSelectedSlotId(slot.id)}
+              onRangeChange={({ from: nextFrom, to: nextTo }) =>
+                updateSearch({ page: 1, from: nextFrom, to: nextTo })
+              }
+              renderDay={(date) => (
+                <div className="space-y-1">
+                  {slots
+                    .filter(
+                      (slot) =>
+                        formatDate(slot.start_at, 'yyyy-MM-dd') === date,
+                    )
+                    .map((slot) => (
+                      <button
+                        key={slot.id}
+                        type="button"
+                        className="block w-full truncate rounded px-1 py-0.5 text-left text-slate-600 hover:bg-slate-100"
+                        onClick={() => setSelectedSlotId(slot.id)}
+                      >
+                        {formatDate(slot.start_at, 'p')} · {slot.status}
+                      </button>
+                    ))}
+                </div>
+              )}
+            />
+          </>
         )}
       </div>
 
-      <Pagination
-        meta={meta}
-        page={page}
-        updateSearch={(next) => updateSearch({ page: next.page })}
+      <SlotDetailsDrawer
+        slotId={selectedSlotId}
+        onClose={() => setSelectedSlotId(null)}
       />
     </div>
   )

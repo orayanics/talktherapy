@@ -13,8 +13,8 @@ export default function SlpBreakdown({ result }: SlpBreakdownProps) {
       <div className="uppercase font-medium">Word breakdown</div>
       <div
         className="mt-2 overflow-x-auto
-        border border-slate-300 rounded-lg
-        bg-white shadow-sm"
+        border border-slate-300 rounded-box
+        bg-white "
       >
         <table className="table">
           <thead>

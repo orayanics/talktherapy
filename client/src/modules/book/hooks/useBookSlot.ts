@@ -1,11 +1,12 @@
 import { useState } from 'react'
-import { mutateBookSlot } from '#/modules/book/api/bookings'
+import { useBookSlotMutation } from '#/modules/book/hooks/useBookSlotMutation'
+
 import { errMsg } from '#/lib/errorMessage'
 import type { TBookSlot } from '../types/schema'
 
 export default function useBookSlot() {
   const [apiError, setApiError] = useState<string | null>(null)
-  const mutation = mutateBookSlot()
+  const mutation = useBookSlotMutation()
 
   const submit = async (slotId: string, data: TBookSlot) => {
     setApiError(null)

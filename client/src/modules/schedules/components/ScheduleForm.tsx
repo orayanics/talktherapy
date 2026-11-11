@@ -3,7 +3,7 @@ import useScheduleForm from '#/modules/schedules/hooks/useScheduleForm'
 import useRecurrenceBuilder from '#/modules/schedules/hooks/useRecurrenceBuilder'
 import type { TFrequency } from '../types/schema'
 import { formatDate } from '#/utils/useDate'
-import RowError from '#/components/Table/RowError'
+import FormInput from '#/components/Form/FormInput'
 
 const FREQ_BUTTONS: ReadonlyArray<{ freq: TFrequency; label: string }> = [
   { freq: 'none', label: 'One-Time' },
@@ -28,8 +28,6 @@ export default function ScheduleForm() {
     rruleRaw,
     rruleErr,
     occurrences,
-    occurrencesPreview,
-    remaining,
     DAY_CODES,
   } = useRecurrenceBuilder(startAt)
 
@@ -39,62 +37,59 @@ export default function ScheduleForm() {
 
   return (
     <form onSubmit={onSubmit} className="w-full bg-white">
-      <div className="rounded-lg border border-slate-300 shadow-sm space-y-4 p-6">
-        <h2 className="text-sm font-bold uppercase tracking-wide">
-          New Schedule
-        </h2>
-
+      <div className="space-y-4 p-4">
         {apiError && (
-          <div className="alert alert-soft alert-error" role="alert">{apiError}</div>
+          <div className="alert alert-soft alert-error" role="alert">
+            {apiError}
+          </div>
         )}
 
         <div>
           <div className="space-y-2">
-            <h1 className="font-bold uppercase text-sm text-slate-600 tracking-wide">
-              Date &amp; Time
-            </h1>
+            <span className="font-bold">Date &amp; Time</span>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-              <p className="text-xs text-slate-500 lg:col-span-2">
-                Schedule times and previews use UTC.
-              </p>
-              <div>
-                  <label htmlFor="schedule-start-at">
-                  <span className="text-xs font-mono text-gray-400">
-                    Start (UTC)
-                  </span>
-                  <input id="schedule-start-at"
-                    {...register('start_at')}
-                    type="datetime-local"
-                    className="w-full input shadow-sm"
-                  />
-                </label>
+              <span className="text-muted lg:col-span-2">
+                Schedule times and previews use UTC
+              </span>
+              <FormInput
+                htmlFor="schedule-start-at"
+                label="Start (UTC)"
+                error={errors.start_at?.message}
+                required
+              >
+                <input
+                  id="schedule-start-at"
+                  {...register('start_at')}
+                  type="datetime-local"
+                  className="w-full input "
+                />
+              </FormInput>
 
-                <RowError message={errors.start_at?.message} />
-              </div>
-
-              <div>
-                <label htmlFor="schedule-end-at">
-                  <span className="text-xs font-mono text-gray-400">
-                    End (UTC)
-                  </span>
-                  <input id="schedule-end-at"
-                    {...register('end_at')}
-                    type="datetime-local"
-                    className="w-full input shadow-sm"
-                  />
-                </label>
-
-                <RowError message={errors.end_at?.message} />
-              </div>
+              <FormInput
+                htmlFor="schedule-end-at"
+                label="End (UTC)"
+                error={errors.end_at?.message}
+                required
+              >
+                <input
+                  id="schedule-end-at"
+                  {...register('end_at')}
+                  type="datetime-local"
+                  className="w-full input "
+                />
+              </FormInput>
             </div>
           </div>
 
           <div className="divider h-px" />
 
           <div className="space-y-2">
-            <h1 className="font-bold uppercase text-sm text-slate-600 tracking-wide">
-              Recurrence
-            </h1>
+            <div className="flex flex-col">
+              <span className="font-bold">Recurrence</span>
+              <span className="text-muted lg:col-span-2">
+                How many times this schedule should appear
+              </span>
+            </div>
 
             <div className="flex flex-wrap gap-2">
               {FREQ_BUTTONS.map(({ freq: f, label }) => (
@@ -140,36 +135,34 @@ export default function ScheduleForm() {
             )}
 
             {freq !== 'none' && (
-              <div className="space-x-4">
-                <label htmlFor="schedule-occurrences">
-                  <span className="text-xs font-mono text-gray-400">
-                    Occurrences
-                  </span>
-
-                  <input id="schedule-occurrences"
+              <div className="space-x-2">
+                <FormInput
+                  htmlFor="schedule-occurrences"
+                  label="Occurrences"
+                  className="inline-flex"
+                  required
+                >
+                  <input
+                    id="schedule-occurrences"
                     type="number"
                     min={1}
                     max={365}
                     value={count}
                     onChange={(e) => setCount(Number(e.target.value))}
-                    className="input shadow-sm w-24 ml-4"
+                    className="input w-stretch"
                   />
-                </label>
+                </FormInput>
 
-                <span className="text-xs text-slate-400 font-mono uppercase">
-                  max 365
-                </span>
+                <span className="text-muted">max 365</span>
               </div>
             )}
           </div>
 
           <div className="divider h-px" />
 
-          <div className="card space-y-6">
-            <div className="flex items-center justify-between">
-              <h1 className="font-bold uppercase text-sm text-slate-600 tracking-wide">
-                Occurrence Preview
-              </h1>
+          <div className="card space-y-4">
+            <div className="flex items-center gap-2">
+              <span className="font-semibold">Preview</span>
               <div className="badge badge-soft text-xs font-mono">
                 {occurrences.length > 0
                   ? `${occurrences.length} occurrence${occurrences.length !== 1 ? 's' : ''}`
@@ -183,38 +176,25 @@ export default function ScheduleForm() {
               </p>
             ) : (
               <div className="flex flex-col gap-2">
-                {occurrencesPreview.map((d, i) => (
+                {occurrences.map((d, i) => (
                   <div key={i} className="flex items-center gap-2">
-                    <span className="text-right text-xs font-mono text-neutral/60 shrink-0">
+                    <span className="text-right font-mono text-neutral/60 shrink-0">
                       {i + 1}
                     </span>
-                    <div
-                      className={`w-0.5 h-3.5 rounded-full shrink-0 ${
-                        i === 0
-                          ? 'bg-gray-700 dark:bg-gray-300'
-                          : 'bg-gray-200 dark:bg-gray-700'
-                      }`}
-                    />
-                    <span className="text-xs font-mono text-gray-700 dark:text-gray-300">
-                      {formatDate(d, 'PPp')}
-                    </span>
+                    <div className={`w-0.5 h-3.5 rounded-full shrink-0`} />
+                    <span className="font-mono ">{formatDate(d, 'PPp')}</span>
                   </div>
                 ))}
-                {remaining > 0 && (
-                  <p className="text-xs font-mono text-slate-600">
-                    + {remaining} more occurrence{remaining !== 1 ? 's' : ''}
-                  </p>
-                )}
               </div>
             )}
           </div>
         </div>
 
         {/* Footer */}
-        <div className="flex flex-col lg:flex-row justify-between gap-4">
-          <p className="text-xs text-slate-600">
+        <div className="flex flex-col lg:flex-row items-end justify-between gap-4">
+          <span className="text-muted">
             Server enforces a one-year horizon on generated occurrences.
-          </p>
+          </span>
           <button
             type="submit"
             disabled={

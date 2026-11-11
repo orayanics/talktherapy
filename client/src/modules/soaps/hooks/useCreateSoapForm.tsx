@@ -5,7 +5,7 @@ import { useState } from 'react'
 import { CreateSoapSchema } from '../types/schema'
 import type { TCreateSoapSchema } from '../types/schema'
 
-import { mutateCreateSoap } from '#/modules/soaps/api/soaps'
+import { useCreateSoap } from './useSoapsMutations'
 import { errMsg } from '#/lib/errorMessage'
 
 export default function useCreateSoapForm({
@@ -34,7 +34,7 @@ export default function useCreateSoapForm({
     },
   })
 
-  const createMutation = mutateCreateSoap(patientId)
+  const createMutation = useCreateSoap(patientId)
 
   const onSubmit = handleSubmit(async (data) => {
     setApiError(null)

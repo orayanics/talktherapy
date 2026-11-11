@@ -214,6 +214,39 @@ class PhonemeAssessmentTest extends TestCase
             ->assertJsonPath('data.analysis.structured.overall.status', 'unknown');
     }
 
+    public function test_v2_unscorable_response_accepts_empty_transcripts_but_requires_strings(): void
+    {
+        $assessment = $this->practiceAssessment();
+        $assessment['meta']['status'] = 'unscorable';
+        $assessment['meta']['cer'] = 1;
+        $assessment['meta']['modelVersion'] = 'faster-whisper-base-unverified';
+        $assessment['meta']['language'] = 'en';
+        $assessment['analysis']['structured']['reference'] = 'sun';
+        $assessment['analysis']['transcript'] = '';
+        $assessment['analysis']['structured']['transcript'] = '';
+        $assessment['feedback']['text'] = 'That was hard for me to hear. Try again somewhere quieter, or take a break.';
+        Http::preventStrayRequests();
+        $responses = Http::sequence()->push($assessment, 200);
+        Http::fake(['phoneme.test/v1/assess' => $responses]);
+        $this->actingAs($this->createActiveUser())
+            ->post('/api/v1/slp/assess', [
+                'audio' => $this->fakeWavFile(), 'reference_text' => 'sun',
+            ], ['Accept' => 'application/json'])->assertOk()->assertJsonPath('data.meta.status', 'unscorable');
+
+        foreach (['missing', 'null', 'number'] as $invalid) {
+            $payload = $assessment;
+            if ($invalid === 'missing') {
+                unset($payload['analysis']['transcript']);
+            } else {
+                $payload['analysis']['transcript'] = $invalid === 'null' ? null : 123;
+            }
+            $responses->push($payload, 200);
+            $this->post('/api/v1/slp/assess', [
+                'audio' => $this->fakeWavFile(), 'reference_text' => 'sun',
+            ], ['Accept' => 'application/json'])->assertStatus(502);
+        }
+    }
+
     public function test_v2_cannot_smuggle_corrective_scores_or_training_permission(): void
     {
         foreach (['correction', 'consent', 'missing_model'] as $violation) {

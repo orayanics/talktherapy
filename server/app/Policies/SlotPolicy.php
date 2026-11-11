@@ -11,12 +11,20 @@ class SlotPolicy
 {
     public function viewAny(User $user): bool
     {
+        if ($user->profile?->role === UserRole::Superadmin) {
+            return true;
+        }
+
         return $this->isActiveMember($user)
             && in_array($user->profile?->role, [UserRole::Patient, UserRole::Clinician], true);
     }
 
     public function view(User $user, Slot $slot): bool
     {
+        if ($user->profile?->role === UserRole::Superadmin) {
+            return true;
+        }
+
         if (! $this->isActiveMember($user)) {
             return false;
         }
@@ -32,6 +40,13 @@ class SlotPolicy
             && $slot->clinician?->email_verified_at !== null
             && $slot->clinician?->profile?->role === UserRole::Clinician
             && $slot->clinician?->profile?->status === UserStatus::Active;
+    }
+
+    public function hide(User $user, Slot $slot): bool
+    {
+        return $this->isActiveMember($user)
+            && $user->profile?->role === UserRole::Clinician
+            && $slot->clinician_id === $user->id;
     }
 
     private function isActiveMember(User $user): bool

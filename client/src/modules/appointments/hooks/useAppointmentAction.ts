@@ -1,34 +1,26 @@
-import { useState } from 'react'
 import {
-  mutateCancelAppointment,
-  mutateRejectAppointment,
-} from '#/modules/appointments/api/appointments'
+  useCancelAppointmentMutation,
+  useRejectAppointmentMutation,
+} from '#/modules/appointments/hooks/useAppointmentMutations'
 import type { TAppointmentAction } from '../types/schema'
 import { errMsg } from '#/lib/errorMessage'
 
 export default function useAppointmentAction(isClinician = false) {
-  const [apiError, setApiError] = useState<string | null>(null)
   const mutation = isClinician
-    ? mutateRejectAppointment()
-    : mutateCancelAppointment()
+    ? useRejectAppointmentMutation()
+    : useCancelAppointmentMutation()
 
   const submit = async (appointmentId: string, data: TAppointmentAction) => {
-    setApiError(null)
-    try {
-      await mutation.mutateAsync({
-        id: appointmentId,
-        body: isClinician ? data : { reason: data.reason },
-      })
-    } catch (error: unknown) {
-      setApiError(errMsg(error, 'Action failed'))
-      throw error
-    }
+    await mutation.mutateAsync({
+      id: appointmentId,
+      body: isClinician ? data : { reason: data.reason },
+    })
   }
 
-  const reset = () => {
-    setApiError(null)
-    mutation.reset()
+  return {
+    submit,
+    reset: mutation.reset,
+    apiError: mutation.error ? errMsg(mutation.error, 'Action failed') : null,
+    isLoading: mutation.isPending,
   }
-
-  return { submit, reset, apiError, isLoading: mutation.isPending }
 }

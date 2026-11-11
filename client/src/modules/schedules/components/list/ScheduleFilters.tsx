@@ -1,83 +1,45 @@
+import FilterDrawer from '#/components/Page/FilterDrawer'
 import { useQuery } from '@tanstack/react-query'
 import { fetchDiagnoses } from '#/modules/diagnoses/api/diagnoses'
-
-import type { QueryParams } from '#/types/api'
-import type { ScheduleParams } from '#/modules/schedules/types/params'
-import { Filter } from 'lucide-react'
-
-type UpdateSearch = (next: Partial<ScheduleParams & QueryParams>) => void
+import { DateFilter, ChoiceFilter } from '#/components/Page/Filters'
+import type { ScheduleParams } from '../../types/params'
 
 export default function ScheduleFilters({
   from,
-  updateSearch,
   diagnosis,
-}: ScheduleParams & { updateSearch: UpdateSearch }) {
-  const { data: diagnoses, isPending, isError } = useQuery(fetchDiagnoses)
-
-  const toggleValue = (values: string[] = [], value: string): string[] =>
-    values.includes(value)
-      ? values.filter((item) => item !== value)
-      : [...values, value]
+  updateSearch,
+}: ScheduleParams & { updateSearch: (next: Partial<ScheduleParams>) => void }) {
+  const query = useQuery({
+    ...fetchDiagnoses,
+    enabled: diagnosis !== undefined,
+  })
   return (
-    <div className="flex items-center gap-2">
-      <div className="flex gap-2">
-        <label className="flex items-center gap-2">
-          <input
-            id="schedule-filter-from"
-            aria-label="Filter schedules from date"
-            value={from ?? ''}
-            onChange={(e) => updateSearch({ from: e.target.value })}
-            type="date"
-            className="input shadow-sm"
-          />
-        </label>
+    <FilterDrawer>
+      <div className="flex flex-col gap-4">
+        <DateFilter
+          label="From date"
+          value={from}
+          onChange={(value) =>
+            updateSearch({ page: 1, from: value || undefined })
+          }
+        />
+        {diagnosis !== undefined &&
+          (query.isError ? (
+            <p role="alert">Diagnosis filters unavailable.</p>
+          ) : query.isPending ? (
+            <span role="status">Loading diagnoses…</span>
+          ) : (
+            <ChoiceFilter
+              label="Diagnosis"
+              options={query.data.map((item) => ({
+                value: item.value,
+                label: item.label,
+              }))}
+              value={diagnosis}
+              onChange={(value) => updateSearch({ page: 1, diagnosis: value })}
+            />
+          ))}
       </div>
-
-      {diagnosis && (
-        <div>
-          <button
-            type="button"
-            aria-label="Open schedule filters"
-            className="btn btn-outline border-slate-200 bg-white h-10 px-4 rounded-lg flex items-center gap-2 shadow-sm text-sm"
-            popoverTarget="book-popover"
-            style={{ anchorName: '--book-anchor' }}
-          >
-            <Filter size={14} />
-            Filter
-          </button>
-
-          {!isPending && !isError && (
-            <div
-              popover="auto"
-              id="book-popover"
-              className="dropdown dropdown-end menu p-4 shadow-xl bg-white border border-slate rounded-lg w-72 mt-2"
-              style={{ positionAnchor: '--book-anchor' }}
-            >
-              <div className="mb-4">
-                <span className="text-xs text-slate-700 font-bold uppercase mb-2 block tracking-widest">
-                  Diagnosis
-                </span>
-                {diagnoses.map((item) => (
-                  <label key={item.id} className="flex items-center gap-2 mb-2">
-                    <input aria-label={`Filter by diagnosis: ${item.label}`}
-                      type="checkbox"
-                      className="checkbox"
-                      checked={diagnosis.includes(item.value)}
-                      onChange={() =>
-                        updateSearch({
-                          page: 1,
-                          diagnosis: toggleValue(diagnosis, item.value),
-                        })
-                      }
-                    />
-                    {item.label}
-                  </label>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-      )}
-    </div>
+    </FilterDrawer>
   )
 }

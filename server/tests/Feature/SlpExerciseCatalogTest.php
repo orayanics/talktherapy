@@ -53,6 +53,33 @@ class SlpExerciseCatalogTest extends TestCase
         $this->assertNotNull($exercise->fresh()->archived_at);
     }
 
+    public function test_catalog_filters_match_latest_revision_and_preserve_owner_isolation(): void
+    {
+        $clinician = $this->user(UserRole::Clinician);
+        $match = SlpExercise::factory()->for($clinician, 'owner')->withDraft(['language' => 'tl'])->create(['module' => 'voice']);
+        $oldLanguage = SlpExercise::factory()->for($clinician, 'owner')->withDraft(['language' => 'tl'])->create(['module' => 'voice']);
+        $oldLanguage->versions()->create(['revision' => 2, 'language' => 'en', 'task_type' => 'reading', 'status' => 'draft', 'prompt_text' => 'New revision', 'created_by' => $clinician->id]);
+        SlpExercise::factory()->for($clinician, 'owner')->withDraft(['language' => 'tl'])->create(['module' => 'fluency']);
+        SlpExercise::factory()->for($clinician, 'owner')->withDraft(['language' => 'tl'])->create(['module' => 'voice', 'scope' => 'shared']);
+        SlpExercise::factory()->for($this->user(UserRole::Clinician), 'owner')->withDraft(['language' => 'tl'])->create(['module' => 'voice']);
+        SlpExercise::factory()->for($clinician, 'owner')->withDraft(['language' => 'tl'])->create(['module' => 'voice', 'archived_at' => now()]);
+
+        $this->actingAs($clinician)->getJson('/api/v1/slp/exercises?module=voice&language=tl&scope=private&per_page=1')
+            ->assertOk()->assertJsonCount(1, 'data')->assertJsonPath('data.0.id', $match->id)->assertJsonPath('meta.total', 1);
+        $this->getJson('/api/v1/slp/exercises?module=voice')->assertOk()->assertJsonPath('meta.total', 3);
+        $this->getJson('/api/v1/slp/exercises?language=tl')->assertOk()->assertJsonPath('meta.total', 3);
+        $this->getJson('/api/v1/slp/exercises?scope=shared')->assertOk()->assertJsonPath('meta.total', 1);
+        $this->getJson('/api/v1/slp/exercises?language=xx')->assertOk()->assertJsonCount(0, 'data');
+    }
+
+    public function test_catalog_rejects_invalid_filters_and_pagination(): void
+    {
+        $this->actingAs($this->user(UserRole::Clinician));
+        foreach (['module=unknown' => 'module', 'scope=public' => 'scope', 'language[]=en' => 'language', 'per_page=0' => 'per_page', 'per_page=101' => 'per_page', 'page=0' => 'page'] as $query => $field) {
+            $this->getJson('/api/v1/slp/exercises?'.$query)->assertUnprocessable()->assertJsonValidationErrors($field);
+        }
+    }
+
     private function user(UserRole $role): User
     {
         $user = User::factory()->create(['email_verified_at' => now()]);

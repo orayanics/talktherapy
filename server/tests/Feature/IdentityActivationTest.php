@@ -56,6 +56,25 @@ class IdentityActivationTest extends TestCase
         $this->assertDatabaseCount('activation_challenges', 0);
     }
 
+    public function test_activation_mutation_commits_failed_attempts_and_blocks_the_correct_code_after_exhaustion(): void
+    {
+        [$user, $code] = $this->registerPatient();
+        $wrong = $code === '000000' ? '111111' : '000000';
+        for ($attempt = 1; $attempt <= 5; $attempt++) {
+            $this->postJson('/api/v1/activation', ['email' => $user->email, 'otp_code' => $wrong])->assertUnprocessable();
+        }
+        $this->assertSame(5, ActivationChallenge::query()->whereBelongsTo($user)->sole()->attempts);
+        $this->postJson('/api/v1/activation', ['email' => $user->email, 'otp_code' => $code])->assertUnprocessable();
+        $this->assertNull($user->fresh()->email_verified_at);
+    }
+
+    public function test_unknown_email_does_not_consume_another_users_challenge_attempts(): void
+    {
+        [$user] = $this->registerPatient();
+        $this->postJson('/api/v1/activation/otp/verify', ['email' => 'unknown@example.com', 'otp_code' => '000000'])->assertUnprocessable();
+        $this->assertSame(0, ActivationChallenge::query()->whereBelongsTo($user)->sole()->attempts);
+    }
+
     /** @return array{User, string} */
     private function registerPatient(string $email = 'patient@example.com'): array
     {

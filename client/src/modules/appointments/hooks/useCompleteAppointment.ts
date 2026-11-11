@@ -1,25 +1,20 @@
-import { useState } from 'react'
-import { mutateCompleteAppointment } from '#/modules/appointments/api/appointments'
+import { useCompleteAppointmentMutation } from '#/modules/appointments/hooks/useAppointmentMutations'
 import { errMsg } from '#/lib/errorMessage'
 
 export default function useCompleteAppointment() {
-  const [apiError, setApiError] = useState<string | null>(null)
-  const mutation = mutateCompleteAppointment()
+  const mutation = useCompleteAppointmentMutation()
 
-  const submit = async (appointmentId: string, _data?: { is_hidden?: boolean }) => {
-    setApiError(null)
-    try {
-      await mutation.mutateAsync(appointmentId)
-    } catch (error: unknown) {
-      setApiError(errMsg(error, 'Complete failed'))
-      throw error
-    }
+  const submit = async (
+    appointmentId: string,
+    _data?: { is_hidden?: boolean },
+  ) => {
+    await mutation.mutateAsync(appointmentId)
   }
 
-  const reset = () => {
-    setApiError(null)
-    mutation.reset()
+  return {
+    submit,
+    reset: mutation.reset,
+    apiError: mutation.error ? errMsg(mutation.error, 'Complete failed') : null,
+    isLoading: mutation.isPending,
   }
-
-  return { submit, reset, apiError, isLoading: mutation.isPending }
 }

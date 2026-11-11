@@ -27,7 +27,7 @@ function RouteComponent() {
           className="z-1
         col-span-6 md:col-span-3 
         bg-white w-100 md:w-full mx-auto
-        md:rounded-r-3xl rounded-r-lg md:rounded-none rounded-xl md:m-0 m-6
+        md:rounded-r-3xl rounded-r-lg md:rounded-none rounded-box md:m-0 m-6
         flex items-center justify-center
         "
         >

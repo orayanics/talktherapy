@@ -3,7 +3,8 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { RegisterPatientInvitationSchema } from '#/modules/register/types/schema'
 import type { TRegisterPatientInvitation } from '#/modules/register/types/schema'
-import { mutateRegisterPatientInvitation } from '#/modules/register/api/register'
+import { useRegisterPatientInvitationMutation } from '#/modules/register/hooks/useRegistrationMutations'
+
 import { errMsg } from '#/lib/errorMessage'
 
 export default function useRegisterPatientInvitation(onSuccess?: () => void) {
@@ -17,7 +18,7 @@ export default function useRegisterPatientInvitation(onSuccess?: () => void) {
     resolver: zodResolver(RegisterPatientInvitationSchema),
     defaultValues: { name: '', email: '' },
   })
-  const mutation = mutateRegisterPatientInvitation()
+  const mutation = useRegisterPatientInvitationMutation()
   const onSubmit = handleSubmit(async (data) => {
     setApiError(null)
     try {

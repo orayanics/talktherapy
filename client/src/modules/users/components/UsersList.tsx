@@ -1,14 +1,14 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { Link, useNavigate, useSearch } from '@tanstack/react-router'
+import { useNavigate, useSearch } from '@tanstack/react-router'
 import { fetchUsers, fetchUsersCount } from '#/modules/users/api/users'
 
 import StateError from '#/components/State/StateError'
 import StateLoading from '#/components/State/StateLoading'
 import StateNull from '#/components/State/StateNull'
 import StatCards from './StatCards'
-import StatusPill from '#/components/Decorator/StatusPill'
-import RolePill from '#/components/Decorator/RolePill'
+import StatusPill from '#/modules/users/components/StatusPill'
+import RolePill from '#/modules/users/components/RolePill'
 import { formatDate } from '#/utils/useDate'
 import UserFilters from './UserFilters'
 import UserPagination from './UserPagination'
@@ -18,10 +18,13 @@ import Dropdown from '#/components/Dropdown'
 import RegisterClinician from '#/modules/register/components/RegisterClinician'
 import RegisterPatientInvitation from '#/modules/register/components/RegisterPatientInvitation'
 import { ChevronDown, ChevronUp } from 'lucide-react'
+import UserDetailsDrawer from './UserDetailsDrawer'
+import type { AdminUser } from '#/modules/users/types/user'
 
 import useActions from '#/modules/users/hooks/useActions'
 import { useSession } from '#/modules/auth/context/SessionContext'
-import ModalBody from '#/components/Modal/ModalBody'
+import Modal from '#/components/Modal/Modal'
+import FormInput from '#/components/Form/FormInput'
 
 export default function UsersList() {
   const search = useSearch({ from: '/_private/(adm-shared)/users/' })
@@ -33,7 +36,7 @@ export default function UsersList() {
   const accountStatus = search.account_status ?? []
   const sort = search.sort
 
-  const updateSearch = (next: Record<string, unknown>) => {
+  const updateSearch = (next: Partial<typeof search>) => {
     navigate({
       search: (prev) => ({
         ...prev,
@@ -74,12 +77,19 @@ export default function UsersList() {
   const [isClinicianModalOpen, setClinicianModalOpen] = useState(false)
   const [isAdminModalOpen, setAdminModalOpen] = useState(false)
   const [isPatientModalOpen, setPatientModalOpen] = useState(false)
-  const [suspendingUser, setSuspendingUser] = useState<(typeof users)[number] | null>(null)
+  const [selectedUser, setSelectedUser] = useState<AdminUser | null>(null)
+  const [suspendingUser, setSuspendingUser] = useState<
+    (typeof users)[number] | null
+  >(null)
   const [suspensionReason, setSuspensionReason] = useState('')
   const [suspensionError, setSuspensionError] = useState('')
   const isAsc = sort === 'asc'
 
-  const { suspendUser, reactivateUser, isPending: isStatusPending } = useActions()
+  const {
+    suspendUser,
+    reactivateUser,
+    isPending: isStatusPending,
+  } = useActions()
   const session = useSession()
   const canInviteAdmin = session.role === 'superadmin'
 
@@ -106,7 +116,7 @@ export default function UsersList() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex flex-row md:items-center justify-between gap-4">
         <UserFilters
           searchTerm={searchTerm}
           role={role}
@@ -114,18 +124,18 @@ export default function UsersList() {
           updateSearch={updateSearch}
         />
 
-        <Dropdown label="Add User" btnClassName="lg:w-auto w-full btn-neutral">
+        <Dropdown label="Invite User" btnClassName="btn-neutral">
           <div className="flex flex-col gap-2">
             {canInviteAdmin && (
               <>
                 <button
-                  className="btn btn-neutral shadow-sm"
+                  className="btn btn-neutral "
                   onClick={() => setAdminModalOpen(true)}
                 >
                   Admin
                 </button>
                 <button
-                  className="btn btn-neutral shadow-sm"
+                  className="btn btn-neutral "
                   onClick={() => setPatientModalOpen(true)}
                 >
                   Patient
@@ -133,7 +143,7 @@ export default function UsersList() {
               </>
             )}
             <button
-              className="btn btn-neutral shadow-sm"
+              className="btn btn-neutral "
               onClick={() => setClinicianModalOpen(true)}
             >
               Clinician
@@ -157,29 +167,52 @@ export default function UsersList() {
         onClose={() => setPatientModalOpen(false)}
       />
 
-      <ModalBody isOpen={Boolean(suspendingUser)} onClose={closeSuspension}>
-        <form onSubmit={(event) => { event.preventDefault(); void confirmSuspension() }} className="bg-white p-6 space-y-5">
-          <div>
-            <h2 className="text-lg font-bold text-slate-900">Suspend account</h2>
-            <p className="mt-1 text-sm text-slate-600">This immediately prevents sign-in. The reason will be included in the audit record and email.</p>
-          </div>
-          <div>
-            <label htmlFor="suspension-reason" className="label">Reason</label>
-            <textarea id="suspension-reason" required minLength={3} maxLength={1000} value={suspensionReason} onChange={(event) => { setSuspensionReason(event.target.value); setSuspensionError('') }} className="textarea textarea-bordered w-full" rows={4} autoFocus />
-            {suspensionError && <p role="alert" className="mt-2 text-sm text-error">{suspensionError}</p>}
-          </div>
-          <div className="flex justify-end gap-2">
-            <button type="button" className="btn btn-ghost" onClick={closeSuspension}>Cancel</button>
-            <button type="submit" className="btn btn-error" disabled={isStatusPending}>{isStatusPending ? 'Suspending…' : 'Suspend account'}</button>
-          </div>
-        </form>
-      </ModalBody>
+      {selectedUser && (
+        <UserDetailsDrawer
+          user={selectedUser}
+          onClose={() => setSelectedUser(null)}
+        />
+      )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <Modal
+        isOpen={Boolean(suspendingUser)}
+        onClose={closeSuspension}
+        title="Suspend Account"
+        description="Suspending an account will prevent the user from logging in or accessing their account. You can reactivate the account later if needed."
+        showIcon={false}
+        onSubmit={() => confirmSuspension()}
+        submitLabel="Suspend"
+        submitVariant="error"
+        isDisabled={isStatusPending}
+      >
+        <FormInput
+          htmlFor="suspension-reason"
+          label="Reason"
+          error={suspensionError}
+          required
+        >
+          <textarea
+            id="suspension-reason"
+            required
+            minLength={3}
+            maxLength={1000}
+            value={suspensionReason}
+            onChange={(event) => {
+              setSuspensionReason(event.target.value)
+              setSuspensionError('')
+            }}
+            className="textarea textarea-bordered w-full"
+            rows={4}
+            autoFocus
+          />
+        </FormInput>
+      </Modal>
+
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {count && !countPending && !countError && <StatCards {...count} />}
       </div>
 
-      <div className="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden flex flex-col">
+      <div className="bg-white rounded-box border border-border overflow-hidden flex flex-col">
         <div className="w-full p-4">
           {isPending ? (
             <StateLoading />
@@ -195,27 +228,25 @@ export default function UsersList() {
                 {
                   header: 'Name',
                   render: (user) => (
-                    <div className="flex items-center gap-3">
+                    <button
+                      type="button"
+                      className="flex items-center gap-2 text-left"
+                      onClick={() => setSelectedUser(user)}
+                    >
                       <img
-                        className="w-9 h-9 rounded-full"
+                        className="w-9 h-9 rounded-full my-1!"
                         src={`https://ui-avatars.com/api/?name=${encodeURIComponent(
                           user.name,
                         )}&background=1e293b&color=fff&rounded=true&font-size=0.35`}
                         alt={user.name}
                       />
                       <div>
-                        <Link
-                          to="/users/$userId"
-                          params={{ userId: user.id }}
-                          className="font-bold"
-                        >
-                          {user.name}
-                        </Link>
+                        <span className="font-bold">{user.name}</span>
                         <div className="text-xs text-slate-500">
                           {user.email}
                         </div>
                       </div>
-                    </div>
+                    </button>
                   ),
                 },
                 {
@@ -246,11 +277,7 @@ export default function UsersList() {
                 },
                 {
                   header: 'Status',
-                  render: (user) => (
-                    <>
-                      <StatusPill status={user.status} />
-                    </>
-                  ),
+                  render: (user) => <StatusPill status={user.status} />,
                 },
                 {
                   header: 'Actions',
@@ -262,15 +289,19 @@ export default function UsersList() {
                           ['patient', 'clinician'].includes(user.role))) ? (
                         user.status === 'suspended' ? (
                           <button
-                            className="btn btn-sm btn-neutral"
+                            className="btn btn-sm btn-success"
                             onClick={() => reactivateUser(user.id)}
                           >
                             Reactivate
                           </button>
                         ) : user.status === 'active' ? (
                           <button
-                            className="btn btn-sm btn-neutral"
-                            onClick={() => { setSuspendingUser(user); setSuspensionReason(''); setSuspensionError('') }}
+                            className="btn btn-sm btn-error"
+                            onClick={() => {
+                              setSuspendingUser(user)
+                              setSuspensionReason('')
+                              setSuspensionError('')
+                            }}
                           >
                             Suspend
                           </button>

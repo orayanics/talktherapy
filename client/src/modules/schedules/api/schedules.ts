@@ -1,14 +1,15 @@
-import {
-  queryOptions,
-  useMutation,
-  useQueryClient,
-} from '@tanstack/react-query'
-import { useNavigate } from '@tanstack/react-router'
+import { retryApiQuery } from '#/lib/api/query'
+
+import { queryOptions } from '@tanstack/react-query'
+
 import { api } from '#/lib/api/client'
-import { useAlert } from '#/context/AlertContext'
+
 import type { QueryParams } from '#/types/api'
+
 import type { ScheduleParams } from '#/modules/schedules/types/params'
+
 import type { CreateSchedulePayload } from '#/modules/schedules/types/schema'
+
 import type { Slot, SlotsResponse } from '#/modules/schedules/types/slot'
 
 export const fetchSlots = (
@@ -26,8 +27,13 @@ export const fetchSlots = (
 
   return queryOptions<SlotsResponse>({
     queryKey: ['slots', query],
-    queryFn: async () =>
-      api<SlotsResponse>('/api/v1/slots', { method: 'GET', params: query }),
+    retry: retryApiQuery,
+    queryFn: async ({ signal }) =>
+      api<SlotsResponse>('/api/v1/slots', {
+        method: 'GET',
+        signal,
+        params: query,
+      }),
     staleTime: 30 * 60 * 1000,
   })
 }
@@ -35,27 +41,22 @@ export const fetchSlots = (
 export const fetchSlot = (slotId: string) =>
   queryOptions<Slot>({
     queryKey: ['slot', slotId],
-    queryFn: async () =>
-      (await api<{ data: Slot }>(`/api/v1/slots/${slotId}`, { method: 'GET' }))
-        .data,
+    retry: retryApiQuery,
+    queryFn: async ({ signal }) =>
+      (
+        await api<{ data: Slot }>(`/api/v1/slots/${slotId}`, {
+          method: 'GET',
+          signal,
+        })
+      ).data,
     staleTime: 30 * 60 * 1000,
   })
 
-export const mutateSchedule = () => {
-  const queryClient = useQueryClient()
-  const navigate = useNavigate()
-  const { showAlert } = useAlert()
-
-  return useMutation({
-    mutationFn: async (payload: CreateSchedulePayload) =>
-      api('/api/v1/schedules', {
-        method: 'POST',
-        data: JSON.stringify(payload),
-      }),
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['slots'] })
-      showAlert('Schedule created successfully', 'success')
-      navigate({ to: '/schedules' })
-    },
+export const mutateSchedule = async (payload: CreateSchedulePayload) =>
+  api('/api/v1/schedules', {
+    method: 'POST',
+    data: JSON.stringify(payload),
   })
-}
+
+export const mutateHideSlot = async (slotId: string) =>
+  api(`/api/v1/slots/${slotId}/hide`, { method: 'POST' })

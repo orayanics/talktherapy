@@ -1,20 +1,29 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { isAxiosError } from 'axios'
 
 import { UpdateSoapSchema } from '../types/schema'
 import type { TUpdateSoapSchema } from '../types/schema'
 
-import { mutateUpdateSoap, fetchSoapById } from '#/modules/soaps/api/soaps'
+import { fetchSoapById } from '#/modules/soaps/api/soaps'
+import { useUpdateSoap } from './useSoapsMutations'
+import type { Soap } from '../types/soap'
 import { errMsg } from '#/lib/errorMessage'
 
 export default function useUpdateSoapForm({ soapId }: { soapId: string }) {
-  const { data: soap, isPending, refetch } = useQuery({
+  const {
+    data: soap,
+    isPending,
+    refetch,
+  } = useQuery({
     ...fetchSoapById(soapId),
     enabled: !!soapId,
   })
+  const baseline = useRef<Soap | null>(null)
+  const currentId = useRef(soapId)
+  currentId.current = soapId
   const [isConflict, setIsConflict] = useState(false)
 
   const [apiError, setApiError] = useState<string | null>(null)
@@ -39,14 +48,23 @@ export default function useUpdateSoapForm({ soapId }: { soapId: string }) {
     },
   })
 
-  const updateMutation = mutateUpdateSoap(soapId, soap?.patientId ?? '')
+  const updateMutation = useUpdateSoap(
+    soapId,
+    baseline.current?.id === soapId ? baseline.current.patientId : '',
+  )
 
   const onSubmit = handleSubmit(async (data) => {
     setApiError(null)
     setIsConflict(false)
     try {
-      if (!soap) return
-      await updateMutation.mutateAsync({ ...data, version: soap.version })
+      const original = baseline.current
+      if (
+        currentId.current !== soapId ||
+        original?.id !== soapId ||
+        soap?.id !== soapId
+      )
+        return
+      await updateMutation.mutateAsync({ ...data, version: original.version })
     } catch (error: unknown) {
       if (isAxiosError(error) && error.response?.status === 409) {
         setIsConflict(true)
@@ -57,7 +75,8 @@ export default function useUpdateSoapForm({ soapId }: { soapId: string }) {
 
   const reloadLatest = async () => {
     const { data: refreshed } = await refetch()
-    if (refreshed) {
+    if (refreshed?.id === soapId && currentId.current === soapId) {
+      baseline.current = refreshed
       reset({
         activity_plan: refreshed.activity_plan ?? '',
         session_type: refreshed.session_type ?? '',
@@ -73,7 +92,13 @@ export default function useUpdateSoapForm({ soapId }: { soapId: string }) {
   }
 
   useEffect(() => {
-    if (!soap) return
+    if (baseline.current?.id !== soapId) {
+      reset({ activity_plan: '' })
+      setApiError(null)
+      setIsConflict(false)
+    }
+    if (soap?.id !== soapId || baseline.current?.id === soapId) return
+    baseline.current = soap
 
     reset({
       activity_plan: soap.activity_plan ?? '',
@@ -84,7 +109,7 @@ export default function useUpdateSoapForm({ soapId }: { soapId: string }) {
       recommendation: soap.recommendation ?? '',
       comments: soap.comments ?? '',
     })
-  }, [soap, reset])
+  }, [soap, soapId, reset])
 
   return {
     register,
@@ -93,7 +118,12 @@ export default function useUpdateSoapForm({ soapId }: { soapId: string }) {
     apiError,
     isConflict,
     reloadLatest,
-    isLoading: updateMutation.isPending || isSubmitting || isPending,
+    isLoading:
+      updateMutation.isPending ||
+      isSubmitting ||
+      isPending ||
+      soap?.id !== soapId ||
+      baseline.current?.id !== soapId,
     control,
     watch,
     reset,

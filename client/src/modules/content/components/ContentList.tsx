@@ -28,9 +28,7 @@ export default function ContentList() {
   const sort = search.sort ?? 'desc'
   const is_bookmarked = search.is_bookmarked
 
-  const updateSearch = <T extends Record<string, unknown>>(
-    next: Partial<T>,
-  ) => {
+  const updateSearch = (next: Partial<typeof search>) => {
     navigate({
       search: (prev) => ({
         ...prev,
@@ -79,7 +77,16 @@ export default function ContentList() {
       ) : isError ? (
         <StateError />
       ) : contents.length == 0 ? (
-        <StateNull />
+        <StateNull
+          title="No Content Found"
+          message="We couldn't find any content meeting your criteria. Try adjusting your filters."
+        >
+          {isAdmin && (
+            <Link to="/content/create" className="btn btn-neutral btn-outline">
+              Add Content to Get Started
+            </Link>
+          )}
+        </StateNull>
       ) : (
         <div className="grid grid-cols-12 gap-4">
           {contents.map((content) => (

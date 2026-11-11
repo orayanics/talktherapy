@@ -1,3 +1,4 @@
+import { retryApiQuery } from '#/lib/api/query'
 import { queryOptions } from '@tanstack/react-query'
 import { api } from '#/lib/api/client'
 import type { QueryParams } from '#/types/api'
@@ -15,9 +16,11 @@ export const fetchClinicianPatients = (
   }
   return queryOptions<ClinicianPatientsResponse>({
     queryKey: ['clinician-patients', query],
-    queryFn: async () =>
+    retry: retryApiQuery,
+    queryFn: async ({ signal }) =>
       api<ClinicianPatientsResponse>('/api/v1/patients', {
         method: 'GET',
+        signal,
         params: query,
       }),
     staleTime: 1000 * 60 * 5,

@@ -1,6 +1,9 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
+import { useRouter } from '@tanstack/react-router'
+import { sessionQueryOptions } from '#/modules/auth/lib/session-query'
 
 import { ProfileSchema } from '../types/schema'
 import type { TProfileUpdate } from '../types/schema'
@@ -13,6 +16,8 @@ export default function useUpdateProfileForm(defaultValues?: {
   name?: string
   email?: string
 }) {
+  const queryClient = useQueryClient()
+  const router = useRouter()
   const [apiError, setApiError] = useState<string | null>(null)
   const { showAlert } = useAlert()
 
@@ -59,6 +64,11 @@ export default function useUpdateProfileForm(defaultValues?: {
         })
       }
 
+      await queryClient.invalidateQueries({
+        queryKey: sessionQueryOptions.queryKey,
+        refetchType: 'none',
+      })
+      await router.invalidate()
       showAlert('Profile updated', 'success')
       reset({
         name: data.name,

@@ -1,9 +1,6 @@
 import { useState } from 'react'
 
-import {
-  mutateBookmarkContent,
-  mutateRemoveBookmark,
-} from '#/modules/content/api/content'
+import { useBookmarkContent, useRemoveBookmark } from './useContentMutations'
 import { errMsg } from '#/lib/errorMessage'
 
 export default function useBookmark(
@@ -12,8 +9,8 @@ export default function useBookmark(
 ) {
   const [apiError, setApiError] = useState<string | null>(null)
 
-  const addMutation = mutateBookmarkContent(contentId)
-  const removeMutation = mutateRemoveBookmark(contentId)
+  const addMutation = useBookmarkContent(contentId)
+  const removeMutation = useRemoveBookmark(contentId)
 
   const isLoading = addMutation.isPending || removeMutation.isPending
 

@@ -3,6 +3,8 @@ import { createFileRoute } from '@tanstack/react-router'
 
 import ContentList from '#/modules/content/components/ContentList'
 import { toArray } from '#/utils/query'
+import { fetchContentList } from '#/modules/content/api/content'
+import StateLoading from '#/components/State/StateLoading'
 
 const searchSchema = z
   .object({
@@ -15,7 +17,7 @@ const searchSchema = z
       .refine((v) => v === '' || v.length > 0),
 
     diagnosis: z
-      .any()
+      .unknown()
       .optional()
       .transform((v) =>
         toArray(v)
@@ -42,5 +44,25 @@ const searchSchema = z
 
 export const Route = createFileRoute('/_private/(shared)/content/')({
   validateSearch: (search) => searchSchema.parse(search),
+  loaderDeps: ({ search }) => ({
+    page: search.page,
+    search: search.search,
+    diagnosis: search.diagnosis,
+    sort: search.sort,
+    is_bookmarked: search.is_bookmarked,
+  }),
+  loader: ({ context, deps }) =>
+    context.queryClient.query(
+      fetchContentList(
+        { page: deps.page },
+        {
+          search: deps.search || undefined,
+          diagnosis: deps.diagnosis,
+          sort: deps.sort ?? 'desc',
+          is_bookmarked: deps.is_bookmarked,
+        },
+      ),
+    ),
+  pendingComponent: StateLoading,
   component: () => <ContentList />,
 })

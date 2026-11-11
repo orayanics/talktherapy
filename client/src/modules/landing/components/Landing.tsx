@@ -6,7 +6,7 @@ export default function Landing() {
       <div className="flex flex-col items-center lg:max-w-7xl max-w-sm w-full gap-4 lg:p-0">
         <div className="max-w-3xl text-4xl lg:text-8xl text-center mx-auto my-8">
           <div
-            className="badge bg-primary/20 shadow-primary/40 shadow-sm
+            className="badge bg-primary/20 shadow-primary/40 
           px-6 py-4 text-primary rounded-full"
           >
             talktherapy

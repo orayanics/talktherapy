@@ -1,28 +1,20 @@
-import { useState } from 'react'
-import { mutateAcceptAppointment } from '#/modules/appointments/api/appointments'
+import { useAcceptAppointmentMutation } from '#/modules/appointments/hooks/useAppointmentMutations'
 import { errMsg } from '#/lib/errorMessage'
 
 export default function useAcceptAppointment() {
-  const [apiError, setApiError] = useState<string | null>(null)
-  const mutation = mutateAcceptAppointment()
+  const mutation = useAcceptAppointmentMutation()
 
   const submit = async (
     appointmentId: string,
     _data?: { is_hidden?: boolean },
   ) => {
-    setApiError(null)
-    try {
-      await mutation.mutateAsync(appointmentId)
-    } catch (error: unknown) {
-      setApiError(errMsg(error, 'Accept failed'))
-      throw error
-    }
+    await mutation.mutateAsync(appointmentId)
   }
 
-  const reset = () => {
-    setApiError(null)
-    mutation.reset()
+  return {
+    submit,
+    reset: mutation.reset,
+    apiError: mutation.error ? errMsg(mutation.error, 'Accept failed') : null,
+    isLoading: mutation.isPending,
   }
-
-  return { submit, reset, apiError, isLoading: mutation.isPending }
 }

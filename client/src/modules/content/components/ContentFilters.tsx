@@ -1,11 +1,17 @@
-import { ChevronDown, ChevronUp, Search, Filter } from 'lucide-react'
+import { SearchFilter } from '#/components/Page/Filters'
+import { ChevronDown, ChevronUp } from 'lucide-react'
 import type { QueryParams } from '#/types/api'
 import type { ContentParams } from '#/modules/content/types/params'
 
 import { useQuery } from '@tanstack/react-query'
 import { fetchDiagnoses } from '#/modules/diagnoses/api/diagnoses'
+import FilterDrawer from '#/components/Page/FilterDrawer'
 
-type UpdateSearch = (next: Partial<ContentParams & QueryParams>) => void
+type UpdateSearch = (
+  next: Partial<Omit<ContentParams, 'is_bookmarked'> & QueryParams> & {
+    is_bookmarked?: true
+  },
+) => void
 
 type Props = {
   searchTerm: string
@@ -32,89 +38,72 @@ export default function ContentFilters({
   const isDesc = sort === 'desc'
 
   return (
-    <div className="flex items-center gap-4">
-      <div className="relative w-full h-10 bg-white border-slate-200 rounded-lg shadow-sm input input-bordered">
-        <Search className="text-slate-600" size={16} />
-        <input
-          id="content-search"
-          aria-label="Search content"
+    <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+      <div className="flex flex-row md:items-center justify-between gap-4">
+        <SearchFilter
+          label="Search content"
           value={searchTerm}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            updateSearch({ page: 1, search: e.target.value })
-          }
-          placeholder="Search titles and descriptions"
+          onChange={(search) => updateSearch({ page: 1, search })}
         />
-      </div>
-
-      <div>
-        <button
-          type="button"
-          aria-label="Open content filters"
-          className="btn btn-outline border-slate-200 bg-white h-10 px-4 rounded-lg flex items-center gap-2 shadow-sm text-sm"
-          popoverTarget="filter-popover"
-          style={{ anchorName: '--filter-anchor' }}
-        >
-          <Filter size={14} />
-          Filter
-        </button>
-
-        {!isPending && !isError && (
-          <div
-            popover="auto"
-            id="filter-popover"
-            className="dropdown dropdown-end menu p-4 shadow-xl bg-white border border-slate rounded-lg w-72 mt-2"
-            style={{ positionAnchor: '--filter-anchor' }}
+        <div>
+          <button
+            className={`btn ${is_bookmarked ? 'btn-primary' : 'btn-primary btn-ghost border-sky-400'}`}
+            onClick={() =>
+              updateSearch({
+                page: 1,
+                is_bookmarked: is_bookmarked ? undefined : true,
+              })
+            }
           >
-            <div className="mb-4">
-              <span className="text-xs text-slate-700 font-bold uppercase mb-2 block tracking-widest">
-                Diagnosis
-              </span>
-              {diagnoses.map((item) => (
-                <label key={item.id} className="flex items-center gap-2 mb-2">
-                <input aria-label={`Filter by diagnosis: ${item.label}`}
-                    type="checkbox"
-                    className="checkbox"
-                    checked={diagnosis.includes(item.value)}
-                    onChange={() =>
-                      updateSearch({
-                        page: 1,
-                        diagnosis: toggleValue(diagnosis, item.value),
-                      })
-                    }
-                  />
-                  {item.label}
-                </label>
-              ))}
-            </div>
+            Bookmarks
+          </button>
+        </div>
+
+        <div>
+          <button
+            className="btn btn-flat"
+            onClick={() =>
+              updateSearch({ page: 1, sort: isDesc ? 'asc' : 'desc' })
+            }
+          >
+            Sort
+            {isDesc ? <ChevronDown size={14} /> : <ChevronUp size={14} />}
+          </button>
+        </div>
+      </div>
+      <FilterDrawer>
+        <div className="flex flex-col gap-4">
+          <div>
+            {!isPending && !isError && (
+              <div className="space-y-4">
+                <div className="mb-4">
+                  <p className="font-semibold mb-4 mt-0">Diagnosis</p>
+                  {diagnoses.map((item) => (
+                    <label
+                      key={item.id}
+                      className="flex items-center gap-2 mb-4"
+                    >
+                      <input
+                        aria-label={`Filter by diagnosis: ${item.label}`}
+                        type="checkbox"
+                        className="checkbox"
+                        checked={diagnosis.includes(item.value)}
+                        onChange={() =>
+                          updateSearch({
+                            page: 1,
+                            diagnosis: toggleValue(diagnosis, item.value),
+                          })
+                        }
+                      />
+                      {item.label}
+                    </label>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
-        )}
-      </div>
-
-      <div>
-        <button
-          className="btn bg-white shadow-sm"
-          onClick={() =>
-            updateSearch({ page: 1, sort: isDesc ? 'asc' : 'desc' })
-          }
-        >
-          Sort
-          {isDesc ? <ChevronDown size={14} /> : <ChevronUp size={14} />}
-        </button>
-      </div>
-
-      <div>
-        <button
-          className={`btn ${is_bookmarked ? 'btn-primary' : 'btn-primary btn-soft border-sky-400'}`}
-          onClick={() =>
-            updateSearch({
-              page: 1,
-              is_bookmarked: is_bookmarked ? undefined : true,
-            })
-          }
-        >
-          Bookmarks
-        </button>
-      </div>
+        </div>
+      </FilterDrawer>
     </div>
   )
 }

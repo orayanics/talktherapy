@@ -1,31 +1,37 @@
 export default function StateLoading({
   fullpage = false,
+  message,
 }: {
   fullpage?: boolean
+  message?: string
 }) {
-  return <>{fullpage ? <Fullpage /> : <Base />}</>
+  return (
+    <>
+      {fullpage ? <Fullpage message={message} /> : <Base message={message} />}
+    </>
+  )
 }
 
-function Fullpage() {
+function Fullpage({ message }: { message?: string }) {
   return (
     <div
-      className="bg-white h-screen border rounded-lg border-slate-300 border-dashed shadow-sm
-      flex flex-col items-center justify-center p-6
-      "
+      role="status"
+      className="bg-white h-screen flex flex-col items-center justify-center p-6"
     >
-      <span className="loading loading-spinner text-slate-600 loading-lg mb-4"></span>
+      <span className="loading loading-spinner loading-lg mb-4"></span>
+      {message && <p className="text-sm opacity-60">{message}</p>}
     </div>
   )
 }
 
-function Base() {
+function Base({ message }: { message?: string }) {
   return (
     <div
-      className="bg-white h-64 border rounded-lg border-slate-300 border-dashed shadow-sm
-  flex flex-col items-center justify-center p-6
-  "
+      role="status"
+      className="flex flex-col items-center justify-center p-6"
     >
-      <span className="loading loading-spinner text-slate-600 loading-lg mb-4"></span>
+      <span className="loading loading-spinner loading-lg mb-4"></span>
+      {message && <p className="text-sm opacity-60">{message}</p>}
     </div>
   )
 }

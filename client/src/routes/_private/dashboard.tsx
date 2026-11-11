@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useSession } from '#/modules/auth/context/SessionContext'
 
-import DashboardView from '#/modules/dashboard/components/DashboardView'
+import AdminsDashboard from '#/modules/dashboard/components/AdminsDashboard'
 import ClinicianDashboard from '#/modules/dashboard/components/ClinicianDashboard'
 import PatientDashboard from '#/modules/dashboard/components/PatientDashboard'
 
@@ -13,7 +13,7 @@ function RouteComponent() {
   const session = useSession()
   const role = session.role
 
-  if (role === 'superadmin' || role === 'admin') return <DashboardView />
+  if (role === 'superadmin' || role === 'admin') return <AdminsDashboard />
 
   // Clinician gets a focused dashboard for today's appointments
   if (role === 'clinician') return <ClinicianDashboard />
