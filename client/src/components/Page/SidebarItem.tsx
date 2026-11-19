@@ -3,10 +3,11 @@ import type { NavItem } from '#/types/component'
 
 export interface SidebarItemProps {
   items?: Array<NavItem>
+  collapsed?: boolean
 }
 
 export default function SidebarItem(props: SidebarItemProps) {
-  const { items = [] } = props
+  const { items = [], collapsed = false } = props
 
   return (
     <nav className="flex flex-col gap-2">
@@ -16,7 +17,7 @@ export default function SidebarItem(props: SidebarItemProps) {
           <Link
             key={to}
             to={to}
-            className="flex items-center transition-colors p-2 group no-underline"
+            className={`flex items-center transition-colors p-2 group no-underline ${collapsed ? 'lg:justify-center' : ''}`}
             inactiveProps={{
               className: 'opacity-70 hover:opacity-100',
             }}
@@ -24,8 +25,14 @@ export default function SidebarItem(props: SidebarItemProps) {
               className: 'rounded-box font-medium bg-base-300',
             }}
           >
-            <span className="mr-4">{icon}</span>
-            <p className="text-sm my-0!">{label}</p>
+            <span className={collapsed ? 'mr-4 lg:mr-0' : 'mr-4'}>{icon}</span>
+            <p
+              className={
+                collapsed ? 'text-sm my-0! lg:hidden' : 'text-sm my-0!'
+              }
+            >
+              {label}
+            </p>
           </Link>
         )
       })}

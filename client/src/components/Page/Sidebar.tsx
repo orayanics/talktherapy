@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Bell, Menu } from 'lucide-react'
+import { Bell, Menu, PanelLeftClose, PanelLeftOpen } from 'lucide-react'
 
 import type { USER_ROLE } from '#/modules/auth/types/account'
 import { NAV_BY_ROLE } from '#/constants/sidebar'
@@ -11,6 +11,8 @@ import { useUnreadNotificationCount } from '#/modules/notifications/hooks/useNot
 import Drawer from '#/components/Drawer'
 import Breadcrumbs from './Breadcrumbs'
 
+const SIDEBAR_COLLAPSED_KEY = 'talktherapy.sidebar.collapsed'
+
 export interface SidebarProps {
   children: React.ReactNode
   role: USER_ROLE
@@ -20,6 +22,15 @@ export default function Sidebar(props: SidebarProps) {
   const { children, role } = props
   const [show, setShow] = useState(false)
   const [isMenuOpen, setMenuOpen] = useState(false)
+  const [isCollapsed, setIsCollapsed] = useState(() => {
+    if (typeof window === 'undefined') return false
+
+    try {
+      return window.localStorage.getItem(SIDEBAR_COLLAPSED_KEY) === 'true'
+    } catch {
+      return false
+    }
+  })
   const { data: unreadCount = 0 } = useUnreadNotificationCount()
 
   const logout = useLogoutMutation()
@@ -28,6 +39,20 @@ export default function Sidebar(props: SidebarProps) {
   const handleLogout = async () => {
     await logout.mutateAsync()
     window.location.href = '/login'
+  }
+
+  const toggleCollapsed = () => {
+    setIsCollapsed((current) => {
+      const next = !current
+
+      try {
+        window.localStorage.setItem(SIDEBAR_COLLAPSED_KEY, String(next))
+      } catch {
+        // Storage can be unavailable in restricted browser contexts.
+      }
+
+      return next
+    })
   }
 
   return (
@@ -40,11 +65,26 @@ export default function Sidebar(props: SidebarProps) {
       className="lg:drawer-open"
       sideClassName="z-40 lg:z-1!"
       contentClassName="flex flex-col min-h-screen"
-      panelClassName="w-fit min-h-full bg-base-200 flex flex-col pt-6 pb-4 lg:border-e border-border"
+      panelClassName={`w-fit min-h-full bg-base-200 flex flex-col pt-6 pb-4 lg:border-e border-border ${isCollapsed ? 'lg:w-16' : 'lg:w-fit'}`}
       content={
         <>
           <div className="bg-white border-b border-border w-full flex flex-row items-center justify-between gap-2 px-4 h-14 shrink-0">
             <div className="flex min-w-0 items-center gap-2">
+              <button
+                type="button"
+                className="btn btn-square btn-flat btn-sm hidden lg:inline-flex"
+                onClick={toggleCollapsed}
+                aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+                aria-pressed={isCollapsed}
+                title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+              >
+                {isCollapsed ? (
+                  <PanelLeftOpen size={16} strokeWidth={2.5} />
+                ) : (
+                  <PanelLeftClose size={16} strokeWidth={2.5} />
+                )}
+              </button>
+
               <button
                 type="button"
                 aria-label="Open navigation"
@@ -103,15 +143,18 @@ export default function Sidebar(props: SidebarProps) {
       }
     >
       <div className="overflow-y-auto px-4 flex-1">
-        <SidebarItem items={navItems} />
+        <SidebarItem items={navItems} collapsed={isCollapsed} />
       </div>
 
       <div className="p-4 mt-auto">
         <button
+          type="button"
           onClick={handleLogout}
-          className="btn btn-block btn-neutral w-full"
+          aria-label="Log out"
+          title="Log out"
+          className={`btn btn-block btn-neutral w-full ${isCollapsed ? 'lg:btn-square' : ''}`}
         >
-          Logout
+          <span className={isCollapsed ? 'lg:hidden' : undefined}>Logout</span>
         </button>
       </div>
     </Drawer>
