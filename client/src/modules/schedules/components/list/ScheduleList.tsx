@@ -40,7 +40,7 @@ export default function ScheduleList() {
 
   return (
     <div>
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="p-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
         {role === 'clinician' && (
           <Link to="/schedules/create" className="btn btn-neutral">
             Create Schedule

@@ -37,7 +37,7 @@ export default function ScheduleForm() {
 
   return (
     <form onSubmit={onSubmit} className="w-full bg-white">
-      <div className="space-y-4 p-4">
+      <div className="space-y-4">
         {apiError && (
           <div className="alert alert-soft alert-error" role="alert">
             {apiError}

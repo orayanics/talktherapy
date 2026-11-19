@@ -53,7 +53,6 @@ export const Route = createFileRoute('/_private/(shared)/appointments/')({
     <PageLayout
       title={PAGE_META.appointments.title}
       description={PAGE_META.appointments.description}
-      paddedCh
     >
       <AppointmentsPage />
     </PageLayout>

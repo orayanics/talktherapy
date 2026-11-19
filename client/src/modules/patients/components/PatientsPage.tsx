@@ -42,14 +42,14 @@ export default function PatientsPage() {
   }
 
   return (
-    <div className="space-y-4   border-border">
+    <div className="space-y-4">
       <SearchFilter
         label="Search patients"
         placeholder="Search patient name"
         value={searchTerm}
         onChange={(s) => updateSearch({ page: 1, search: s })}
       />
-      <div className="bg-white border-y border-border overflow-hidden flex flex-col p-4">
+      <div className="bg-white border border-border rounded-box overflow-hidden flex flex-col p-4">
         {isPending ? (
           <StateLoading />
         ) : isError ? (

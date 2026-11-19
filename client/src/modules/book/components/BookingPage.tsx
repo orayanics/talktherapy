@@ -84,7 +84,7 @@ export default function BookingPage() {
         panelClassName="bg-base-100 text-base-content min-h-full w-[min(36rem,100vw)]"
         content={
           <>
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="p-4 pb-0 flex flex-col md:flex-row md:items-center justify-between gap-4">
               <ScheduleFilters
                 diagnosis={diagnosis}
                 from={from}
@@ -108,11 +108,6 @@ export default function BookingPage() {
               Select a date to view available sessions. Calendar counts reflect
               the current results page.
             </p>
-            <Pagination
-              meta={meta}
-              page={page}
-              updateSearch={(next) => updateSearch({ page: next.page })}
-            />
           </>
         }
       >
