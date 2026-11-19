@@ -4,8 +4,6 @@ import { api } from '#/lib/api/client'
 import { Route as ContentRoute } from '#/routes/_private/(shared)/content/$contentId'
 import { Route as ContentEditRoute } from '#/routes/_private/(shared)/content/_adm/$contentId.edit'
 import { Route as PatientSoapRoute } from '#/routes/_private/(patient)/records.$soapId'
-import { Route as ClinicianSoapRoute } from '#/routes/_private/(clinician)/patients/$patientId.soap.$soapId.index'
-import { Route as SoapEditRoute } from '#/routes/_private/(clinician)/patients/$patientId.soap.$soapId.update'
 
 vi.mock('#/lib/api/client', () => ({ api: vi.fn() }))
 afterEach(() => vi.clearAllMocks())
@@ -14,8 +12,6 @@ const routes = [
   ['content detail', ContentRoute, 'content'],
   ['content editor', ContentEditRoute, 'content'],
   ['patient SOAP', PatientSoapRoute, 'soap'],
-  ['clinician SOAP', ClinicianSoapRoute, 'soap'],
-  ['SOAP editor', SoapEditRoute, 'soap'],
 ] as const
 
 it.each(routes)(

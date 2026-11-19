@@ -28,6 +28,7 @@ const note = (id: string, version = 1): Soap => ({
 })
 
 it('keeps the draft and original version when the query refreshes', async () => {
+  const onSuccess = vi.fn()
   const { queryClient } = getContext()
   queryClient.setQueryData(['soap', 'a'], note('a'))
   vi.mocked(api).mockResolvedValue({ data: note('a', 2) })
@@ -35,7 +36,7 @@ it('keeps the draft and original version when the query refreshes', async () => 
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   )
   const { result, unmount } = renderHook(
-    () => useUpdateSoapForm({ soapId: 'a' }),
+    () => useUpdateSoapForm({ soapId: 'a', onSuccess }),
     { wrapper },
   )
   await waitFor(() => expect(result.current.watch('activity_plan')).toBe('a'))
@@ -53,6 +54,7 @@ it('keeps the draft and original version when the query refreshes', async () => 
       data: expect.objectContaining({ activity_plan: 'draft', version: 1 }),
     }),
   )
+  expect(onSuccess).toHaveBeenCalledOnce()
   unmount()
   queryClient.clear()
 })

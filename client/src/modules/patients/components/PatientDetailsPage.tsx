@@ -1,3 +1,8 @@
+import { useState } from 'react'
+import Drawer from '#/components/Drawer'
+import SoapDetails from '#/modules/soaps/components/SoapDetails'
+import CreateSoapPage from '#/modules/soaps/components/CreateSoapPage'
+import UpdateSoapPage from '#/modules/soaps/components/UpdateSoapPage'
 import { Link, useNavigate, useSearch, useParams } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { fetchSoapsByPatient } from '#/modules/soaps/api/soaps'
@@ -17,6 +22,14 @@ export default function PatientDetailsPage() {
   const patientId = useParams({
     from: '/_private/(clinician)/patients/$patientId/',
   }).patientId
+  const [selectedSoap, setSelectedSoap] = useState<
+    | {
+        id: string
+        mode: 'view' | 'edit'
+      }
+    | { mode: 'create' }
+    | null
+  >(null)
   const page = search.page ?? 1
   const sort = search.sort ?? 'desc'
 
@@ -54,15 +67,47 @@ export default function PatientDetailsPage() {
           Patients
         </Link>
 
-        <Link
-          to="/patients/$patientId/create"
-          params={{ patientId: String(patientId) }}
+        <button
+          type="button"
+          onClick={() => setSelectedSoap({ mode: 'create' })}
           className="btn btn-neutral"
         >
           Create SOAP
-        </Link>
+        </button>
       </div>
 
+      {selectedSoap && (
+        <Drawer
+          isOpen
+          onClose={() => setSelectedSoap(null)}
+          label={
+            selectedSoap.mode === 'create'
+              ? 'Create SOAP'
+              : selectedSoap.mode === 'view'
+                ? 'View SOAP'
+                : 'Edit SOAP'
+          }
+          className="fixed inset-0 z-40"
+          panelClassName="min-h-full w-full max-w-2xl overflow-y-auto bg-base-100 text-base-content"
+        >
+          {selectedSoap.mode === 'create' ? (
+            <CreateSoapPage
+              patientId={patientId}
+              onClose={() => setSelectedSoap(null)}
+            />
+          ) : selectedSoap.mode === 'view' ? (
+            <div className="p-6">
+              <SoapDetails soapId={selectedSoap.id} />
+            </div>
+          ) : (
+            <UpdateSoapPage
+              key={selectedSoap.id}
+              soapId={selectedSoap.id}
+              onClose={() => setSelectedSoap(null)}
+            />
+          )}
+        </Drawer>
+      )}
       <div className="bg-white rounded-box border border-slate-200  overflow-hidden flex flex-col p-4">
         {isPending ? (
           <StateLoading />
@@ -111,20 +156,24 @@ export default function PatientDetailsPage() {
                 accessor: 'id',
                 render: (row) => (
                   <div className="flex gap-2">
-                    <Link
-                      to="/patients/$patientId/soap/$soapId"
-                      params={{ soapId: row.id, patientId }}
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setSelectedSoap({ id: row.id, mode: 'view' })
+                      }
                       className="btn btn-neutral btn-soft"
                     >
                       View
-                    </Link>
-                    <Link
-                      to="/patients/$patientId/soap/$soapId/update"
-                      params={{ soapId: row.id, patientId }}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setSelectedSoap({ id: row.id, mode: 'edit' })
+                      }
                       className="btn btn-neutral"
                     >
                       Edit
-                    </Link>
+                    </button>
                   </div>
                 ),
               },

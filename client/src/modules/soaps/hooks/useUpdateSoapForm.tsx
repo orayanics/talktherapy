@@ -12,7 +12,13 @@ import { useUpdateSoap } from './useSoapsMutations'
 import type { Soap } from '../types/soap'
 import { errMsg } from '#/lib/errorMessage'
 
-export default function useUpdateSoapForm({ soapId }: { soapId: string }) {
+export default function useUpdateSoapForm({
+  soapId,
+  onSuccess,
+}: {
+  soapId: string
+  onSuccess?: () => void
+}) {
   const {
     data: soap,
     isPending,
@@ -48,10 +54,7 @@ export default function useUpdateSoapForm({ soapId }: { soapId: string }) {
     },
   })
 
-  const updateMutation = useUpdateSoap(
-    soapId,
-    baseline.current?.id === soapId ? baseline.current.patientId : '',
-  )
+  const updateMutation = useUpdateSoap(soapId, onSuccess)
 
   const onSubmit = handleSubmit(async (data) => {
     setApiError(null)

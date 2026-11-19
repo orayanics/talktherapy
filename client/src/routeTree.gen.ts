@@ -49,8 +49,6 @@ import { Route as PrivatesharedContentAdmCreateRouteImport } from './routes/_pri
 import { Route as PrivatesharedSlpExercisesIndexRouteImport } from './routes/_private/(shared)/slp/exercises/index'
 import { Route as PrivatesharedSlpExercisesCreateRouteImport } from './routes/_private/(shared)/slp/exercises/create'
 import { Route as PrivatesharedContentAdmContentIdEditRouteImport } from './routes/_private/(shared)/content/_adm/$contentId.edit'
-import { Route as PrivateclinicianPatientsPatientIdSoapSoapIdIndexRouteImport } from './routes/_private/(clinician)/patients/$patientId.soap.$soapId.index'
-import { Route as PrivateclinicianPatientsPatientIdSoapSoapIdUpdateRouteImport } from './routes/_private/(clinician)/patients/$patientId.soap.$soapId.update'
 
 const PrivateRouteRoute = PrivateRouteRouteImport.update({
   id: '/_private',
@@ -267,18 +265,6 @@ const PrivatesharedContentAdmContentIdEditRoute =
     path: '/$contentId/edit',
     getParentRoute: () => PrivatesharedContentAdmRouteRoute,
   } as any)
-const PrivateclinicianPatientsPatientIdSoapSoapIdIndexRoute =
-  PrivateclinicianPatientsPatientIdSoapSoapIdIndexRouteImport.update({
-    id: '/patients/$patientId/soap/$soapId/',
-    path: '/patients/$patientId/soap/$soapId/',
-    getParentRoute: () => PrivateclinicianRouteRoute,
-  } as any)
-const PrivateclinicianPatientsPatientIdSoapSoapIdUpdateRoute =
-  PrivateclinicianPatientsPatientIdSoapSoapIdUpdateRouteImport.update({
-    id: '/patients/$patientId/soap/$soapId/update',
-    path: '/patients/$patientId/soap/$soapId/update',
-    getParentRoute: () => PrivateclinicianRouteRoute,
-  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof PublicIndexRoute
@@ -316,8 +302,6 @@ export interface FileRoutesByFullPath {
   '/patients/$patientId/': typeof PrivateclinicianPatientsPatientIdIndexRoute
   '/slp/exercises/': typeof PrivatesharedSlpExercisesIndexRoute
   '/content/$contentId/edit': typeof PrivatesharedContentAdmContentIdEditRoute
-  '/patients/$patientId/soap/$soapId/update': typeof PrivateclinicianPatientsPatientIdSoapSoapIdUpdateRoute
-  '/patients/$patientId/soap/$soapId/': typeof PrivateclinicianPatientsPatientIdSoapSoapIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof PublicIndexRoute
@@ -354,8 +338,6 @@ export interface FileRoutesByTo {
   '/patients/$patientId': typeof PrivateclinicianPatientsPatientIdIndexRoute
   '/slp/exercises': typeof PrivatesharedSlpExercisesIndexRoute
   '/content/$contentId/edit': typeof PrivatesharedContentAdmContentIdEditRoute
-  '/patients/$patientId/soap/$soapId/update': typeof PrivateclinicianPatientsPatientIdSoapSoapIdUpdateRoute
-  '/patients/$patientId/soap/$soapId': typeof PrivateclinicianPatientsPatientIdSoapSoapIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -399,8 +381,6 @@ export interface FileRoutesById {
   '/_private/(clinician)/patients/$patientId/': typeof PrivateclinicianPatientsPatientIdIndexRoute
   '/_private/(shared)/slp/exercises/': typeof PrivatesharedSlpExercisesIndexRoute
   '/_private/(shared)/content/_adm/$contentId/edit': typeof PrivatesharedContentAdmContentIdEditRoute
-  '/_private/(clinician)/patients/$patientId/soap/$soapId/update': typeof PrivateclinicianPatientsPatientIdSoapSoapIdUpdateRoute
-  '/_private/(clinician)/patients/$patientId/soap/$soapId/': typeof PrivateclinicianPatientsPatientIdSoapSoapIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -440,8 +420,6 @@ export interface FileRouteTypes {
     | '/patients/$patientId/'
     | '/slp/exercises/'
     | '/content/$contentId/edit'
-    | '/patients/$patientId/soap/$soapId/update'
-    | '/patients/$patientId/soap/$soapId/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -478,8 +456,6 @@ export interface FileRouteTypes {
     | '/patients/$patientId'
     | '/slp/exercises'
     | '/content/$contentId/edit'
-    | '/patients/$patientId/soap/$soapId/update'
-    | '/patients/$patientId/soap/$soapId'
   id:
     | '__root__'
     | '/_private'
@@ -522,8 +498,6 @@ export interface FileRouteTypes {
     | '/_private/(clinician)/patients/$patientId/'
     | '/_private/(shared)/slp/exercises/'
     | '/_private/(shared)/content/_adm/$contentId/edit'
-    | '/_private/(clinician)/patients/$patientId/soap/$soapId/update'
-    | '/_private/(clinician)/patients/$patientId/soap/$soapId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -816,20 +790,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivatesharedContentAdmContentIdEditRouteImport
       parentRoute: typeof PrivatesharedContentAdmRouteRoute
     }
-    '/_private/(clinician)/patients/$patientId/soap/$soapId/': {
-      id: '/_private/(clinician)/patients/$patientId/soap/$soapId/'
-      path: '/patients/$patientId/soap/$soapId'
-      fullPath: '/patients/$patientId/soap/$soapId/'
-      preLoaderRoute: typeof PrivateclinicianPatientsPatientIdSoapSoapIdIndexRouteImport
-      parentRoute: typeof PrivateclinicianRouteRoute
-    }
-    '/_private/(clinician)/patients/$patientId/soap/$soapId/update': {
-      id: '/_private/(clinician)/patients/$patientId/soap/$soapId/update'
-      path: '/patients/$patientId/soap/$soapId/update'
-      fullPath: '/patients/$patientId/soap/$soapId/update'
-      preLoaderRoute: typeof PrivateclinicianPatientsPatientIdSoapSoapIdUpdateRouteImport
-      parentRoute: typeof PrivateclinicianRouteRoute
-    }
   }
 }
 
@@ -858,8 +818,6 @@ interface PrivateclinicianRouteRouteChildren {
   PrivateclinicianSchedulesIndexRoute: typeof PrivateclinicianSchedulesIndexRoute
   PrivateclinicianPatientsPatientIdCreateRoute: typeof PrivateclinicianPatientsPatientIdCreateRoute
   PrivateclinicianPatientsPatientIdIndexRoute: typeof PrivateclinicianPatientsPatientIdIndexRoute
-  PrivateclinicianPatientsPatientIdSoapSoapIdUpdateRoute: typeof PrivateclinicianPatientsPatientIdSoapSoapIdUpdateRoute
-  PrivateclinicianPatientsPatientIdSoapSoapIdIndexRoute: typeof PrivateclinicianPatientsPatientIdSoapSoapIdIndexRoute
 }
 
 const PrivateclinicianRouteRouteChildren: PrivateclinicianRouteRouteChildren = {
@@ -870,10 +828,6 @@ const PrivateclinicianRouteRouteChildren: PrivateclinicianRouteRouteChildren = {
     PrivateclinicianPatientsPatientIdCreateRoute,
   PrivateclinicianPatientsPatientIdIndexRoute:
     PrivateclinicianPatientsPatientIdIndexRoute,
-  PrivateclinicianPatientsPatientIdSoapSoapIdUpdateRoute:
-    PrivateclinicianPatientsPatientIdSoapSoapIdUpdateRoute,
-  PrivateclinicianPatientsPatientIdSoapSoapIdIndexRoute:
-    PrivateclinicianPatientsPatientIdSoapSoapIdIndexRoute,
 }
 
 const PrivateclinicianRouteRouteWithChildren =

@@ -78,6 +78,15 @@ body {
   }
 }
 
+/* Hide scrollbars while keeping scrolling enabled */
+* {
+  scrollbar-width: none;
+}
+
+*::-webkit-scrollbar {
+  display: none;
+}
+
 /* Fix MDEditor textarea height when highlightEnable={false} */
 .w-md-editor-input {
   flex: 1;

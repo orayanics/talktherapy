@@ -4,7 +4,7 @@ import { useAlert } from '#/context/AlertContext'
 import { mutateCreateSoap, mutateUpdateSoap } from '../api/soaps'
 import type { Soap } from '../types/soap'
 
-export const useCreateSoap = (patientId: string) => {
+export const useCreateSoap = (patientId: string, onSuccess?: () => void) => {
   const navigate = useNavigate()
   const { showAlert } = useAlert()
   const queryClient = useQueryClient()
@@ -17,12 +17,12 @@ export const useCreateSoap = (patientId: string) => {
         queryClient.invalidateQueries({ queryKey: ['soap'] }),
       ])
       showAlert('SOAP created successfully', 'success')
-      navigate({ to: '/patients/$patientId', params: { patientId } })
+      if (onSuccess) onSuccess()
+      else navigate({ to: '/patients/$patientId', params: { patientId } })
     },
   })
 }
-export const useUpdateSoap = (soapId: string, patientId: string) => {
-  const navigate = useNavigate()
+export const useUpdateSoap = (soapId: string, onSuccess?: () => void) => {
   const { showAlert } = useAlert()
   const queryClient = useQueryClient()
   return useMutation({
@@ -33,7 +33,7 @@ export const useUpdateSoap = (soapId: string, patientId: string) => {
         queryClient.invalidateQueries({ queryKey: ['soap'] }),
       ])
       showAlert('SOAP updated', 'success')
-      navigate({ to: '/patients/$patientId', params: { patientId } })
+      onSuccess?.()
     },
   })
 }

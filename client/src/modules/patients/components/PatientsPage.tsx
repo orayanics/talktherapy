@@ -7,8 +7,8 @@ import StateNull from '#/components/State/StateNull'
 import { TableBase } from '#/components/Table/TableBase'
 import { formatDate } from '#/utils/useDate'
 import Pagination from '#/components/Page/Pagination'
-import CpFilters from '#/modules/patients/components/CpFilters'
 import { ChevronDown, ChevronUp } from 'lucide-react'
+import { SearchFilter } from '#/components/Page/Filters'
 
 export default function PatientsPage() {
   const search = useSearch({ from: '/_private/(clinician)/patients/' })
@@ -42,10 +42,14 @@ export default function PatientsPage() {
   }
 
   return (
-    <div className="space-y-4">
-      <CpFilters searchTerm={searchTerm} updateSearch={updateSearch} />
-
-      <div className="bg-white rounded-box border border-slate-200  overflow-hidden flex flex-col p-4">
+    <div className="space-y-4   border-border">
+      <SearchFilter
+        label="Search patients"
+        placeholder="Search patient name"
+        value={searchTerm}
+        onChange={(s) => updateSearch({ page: 1, search: s })}
+      />
+      <div className="bg-white border-y border-border overflow-hidden flex flex-col p-4">
         {isPending ? (
           <StateLoading />
         ) : isError ? (

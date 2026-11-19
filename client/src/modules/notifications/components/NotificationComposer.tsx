@@ -114,7 +114,7 @@ export default function NotificationComposer() {
               </button>
             </div>
             {mode === 'role' ? (
-              <div className="grid gap-2 sm:grid-cols-2">
+              <div className="grid gap-2 sm:grid-cols-2 my-2">
                 {roles.map((role) => (
                   <label
                     key={role}

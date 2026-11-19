@@ -10,8 +10,10 @@ import { errMsg } from '#/lib/errorMessage'
 
 export default function useCreateSoapForm({
   patientId,
+  onSuccess,
 }: {
   patientId: string
+  onSuccess?: () => void
 }) {
   const [apiError, setApiError] = useState<string | null>(null)
 
@@ -34,7 +36,7 @@ export default function useCreateSoapForm({
     },
   })
 
-  const createMutation = useCreateSoap(patientId)
+  const createMutation = useCreateSoap(patientId, onSuccess)
 
   const onSubmit = handleSubmit(async (data) => {
     setApiError(null)

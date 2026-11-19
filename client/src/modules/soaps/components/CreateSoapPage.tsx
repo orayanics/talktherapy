@@ -3,22 +3,29 @@ import { ArrowLeft } from 'lucide-react'
 import SoapFields from './SoapFields'
 import useCreateSoapForm from '#/modules/soaps/hooks/useCreateSoapForm'
 
-export default function CreateSoapPage() {
-  const { patientId } = useParams({
-    from: '/_private/(clinician)/patients/$patientId/create',
-  })
-  const createHook = useCreateSoapForm({ patientId: patientId })
+export default function CreateSoapPage({
+  patientId: drawerPatientId,
+  onClose,
+}: {
+  patientId?: string
+  onClose?: () => void
+}) {
+  const params = useParams({ strict: false })
+  const patientId = drawerPatientId ?? params.patientId!
+  const createHook = useCreateSoapForm({ patientId, onSuccess: onClose })
 
   return (
     <div className="space-y-6">
-      <Link
-        to="/patients/$patientId"
-        params={{ patientId: String(patientId) }}
-        className="flex gap-2 items-center link link-hover text-slate-600"
-      >
-        <ArrowLeft size={16} />
-        Patient
-      </Link>
+      {!onClose && (
+        <Link
+          to="/patients/$patientId"
+          params={{ patientId: String(patientId) }}
+          className="flex gap-2 items-center link link-hover text-slate-600"
+        >
+          <ArrowLeft size={16} />
+          Patient
+        </Link>
+      )}
 
       <div className="w-full bg-white">
         <div className="rounded-box border border-slate-300  flex flex-col gap-4 p-6">

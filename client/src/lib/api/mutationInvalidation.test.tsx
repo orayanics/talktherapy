@@ -218,3 +218,18 @@ it('does not refresh caches or show success when a status mutation fails', async
     queryClient.clear()
   }
 })
+it('closes the SOAP creation drawer without navigating after saving', async () => {
+  const queryClient = new QueryClient()
+  const onSuccess = vi.fn()
+  vi.mocked(api).mockResolvedValue({ data: {} })
+  const wrapper = ({ children }: { children: ReactNode }) => (
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+  )
+  const { result } = renderHook(() => useCreateSoap('patient', onSuccess), {
+    wrapper,
+  })
+  await act(() => result.current.mutateAsync({ activity_plan: 'Practice' }))
+  expect(onSuccess).toHaveBeenCalledOnce()
+  expect(navigate).not.toHaveBeenCalled()
+  queryClient.clear()
+})
