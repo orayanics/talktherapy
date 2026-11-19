@@ -2,6 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { z } from 'zod'
 import PatientDetailsPage from '#/modules/patients/components/PatientDetailsPage'
 import { PAGE_META } from '#/constants/pageMeta'
+import PageLayout from '#/components/Page/PageLayout'
 
 const searchSchema = z
   .object({
@@ -23,5 +24,13 @@ export const Route = createFileRoute(
 )({
   staticData: { page: PAGE_META.patients.children.details, bcLink: '.' },
   validateSearch: (search) => searchSchema.parse(search),
-  component: PatientDetailsPage,
+  component: () => (
+    <PageLayout
+      title={PAGE_META.patients.children.details.title}
+      description={PAGE_META.patients.children.details.description}
+      paddedCh
+    >
+      <PatientDetailsPage />
+    </PageLayout>
+  ),
 })

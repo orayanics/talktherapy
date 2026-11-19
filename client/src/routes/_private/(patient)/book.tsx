@@ -3,6 +3,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { toArray } from '#/utils/query'
 import BookingPage from '#/modules/book/components/BookingPage'
 import { PAGE_META } from '#/constants/pageMeta'
+import PageLayout from '#/components/Page/PageLayout'
 
 const searchSchema = z
   .object({
@@ -38,5 +39,13 @@ const searchSchema = z
 export const Route = createFileRoute('/_private/(patient)/book')({
   staticData: { page: PAGE_META.bookAppointment, bcLink: '.' },
   validateSearch: (search) => searchSchema.parse(search),
-  component: BookingPage,
+  component: () => (
+    <PageLayout
+      title={PAGE_META.bookAppointment.title}
+      description={PAGE_META.bookAppointment.description}
+      paddedCh
+    >
+      <BookingPage />
+    </PageLayout>
+  ),
 })

@@ -2,6 +2,7 @@ import { z } from 'zod'
 import { createFileRoute } from '@tanstack/react-router'
 import ScheduleList from '#/modules/schedules/components/list/ScheduleList'
 import { PAGE_META } from '#/constants/pageMeta'
+import PageLayout from '#/components/Page/PageLayout'
 
 const searchSchema = z
   .object({
@@ -39,5 +40,13 @@ const searchSchema = z
 export const Route = createFileRoute('/_private/(clinician)/schedules/')({
   staticData: { page: PAGE_META.schedules, bcLink: '.' },
   validateSearch: (search) => searchSchema.parse(search),
-  component: () => <ScheduleList />,
+  component: () => (
+    <PageLayout
+      title={PAGE_META.schedules.title}
+      description={PAGE_META.schedules.description}
+      paddedCh
+    >
+      <ScheduleList />
+    </PageLayout>
+  ),
 })

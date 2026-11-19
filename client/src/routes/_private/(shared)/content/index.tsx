@@ -6,6 +6,7 @@ import { toArray } from '#/utils/query'
 import { fetchContentList } from '#/modules/content/api/content'
 import StateLoading from '#/components/State/StateLoading'
 import { PAGE_META } from '#/constants/pageMeta'
+import PageLayout from '#/components/Page/PageLayout'
 
 const searchSchema = z
   .object({
@@ -66,5 +67,13 @@ export const Route = createFileRoute('/_private/(shared)/content/')({
       ),
     ),
   pendingComponent: StateLoading,
-  component: () => <ContentList />,
+  component: () => (
+    <PageLayout
+      title={PAGE_META.content.title}
+      description={PAGE_META.content.description}
+      paddedCh
+    >
+      <ContentList />
+    </PageLayout>
+  ),
 })

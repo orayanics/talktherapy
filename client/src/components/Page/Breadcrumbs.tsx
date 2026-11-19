@@ -12,7 +12,7 @@ export default function Breadcrumbs() {
       aria-label="Breadcrumbs"
       className="breadcrumbs min-w-0 w-100 flex-1 overflow-x-auto"
     >
-      <ol role="list" className="whitespace-nowrap">
+      <ol role="list" className="whitespace-nowrap px-0!">
         {crumbs.map((crumb, index) => {
           const current = index === crumbs.length - 1
 

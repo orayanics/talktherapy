@@ -4,6 +4,7 @@ import { toArray } from '#/utils/query'
 import { ROLE_VALUES, STATUS_VALUES } from '#/modules/auth/constants/account'
 import UsersList from '#/modules/users/components/UsersList'
 import { PAGE_META } from '#/constants/pageMeta'
+import PageLayout from '#/components/Page/PageLayout'
 
 const roleSchema = z
   .unknown()
@@ -60,5 +61,13 @@ const searchSchema = z
 export const Route = createFileRoute('/_private/(adm-shared)/users/')({
   staticData: { page: PAGE_META.administration.children.users, bcLink: '.' },
   validateSearch: (search) => searchSchema.parse(search),
-  component: UsersList,
+  component: () => (
+    <PageLayout
+      title={PAGE_META.administration.children.users.title}
+      description={PAGE_META.administration.children.users.description}
+      paddedCh
+    >
+      <UsersList />
+    </PageLayout>
+  ),
 })

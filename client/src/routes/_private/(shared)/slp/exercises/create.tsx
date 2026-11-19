@@ -2,6 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { requireRole } from '#/modules/auth/lib/auth-guard'
 import CreateSlpExercisePage from '#/modules/slp/components/CreateSlpExercisePage'
 import { PAGE_META } from '#/constants/pageMeta'
+import PageLayout from '#/components/Page/PageLayout'
 
 export const Route = createFileRoute('/_private/(shared)/slp/exercises/create')(
   {
@@ -12,6 +13,16 @@ export const Route = createFileRoute('/_private/(shared)/slp/exercises/create')(
     beforeLoad: ({ context }) => {
       requireRole(context.user, 'clinician', 'admin')
     },
-    component: CreateSlpExercisePage,
+    component: () => (
+      <PageLayout
+        title={PAGE_META.slp.children.exercises.children.create.title}
+        description={
+          PAGE_META.slp.children.exercises.children.create.description
+        }
+        paddedCh
+      >
+        <CreateSlpExercisePage />
+      </PageLayout>
+    ),
   },
 )

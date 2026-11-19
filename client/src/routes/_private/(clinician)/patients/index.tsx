@@ -4,6 +4,7 @@ import PatientsPage from '#/modules/patients/components/PatientsPage'
 import { fetchClinicianPatients } from '#/modules/patients/api/patients'
 import StateLoading from '#/components/State/StateLoading'
 import { PAGE_META } from '#/constants/pageMeta'
+import PageLayout from '#/components/Page/PageLayout'
 
 const searchSchema = z
   .object({
@@ -43,5 +44,13 @@ export const Route = createFileRoute('/_private/(clinician)/patients/')({
       ),
     ),
   pendingComponent: StateLoading,
-  component: PatientsPage,
+  component: () => (
+    <PageLayout
+      title={PAGE_META.patients.title}
+      description={PAGE_META.patients.description}
+      paddedCh
+    >
+      <PatientsPage />
+    </PageLayout>
+  ),
 })
