@@ -35,12 +35,14 @@ export default function RegisterForm() {
               <path d="M2 12l10 5 10-5" />
             </svg>
           </div>
-          <h1 className="text-slate-800 text-3xl font-bold">TalkTherapy</h1>
+          <h1 className="mb-0 font-semibold">TalkTherapy</h1>
         </div>
 
         <div>
-          <p className="text-slate-800 font-medium">Welcome back!</p>
-          <p className="text-slate-500 text-sm">Ready to join the session?</p>
+          <p className="font-medium mb-0">Welcome!</p>
+          <p className="text-muted my-0!">
+            Ready to get started with your account?
+          </p>
         </div>
 
         {apiError && (

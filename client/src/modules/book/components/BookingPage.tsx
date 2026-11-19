@@ -9,7 +9,6 @@ import Drawer from '#/components/Drawer'
 import StateError from '#/components/State/StateError'
 import StateLoading from '#/components/State/StateLoading'
 import StateNull from '#/components/State/StateNull'
-import Pagination from '#/components/Page/Pagination'
 import { TableBase } from '#/components/Table/TableBase'
 import ScheduleFilters from '#/modules/schedules/components/list/ScheduleFilters'
 import { formatDate } from '#/utils/useDate'
@@ -49,13 +48,6 @@ export default function BookingPage() {
   const daySlots = slots.filter(
     (slot) => formatDate(slot.start_at, 'yyyy-MM-dd') === selectedDate,
   )
-  const meta = data?.meta ?? {
-    current_page: 1,
-    last_page: 1,
-    total: 0,
-    from: null,
-    per_page: 0,
-  }
 
   const openBooking = (slotId: string) => {
     setSelectedSlot(slotId)
