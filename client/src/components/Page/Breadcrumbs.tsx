@@ -8,8 +8,11 @@ export default function Breadcrumbs() {
   if (crumbs.length === 0) return null
 
   return (
-    <nav aria-label="Breadcrumbs" className="breadcrumbs w-full">
-      <ol role="list">
+    <nav
+      aria-label="Breadcrumbs"
+      className="breadcrumbs min-w-0 w-100 flex-1 overflow-x-auto"
+    >
+      <ol role="list" className="whitespace-nowrap">
         {crumbs.map((crumb, index) => {
           const current = index === crumbs.length - 1
 
