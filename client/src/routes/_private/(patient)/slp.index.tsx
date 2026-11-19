@@ -2,6 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import SlpAssessmentPage from '#/modules/slp/components/SlpAssessmentPage'
 
 export const Route = createFileRoute('/_private/(patient)/slp/')({
+  staticData: { crumb: 'Speech practice', bcLink: '.' },
   component: RouteComponent,
 })
 

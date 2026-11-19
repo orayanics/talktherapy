@@ -5,6 +5,7 @@ import EditContentPage from '#/modules/content/components/EditContentPage'
 export const Route = createFileRoute(
   '/_private/(shared)/content/_adm/$contentId/edit',
 )({
+  staticData: { crumb: 'Edit content', bcLink: '.' },
   loader: ({ context, params }) =>
     context.queryClient.query(fetchContentById(params.contentId)),
   component: EditContentPage,

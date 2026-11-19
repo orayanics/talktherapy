@@ -5,6 +5,7 @@ import { z } from 'zod'
 import { api } from '#/lib/api/client'
 
 export const Route = createFileRoute('/_private/profile/email-change')({
+  staticData: { crumb: 'Confirm email', bcLink: '.' },
   validateSearch: z.object({ code: z.string().length(6).optional() }),
   component: ConfirmEmailChange,
 })

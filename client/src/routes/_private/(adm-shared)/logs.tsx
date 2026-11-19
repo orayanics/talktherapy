@@ -45,6 +45,7 @@ const searchSchema = z
   }))
 
 export const Route = createFileRoute('/_private/(adm-shared)/logs')({
+  staticData: { crumb: 'Activity logs', bcLink: '.' },
   validateSearch: (search) => searchSchema.parse(search),
   component: LogsPage,
 })

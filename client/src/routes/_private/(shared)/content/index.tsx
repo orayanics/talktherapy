@@ -43,6 +43,7 @@ const searchSchema = z
   }))
 
 export const Route = createFileRoute('/_private/(shared)/content/')({
+  staticData: { crumb: 'Content', bcLink: '.' },
   validateSearch: (search) => searchSchema.parse(search),
   loaderDeps: ({ search }) => ({
     page: search.page,

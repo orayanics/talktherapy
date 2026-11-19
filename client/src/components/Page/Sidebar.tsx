@@ -9,6 +9,7 @@ import { useLogoutMutation } from '#/modules/auth/hooks/useLogoutMutation'
 import NotificationList from '#/modules/notifications/components/NotificationList'
 import { useUnreadNotificationCount } from '#/modules/notifications/hooks/useNotifications'
 import Drawer from '#/components/Drawer'
+import Breadcrumbs from './Breadcrumbs'
 
 export interface SidebarProps {
   children: React.ReactNode
@@ -42,15 +43,18 @@ export default function Sidebar(props: SidebarProps) {
       panelClassName="w-fit min-h-full bg-base-200 flex flex-col pt-6 pb-4 lg:border-e border-border"
       content={
         <>
-          <div className="bg-white border-b border-border w-full flex flex-row items-center justify-end gap-2 p-4 h-14 shrink-0">
-            <button
-              type="button"
-              aria-label="Open navigation"
-              onClick={() => setMenuOpen(true)}
-              className="btn btn-square btn-flat btn-sm lg:hidden"
-            >
-              <Menu size={16} strokeWidth={2.5} />
-            </button>
+          <div className="bg-white border-b border-border w-full flex flex-row items-center justify-between gap-2 px-4 h-14 shrink-0">
+            <div className="flex min-w-0 items-center gap-2">
+              <button
+                type="button"
+                aria-label="Open navigation"
+                onClick={() => setMenuOpen(true)}
+                className="btn btn-square btn-flat btn-sm lg:hidden"
+              >
+                <Menu size={16} strokeWidth={2.5} />
+              </button>
+              <Breadcrumbs />
+            </div>
 
             <div className="items-center justify-end relative">
               <button

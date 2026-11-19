@@ -18,6 +18,7 @@ const searchSchema = z
   }))
 
 export const Route = createFileRoute('/_private/(patient)/records/')({
+  staticData: { crumb: 'Records', bcLink: '.' },
   validateSearch: (search) => searchSchema.parse(search),
   component: PatientRecordsPage,
 })

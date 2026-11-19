@@ -1,6 +1,8 @@
-import { Link, useSearch, useNavigate } from '@tanstack/react-router'
+import { useState } from 'react'
+import { useSearch, useNavigate } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { fetchSoapsByPatient } from '#/modules/soaps/api/soaps'
+import Drawer from '#/components/Drawer'
 import StateLoading from '#/components/State/StateLoading'
 import StateError from '#/components/State/StateError'
 import StateNull from '#/components/State/StateNull'
@@ -9,11 +11,13 @@ import Pagination from '#/components/Page/Pagination'
 import { formatDate } from '#/utils/useDate'
 import { ChevronDown, ChevronUp } from 'lucide-react'
 import { useSession } from '#/modules/auth/context/SessionContext'
+import SoapDetails from './SoapDetails'
 
 export default function PatientRecordsPage() {
   const session = useSession()
   const search = useSearch({ from: '/_private/(patient)/records/' })
   const navigate = useNavigate({ from: '/records/' })
+  const [selectedSoapId, setSelectedSoapId] = useState<string | null>(null)
 
   const page = search.page ?? 1
   const sort = search.sort ?? 'desc'
@@ -87,13 +91,13 @@ export default function PatientRecordsPage() {
                 accessor: 'id',
                 render: (row) => (
                   <div className="flex gap-2">
-                    <Link
-                      to="/records/$soapId"
-                      params={{ soapId: row.id }}
+                    <button
+                      type="button"
                       className="btn btn-neutral"
+                      onClick={() => setSelectedSoapId(row.id)}
                     >
                       View
-                    </Link>
+                    </button>
                   </div>
                 ),
               },
@@ -107,6 +111,21 @@ export default function PatientRecordsPage() {
           updateSearch={(next) => updateSearch({ page: next.page })}
         />
       </div>
+
+      <Drawer
+        isOpen={Boolean(selectedSoapId)}
+        onClose={() => setSelectedSoapId(null)}
+        label="SOAP record details"
+        title="Record Details"
+        className={selectedSoapId ? 'fixed inset-0 z-40' : 'hidden'}
+        panelClassName="min-h-full w-full max-w-lg overflow-y-auto bg-base-100 text-base-content"
+      >
+        {selectedSoapId && (
+          <div className="p-6">
+            <SoapDetails soapId={selectedSoapId} />
+          </div>
+        )}
+      </Drawer>
     </div>
   )
 }

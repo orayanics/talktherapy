@@ -57,6 +57,7 @@ const searchSchema = z
   }))
 
 export const Route = createFileRoute('/_private/(adm-shared)/users/')({
+  staticData: { crumb: 'Users', bcLink: '.' },
   validateSearch: (search) => searchSchema.parse(search),
   component: UsersList,
 })

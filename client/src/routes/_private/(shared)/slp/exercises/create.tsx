@@ -4,6 +4,7 @@ import CreateSlpExercisePage from '#/modules/slp/components/CreateSlpExercisePag
 
 export const Route = createFileRoute('/_private/(shared)/slp/exercises/create')(
   {
+    staticData: { crumb: 'Create SLP exercise', bcLink: '.' },
     beforeLoad: ({ context }) => {
       requireRole(context.user, 'clinician', 'admin')
     },

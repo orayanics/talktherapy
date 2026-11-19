@@ -8,6 +8,7 @@ import StateLoading from '#/components/State/StateLoading'
 import { useSessionRevalidation } from '#/modules/auth/hooks/useSessionRevalidation'
 
 export const Route = createFileRoute('/_private')({
+  staticData: { crumb: 'Dashboard', bcLink: '/dashboard' },
   ssr: false,
   beforeLoad: requireSession,
   pendingComponent: StateLoading,

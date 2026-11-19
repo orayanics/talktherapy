@@ -45,6 +45,7 @@ const searchSchema = z
   }))
 
 export const Route = createFileRoute('/_private/(shared)/appointments/')({
+  staticData: { crumb: 'Appointments', bcLink: '.' },
   validateSearch: (search) => searchSchema.parse(search),
   component: AppointmentsPage,
 })
