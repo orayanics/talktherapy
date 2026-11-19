@@ -1,3 +1,4 @@
+import AuthLayout from '#/modules/auth/components/AuthLayout'
 import { createFileRoute, useSearch } from '@tanstack/react-router'
 import { z } from 'zod'
 
@@ -19,11 +20,16 @@ function RouteComponent() {
   })
   if (!otp) return null
   return (
-    <FormOtpUpdate
-      otp={otp}
-      role={role}
-      requiresCredentials={requires_credentials}
-      initialEmail={email}
-    />
+    <AuthLayout
+      title="Complete your profile"
+      description="A few more details, and you’re ready to begin."
+    >
+      <FormOtpUpdate
+        otp={otp}
+        role={role}
+        requiresCredentials={requires_credentials}
+        initialEmail={email}
+      />
+    </AuthLayout>
   )
 }

@@ -1,0 +1,206 @@
+.tt-auth {
+  --tt-ink: #172f3c;
+  --tt-muted: #56666e;
+  --tt-blue: color-mix(in oklch, var(--color-primary), #123a55 45%);
+  color: var(--tt-ink);
+  background: #fff8ec;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  border-top: 5px solid var(--color-primary);
+}
+.tt-auth-nav {
+  width: 100%;
+  max-width: 1264px;
+  margin: 0 auto;
+  padding: 28px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.tt-auth-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 25px;
+  font-weight: 750;
+  letter-spacing: -1.2px;
+}
+.tt-auth-brand svg {
+  width: 30px;
+  height: 30px;
+  color: var(--tt-blue);
+}
+.tt-auth-brand span {
+  color: var(--tt-blue);
+  margin-left: -7px;
+}
+.tt-auth-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+.tt-auth-main {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 80px;
+  max-width: 1120px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 40px 32px 64px;
+}
+.tt-auth-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--tt-blue);
+  background: color-mix(in oklch, var(--color-primary), white 85%);
+  border: 1px solid color-mix(in oklch, var(--color-primary), white 60%);
+  border-radius: 30px;
+  padding: 7px 13px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.tt-auth-intro h2 {
+  font-size: clamp(36px, 4vw, 56px);
+  line-height: 1.08;
+  font-weight: 750;
+  letter-spacing: -0.055em;
+  margin: 24px 0;
+}
+.tt-auth-intro h2 span {
+  color: var(--tt-blue);
+}
+.tt-auth-intro p {
+  max-width: 350px;
+  color: var(--tt-muted);
+  font-size: 16px;
+  line-height: 1.7;
+}
+.tt-auth-art {
+  width: 100px;
+  height: 100px;
+  margin-top: 36px;
+  color: var(--color-primary);
+  stroke-width: 1;
+  transform: rotate(-12deg);
+}
+.tt-auth-card {
+  min-width: 0;
+  padding: 32px;
+  border: 1px solid #e9e4da;
+  border-radius: 20px;
+  background: white;
+  box-shadow: 0 20px 60px #172f3c08;
+}
+.tt-auth-heading {
+  margin-bottom: 24px;
+}
+.tt-auth-heading h1 {
+  font-size: 30px;
+  line-height: 1.15;
+  letter-spacing: -0.04em;
+  font-weight: 700;
+  margin: 0 0 10px;
+}
+.tt-auth-heading p {
+  color: var(--tt-muted);
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 0;
+}
+.tt-auth .fieldset {
+  padding: 0;
+}
+.tt-auth .fieldset-legend {
+  font-size: 13px;
+  font-weight: 550;
+  padding-bottom: 8px;
+}
+.tt-auth .input,
+.tt-auth .select {
+  min-height: 46px;
+  border-color: #d9dfe2;
+  border-radius: 9px;
+  background-color: white;
+  font-size: 16px;
+}
+.tt-auth .input[readonly] {
+  background: #f5f7f8;
+  color: var(--tt-muted);
+}
+.tt-auth .input[aria-invalid='true'] {
+  border-color: var(--color-error);
+}
+.tt-auth .btn-primary {
+  height: 48px;
+  border: none;
+  border-radius: 9px;
+  color: var(--tt-ink);
+  font-weight: 650;
+  box-shadow: none;
+}
+.tt-auth .btn-primary:hover:not(:disabled) {
+  background: color-mix(in oklch, var(--color-primary), white 15%);
+}
+.tt-auth .btn-primary:disabled {
+  background: #e3e8eb;
+  color: #65747d;
+}
+.tt-auth .link {
+  color: var(--tt-blue);
+}
+.tt-auth .label {
+  white-space: normal;
+  color: var(--tt-muted);
+  font-size: 12px;
+  line-height: 1.6;
+}
+.tt-auth .checkbox {
+  flex-shrink: 0;
+}
+.tt-auth :focus-visible {
+  outline: 3px solid var(--tt-blue);
+  outline-offset: 3px;
+}
+.tt-auth-footer {
+  text-align: center;
+  padding: 20px;
+  font-size: 12px;
+  color: var(--tt-muted);
+}
+@media (max-width: 800px) {
+  .tt-auth-main {
+    grid-template-columns: 1fr;
+    max-width: 540px;
+    gap: 28px;
+    padding: 24px 20px 36px;
+  }
+  .tt-auth-intro {
+    text-align: center;
+  }
+  .tt-auth-intro h2 {
+    font-size: 36px;
+    margin: 18px 0 0;
+  }
+  .tt-auth-intro p,
+  .tt-auth-art {
+    display: none;
+  }
+  .tt-auth-nav {
+    padding: 22px 20px;
+  }
+  .tt-auth-brand {
+    font-size: 21px;
+  }
+  .tt-auth-back {
+    font-size: 12px;
+  }
+  .tt-auth-card {
+    padding: 26px 22px;
+  }
+}

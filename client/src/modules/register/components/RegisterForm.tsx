@@ -16,35 +16,8 @@ export default function RegisterForm() {
   if (isError) return <StateError />
 
   return (
-    <form onSubmit={onSubmit} className="w-full max-w-md lg:max-w-xl mx-auto">
-      <div className="p-6 h-full space-y-4">
-        <div className="flex items-center gap-2">
-          <div className="w-10 h-10 bg-slate-800 rounded-box flex items-center justify-center text-white">
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M12 2L2 7l10 5 10-5-10-5z" />
-              <path d="M2 17l10 5 10-5" />
-              <path d="M2 12l10 5 10-5" />
-            </svg>
-          </div>
-          <h1 className="mb-0 font-semibold">TalkTherapy</h1>
-        </div>
-
-        <div>
-          <p className="font-medium mb-0">Welcome!</p>
-          <p className="text-muted my-0!">
-            Ready to get started with your account?
-          </p>
-        </div>
-
+    <form onSubmit={onSubmit} className="w-full">
+      <div className="space-y-4">
         {apiError && (
           <div className="alert alert-soft alert-error" role="alert">
             {apiError}
@@ -149,7 +122,7 @@ export default function RegisterForm() {
           <button
             type="submit"
             disabled={isLoading}
-            className="btn btn-neutral btn-block"
+            className="btn btn-primary btn-block"
           >
             Register
           </button>
@@ -158,7 +131,7 @@ export default function RegisterForm() {
             to="/login"
             className="link link-hover link-neutral text-sm text-center"
           >
-            Alreay have an account? Login
+            Already have an account? Log in
           </Link>
         </div>
       </div>

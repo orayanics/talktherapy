@@ -35,7 +35,7 @@ export default function FormOtpUpdate({
 
   if (isPending || isError) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-white">
+      <div className="flex items-center justify-center py-10">
         <div className="w-full max-w-120">
           {isPending ? <StateLoading /> : <StateError />}
         </div>
@@ -46,21 +46,9 @@ export default function FormOtpUpdate({
   if (isPatient) return <Navigate to="/activate/otp" replace />
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-slate-50 p-4">
-      <form
-        onSubmit={onSubmit}
-        className="w-full max-w-120 bg-white border border-slate-200 rounded-box  shadow-slate-300 overflow-hidden"
-      >
-        <div className="p-6 border-b border-slate-200">
-          <h2 className="text-xl font-bold text-slate-900 tracking-tight">
-            Account Details
-          </h2>
-          <p className="text-sm text-slate-500 mt-1">
-            Complete your profile to finalize registration.
-          </p>
-        </div>
-
-        <div className="p-6 space-y-5">
+    <>
+      <form onSubmit={onSubmit} className="w-full">
+        <div className="space-y-5">
           {apiError && (
             <div className="alert alert-soft alert-error" role="alert">
               {apiError}
@@ -158,7 +146,7 @@ export default function FormOtpUpdate({
             <button
               type="submit"
               disabled={isLoading}
-              className="btn btn-block btn-neutral"
+              className="btn btn-block btn-primary"
             >
               {isLoading ? 'Updating Account...' : 'Complete Activation'}
             </button>
@@ -176,6 +164,6 @@ export default function FormOtpUpdate({
           </div>
         </div>
       </form>
-    </div>
+    </>
   )
 }

@@ -5,35 +5,8 @@ import FormInput from '#/components/Form/FormInput'
 export default function LoginForm() {
   const { register, onSubmit, errors, apiError, isLoading } = useLoginForm()
   return (
-    <form onSubmit={onSubmit} className="w-full max-w-md lg:max-w-xl mx-auto">
-      <div className="p-6 h-full space-y-4">
-        <div className="flex items-center gap-2">
-          <div className="w-10 h-10 bg-slate-800 rounded-box flex items-center justify-center text-white">
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M12 2L2 7l10 5 10-5-10-5z" />
-              <path d="M2 17l10 5 10-5" />
-              <path d="M2 12l10 5 10-5" />
-            </svg>
-          </div>
-          <h1 className="mb-0 font-semibold">TalkTherapy</h1>
-        </div>
-
-        <div>
-          <p className="font-medium mb-0">Welcome back!</p>
-          <p className="text-muted my-0!">
-            Ready to continue where you left off?
-          </p>
-        </div>
-
+    <form onSubmit={onSubmit} className="w-full">
+      <div className="space-y-4">
         {apiError && (
           <div className="alert alert-soft alert-error" role="alert">
             {apiError}
@@ -79,7 +52,7 @@ export default function LoginForm() {
         </FormInput>
 
         <div className="flex flex-col gap-4 items-center">
-          <button disabled={isLoading} className="btn btn-neutral btn-block">
+          <button disabled={isLoading} className="btn btn-primary btn-block">
             Login
           </button>
 
