@@ -22,9 +22,9 @@ export default function SoapDetails({ soapId }: { soapId: string }) {
         <StateNull />
       ) : (
         <div>
-          <h1 className="text-xl font-bold pb-2 mb-2 border-b border-slate-300">
+          <h2 className="text-xl font-bold pb-2 mb-2 border-b border-slate-300">
             SOAP Details
-          </h1>
+          </h2>
           <Row label="Date" value={formatDate(data.createdAt)} />
           <Row label="Clinician" value={data.clinician.name} />
           <Row label="Activity Plan" value={data.activity_plan} />

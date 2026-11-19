@@ -5,6 +5,7 @@ import ContentList from '#/modules/content/components/ContentList'
 import { toArray } from '#/utils/query'
 import { fetchContentList } from '#/modules/content/api/content'
 import StateLoading from '#/components/State/StateLoading'
+import { PAGE_META } from '#/constants/pageMeta'
 
 const searchSchema = z
   .object({
@@ -43,7 +44,7 @@ const searchSchema = z
   }))
 
 export const Route = createFileRoute('/_private/(shared)/content/')({
-  staticData: { crumb: 'Content', bcLink: '.' },
+  staticData: { page: PAGE_META.content, bcLink: '.' },
   validateSearch: (search) => searchSchema.parse(search),
   loaderDeps: ({ search }) => ({
     page: search.page,

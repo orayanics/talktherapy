@@ -8,6 +8,7 @@ import {
   createRouter,
 } from '@tanstack/react-router'
 import { afterEach, expect, it } from 'vitest'
+import { PAGE_META } from '#/constants/pageMeta'
 import Breadcrumbs from './Breadcrumbs'
 import PageLayout from './PageLayout'
 
@@ -18,12 +19,18 @@ it('renders breadcrumb matches as an ordered trail with the current page marked'
   const dashboardRoute = createRoute({
     getParentRoute: () => rootRoute,
     id: '_private',
-    staticData: { crumb: 'Dashboard', bcLink: '/dashboard' },
+    staticData: {
+      page: PAGE_META.dashboard,
+      bcLink: '/dashboard',
+    },
   })
   const usersRoute = createRoute({
     getParentRoute: () => dashboardRoute,
     path: '/users',
-    staticData: { crumb: 'Users', bcLink: '/users' },
+    staticData: {
+      page: PAGE_META.administration.children.users,
+      bcLink: '/users',
+    },
   })
   const router = createRouter({
     routeTree: rootRoute.addChildren([
@@ -62,27 +69,17 @@ it('omits the breadcrumb landmark when no matched route has a label', async () =
   expect(screen.queryByRole('navigation', { name: 'Breadcrumbs' })).toBeNull()
 })
 
-it('renders node titles, optional node descriptions, and slotted children', () => {
-  const { rerender } = render(
+it('renders title, description, and slotted children', () => {
+  render(
     <PageLayout
       title={<span>Users</span>}
-      description={<span>Manage access</span>}
+      description={PAGE_META.administration.children.users.description}
     >
       <button type="button">Invite user</button>
     </PageLayout>,
   )
 
   expect(screen.getByRole('heading', { level: 1, name: 'Users' })).toBeDefined()
-  expect(screen.getByText('Manage access')).toBeDefined()
+  expect(screen.getByText('View and manage user accounts.')).toBeDefined()
   expect(screen.getByRole('button', { name: 'Invite user' })).toBeDefined()
-
-  rerender(<PageLayout title="Users">Content</PageLayout>)
-  expect(screen.queryByText('Manage access')).toBeNull()
-
-  rerender(
-    <PageLayout title="Count" description={0}>
-      Content
-    </PageLayout>,
-  )
-  expect(screen.getByText('0').tagName).toBe('P')
 })

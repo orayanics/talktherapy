@@ -22,6 +22,7 @@ import { api } from '#/lib/api/client'
 vi.mock('#/lib/api/client', () => ({ api: vi.fn() }))
 vi.mock('../api/echo', () => ({}))
 vi.mock('#/components/Page/SidebarItem', () => ({ default: () => null }))
+vi.mock('#/components/Page/Breadcrumbs', () => ({ default: () => null }))
 vi.mock('@laravel/echo-react', () => ({
   useConnectionStatus: () => 'connected',
   useEcho: vi.fn(),

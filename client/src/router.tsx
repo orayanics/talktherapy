@@ -7,6 +7,7 @@ import { NotFound } from './components/NotFound'
 import { DefaultCatchBoundary } from './components/DefaultCatchBoundary'
 
 import type { LinkProps } from '@tanstack/react-router'
+import type { PageMeta } from './constants/pageMeta'
 
 export function getRouter() {
   const context = getContext()
@@ -33,6 +34,6 @@ declare module '@tanstack/react-router' {
 
   interface StaticDataRouteOption {
     bcLink?: LinkProps['to']
-    crumb?: string
+    page?: PageMeta
   }
 }

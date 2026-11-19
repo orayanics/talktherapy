@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import { createFileRoute } from '@tanstack/react-router'
 import LogsPage from '#/modules/logs/components/LogsPage'
+import { PAGE_META } from '#/constants/pageMeta'
 
 const searchSchema = z
   .object({
@@ -45,7 +46,7 @@ const searchSchema = z
   }))
 
 export const Route = createFileRoute('/_private/(adm-shared)/logs')({
-  staticData: { crumb: 'Activity logs', bcLink: '.' },
+  staticData: { page: PAGE_META.administration.children.logs, bcLink: '.' },
   validateSearch: (search) => searchSchema.parse(search),
   component: LogsPage,
 })

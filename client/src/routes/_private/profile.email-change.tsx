@@ -3,9 +3,10 @@ import { useMutation } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { z } from 'zod'
 import { api } from '#/lib/api/client'
+import { PAGE_META } from '#/constants/pageMeta'
 
 export const Route = createFileRoute('/_private/profile/email-change')({
-  staticData: { crumb: 'Confirm email', bcLink: '.' },
+  staticData: { page: PAGE_META.profile.children.confirmEmail, bcLink: '.' },
   validateSearch: z.object({ code: z.string().length(6).optional() }),
   component: ConfirmEmailChange,
 })
@@ -25,7 +26,7 @@ function ConfirmEmailChange() {
 
   return (
     <section className="mx-auto max-w-md space-y-4">
-      <h1 className="text-2xl font-semibold">Confirm new email</h1>
+      <h2 className="text-2xl font-semibold">Confirm new email</h2>
       <p>Enter the six-digit code sent to your new address.</p>
       <input
         className="input input-bordered w-full"

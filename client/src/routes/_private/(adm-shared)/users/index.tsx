@@ -3,6 +3,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { toArray } from '#/utils/query'
 import { ROLE_VALUES, STATUS_VALUES } from '#/modules/auth/constants/account'
 import UsersList from '#/modules/users/components/UsersList'
+import { PAGE_META } from '#/constants/pageMeta'
 
 const roleSchema = z
   .unknown()
@@ -57,7 +58,7 @@ const searchSchema = z
   }))
 
 export const Route = createFileRoute('/_private/(adm-shared)/users/')({
-  staticData: { crumb: 'Users', bcLink: '.' },
+  staticData: { page: PAGE_META.administration.children.users, bcLink: '.' },
   validateSearch: (search) => searchSchema.parse(search),
   component: UsersList,
 })

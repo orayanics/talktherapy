@@ -36,9 +36,9 @@ export default function SlpAssignments() {
         <header className="flex items-center gap-4">
           <Tala mood="cheer" size={64} />
           <div>
-            <h1 id="slp-assignment-heading" className="text-2xl font-bold">
+            <h2 id="slp-assignment-heading" className="text-2xl font-bold">
               Your speech practice
-            </h1>
+            </h2>
             <p className="mt-1 text-sm text-slate-600">
               Try each activity at your own pace. Your clinician reviews
               recordings.
@@ -47,7 +47,7 @@ export default function SlpAssignments() {
         </header>
         {!data.data.length && (
           <div className="tt-card" role="status">
-            <h2 className="text-lg font-bold">No practice yet</h2>
+            <h3 className="text-lg font-bold">No practice yet</h3>
             <p className="mt-1 text-sm text-slate-600">
               Your clinician will add an exercise here when one is ready.
             </p>
@@ -61,9 +61,9 @@ export default function SlpAssignments() {
                   {index + 1}
                 </span>
                 <div className="min-w-0 flex-1">
-                  <h2 className="break-words text-lg font-bold">
+                  <h3 className="break-words text-lg font-bold">
                     {item.version?.prompt_text ?? 'Assigned exercise'}
-                  </h2>
+                  </h3>
                   <p className="mt-1 text-sm text-slate-600">
                     {item.version?.task_type ?? 'Speech activity'} ·{' '}
                     {item.version?.language ?? 'English'}

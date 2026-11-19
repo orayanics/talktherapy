@@ -3,6 +3,7 @@ import { z } from 'zod'
 import PatientsPage from '#/modules/patients/components/PatientsPage'
 import { fetchClinicianPatients } from '#/modules/patients/api/patients'
 import StateLoading from '#/components/State/StateLoading'
+import { PAGE_META } from '#/constants/pageMeta'
 
 const searchSchema = z
   .object({
@@ -27,7 +28,7 @@ const searchSchema = z
   }))
 
 export const Route = createFileRoute('/_private/(clinician)/patients/')({
-  staticData: { crumb: 'Patients', bcLink: '.' },
+  staticData: { page: PAGE_META.patients, bcLink: '.' },
   validateSearch: (search) => searchSchema.parse(search),
   loaderDeps: ({ search }) => ({
     page: search.page,

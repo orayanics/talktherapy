@@ -187,9 +187,9 @@ export default function SlpAssessmentPage() {
               />
             )}
             <div>
-              <h1 className="text-xl sm:text-2xl font-bold">
+              <h2 className="text-xl sm:text-2xl font-bold">
                 {mode === 'explore' ? 'Picture adventures' : 'Speech practice'}
-              </h1>
+              </h2>
               <p className="mt-1 text-sm text-slate-600 hidden sm:block">
                 {mode === 'explore'
                   ? theme.greeting

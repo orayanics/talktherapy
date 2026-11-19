@@ -73,7 +73,7 @@ export default function ContentDetail({ contentId }: { contentId: string }) {
 
           <div className="flex justify-between">
             <div>
-              <h1 className="text-2xl font-bold my-0!">{data.title}</h1>
+              <h2 className="text-2xl font-bold my-0!">{data.title}</h2>
               <p className="my-0!">{data.description}</p>
 
               <div className="flex gap-2 items-center mt-2">

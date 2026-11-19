@@ -2,6 +2,7 @@ import { z } from 'zod'
 import { createFileRoute } from '@tanstack/react-router'
 import { toArray } from '#/utils/query'
 import AppointmentsPage from '#/modules/appointments/components/AppointmentsPage'
+import { PAGE_META } from '#/constants/pageMeta'
 
 const searchSchema = z
   .object({
@@ -45,7 +46,7 @@ const searchSchema = z
   }))
 
 export const Route = createFileRoute('/_private/(shared)/appointments/')({
-  staticData: { crumb: 'Appointments', bcLink: '.' },
+  staticData: { page: PAGE_META.appointments, bcLink: '.' },
   validateSearch: (search) => searchSchema.parse(search),
   component: AppointmentsPage,
 })

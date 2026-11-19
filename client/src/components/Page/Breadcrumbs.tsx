@@ -2,13 +2,13 @@ import { Link, useMatches } from '@tanstack/react-router'
 
 export default function Breadcrumbs() {
   const crumbs = useMatches({
-    select: (matches) => matches.filter((match) => match.staticData.crumb),
+    select: (matches) => matches.filter((match) => match.staticData.page),
   })
 
   if (crumbs.length === 0) return null
 
   return (
-    <nav aria-label="Breadcrumbs" className="breadcrumbs w-100">
+    <nav aria-label="Breadcrumbs" className="breadcrumbs w-full">
       <ol role="list">
         {crumbs.map((crumb, index) => {
           const current = index === crumbs.length - 1
@@ -18,14 +18,13 @@ export default function Breadcrumbs() {
               <Link
                 to={crumb.staticData.bcLink}
                 aria-current={current ? 'page' : undefined}
-                className={`
-                  ${
-                    current
-                      ? 'font-semibold text-base-content'
-                      : 'text-base-content/70'
-                  }`}
+                className={
+                  current
+                    ? 'font-semibold text-base-content'
+                    : 'text-base-content/70'
+                }
               >
-                {crumb.staticData.crumb}
+                {crumb.staticData.page?.title}
               </Link>
             </li>
           )
