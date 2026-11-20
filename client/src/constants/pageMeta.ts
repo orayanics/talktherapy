@@ -90,6 +90,10 @@ export const PAGE_META = {
     title: 'Speech practice',
     description: 'Complete speech and language practice activities.',
   },
+  picturePractice: {
+    title: 'Picture practice',
+    description: 'Practice speech and language with picture prompts.',
+  },
   appointments: {
     title: 'Appointments',
     description: 'View and manage your appointments.',

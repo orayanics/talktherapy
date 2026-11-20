@@ -179,6 +179,11 @@ export const PATIENT_NAV_ITEMS = [
     children: [
       { label: 'Collections', to: '/slp', icon: <ClipboardCheck size={16} /> },
       {
+        label: 'Picture practice',
+        to: '/slp/pictures',
+        icon: <ClipboardCheck size={16} />,
+      },
+      {
         label: 'My assignments',
         to: '/slp/assignments',
         icon: <ClipboardPlus size={16} />,
