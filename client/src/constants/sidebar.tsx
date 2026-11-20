@@ -167,6 +167,11 @@ export const CLINICIAN_NAV_ITEMS = [
         to: '/slp/reviews',
         icon: <ClipboardCheck size={16} />,
       },
+      {
+        label: 'Reports',
+        to: '/slp/reports',
+        icon: <ClipboardCheck size={16} />,
+      },
     ],
   },
 
@@ -192,6 +197,11 @@ export const PATIENT_NAV_ITEMS = [
         label: 'My assignments',
         to: '/slp/assignments',
         icon: <ClipboardPlus size={16} />,
+      },
+      {
+        label: 'My reports',
+        to: '/slp/reports',
+        icon: <ClipboardCheck size={16} />,
       },
     ],
   },

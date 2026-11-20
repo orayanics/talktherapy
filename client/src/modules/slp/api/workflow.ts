@@ -43,6 +43,20 @@ export interface SlpReviewAttempt extends SlpAttemptStatus {
     annotations: Record<string, unknown>[] | null
   } | null
 }
+export interface SlpReport {
+  id: string
+  status: 'approved' | 'released'
+  released_at: string | null
+  patient?: { id: string; name: string | null }
+  exercise: { prompt_text: string; task_type: string; language: string }
+  snapshot: {
+    prompt_text?: string
+    language?: string
+    annotations?: Record<string, unknown>[] | null
+    metrics?: Record<string, unknown> | null
+    approved_at?: string
+  }
+}
 type ListResponse<T> = { data: T[]; meta: Record<string, unknown> }
 
 export const slpWorkflowKeys = {
@@ -125,6 +139,17 @@ export const fetchSlpRecording = (attemptId: string) =>
       api<Blob>(`/api/v1/slp/attempts/${attemptId}/recording`, {
         responseType: 'blob',
       }),
+  })
+
+export const fetchSlpReports = () =>
+  queryOptions<ListResponse<SlpReport>>({
+    queryKey: ['slp-workflow', 'reports'],
+    queryFn: () => api<ListResponse<SlpReport>>('/api/v1/slp/reports'),
+  })
+
+export const mutateReleaseSlpReport = (reportId: string) =>
+  api<{ data: SlpReport }>(`/api/v1/slp/reports/${reportId}/release`, {
+    method: 'POST',
   })
 
 export const mutateSaveSlpReview = (

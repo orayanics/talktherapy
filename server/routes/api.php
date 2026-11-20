@@ -60,6 +60,7 @@ Route::middleware(['auth:sanctum', 'account.active', 'verified'])->group(functio
     Route::post('/slp/consents/{consent}/withdraw', [SlpWorkflowController::class, 'withdrawConsent'])->name('slp.consents.withdraw');
     Route::get('/slp/assignments', [SlpWorkflowController::class, 'assignments'])->name('slp.assignments.index');
     Route::get('/slp/review-attempts', [SlpWorkflowController::class, 'reviewAttempts'])->name('slp.review-attempts.index');
+    Route::get('/slp/reports', [SlpWorkflowController::class, 'reports'])->name('slp.reports.index');
     Route::post('/slp/assignments', [SlpWorkflowController::class, 'storeAssignment'])->name('slp.assignments.store');
     Route::post('/slp/assignments/{assignment}/attempts', [SlpWorkflowController::class, 'storeAttempt'])->name('slp.attempts.store');
     Route::post('/slp/attempts/{attempt}/recording', [SlpWorkflowController::class, 'uploadRecording'])->name('slp.recordings.store');
@@ -67,6 +68,7 @@ Route::middleware(['auth:sanctum', 'account.active', 'verified'])->group(functio
     Route::get('/slp/attempts/{attempt}', [SlpWorkflowController::class, 'attempt'])->name('slp.attempts.show');
     Route::put('/slp/attempts/{attempt}/review', [SlpWorkflowController::class, 'saveReview'])->name('slp.reviews.store');
     Route::post('/slp/reviews/{review}/approve', [SlpWorkflowController::class, 'approveReview'])->name('slp.reviews.approve');
+    Route::post('/slp/reports/{report}/release', [SlpWorkflowController::class, 'releaseReport'])->name('slp.reports.release');
     Route::get('/me', [SessionController::class, 'show'])->name('me.show');
     Route::get('/notifications/channel', [NotificationController::class, 'channel'])->name('notifications.channel');
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');

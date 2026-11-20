@@ -124,6 +124,11 @@ export const PAGE_META = {
         title: 'SLP reviews',
         description: 'Review submitted speech recordings and analysis.',
       },
+      reports: {
+        title: 'SLP reports',
+        description:
+          'Review approved speech reports and release them to patients.',
+      },
       exercises: {
         title: 'SLP exercises',
         description: 'Browse speech and language exercises.',

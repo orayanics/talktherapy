@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\SlpAssignmentResource;
+use App\Http\Resources\SlpReportResource;
 use App\Http\Resources\SlpReviewAttemptResource;
 use App\Jobs\RunSlpAnalysis;
 use App\Models\ClinicianPatient;
@@ -153,6 +154,20 @@ class SlpWorkflowController extends Controller
         return SlpReviewAttemptResource::collection($query->latest()->paginate($data['per_page'] ?? 15));
     }
 
+    public function reports(Request $request): AnonymousResourceCollection
+    {
+        $role = $request->user()->profile?->role;
+        abort_unless(in_array($role, [UserRole::Patient, UserRole::Clinician], true), 403);
+        $query = SlpReport::query()->with(['review.attempt.assignment.patient', 'review.attempt.assignment.version']);
+        if ($role === UserRole::Patient) {
+            $query->whereNotNull('released_at')->whereHas('review.attempt.assignment', fn ($q) => $q->where('patient_id', $request->user()->id));
+        } else {
+            $query->whereHas('review.attempt.assignment', fn ($q) => $q->where('clinician_id', $request->user()->id));
+        }
+
+        return SlpReportResource::collection($query->latest()->paginate(15));
+    }
+
     public function recording(Request $request, SlpAttempt $attempt): StreamedResponse
     {
         abort_unless($request->user()->profile?->role === UserRole::Clinician, 403);
@@ -297,10 +312,26 @@ class SlpWorkflowController extends Controller
                 abort_unless($attempt->status === 'awaiting_review', 409, 'Analysis is not ready for approval.');
                 $locked->update(['status' => 'approved']);
                 $attempt->update(['status' => 'approved']);
-                $report = SlpReport::query()->create(['review_id' => $locked->id, 'created_by' => $request->user()->id, 'snapshot' => ['metrics' => $locked->metrics, 'annotations' => $locked->annotations, 'approved_at' => now()->toISOString()]]);
+                $version = $attempt->assignment->version;
+                $report = SlpReport::query()->create(['review_id' => $locked->id, 'created_by' => $request->user()->id, 'snapshot' => ['exercise_version_id' => $version->id, 'revision' => $version->revision, 'prompt_text' => $version->prompt_text, 'language' => $version->language, 'analysis' => $attempt->analysis?->result, 'metrics' => $locked->metrics, 'annotations' => $locked->annotations, 'approved_at' => now()->toISOString()]]);
             }
 
             return ['data' => ['review' => $locked, 'report' => $report]];
+        });
+    }
+
+    public function releaseReport(Request $request, SlpReport $report): array
+    {
+        abort_unless($report->review->attempt->assignment->clinician_id === $request->user()->id, 403);
+
+        return DB::transaction(function () use ($report, $request): array {
+            $locked = SlpReport::query()->lockForUpdate()->findOrFail($report->id);
+            abort_unless($locked->review->status === 'approved', 409, 'Approve the review before releasing the report.');
+            if ($locked->released_at === null) {
+                $locked->update(['released_at' => now(), 'released_by' => $request->user()->id]);
+            }
+
+            return ['data' => new SlpReportResource($locked->load(['review.attempt.assignment.patient', 'review.attempt.assignment.version']))];
         });
     }
 

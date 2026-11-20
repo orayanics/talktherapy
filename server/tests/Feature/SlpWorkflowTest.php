@@ -92,9 +92,14 @@ class SlpWorkflowTest extends TestCase
             'annotations' => [['text' => 'review']],
         ])->assertOk()->json('data');
         $this->actingAs($admin)->postJson("/api/v1/slp/reviews/{$review['id']}/approve")->assertForbidden();
-        $this->actingAs($clinician)->postJson("/api/v1/slp/reviews/{$review['id']}/approve")->assertOk();
+        $approval = $this->actingAs($clinician)->postJson("/api/v1/slp/reviews/{$review['id']}/approve")->assertOk()->json('data');
         $this->actingAs($clinician)->postJson("/api/v1/slp/reviews/{$review['id']}/approve")->assertOk();
         $this->assertDatabaseCount('slp_reports', 1);
+        $this->actingAs($clinician)->getJson('/api/v1/slp/reports')->assertOk()->assertJsonPath('data.0.status', 'approved');
+        $this->actingAs($patient)->getJson('/api/v1/slp/reports')->assertOk()->assertJsonCount(0, 'data');
+        $this->actingAs($patient)->postJson('/api/v1/slp/reports/'.$approval['report']['id'].'/release')->assertForbidden();
+        $this->actingAs($clinician)->postJson('/api/v1/slp/reports/'.$approval['report']['id'].'/release')->assertOk()->assertJsonPath('data.status', 'released');
+        $this->actingAs($patient)->getJson('/api/v1/slp/reports')->assertOk()->assertJsonCount(1, 'data')->assertJsonPath('data.0.status', 'released')->assertJsonMissingPath('data.0.patient');
     }
 
     public function test_clinician_can_list_review_attempts_and_stream_only_their_recordings(): void
