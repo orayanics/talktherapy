@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\V1\AppointmentSessionController;
 use App\Http\Controllers\Api\V1\AuditLogController;
 use App\Http\Controllers\Api\V1\BookmarkController;
 use App\Http\Controllers\Api\V1\ContentController;
+use App\Http\Controllers\Api\V1\DashboardSummaryController;
 use App\Http\Controllers\Api\V1\DiagnosisController;
 use App\Http\Controllers\Api\V1\NotificationController;
 use App\Http\Controllers\Api\V1\NotificationPreferenceController;
@@ -73,6 +74,7 @@ Route::middleware(['auth:sanctum', 'account.active', 'verified'])->group(functio
     Route::post('/email-change/confirm', [EmailChangeController::class, 'confirm'])->middleware('throttle:10,1');
     Route::get('/users/counts', [UserController::class, 'counts']);
     Route::get('/reports/stats', ReportingStatsController::class)->name('reports.stats');
+    Route::get('/dashboard/summary', DashboardSummaryController::class)->name('dashboard.summary');
     Route::get('/logs', [AuditLogController::class, 'index'])->name('logs.index');
     Route::get('/logs/export', [AuditLogController::class, 'export'])->name('logs.export');
     Route::post('/logs/exports', [AuditLogController::class, 'queue'])->name('logs.exports.queue');
@@ -97,6 +99,7 @@ Route::middleware(['auth:sanctum', 'account.active', 'verified'])->group(functio
     Route::post('/schedules', [ScheduleController::class, 'store'])->name('schedules.store');
     Route::get('/slots', [SlotController::class, 'index'])->name('slots.index');
     Route::get('/slots/{slot}', [SlotController::class, 'show'])->name('slots.show');
+    Route::post('/slots/{slot}/hide', [SlotController::class, 'hide'])->name('slots.hide');
     Route::post('/slots/{slot}/book', [AppointmentController::class, 'store'])->name('slots.book');
     Route::get('/appointments', [AppointmentController::class, 'index'])->name('appointments.index');
     Route::get('/appointments/{appointment}', [AppointmentController::class, 'show'])->name('appointments.show');

@@ -69,7 +69,7 @@ export default function AssignedExercise({
   if (sent)
     return (
       <div
-        className="mt-4 flex items-center gap-3 rounded-2xl bg-[var(--practice-tint)] p-4"
+        className="mt-4 flex items-center gap-3 rounded-box bg-[var(--practice-tint)] p-4"
         role="status"
       >
         <Tala mood="cheer" size={48} />
@@ -79,7 +79,7 @@ export default function AssignedExercise({
       </div>
     )
   return (
-    <div className="mt-4 space-y-4 rounded-2xl border-2 border-[var(--practice-tint)] bg-white p-4">
+    <div className="mt-4 space-y-4 rounded-box border-2 border-[var(--practice-tint)] bg-white p-4">
       <div className="flex items-start gap-3">
         <Tala mood="idle" size={48} />
         <p className="text-sm leading-relaxed">

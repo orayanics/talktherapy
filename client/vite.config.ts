@@ -16,7 +16,12 @@ const https =
     : undefined
 
 const config = defineConfig({
-  plugins: [devtools(), tailwindcss(), tanstackStart(), viteReact()],
+  plugins: [
+    devtools(),
+    tailwindcss(),
+    tanstackStart({ spa: { enabled: true } }),
+    viteReact(),
+  ],
   server: {
     port: 3000,
     host: true,

@@ -1,6 +1,21 @@
-import { createFileRoute, Navigate } from '@tanstack/react-router'
-import { useAuthGuard } from '#/modules/auth/hooks/useAuth'
+import { createFileRoute } from '@tanstack/react-router'
+import { requireRole } from '#/modules/auth/lib/auth-guard'
 import SlpAssignments from '#/modules/slp/components/SlpAssignments'
+import { PAGE_META } from '#/constants/pageMeta'
+import PageLayout from '#/components/Page/PageLayout'
 
-export const Route = createFileRoute('/_private/(shared)/slp/assignments')({ component: RouteComponent })
-function RouteComponent() { const { is } = useAuthGuard(); if (!(is('patient') || is('clinician'))) return <Navigate to="/unauthorized" />; return <SlpAssignments /> }
+export const Route = createFileRoute('/_private/(shared)/slp/assignments')({
+  staticData: { page: PAGE_META.slp.children.assignments, bcLink: '.' },
+  beforeLoad: ({ context }) => {
+    requireRole(context.user, 'patient', 'clinician')
+  },
+  component: () => (
+    <PageLayout
+      title={PAGE_META.slp.children.assignments.title}
+      description={PAGE_META.slp.children.assignments.description}
+      paddedCh
+    >
+      <SlpAssignments />
+    </PageLayout>
+  ),
+})

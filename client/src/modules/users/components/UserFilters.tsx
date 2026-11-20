@@ -1,112 +1,46 @@
-import { Search, Filter } from 'lucide-react'
+import { SearchFilter, ChoiceFilter } from '#/components/Page/Filters'
+import { ROLE_VALUES, STATUS_VALUES } from '#/modules/auth/constants/account'
+import type { UsersParams } from '../types/params'
 import type { QueryParams } from '#/types/api'
-import type { UsersParams } from '#/modules/users/types/params'
-import { ROLE_VALUES, STATUS_VALUES } from '#/constants/account'
-
-type UpdateSearch = (next: Partial<UsersParams & QueryParams>) => void
-
-type Props = {
-  searchTerm: string
-  role: string[]
-  accountStatus: string[]
-  updateSearch: UpdateSearch
-}
+import FilterDrawer from '#/components/Page/FilterDrawer'
 
 export default function UserFilters({
   searchTerm,
   role,
   accountStatus,
   updateSearch,
-}: Props) {
-  const toggleValue = (values: string[], value: string): string[] =>
-    values.includes(value)
-      ? values.filter((item) => item !== value)
-      : [...values, value]
-
+}: {
+  searchTerm: string
+  role: string[]
+  accountStatus: string[]
+  updateSearch: (next: Partial<UsersParams & QueryParams>) => void
+}) {
   return (
-    <div className="flex items-center gap-4">
-      <div className="relative w-full h-10 bg-white border-slate-200 rounded-lg shadow-sm input input-bordered">
-        <Search className="text-slate-600" size={16} />
-        <input
-          id="user-search"
-          aria-label="Search users"
-          value={searchTerm}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            updateSearch({ page: 1, search: e.target.value })
-          }
-          placeholder="Search name/email..."
-        />
-      </div>
-
-      <div>
-        <button
-          type="button"
-          aria-label="Open user filters"
-          className="btn btn-outline border-slate-200 bg-white h-10 px-4 rounded-lg flex items-center gap-2 shadow-sm text-sm"
-          popoverTarget="filter-popover"
-          style={{ anchorName: '--filter-anchor' }}
-        >
-          <Filter size={14} />
-          Filter
-        </button>
-
-        <div
-          popover="auto"
-          id="filter-popover"
-          className="dropdown dropdown-end menu p-4 shadow-xl bg-white border border-slate rounded-lg w-72 mt-2"
-          style={{ positionAnchor: '--filter-anchor' }}
-        >
-          <div className="mb-4">
-            <span className="text-xs text-slate-700 font-bold uppercase mb-2 block tracking-widest">
-              Account Role
-            </span>
-            {ROLE_VALUES.map((value: string) => (
-              <label
-                key={value}
-                className="flex items-center gap-2 mb-2 tracking-wide uppercase"
-              >
-                <input
-                  type="checkbox"
-                  className="checkbox"
-                  checked={role.includes(value)}
-                  onChange={() =>
-                    updateSearch({
-                      page: 1,
-                      role: toggleValue(role, value),
-                    })
-                  }
-                />
-                {value}
-              </label>
-            ))}
-          </div>
-
-          <div>
-            <span className="text-xs text-slate-700 font-bold uppercase mb-2 block tracking-widest">
-              Account Status
-            </span>
-            {STATUS_VALUES.map((value: string) => (
-              <label
-                key={value}
-                className="flex items-center gap-2 mb-2 tracking-wide uppercase"
-              >
-                <input
-                  type="checkbox"
-                  className="checkbox"
-                  checked={accountStatus.includes(value)}
-                  onChange={() =>
-                    updateSearch({
-                      page: 1,
-                      account_status: toggleValue(accountStatus, value),
-                    })
-                  }
-                />
-                {value}
-              </label>
-            ))}
-          </div>
+    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 w-full">
+      <SearchFilter
+        label="Search users"
+        placeholder="Search name/email..."
+        value={searchTerm}
+        onChange={(search) => updateSearch({ page: 1, search })}
+      />
+      <FilterDrawer>
+        <div className="space-y-6">
+          <ChoiceFilter
+            label="Account role"
+            options={ROLE_VALUES.map((value) => ({ value, label: value }))}
+            value={role}
+            onChange={(r) => updateSearch({ page: 1, role: r })}
+          />
+          <ChoiceFilter
+            label="Account status"
+            options={STATUS_VALUES.map((value) => ({ value, label: value }))}
+            value={accountStatus}
+            onChange={(account_status) =>
+              updateSearch({ page: 1, account_status })
+            }
+          />
         </div>
-      </div>
+      </FilterDrawer>
     </div>
   )
 }

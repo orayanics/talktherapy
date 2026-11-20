@@ -20,7 +20,7 @@ class SlotResource extends JsonResource
             'start_at' => $this->start_at?->toISOString(),
             'end_at' => $this->end_at?->toISOString(),
             'status' => $this->status,
-            'is_hidden' => $this->when($request->user()?->profile?->role === UserRole::Clinician, $this->is_hidden),
+            'is_hidden' => $this->when(in_array($request->user()?->profile?->role, [UserRole::Clinician, UserRole::Superadmin], true), $this->is_hidden),
             'clinician' => $this->whenLoaded('clinician', fn (): array => [
                 'id' => $this->clinician->id,
                 'name' => $this->clinician->name,

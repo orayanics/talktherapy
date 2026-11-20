@@ -1,4 +1,4 @@
-import type { USER_ROLE } from '#/types/account'
+import type { USER_ROLE } from '#/modules/auth/types/account'
 
 export interface UserResponse {
   id: string

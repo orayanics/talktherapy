@@ -1,6 +1,8 @@
 import { z } from 'zod'
 import { createFileRoute } from '@tanstack/react-router'
 import ScheduleList from '#/modules/schedules/components/list/ScheduleList'
+import { PAGE_META } from '#/constants/pageMeta'
+import PageLayout from '#/components/Page/PageLayout'
 
 const searchSchema = z
   .object({
@@ -11,6 +13,14 @@ const searchSchema = z
       .optional()
       .transform((v) => (v && v.trim() !== '' ? v.trim() : undefined)),
 
+    date_to: z
+      .string()
+      .optional()
+      .transform((v) => (v && v.trim() !== '' ? v.trim() : undefined)),
+
+    from: z.string().optional(),
+    to: z.string().optional(),
+
     sort: z
       .string()
       .optional()
@@ -20,11 +30,23 @@ const searchSchema = z
   })
   .transform((data) => ({
     ...(data.page !== 1 ? { page: data.page } : {}),
-    ...(data.date_from ? { from: data.date_from } : {}),
+    ...((data.from ?? data.date_from)
+      ? { from: data.from ?? data.date_from }
+      : {}),
+    ...((data.to ?? data.date_to) ? { to: data.to ?? data.date_to } : {}),
     ...(data.sort ? { sort: data.sort } : {}),
   }))
 
 export const Route = createFileRoute('/_private/(clinician)/schedules/')({
+  staticData: { page: PAGE_META.schedules, bcLink: '.' },
   validateSearch: (search) => searchSchema.parse(search),
-  component: () => <ScheduleList />,
+  component: () => (
+    <PageLayout
+      title={PAGE_META.schedules.title}
+      description={PAGE_META.schedules.description}
+      paddedCh
+    >
+      <ScheduleList />
+    </PageLayout>
+  ),
 })

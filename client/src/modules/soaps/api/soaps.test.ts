@@ -21,11 +21,13 @@ describe('fetchSoapsByPatient', () => {
     vi.mocked(api).mockResolvedValue(response)
     const query = fetchSoapsByPatient('patient-1', { page: 2 }, { sort: 'asc' })
 
-    const result = await query.queryFn!({} as never)
+    const signal = new AbortController().signal
+    const result = await query.queryFn!({ signal } as never)
 
     expect(result).toEqual(response)
     expect(api).toHaveBeenCalledWith('/api/v1/soaps/patient/patient-1', {
       method: 'GET',
+      signal,
       params: { page: 2, sort: 'asc' },
     })
   })
@@ -45,9 +47,13 @@ describe('fetchSoapsByPatient', () => {
     vi.mocked(api).mockResolvedValue({ data: soap })
     const query = fetchSoapById(soap.id)
 
-    const result = await query.queryFn!({} as never)
+    const signal = new AbortController().signal
+    const result = await query.queryFn!({ signal } as never)
 
     expect(result).toEqual(soap)
-    expect(api).toHaveBeenCalledWith('/api/v1/soaps/soap-1', { method: 'GET' })
+    expect(api).toHaveBeenCalledWith('/api/v1/soaps/soap-1', {
+      method: 'GET',
+      signal,
+    })
   })
 })

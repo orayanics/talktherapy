@@ -21,12 +21,17 @@ export function TableBase<T>({
   className,
 }: TableProps<T>) {
   return (
-    <div className="overflow-x-auto w-full">
+    <div
+      className="app-table overflow-x-auto w-full"
+      tabIndex={0}
+      role="region"
+      aria-label="Data table"
+    >
       <table className={`table w-full ${className ?? ''}`}>
         <thead>
           <tr>
             {columns.map((col, i) => (
-              <th key={i} className={col.className}>
+              <th key={i} scope="col" className={col.className}>
                 {col.header}
               </th>
             ))}

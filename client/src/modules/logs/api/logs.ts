@@ -51,10 +51,13 @@ export const fetchLogs = (
   return queryOptions<LogsResponse>({
     queryKey: ['logs', query],
     queryFn: async () => {
-      const response = await api<{ data: RawLogEntry[]; meta: Meta }>('/api/v1/logs', {
-        method: 'GET',
-        params: query,
-      })
+      const response = await api<{ data: RawLogEntry[]; meta: Meta }>(
+        '/api/v1/logs',
+        {
+          method: 'GET',
+          params: query,
+        },
+      )
       return {
         ...response,
         data: response.data.map((row) => ({
@@ -86,7 +89,7 @@ export const exportLogs = async (
   // strip empty string / null / undefined values so backend "sometimes" validation
   // does not treat present-but-empty params as invalid
   const normalizedParams = Object.fromEntries(
-    Object.entries(query as Record<string, any>).filter(
+    Object.entries<unknown>(query).filter(
       ([, v]) => v !== '' && v !== null && v !== undefined,
     ),
   )
@@ -116,13 +119,22 @@ export const exportLogs = async (
   }
 }
 
-export const queueLogsExport = async (params: Partial<LogParams> = {}, format: 'jsonl' | 'xls' = 'jsonl') => {
-  const response = await api<{ data: { id: string; status: string } }>('/api/v1/logs/exports', {
-    method: 'POST',
-    data: { format, ...params },
-  })
+export const queueLogsExport = async (
+  params: Partial<LogParams> = {},
+  format: 'jsonl' | 'xls' = 'jsonl',
+) => {
+  const response = await api<{ data: { id: string; status: string } }>(
+    '/api/v1/logs/exports',
+    {
+      method: 'POST',
+      data: { format, ...params },
+    },
+  )
   return response.data
 }
 
 export const downloadQueuedLogsExport = (id: string) =>
-  api<Blob>(`/api/v1/logs/exports/${id}/download`, { method: 'GET', responseType: 'blob' })
+  api<Blob>(`/api/v1/logs/exports/${id}/download`, {
+    method: 'GET',
+    responseType: 'blob',
+  })

@@ -183,7 +183,7 @@ async def assess(
         return build_practice_response(
             reference_text,
             transcript,
-            model_version="faster-whisper-base-unverified",
+            model_version=SETTINGS.model_identity,
             language=language,
         )
 

@@ -16,7 +16,8 @@ const apiClient: AxiosInstance = axios.create({
 // optional: request interceptor (runs before every request)
 apiClient.interceptors.request.use(async (config) => {
   const method = config.method?.toUpperCase()
-  const contentType = config.headers.get('Content-Type') ?? config.headers['Content-Type']
+  const contentType =
+    config.headers.get('Content-Type') ?? config.headers['Content-Type']
   if (
     ['POST', 'PUT', 'PATCH'].includes(method ?? '') &&
     typeof config.data === 'string' &&
@@ -47,7 +48,7 @@ type CsrfRetryConfig = AxiosRequestConfig & {
 // optional: response interceptor (centralized error handling)
 apiClient.interceptors.response.use(
   (response) => response,
-  async (error: AxiosError<any>) => {
+  async (error: AxiosError<unknown>) => {
     const status = error.response?.status
     const config = error.config as CsrfRetryConfig | undefined
 
@@ -65,7 +66,7 @@ export async function initializeCsrf(): Promise<void> {
   await apiClient.get('/sanctum/csrf-cookie')
 }
 
-export async function api<T = any>(
+export async function api<T = unknown>(
   url: string,
   options: AxiosRequestConfig = {},
 ): Promise<T> {

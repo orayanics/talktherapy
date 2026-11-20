@@ -5,7 +5,8 @@ import { useState } from 'react'
 import { RegisterPatientSchema } from '../types/schema'
 import type { TRegisterPatient } from '../types/schema'
 
-import { mutateRegisterPatient } from '#/modules/register/api/register'
+import { useRegisterPatientMutation } from '#/modules/register/hooks/useRegistrationMutations'
+
 import { errMsg } from '#/lib/errorMessage'
 
 export default function useRegisterForm() {
@@ -27,7 +28,7 @@ export default function useRegisterForm() {
     },
   })
 
-  const registerMutation = mutateRegisterPatient()
+  const registerMutation = useRegisterPatientMutation()
 
   const onSubmit = handleSubmit(async (data) => {
     setApiError(null)

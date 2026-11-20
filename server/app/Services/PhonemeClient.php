@@ -88,6 +88,8 @@ class PhonemeClient
     /** @param array<string, mixed> $payload */
     private function isValidAssessment(array $payload): bool
     {
+        $transcriptPresence = ($payload['meta']['schemaVersion'] ?? null) === '2.0'
+            && ($payload['meta']['status'] ?? null) === 'unscorable' ? 'present' : 'required';
         $validator = Validator::make($payload, [
             'meta' => ['required', 'array:alignmentSource,cer,schemaVersion,status,measurement,modelVersion,calibrationVersion,learningEligible,language'],
             'meta.language' => ['sometimes', 'in:en,tl'],
@@ -100,7 +102,7 @@ class PhonemeClient
             'meta.learningEligible' => ['required_with:meta.schemaVersion', 'boolean'],
             'meta.cer' => ['required', 'numeric', 'min:0'],
             'analysis' => ['required', 'array:transcript,lowScoring,structured'],
-            'analysis.transcript' => ['required', 'string', 'max:5000'],
+            'analysis.transcript' => [$transcriptPresence, 'string', 'max:5000'],
             'analysis.lowScoring' => ['present', 'array', 'max:2000'],
             'analysis.lowScoring.*' => ['required', 'array:phoneme,score,word,wordIndex'],
             'analysis.lowScoring.*.phoneme' => ['required', 'string', 'max:32'],
@@ -109,7 +111,7 @@ class PhonemeClient
             'analysis.lowScoring.*.wordIndex' => ['present', 'nullable', 'integer', 'min:0'],
             'analysis.structured' => ['required', 'array:reference,transcript,overall,words,accurateUnits,needsWorkUnits'],
             'analysis.structured.reference' => ['required', 'string', 'max:800'],
-            'analysis.structured.transcript' => ['required', 'string', 'max:5000'],
+            'analysis.structured.transcript' => [$transcriptPresence, 'string', 'max:5000'],
             'analysis.structured.overall' => ['required', 'array:avgScore,percentAboveNeedsWork,status'],
             'analysis.structured.overall.avgScore' => ['required', 'numeric', 'between:0,100'],
             'analysis.structured.overall.percentAboveNeedsWork' => ['required', 'numeric', 'between:0,100'],

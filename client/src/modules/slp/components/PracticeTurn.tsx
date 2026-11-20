@@ -78,7 +78,7 @@ export default function PracticeTurn({
         </div>
       )}
       {error && (
-        <p role="alert" className="rounded-xl bg-red-50 p-4 text-red-900">
+        <p role="alert" className="rounded-box bg-red-50 p-4 text-red-900">
           {error}
         </p>
       )}

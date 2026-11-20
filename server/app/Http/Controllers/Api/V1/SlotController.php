@@ -6,14 +6,47 @@ use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SlotReadRequest;
 use App\Http\Resources\SlotResource;
+use App\Models\AuditLog;
 use App\Models\Slot;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 
 class SlotController extends Controller
 {
+    public function hide(Request $request, string $slot): SlotResource
+    {
+        $record = DB::transaction(function () use ($request, $slot): Slot {
+            $record = Slot::query()->whereKey($slot)->lockForUpdate()->firstOrFail();
+            Gate::authorize('hide', $record);
+
+            if ($record->status !== 'FREE') {
+                throw new ConflictHttpException('Only free slots can be hidden.');
+            }
+
+            if (! $record->is_hidden) {
+                $record->update(['is_hidden' => true]);
+                AuditLog::query()->create([
+                    'actor_id' => $request->user()->id,
+                    'actor_role' => UserRole::Clinician->value,
+                    'action' => 'slot.hidden',
+                    'entity_type' => 'slot',
+                    'entity_id' => $record->id,
+                    'request_id' => $request->attributes->get('request_id'),
+                    'details' => [],
+                ]);
+            }
+
+            return $record;
+        }, attempts: 3);
+
+        return SlotResource::make($record->load('clinician.profile.diagnosis'));
+    }
+
     public function index(SlotReadRequest $request): AnonymousResourceCollection
     {
         $user = $request->user();
@@ -25,7 +58,7 @@ class SlotController extends Controller
 
         if ($user->profile->role === UserRole::Clinician) {
             $query->where('clinician_id', $user->id);
-        } else {
+        } elseif ($user->profile->role === UserRole::Patient) {
             $query->where('status', 'FREE')
                 ->where('is_hidden', false)
                 ->where('start_at', '>', now())

@@ -6,6 +6,9 @@ import { getContext } from './integrations/tanstack-query/root-provider'
 import { NotFound } from './components/NotFound'
 import { DefaultCatchBoundary } from './components/DefaultCatchBoundary'
 
+import type { LinkProps } from '@tanstack/react-router'
+import type { PageMeta } from './constants/pageMeta'
+
 export function getRouter() {
   const context = getContext()
 
@@ -27,5 +30,10 @@ export function getRouter() {
 declare module '@tanstack/react-router' {
   interface Register {
     router: ReturnType<typeof getRouter>
+  }
+
+  interface StaticDataRouteOption {
+    bcLink?: LinkProps['to']
+    page?: PageMeta
   }
 }

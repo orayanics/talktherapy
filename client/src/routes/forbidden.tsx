@@ -8,7 +8,7 @@ export const Route = createFileRoute('/forbidden')({
 function RouteComponent() {
   return (
     <div className="bg-white flex h-screen flex-col items-center justify-center gap-4">
-      <div className="border border-slate-300 rounded-lg p-4 mx-auto w-100">
+      <div className="border border-slate-300 rounded-box p-4 mx-auto w-100">
         <h1 className="text-3xl font-bold">Forbidden</h1>
         <p className="mt-4 text-lg">
           You do not have permission to access this page or action.

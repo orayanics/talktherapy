@@ -5,4 +5,5 @@ export interface ScheduleParams {
   sort?: string
   diagnosis?: Array<string>
   clinician_id?: string
+  status?: Array<string>
 }

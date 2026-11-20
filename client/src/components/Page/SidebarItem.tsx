@@ -3,30 +3,40 @@ import type { NavItem } from '#/types/component'
 
 export interface SidebarItemProps {
   items?: Array<NavItem>
+  collapsed?: boolean
 }
 
 export default function SidebarItem(props: SidebarItemProps) {
-  const { items = [] } = props
+  const { items = [], collapsed = false } = props
 
   return (
-    <nav className="flex flex-col gap-1 mb-6">
+    <nav aria-label="Main navigation" className="flex flex-col gap-1">
       {items.map((item) => {
         const { label, to, icon } = item
         return (
           <Link
             key={to}
             to={to}
-            className="flex items-center px-3 py-2 rounded-lg  transition-colors group"
+            aria-label={label}
+            title={collapsed ? label : undefined}
+            className={`flex min-h-10 items-center rounded-lg px-3 py-2 gap-3 no-underline ${collapsed ? 'lg:justify-center lg:px-0' : ''}`}
             inactiveProps={{
-              className: 'text-slate-500 hover:bg-white hover:text-slate-900',
+              className: 'text-muted hover:bg-base-200 hover:text-base-content',
             }}
             activeProps={{
-              className:
-                'text-primary [&>span]:drop-shadow [&>span]:drop-shadow-primary/30',
+              className: 'font-medium bg-base-200 text-base-content',
             }}
           >
-            <span className="mr-3 h-5 w-4 opacity-70">{icon}</span>
-            <p className="font-semibold text-sm">{label}</p>
+            <span aria-hidden="true" className="shrink-0 [&>svg]:size-4.5">
+              {icon}
+            </span>
+            <p
+              className={
+                collapsed ? 'text-sm my-0! lg:hidden' : 'text-sm my-0!'
+              }
+            >
+              {label}
+            </p>
           </Link>
         )
       })}

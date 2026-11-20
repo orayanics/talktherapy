@@ -25,7 +25,10 @@ class ActivationController extends Controller
     public function verify(VerifyOtpRequest $request): JsonResponse
     {
         $user = User::query()->with('profile')->where('email', $request->string('email'))->first();
-        $challenge = $this->validChallenge($user, $request->string('otp_code')->toString());
+        $challenge = DB::transaction(fn (): ?ActivationChallenge => $this->validChallenge($user, $request->string('otp_code')->toString(), true));
+        if ($challenge === null) {
+            throw ValidationException::withMessages(['otp_code' => 'The verification code is invalid or expired.']);
+        }
 
         return new JsonResponse(['data' => [
             'role' => $user->profile->role->value,
@@ -65,9 +68,12 @@ class ActivationController extends Controller
 
     public function activate(ActivateAccountRequest $request): JsonResponse
     {
-        $user = DB::transaction(function () use ($request): User {
+        $user = DB::transaction(function () use ($request): ?User {
             $user = User::query()->with('profile')->where('email', $request->string('email'))->lockForUpdate()->first();
             $challenge = $this->validChallenge($user, $request->string('otp_code')->toString(), true);
+            if ($challenge === null) {
+                return null;
+            }
             if ($user->profile?->status !== UserStatus::Pending || $user->hasVerifiedEmail()) {
                 throw ValidationException::withMessages(['email' => 'This account cannot be activated.']);
             }
@@ -99,11 +105,18 @@ class ActivationController extends Controller
             return $user->refresh()->load('profile');
         });
 
+        if ($user === null) {
+            throw ValidationException::withMessages(['otp_code' => 'The verification code is invalid or expired.']);
+        }
+
         return new JsonResponse(['data' => ['status' => $user->profile->status->value]]);
     }
 
-    private function validChallenge(?User $user, string $code, bool $lock = false): ActivationChallenge
+    private function validChallenge(?User $user, string $code, bool $lock = false): ?ActivationChallenge
     {
+        if ($user === null) {
+            return null;
+        }
         $query = ActivationChallenge::query()->when($user, fn ($query) => $query->whereBelongsTo($user))
             ->where('purpose', 'activation')->latest();
         $challenge = $lock ? $query->lockForUpdate()->first() : $query->first();
@@ -113,7 +126,8 @@ class ActivationController extends Controller
             if ($challenge && ! $challenge->consumed_at && $challenge->attempts < $challenge->max_attempts) {
                 $challenge->increment('attempts');
             }
-            throw ValidationException::withMessages(['otp_code' => 'The verification code is invalid or expired.']);
+
+            return null;
         }
 
         return $challenge;

@@ -1,3 +1,4 @@
+import { retryApiQuery } from '#/lib/api/query'
 import { queryOptions } from '@tanstack/react-query'
 import { api } from '#/lib/api/client'
 import type { QueryParams, Meta } from '#/types/api'
@@ -26,11 +27,13 @@ export const fetchUsers = (
 
   return queryOptions<UsersResponse>({
     queryKey: ['users', query],
-    queryFn: async () => {
+    retry: retryApiQuery,
+    queryFn: async ({ signal }) => {
       const { data, meta } = await api<{ data: AdminUser[]; meta: Meta }>(
         '/api/v1/users',
         {
           method: 'GET',
+          signal,
           params: query,
         },
       )
@@ -43,14 +46,15 @@ export const fetchUsers = (
 export const fetchUser = (id: string) => {
   return queryOptions<AdminUser>({
     queryKey: ['user', id],
-    queryFn: async () => {
+    retry: retryApiQuery,
+    queryFn: async ({ signal }) => {
       const { data } = await api<{ data: AdminUser }>(`/api/v1/users/${id}`, {
         method: 'GET',
+        signal,
       })
       return data
     },
     staleTime: 1000 * 60 * 30,
-    retry: false,
   })
 }
 
@@ -64,14 +68,15 @@ export const fetchUsersCount = (searchParams: UsersParams = {}) => {
   }
   return queryOptions<CountResponse>({
     queryKey: ['users-count', query],
-    queryFn: async () => {
+    retry: retryApiQuery,
+    queryFn: async ({ signal }) => {
       const data = await api<CountResponse>('/api/v1/users/counts', {
         method: 'GET',
+        signal,
         params: query,
       })
       return data
     },
     staleTime: 1000 * 60 * 30,
-    retry: false,
   })
 }

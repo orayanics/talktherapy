@@ -5,7 +5,8 @@ import { useState } from 'react'
 import { ScheduleSchema } from '../types/schema'
 import type { TSchedule } from '../types/schema'
 
-import { mutateSchedule } from '#/modules/schedules/api/schedules'
+import { useScheduleMutation } from '#/modules/schedules/hooks/useScheduleMutation'
+
 import { errMsg } from '#/lib/errorMessage'
 
 export default function useScheduleForm() {
@@ -27,7 +28,7 @@ export default function useScheduleForm() {
     },
   })
 
-  const scheduleMutation = mutateSchedule()
+  const scheduleMutation = useScheduleMutation()
 
   const onSubmit = handleSubmit(async (data) => {
     setApiError(null)

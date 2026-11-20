@@ -1,5 +1,6 @@
 export interface QueryParams {
   page?: number
+  per_page?: number
 }
 export interface Meta {
   current_page: number

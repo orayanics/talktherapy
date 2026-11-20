@@ -12,7 +12,7 @@ import {
   Send,
 } from 'lucide-react'
 
-import type { USER_ROLE } from '#/types/account'
+import type { USER_ROLE } from '#/modules/auth/types/account'
 import type { NavItem } from '#/types/component'
 
 export const superadmin_NAV_ITEMS = [
@@ -25,6 +25,16 @@ export const superadmin_NAV_ITEMS = [
     label: 'Users',
     to: '/users',
     icon: <User size={16} />,
+  },
+  {
+    label: 'Appointments',
+    to: '/appointments',
+    icon: <ClipboardClock size={16} />,
+  },
+  {
+    label: 'Schedule Slots',
+    to: '/schedules',
+    icon: <Calendar size={16} />,
   },
   {
     label: 'Content',
@@ -92,11 +102,6 @@ export const CLINICIAN_NAV_ITEMS = [
     icon: <LayoutDashboard size={16} />,
   },
   {
-    label: 'Schedules',
-    to: '/schedules',
-    icon: <Calendar size={16} />,
-  },
-  {
     label: 'Appointments',
     to: '/appointments',
     icon: <ClipboardClock size={16} />,
@@ -106,7 +111,11 @@ export const CLINICIAN_NAV_ITEMS = [
     to: '/patients',
     icon: <User size={16} />,
   },
-
+  {
+    label: 'Schedule Slots',
+    to: '/schedules',
+    icon: <Calendar size={16} />,
+  },
   {
     label: 'Content',
     to: '/content',

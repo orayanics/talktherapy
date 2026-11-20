@@ -14,7 +14,7 @@ export default function SlpImprovement({ result }: SlpImprovementProps) {
         {result.analysis.structured.needsWorkUnits.slice(0, 10).map((item) => (
           <li
             key={`needs-${item.unit}`}
-            className="bg-white shadow-sm rounded-lg
+            className="bg-white  rounded-box
                 border border-slate-300
                 flex items-start justify-between gap-3 p-3"
           >

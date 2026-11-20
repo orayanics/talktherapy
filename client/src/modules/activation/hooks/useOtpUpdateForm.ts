@@ -5,9 +5,10 @@ import { ActivateAccountSchema } from '../types/schema'
 import type { TActivateAccount } from '../types/schema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
-  mutateActivateAccount,
-  mutateResendOtp,
-} from '#/modules/activation/api/activate'
+  useActivateAccountMutation,
+  useResendOtpMutation,
+} from '#/modules/activation/hooks/useActivationMutations'
+
 import { useNavigate } from '@tanstack/react-router'
 import { errMsg } from '#/lib/errorMessage'
 
@@ -42,8 +43,8 @@ export default function useOtpUpdateForm({
     },
   })
 
-  const activateAccountMutation = mutateActivateAccount()
-  const resendOtpMutation = mutateResendOtp()
+  const activateAccountMutation = useActivateAccountMutation()
+  const resendOtpMutation = useResendOtpMutation()
   const isPatient = role?.toLowerCase() === 'patient'
 
   const onSubmit = handleSubmit(async (data) => {

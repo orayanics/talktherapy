@@ -7,3 +7,6 @@ slp-env
 _server
 
 artifacts
+
+__pycache__/
+*.py[cod]

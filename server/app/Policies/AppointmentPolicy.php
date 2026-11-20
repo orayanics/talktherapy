@@ -10,12 +10,14 @@ class AppointmentPolicy
 {
     public function viewAny(User $user): bool
     {
-        return in_array($user->profile?->role, [UserRole::Patient, UserRole::Clinician], true);
+        return in_array($user->profile?->role, [UserRole::Patient, UserRole::Clinician, UserRole::Superadmin], true);
     }
 
     public function view(User $user, Appointment $appointment): bool
     {
-        return $user->id === $appointment->patient_id || $user->id === $appointment->clinician_id;
+        return $user->profile?->role === UserRole::Superadmin
+            || $user->id === $appointment->patient_id
+            || $user->id === $appointment->clinician_id;
     }
 
     public function create(User $user): bool

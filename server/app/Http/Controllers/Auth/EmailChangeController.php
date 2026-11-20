@@ -36,7 +36,7 @@ class EmailChangeController extends Controller
 
     public function confirm(ConfirmEmailChangeRequest $request): JsonResponse
     {
-        DB::transaction(function () use ($request): void {
+        $confirmed = DB::transaction(function () use ($request): bool {
             $user = $request->user();
             $challenge = ActivationChallenge::query()->whereBelongsTo($user)->where('purpose', 'email_change')
                 ->latest()->lockForUpdate()->first();
@@ -45,7 +45,8 @@ class EmailChangeController extends Controller
                 if ($challenge && ! $challenge->consumed_at && $challenge->attempts < $challenge->max_attempts) {
                     $challenge->increment('attempts');
                 }
-                throw ValidationException::withMessages(['otp_code' => 'The verification code is invalid or expired.']);
+
+                return false;
             }
 
             if (User::query()->where('email', $challenge->new_email)->whereKeyNot($user->id)->exists()) {
@@ -58,7 +59,13 @@ class EmailChangeController extends Controller
                 'action' => 'identity.email_changed', 'entity_type' => 'user', 'entity_id' => $user->id,
                 'request_id' => $request->attributes->get('request_id'),
             ]);
+
+            return true;
         });
+
+        if (! $confirmed) {
+            throw ValidationException::withMessages(['otp_code' => 'The verification code is invalid or expired.']);
+        }
 
         return new JsonResponse(['data' => ['email' => $request->user()->fresh()->email]]);
     }

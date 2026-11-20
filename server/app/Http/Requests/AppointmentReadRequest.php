@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Validator;
 
 class AppointmentReadRequest extends FormRequest
@@ -20,7 +21,16 @@ class AppointmentReadRequest extends FormRequest
             'date_from' => ['sometimes', 'date_format:Y-m-d'],
             'date_to' => ['sometimes', 'date_format:Y-m-d'],
             'sort' => ['sometimes', 'in:asc,desc'],
+            'status' => ['sometimes', 'array'],
+            'status.*' => [Rule::in(['PENDING', 'ACCEPTED', 'REJECT', 'CANCELLED', 'COMPLETED'])],
         ];
+    }
+
+    protected function prepareForValidation(): void
+    {
+        if (is_string($this->input('status'))) {
+            $this->merge(['status' => [$this->input('status')]]);
+        }
     }
 
     /** @return array<int, callable(Validator): void> */

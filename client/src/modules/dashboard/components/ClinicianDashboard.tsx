@@ -1,7 +1,10 @@
+import type { TAppointmentAction } from '#/modules/appointments/types/schema'
 import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
+import ScheduleCalendar from '#/modules/schedules/components/ScheduleCalendar'
 
 import { fetchAppointments } from '#/modules/appointments/api/appointments'
+import { fetchDashboardSummary } from '#/modules/dashboard/api/dashboard'
 
 import StateLoading from '#/components/State/StateLoading'
 import StateError from '#/components/State/StateError'
@@ -17,53 +20,46 @@ import AcceptAppointmentModal from '#/modules/appointments/components/AcceptAppo
 import useAcceptAppointment from '#/modules/appointments/hooks/useAcceptAppointment'
 import CompleteAppointmentModal from '#/modules/appointments/components/CompleteAppointmentModal'
 import useCompleteAppointment from '#/modules/appointments/hooks/useCompleteAppointment'
-
-function todayRange() {
-  const today = formatDate(new Date(), 'yyyy-MM-dd')
-
-  return {
-    from: today,
-    to: today,
-  }
-}
+import ScheduleData from './clinician/ScheduleData'
+import ClinicianSummary from './clinician/ClinicianSummary'
+import AppointmentDetailsDrawer from '#/modules/appointments/components/AppointmentDetailsDrawer'
 
 export default function ClinicianDashboard() {
   const [selected, setSelected] = useState<string | null>(null)
   const [openReject, setOpenReject] = useState(false)
   const [openAccept, setOpenAccept] = useState(false)
   const [openComplete, setOpenComplete] = useState(false)
+  const [detailsAppointmentId, setDetailsAppointmentId] = useState<
+    string | null
+  >(null)
 
-  const { from, to } = todayRange()
-
-  const q = useQuery(fetchAppointments({}, { from, to }))
-  const appointments = q.data?.data ?? []
-
-  // next 7 days
-  const weekFrom = formatDate(new Date(), 'yyyy-MM-dd')
-  const start = new Date(`${weekFrom}T00:00:00.000Z`)
+  const today = formatDate(new Date(), 'yyyy-MM-dd')
+  const start = new Date(`${today}T00:00:00.000Z`)
+  start.setUTCDate(start.getUTCDate() - ((start.getUTCDay() + 6) % 7))
+  const weekFrom = formatDate(start, 'yyyy-MM-dd')
   const end = new Date(start)
   end.setUTCDate(end.getUTCDate() + 6)
+  const weekTo = formatDate(end, 'yyyy-MM-dd')
 
-  const qWeek = useQuery(
-    fetchAppointments({}, { from: weekFrom, to: formatDate(end, 'yyyy-MM-dd') }),
+  // shortcut: the dashboard loads at most 100 weekly appointments, paginate if weekly volume can exceed that.
+  const q = useQuery(
+    fetchAppointments(
+      { per_page: 100 },
+      { from: weekFrom, to: weekTo, sort: 'asc' },
+    ),
+  )
+  const appointments = q.data?.data ?? []
+  const todayAppointments = appointments.filter(
+    (appointment) =>
+      formatDate(appointment.slot.start_at, 'yyyy-MM-dd') === today,
   )
 
-  const weekAppointments = qWeek.data?.data ?? []
-
-  // init counts
-  const countsByDay: Record<string, number> = {}
-
-  for (let day = 0; day < 7; day += 1) {
-    const date = new Date(start)
-    date.setUTCDate(start.getUTCDate() + day)
-    countsByDay[formatDate(date, 'EEE MMM dd yyyy')] = 0
-  }
-
-  // count
-  for (const appt of weekAppointments) {
-    const key = formatDate(appt.slot.start_at, 'EEE MMM dd yyyy')
-    countsByDay[key] = (countsByDay[key] ?? 0) + 1
-  }
+  const summaryQ = useQuery(
+    fetchDashboardSummary({
+      date_from: weekFrom,
+      date_to: weekTo,
+    }),
+  )
 
   const {
     submit: submitReject,
@@ -88,17 +84,17 @@ export default function ClinicianDashboard() {
     setOpenComplete(true)
   }
 
-  const handleRejectSubmit = async (payload: any) => {
+  const handleRejectSubmit = async (payload: TAppointmentAction) => {
     if (!selected) return
     await submitReject(selected, payload)
   }
 
-  const handleAcceptSubmit = async (payload?: any) => {
+  const handleAcceptSubmit = async (payload?: { is_hidden?: boolean }) => {
     if (!selected) return
     await acceptAction.submit(selected, payload)
   }
 
-  const handleCompleteSubmit = async (payload?: any) => {
+  const handleCompleteSubmit = async (payload?: { is_hidden?: boolean }) => {
     if (!selected) return
     await completeAction.submit(selected, payload)
   }
@@ -126,6 +122,7 @@ export default function ClinicianDashboard() {
 
   return (
     <div className="space-y-6">
+      <ClinicianSummary summary={summaryQ.data} />
       <section className="space-y-4">
         <div>
           <p className="text-lg font-bold text-slate-900 uppercase tracking-tight">
@@ -136,34 +133,31 @@ export default function ClinicianDashboard() {
           </p>
         </div>
 
-        <div className="grid grid-cols-3 lg:grid-cols-7 gap-2">
-          {Array.from({ length: 7 }).map((_, i) => {
-            const d = new Date(start)
-            d.setUTCDate(start.getUTCDate() + i)
-            const label = d.toLocaleDateString(undefined, {
-              weekday: 'short',
-              day: 'numeric',
-            })
-            const count = countsByDay[formatDate(d, 'EEE MMM dd yyyy')] ?? 0
-            const dateStr = formatDate(d, 'yyyy-MM-dd')
-            return (
-              <Link
-                key={d.toDateString()}
-                to="/schedules"
-                search={{
-                  from: dateStr,
-                }}
-                className="p-4 bg-white border border-slate-200 shadow-xs rounded-lg flex flex-col items-center gap-2"
-              >
-                <div className="text-sm text-slate-900">{label}</div>
-                <div className="text-center">
-                  <p className="text-sm font-bold">{count}</p>
-                  <p className="text-xs text-slate-500">Appointments</p>
-                </div>
-              </Link>
-            )
-          })}
-        </div>
+        <ScheduleCalendar
+          start={today}
+          days={7}
+          appointments={appointments}
+          isClinician
+          onOpenAction={(appointment) => openRejectAction(appointment.id)}
+          onOpenAcceptAction={(appointment) => openAcceptAction(appointment.id)}
+          onOpenCompleteAction={(appointment) =>
+            openCompleteAction(appointment.id)
+          }
+          onAppointmentClick={(appointment) =>
+            setDetailsAppointmentId(appointment.id)
+          }
+          renderDay={(date) => (
+            <ScheduleData
+              appointments={appointments.filter(
+                (appointment) =>
+                  formatDate(appointment.slot.start_at, 'yyyy-MM-dd') === date,
+              )}
+              onAppointmentClick={(appointment) =>
+                setDetailsAppointmentId(appointment.id)
+              }
+            />
+          )}
+        />
       </section>
 
       <section className="space-y-4">
@@ -176,24 +170,24 @@ export default function ClinicianDashboard() {
           </p>
         </div>
 
-        {appointments.length === 0 ? (
+        {todayAppointments.length === 0 ? (
           <StateNull />
         ) : (
-          <div className="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden flex flex-col">
+          <div className="bg-white rounded-box border border-border overflow-hidden flex flex-col">
             <TableBase
-              data={appointments}
+              data={todayAppointments}
               columns={[
                 {
                   header: 'Patient',
                   accessor: 'patient',
                   render: (row) => (
-                    <Link
-                      to="/appointments/$appointmentId"
-                      params={{ appointmentId: row.id }}
+                    <button
+                      type="button"
                       className="link link-hover"
+                      onClick={() => setDetailsAppointmentId(row.id)}
                     >
                       {row.patient.name}
-                    </Link>
+                    </button>
                   ),
                 },
                 {
@@ -272,6 +266,11 @@ export default function ClinicianDashboard() {
           </div>
         )}
       </section>
+
+      <AppointmentDetailsDrawer
+        appointmentId={detailsAppointmentId}
+        onClose={() => setDetailsAppointmentId(null)}
+      />
 
       <AppointmentActionModal
         isOpen={openReject}

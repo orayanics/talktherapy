@@ -1,13 +1,11 @@
-import { useMutation, useQueryClient, queryOptions } from '@tanstack/react-query'
+import { queryOptions } from '@tanstack/react-query'
+
 import { api } from '#/lib/api/client'
 
+import type { Meta } from '#/types/api'
+
 export type SlpExerciseModule =
-  | 'fluency'
-  | 'timing'
-  | 'articulation'
-  | 'aphasia'
-  | 'voice'
-  | 'motor_speech'
+  'fluency' | 'timing' | 'articulation' | 'aphasia' | 'voice' | 'motor_speech'
 
 export interface SlpExerciseVersion {
   id: string
@@ -42,39 +40,45 @@ export interface SlpExerciseInput {
 }
 
 type ExerciseResponse = { data: SlpExercise }
-type ExerciseListResponse = { data: SlpExercise[]; meta: Record<string, unknown> }
+export interface SlpExerciseFilters {
+  module?: SlpExerciseModule
+  language?: string
+  scope?: 'private' | 'shared'
+}
+
+type ExerciseListResponse = { data: SlpExercise[]; meta: Meta }
 
 export const slpExerciseKeys = {
   all: ['slp-exercises'] as const,
-  list: (page = 1) => ['slp-exercises', 'list', page] as const,
+  list: (page = 1, filters: SlpExerciseFilters = {}) =>
+    ['slp-exercises', 'list', page, filters] as const,
   detail: (id: string) => ['slp-exercises', id] as const,
 }
 
-export const fetchSlpExercises = (page = 1) => queryOptions<ExerciseListResponse>({
-  queryKey: slpExerciseKeys.list(page),
-  queryFn: () => api<ExerciseListResponse>('/api/v1/slp/exercises', { method: 'GET', params: { page } }),
-})
-
-export const mutateCreateSlpExercise = () => {
-  const queryClient = useQueryClient()
-  return useMutation({
-    mutationFn: (input: SlpExerciseInput) => api<ExerciseResponse>('/api/v1/slp/exercises', { method: 'POST', data: input }),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: slpExerciseKeys.all }),
+export const fetchSlpExercises = (page = 1, filters: SlpExerciseFilters = {}) =>
+  queryOptions<ExerciseListResponse>({
+    queryKey: slpExerciseKeys.list(page, filters),
+    queryFn: () =>
+      api<ExerciseListResponse>('/api/v1/slp/exercises', {
+        method: 'GET',
+        params: { page, ...filters },
+      }),
   })
-}
 
-export const mutateUpdateSlpExercise = (id: string) => {
-  const queryClient = useQueryClient()
-  return useMutation({
-    mutationFn: (input: Partial<SlpExerciseInput>) => api<ExerciseResponse>(`/api/v1/slp/exercises/${id}`, { method: 'PATCH', data: input }),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: slpExerciseKeys.all }),
+export const mutateCreateSlpExercise = (input: SlpExerciseInput) =>
+  api<ExerciseResponse>('/api/v1/slp/exercises', {
+    method: 'POST',
+    data: input,
   })
-}
 
-export const mutateArchiveSlpExercise = (id: string) => {
-  const queryClient = useQueryClient()
-  return useMutation({
-    mutationFn: () => api<void>(`/api/v1/slp/exercises/${id}`, { method: 'DELETE' }),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: slpExerciseKeys.all }),
+export const mutateUpdateSlpExercise = (
+  id: string,
+  input: Partial<SlpExerciseInput>,
+) =>
+  api<ExerciseResponse>(`/api/v1/slp/exercises/${id}`, {
+    method: 'PATCH',
+    data: input,
   })
-}
+
+export const mutateArchiveSlpExercise = (id: string) =>
+  api<void>(`/api/v1/slp/exercises/${id}`, { method: 'DELETE' })

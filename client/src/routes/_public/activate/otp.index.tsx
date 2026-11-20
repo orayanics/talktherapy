@@ -1,3 +1,4 @@
+import AuthLayout from '#/modules/auth/components/AuthLayout'
 import { createFileRoute } from '@tanstack/react-router'
 import { z } from 'zod'
 import FormOtp from '#/modules/activation/components/FormOtp'
@@ -11,5 +12,12 @@ export const Route = createFileRoute('/_public/activate/otp/')({
 
 function RouteComponent() {
   const { email } = Route.useSearch()
-  return <FormOtp initialEmail={email} />
+  return (
+    <AuthLayout
+      title="Activate your account"
+      description="Enter the verification code sent to your email to get started."
+    >
+      <FormOtp initialEmail={email} />
+    </AuthLayout>
+  )
 }

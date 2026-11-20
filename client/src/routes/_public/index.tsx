@@ -1,14 +1,20 @@
 import { createFileRoute } from '@tanstack/react-router'
 import Landing from '#/modules/landing/components/Landing'
-// import Values from '#/modules/landing/Values'
 
-export const Route = createFileRoute('/_public/')({ component: App })
+export const Route = createFileRoute('/_public/')({
+  head: () => ({
+    meta: [
+      { title: 'TalkTherapy | Your voice matters' },
+      {
+        name: 'description',
+        content:
+          'Connect with a therapist, make time for speech practice, and keep your care together with TalkTherapy.',
+      },
+    ],
+  }),
+  component: App,
+})
 
 function App() {
-  return (
-    <>
-      <Landing />
-      {/* <Values /> */}
-    </>
-  )
+  return <Landing />
 }

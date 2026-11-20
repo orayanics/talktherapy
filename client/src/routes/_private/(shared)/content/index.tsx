@@ -3,6 +3,10 @@ import { createFileRoute } from '@tanstack/react-router'
 
 import ContentList from '#/modules/content/components/ContentList'
 import { toArray } from '#/utils/query'
+import { fetchContentList } from '#/modules/content/api/content'
+import StateLoading from '#/components/State/StateLoading'
+import { PAGE_META } from '#/constants/pageMeta'
+import PageLayout from '#/components/Page/PageLayout'
 
 const searchSchema = z
   .object({
@@ -15,7 +19,7 @@ const searchSchema = z
       .refine((v) => v === '' || v.length > 0),
 
     diagnosis: z
-      .any()
+      .unknown()
       .optional()
       .transform((v) =>
         toArray(v)
@@ -41,6 +45,35 @@ const searchSchema = z
   }))
 
 export const Route = createFileRoute('/_private/(shared)/content/')({
+  staticData: { page: PAGE_META.content, bcLink: '.' },
   validateSearch: (search) => searchSchema.parse(search),
-  component: () => <ContentList />,
+  loaderDeps: ({ search }) => ({
+    page: search.page,
+    search: search.search,
+    diagnosis: search.diagnosis,
+    sort: search.sort,
+    is_bookmarked: search.is_bookmarked,
+  }),
+  loader: ({ context, deps }) =>
+    context.queryClient.query(
+      fetchContentList(
+        { page: deps.page },
+        {
+          search: deps.search || undefined,
+          diagnosis: deps.diagnosis,
+          sort: deps.sort ?? 'desc',
+          is_bookmarked: deps.is_bookmarked,
+        },
+      ),
+    ),
+  pendingComponent: StateLoading,
+  component: () => (
+    <PageLayout
+      title={PAGE_META.content.title}
+      description={PAGE_META.content.description}
+      paddedCh
+    >
+      <ContentList />
+    </PageLayout>
+  ),
 })

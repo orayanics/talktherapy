@@ -1,4 +1,3 @@
-import { useQuery } from '@tanstack/react-query'
 import { isAxiosError } from 'axios'
 import { api, initializeCsrf } from '#/lib/api/client'
 import type { UserResponse } from '#/modules/auth/types/session'
@@ -29,28 +28,21 @@ export const toUser = (user: UserResource): UserResponse => ({
   updatedAt: user.updated_at,
 })
 
-export const authClient = {
-  useSession: () =>
-    useQuery({
-      queryKey: ['session'],
-      retry: false,
-      queryFn: async () => {
-        try {
-          const { data } = await api<{ data: UserResource }>('/api/v1/me')
-          return { user: toUser(data) }
-        } catch (error) {
-          if (
-            isAxiosError(error) &&
-            [401, 403].includes(error.response?.status ?? 0)
-          )
-            return null
-          throw error
-        }
-      },
-    }),
-  signOut: async (options?: { fetchOptions?: { onSuccess?: () => void } }) => {
-    await initializeCsrf()
-    await api('/logout', { method: 'POST' })
-    options?.fetchOptions?.onSuccess?.()
-  },
+export type Session = { user: UserResponse } | null
+
+export async function fetchSession(signal?: AbortSignal): Promise<Session> {
+  if (typeof window === 'undefined')
+    throw new Error('Session checks require a browser')
+  try {
+    const { data } = await api<{ data: UserResource }>('/api/v1/me', { signal })
+    return { user: toUser(data) }
+  } catch (error) {
+    if (!isAxiosError(error) || error.response?.status !== 401) throw error
+    return null
+  }
+}
+
+export async function mutateSignOut() {
+  await initializeCsrf()
+  await api('/logout', { method: 'POST' })
 }

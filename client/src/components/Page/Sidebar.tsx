@@ -1,13 +1,24 @@
 import React, { useState } from 'react'
-import { Bell, Menu } from 'lucide-react'
+import {
+  Bell,
+  LogOut,
+  Menu,
+  PanelLeftClose,
+  PanelLeftOpen,
+  X,
+} from 'lucide-react'
 
-import type { USER_ROLE } from '#/types/account'
+import type { USER_ROLE } from '#/modules/auth/types/account'
 import { NAV_BY_ROLE } from '#/constants/sidebar'
 
 import SidebarItem from './SidebarItem'
-import { authClient } from '#/modules/auth/api/auth-client'
+import { useLogoutMutation } from '#/modules/auth/hooks/useLogoutMutation'
 import NotificationList from '#/modules/notifications/components/NotificationList'
-import { useNotifications } from '#/modules/notifications/hooks/useNotifications'
+import { useUnreadNotificationCount } from '#/modules/notifications/hooks/useNotifications'
+import Drawer from '#/components/Drawer'
+import Breadcrumbs from './Breadcrumbs'
+
+const SIDEBAR_COLLAPSED_KEY = 'talktherapy.sidebar.collapsed'
 
 export interface SidebarProps {
   children: React.ReactNode
@@ -17,134 +28,172 @@ export interface SidebarProps {
 export default function Sidebar(props: SidebarProps) {
   const { children, role } = props
   const [show, setShow] = useState(false)
-  const { unreadCount } = useNotifications()
+  const [isMenuOpen, setMenuOpen] = useState(false)
+  const [isCollapsed, setIsCollapsed] = useState(() => {
+    if (typeof window === 'undefined') return false
 
+    try {
+      return window.localStorage.getItem(SIDEBAR_COLLAPSED_KEY) === 'true'
+    } catch {
+      return false
+    }
+  })
+  const { data: unreadCount = 0 } = useUnreadNotificationCount()
+
+  const logout = useLogoutMutation()
   const navItems = NAV_BY_ROLE[role]
 
   const handleLogout = async () => {
-    await authClient.signOut({
-      fetchOptions: {
-        onSuccess: () => {
-          window.location.href = '/login'
-        },
-      },
+    await logout.mutateAsync()
+    window.location.href = '/login'
+  }
+
+  const toggleCollapsed = () => {
+    setIsCollapsed((current) => {
+      const next = !current
+
+      try {
+        window.localStorage.setItem(SIDEBAR_COLLAPSED_KEY, String(next))
+      } catch {
+        // Storage can be unavailable in restricted browser contexts.
+      }
+
+      return next
     })
   }
 
   return (
-    <aside className="drawer lg:drawer-open font-sans">
-      <input id="my-drawer-3" type="checkbox" className="drawer-toggle" />
-
-      <div className="drawer-content flex flex-col min-h-screen">
-        <div className="bg-white border-b border-slate-300 lg:hidden w-full flex flex-row items-center justify-end px-4 h-16 shrink-0">
-          <label
-            htmlFor="my-drawer-3"
-            className="btn btn-square border border-slate-300"
-          >
-            <Menu className="h-5 w-5 text-black" />
-          </label>
-
-          <div className="items-center justify-end px-4 relative">
-            <button
-              className="btn btn-square border border-slate-300"
-              onClick={() => setShow((s) => !s)}
-              aria-label={
-                unreadCount > 0
-                  ? `Notifications, ${unreadCount} unread`
-                  : 'Notifications'
-              }
-            >
-              <Bell size={19} strokeWidth={2.2} />
-              {unreadCount > 0 && (
-                <span className="absolute right-2 top-1 badge badge-error badge-xs min-w-4 px-1 text-[10px] text-white">
-                  {unreadCount > 99 ? '99+' : unreadCount}
-                </span>
-              )}
-            </button>
-            {show && (
-              <div
-                className="fixed inset-0 z-50"
-                role="dialog"
-                aria-modal="true"
-                aria-label="Notifications"
+    <Drawer
+      isOpen={isMenuOpen}
+      onClose={() => setMenuOpen(false)}
+      hideHeader
+      label="Navigation"
+      position="start"
+      className="lg:drawer-open"
+      sideClassName="z-40 lg:z-1!"
+      contentClassName="flex min-h-0 min-w-0 h-dvh flex-col"
+      panelClassName={`app-sidebar w-60 max-w-[85vw] h-dvh bg-base-100 flex flex-col border-e border-border ${isCollapsed ? 'lg:w-16' : 'lg:w-60'}`}
+      content={
+        <>
+          <a href="#app-main" className="app-skip-link">
+            Skip to content
+          </a>
+          <div className="bg-base-100 border-b border-border w-full flex items-center justify-between gap-3 px-4 sm:px-6 h-16 shrink-0">
+            <div className="flex min-w-0 flex-1 items-center gap-3">
+              <button
+                type="button"
+                className="btn btn-square btn-flat btn-sm hidden lg:inline-flex"
+                onClick={toggleCollapsed}
+                aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+                aria-pressed={isCollapsed}
+                title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
               >
-                <button
-                  className="absolute inset-0 bg-slate-900/30"
-                  aria-label="Close notifications"
-                  onClick={() => setShow(false)}
-                />
-                <section className="absolute inset-y-0 right-0 flex w-full max-w-md flex-col bg-white shadow-2xl">
-                  <div className="flex items-center justify-between border-b border-slate-200 px-5 py-4">
-                    <h2 className="text-base font-bold text-slate-900">
-                      Notifications
-                    </h2>
-                    <button
-                      className="btn btn-sm btn-ghost"
-                      onClick={() => setShow(false)}
-                    >
-                      Close
-                    </button>
-                  </div>
-                  <div className="min-h-0 flex-1 p-4">
+                {isCollapsed ? (
+                  <PanelLeftOpen size={16} strokeWidth={2.5} />
+                ) : (
+                  <PanelLeftClose size={16} strokeWidth={2.5} />
+                )}
+              </button>
+
+              <button
+                type="button"
+                aria-label="Open navigation"
+                aria-expanded={isMenuOpen}
+                onClick={() => setMenuOpen(true)}
+                className="btn btn-square btn-flat btn-sm lg:hidden"
+              >
+                <Menu size={16} strokeWidth={2.5} />
+              </button>
+              <Breadcrumbs />
+            </div>
+
+            <div className="shrink-0 items-center justify-end relative">
+              <button
+                type="button"
+                className={`btn btn-sm btn-flat btn-square relative ${unreadCount > 0 ? 'bg-primary/10 text-primary ring-1 ring-primary/30' : ''}`}
+                onClick={() => setShow((s) => !s)}
+                aria-label={
+                  unreadCount > 0
+                    ? `Notifications, ${unreadCount} unread`
+                    : 'Notifications'
+                }
+                aria-expanded={show}
+                aria-haspopup="dialog"
+              >
+                <Bell size={16} strokeWidth={2.5} />
+                {unreadCount > 0 && (
+                  <span
+                    aria-hidden="true"
+                    className="absolute -top-1 -right-1 min-w-4 rounded-full bg-error px-1 text-[10px] font-bold leading-4 text-error-content"
+                  >
+                    {unreadCount > 99 ? '99+' : unreadCount}
+                  </span>
+                )}
+              </button>
+              {show && (
+                <Drawer
+                  isOpen
+                  onClose={() => setShow(false)}
+                  label="Notifications"
+                  className="fixed inset-0 z-50"
+                  sideClassName="z-50"
+                  panelProps={{ role: 'dialog', 'aria-modal': true }}
+                  panelClassName="flex h-full w-full max-w-md flex-col bg-white "
+                >
+                  <div className="min-h-0 flex-1 p-4 pt-2">
                     <NotificationList />
                   </div>
-                </section>
-              </div>
-            )}
-          </div>
-        </div>
-        <div className="flex-1 w-full bg-slate-50 lg:z-10 relative overflow-auto">
-          {children}
-        </div>
-      </div>
-
-      <div className="drawer-side z-1!">
-        <label
-          htmlFor="my-drawer-3"
-          aria-label="close sidebar"
-          className="drawer-overlay"
-        ></label>
-
-        {/* Sidebar Panel */}
-        <div className="w-64 min-h-full bg-white flex flex-col pt-6 pb-4 lg:border-e border-slate-300">
-          {/* Brand Logo */}
-          <div className="px-6 flex items-center gap-2 mb-6">
-            <div className="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center text-white">
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M12 2L2 7l10 5 10-5-10-5z" />
-                <path d="M2 17l10 5 10-5" />
-                <path d="M2 12l10 5 10-5" />
-              </svg>
+                </Drawer>
+              )}
             </div>
-            <span className="font-bold text-[18px] tracking-tight text-slate-900">
-              TalkTherapy
-            </span>
           </div>
-
-          {/* Navigation Links mimicking HR Design */}
-          <div className="overflow-y-auto px-4 flex-1">
-            <SidebarItem items={navItems} />
+          <div className="min-h-0 min-w-0 flex-1 w-full relative overflow-auto">
+            {children}
           </div>
-
-          <div className="p-4 mt-auto">
-            <button
-              onClick={handleLogout}
-              className="btn btn-block btn-neutral w-full"
-            >
-              Logout
-            </button>
-          </div>
-        </div>
+        </>
+      }
+    >
+      <div
+        className={`flex h-16 shrink-0 items-center border-b border-border px-5 text-sm font-semibold tracking-tight ${isCollapsed ? 'lg:justify-center lg:px-0' : ''}`}
+      >
+        <span className={isCollapsed ? 'lg:hidden' : undefined}>
+          TalkTherapy
+        </span>
+        {isCollapsed && (
+          <span className="hidden lg:inline" aria-hidden="true">
+            T
+          </span>
+        )}
+        <button
+          type="button"
+          className="btn btn-sm btn-square btn-ghost ml-auto lg:hidden"
+          aria-label="Close navigation"
+          onClick={() => setMenuOpen(false)}
+        >
+          <X size={18} aria-hidden="true" />
+        </button>
       </div>
-    </aside>
+      <div
+        className="overflow-y-auto p-3 flex-1"
+        onClick={(event) => {
+          if ((event.target as HTMLElement).closest('a')) setMenuOpen(false)
+        }}
+      >
+        <SidebarItem items={navItems} collapsed={isCollapsed} />
+      </div>
+
+      <div className="p-3 mt-auto border-t border-border">
+        <button
+          type="button"
+          onClick={handleLogout}
+          aria-label="Log out"
+          title="Log out"
+          className={`btn btn-ghost w-full justify-start ${isCollapsed ? 'lg:btn-square lg:justify-center' : ''}`}
+        >
+          <LogOut size={18} aria-hidden="true" />
+          <span className={isCollapsed ? 'lg:hidden' : undefined}>Log out</span>
+        </button>
+      </div>
+    </Drawer>
   )
 }

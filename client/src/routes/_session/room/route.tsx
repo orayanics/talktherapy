@@ -1,38 +1,23 @@
-import { createFileRoute, Navigate, Outlet } from '@tanstack/react-router'
-import { authClient } from '#/modules/auth/api/auth-client'
-
+import { createFileRoute, Outlet } from '@tanstack/react-router'
 import { SessionProvider } from '#/modules/auth/context/SessionContext'
-import type { SessionContextValue } from '#/modules/auth/context/SessionContext'
-
+import { requireSession } from '#/modules/auth/lib/session-guard'
+import SessionError from '#/modules/auth/components/SessionError'
 import StateLoading from '#/components/State/StateLoading'
+import { useSessionRevalidation } from '#/modules/auth/hooks/useSessionRevalidation'
 
 export const Route = createFileRoute('/_session/room')({
   ssr: false,
-  component: RouteComponent,
+  beforeLoad: requireSession,
+  pendingComponent: StateLoading,
+  errorComponent: SessionError,
+  component: RoomLayout,
 })
 
-function RouteComponent() {
-  const { data, isPending } = authClient.useSession()
-
-  if (isPending) return <StateLoading fullpage />
-  if (!data) {
-    return <Navigate to="/login" />
-  }
-
-  const user = data.user
-  const session: SessionContextValue = {
-    ...user,
-    image: user.image ?? null,
-    role: user.role,
-    banned: user.banned ?? false,
-    banExpires: user.banExpires ?? null,
-    banReason: user.banReason ?? null,
-    createdAt: user.createdAt,
-    updatedAt: user.updatedAt,
-  }
-
+function RoomLayout() {
+  const { user } = Route.useRouteContext()
+  useSessionRevalidation(user)
   return (
-    <SessionProvider value={session}>
+    <SessionProvider value={user}>
       <Outlet />
     </SessionProvider>
   )

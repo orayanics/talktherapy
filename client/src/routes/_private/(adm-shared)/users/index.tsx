@@ -1,13 +1,13 @@
 import { z } from 'zod'
-
 import { createFileRoute } from '@tanstack/react-router'
-import UsersList from '#/modules/users/components/UsersList'
-
 import { toArray } from '#/utils/query'
-import { ROLE_VALUES, STATUS_VALUES } from '#/constants/account'
+import { ROLE_VALUES, STATUS_VALUES } from '#/modules/auth/constants/account'
+import UsersList from '#/modules/users/components/UsersList'
+import { PAGE_META } from '#/constants/pageMeta'
+import PageLayout from '#/components/Page/PageLayout'
 
 const roleSchema = z
-  .any()
+  .unknown()
   .optional()
   .transform((v) => toArray(v))
   .transform((arr) =>
@@ -17,7 +17,7 @@ const roleSchema = z
   )
 
 const statusSchema = z
-  .any()
+  .unknown()
   .optional()
   .transform((v) => toArray(v))
   .transform((arr) =>
@@ -59,10 +59,15 @@ const searchSchema = z
   }))
 
 export const Route = createFileRoute('/_private/(adm-shared)/users/')({
+  staticData: { page: PAGE_META.administration.children.users, bcLink: '.' },
   validateSearch: (search) => searchSchema.parse(search),
-  component: RouteComponent,
+  component: () => (
+    <PageLayout
+      title={PAGE_META.administration.children.users.title}
+      description={PAGE_META.administration.children.users.description}
+      paddedCh
+    >
+      <UsersList />
+    </PageLayout>
+  ),
 })
-
-function RouteComponent() {
-  return <UsersList />
-}

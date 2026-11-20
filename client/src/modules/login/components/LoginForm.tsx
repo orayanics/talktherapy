@@ -1,46 +1,25 @@
-import RowError from '#/components/Table/RowError'
 import useLoginForm from '#/modules/login/hooks/useLoginForm'
 import { Link } from '@tanstack/react-router'
-import FormLabel from '#/components/Form/FormLabel'
+import FormInput from '#/components/Form/FormInput'
 
 export default function LoginForm() {
   const { register, onSubmit, errors, apiError, isLoading } = useLoginForm()
   return (
-    <form onSubmit={onSubmit} className="w-full max-w-md lg:max-w-xl mx-auto">
-      <div className="p-6 h-full space-y-4">
-        <div className="flex items-center gap-2">
-          <div className="w-10 h-10 bg-slate-800 rounded-lg flex items-center justify-center text-white">
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M12 2L2 7l10 5 10-5-10-5z" />
-              <path d="M2 17l10 5 10-5" />
-              <path d="M2 12l10 5 10-5" />
-            </svg>
-          </div>
-          <h1 className="text-slate-800 text-3xl font-bold">TalkTherapy</h1>
-        </div>
-
-        <div>
-          <p className="text-slate-800 font-medium">Welcome back!</p>
-          <p className="text-slate-500 text-sm">
-            Ready to continue where you left off?
-          </p>
-        </div>
-
+    <form onSubmit={onSubmit} className="w-full">
+      <div className="space-y-4">
         {apiError && (
-          <div className="alert alert-soft alert-error" role="alert">{apiError}</div>
+          <div className="alert alert-soft alert-error" role="alert">
+            {apiError}
+          </div>
         )}
 
-        <div className="flex flex-col">
-          <FormLabel title="Email" htmlFor="login-email" />
+        <FormInput
+          htmlFor="login-email"
+          label="Email"
+          error={errors.email?.message}
+          errorId="login-email-error"
+          required
+        >
           <input
             id="login-email"
             {...register('email')}
@@ -50,11 +29,15 @@ export default function LoginForm() {
             aria-invalid={Boolean(errors.email)}
             aria-describedby={errors.email ? 'login-email-error' : undefined}
           />
-          <RowError id="login-email-error" message={errors.email?.message} />
-        </div>
+        </FormInput>
 
-        <div className="flex flex-col">
-          <FormLabel title="Password" htmlFor="login-password" />
+        <FormInput
+          htmlFor="login-password"
+          label="Password"
+          error={errors.password?.message}
+          errorId="login-password-error"
+          required
+        >
           <input
             id="login-password"
             {...register('password')}
@@ -62,13 +45,14 @@ export default function LoginForm() {
             className="input w-full"
             type="password"
             aria-invalid={Boolean(errors.password)}
-            aria-describedby={errors.password ? 'login-password-error' : undefined}
+            aria-describedby={
+              errors.password ? 'login-password-error' : undefined
+            }
           />
-          <RowError id="login-password-error" message={errors.password?.message} />
-        </div>
+        </FormInput>
 
         <div className="flex flex-col gap-4 items-center">
-          <button disabled={isLoading} className="btn btn-neutral btn-block">
+          <button disabled={isLoading} className="btn btn-primary btn-block">
             Login
           </button>
 
