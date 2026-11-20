@@ -44,6 +44,27 @@ class SlpWorkflowTest extends TestCase
         $this->actingAs($clinician)->postJson('/api/v1/slp/assignments', ['patient_id' => $patient->id, 'exercise_version_id' => $version->id])->assertCreated();
     }
 
+    public function test_patient_can_see_an_existing_assignment_for_an_exercise_without_a_collection(): void
+    {
+        $clinician = $this->user(UserRole::Clinician);
+        $patient = $this->user(UserRole::Patient);
+        $version = SlpExerciseVersion::factory()->create([
+            'status' => 'published',
+            'configuration' => ['patient_visible' => false],
+        ]);
+        $assignment = SlpAssignment::factory()->create([
+            'clinician_id' => $clinician->id,
+            'patient_id' => $patient->id,
+            'exercise_version_id' => $version->id,
+            'status' => 'active',
+        ]);
+
+        $this->actingAs($patient)
+            ->getJson('/api/v1/slp/assignments')
+            ->assertOk()
+            ->assertJsonPath('data.0.id', $assignment->id);
+    }
+
     public function test_attempt_requires_active_consent_and_queues_recording_analysis(): void
     {
         Queue::fake();
@@ -116,8 +137,10 @@ class SlpWorkflowTest extends TestCase
         SlpAnalysisRun::query()->create(['attempt_id' => $attempt->id, 'status' => 'succeeded', 'schema_version' => '2.0', 'result' => ['meta' => ['status' => 'review_required']]]);
         Storage::disk('local')->put('slp-recordings/review.wav', 'speech');
         SlpRecording::query()->create(['attempt_id' => $attempt->id, 'path' => 'slp-recordings/review.wav', 'mime_type' => 'audio/wav', 'bytes' => 6, 'checksum' => hash('sha256', 'speech'), 'retention_until' => now()->addDay()]);
+        SlpAttempt::query()->create(['assignment_id' => $assignment->id, 'consent_id' => $consent->id, 'submission_key' => 'review-failed', 'status' => 'failed']);
 
         $this->actingAs($clinician)->getJson('/api/v1/slp/review-attempts')->assertOk()->assertJsonCount(1, 'data')->assertJsonPath('data.0.id', $attempt->id)->assertJsonPath('data.0.recording.mime_type', 'audio/wav');
+        $this->actingAs($clinician)->getJson('/api/v1/slp/review-attempts?status=failed')->assertOk()->assertJsonCount(1, 'data');
         $this->actingAs($otherClinician)->getJson('/api/v1/slp/review-attempts')->assertOk()->assertJsonCount(0, 'data');
         $this->actingAs($patient)->getJson('/api/v1/slp/review-attempts')->assertForbidden();
         $recording = $this->actingAs($clinician)->get("/api/v1/slp/attempts/{$attempt->id}/recording");

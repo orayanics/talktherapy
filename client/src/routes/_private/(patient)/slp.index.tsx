@@ -4,6 +4,7 @@ import { PAGE_META } from '#/constants/pageMeta'
 import PageLayout from '#/components/Page/PageLayout'
 import { useState } from 'react'
 import ExerciseCollections from '#/modules/slp/components/ExerciseCollections'
+import SlpAssignments from '#/modules/slp/components/SlpAssignments'
 
 export const Route = createFileRoute('/_private/(patient)/slp/')({
   staticData: { page: PAGE_META.speechPractice, bcLink: '.' },
@@ -22,7 +23,14 @@ function RouteComponent() {
         <button className="btn" onClick={() => setPictures(!pictures)}>
           {pictures ? 'Back to collections' : 'Picture practice'}
         </button>
-        {pictures ? <SlpAssessmentPage /> : <ExerciseCollections patientView />}
+        {pictures ? (
+          <SlpAssessmentPage />
+        ) : (
+          <>
+            <ExerciseCollections patientView />
+            <SlpAssignments />
+          </>
+        )}
       </div>
     </PageLayout>
   )

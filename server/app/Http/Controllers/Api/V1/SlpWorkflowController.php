@@ -145,15 +145,10 @@ class SlpWorkflowController extends Controller
         $user = $request->user();
         $query = SlpAssignment::query()->with('version.exercise');
         if ($user->profile?->role === UserRole::Patient) {
-            $query->whereHas('version', function ($q) use ($user): void {
-                $q->where('configuration->patient_visible', true)
-                    ->where(function ($audience) use ($user): void {
-                        $audience->whereNull('configuration->patient_audience')
-                            ->orWhere('configuration->patient_audience', 'all')
-                            ->orWhereJsonContains('configuration->patient_ids', $user->id);
-                    })
-                    ->whereHas('exercise', fn ($e) => $e->whereNull('archived_at'));
-            });
+            // Existing assignments remain available even after an exercise is hidden from new practice.
+            $query->where('status', 'active')
+                ->whereHas('version', fn ($q) => $q->where('status', 'published')
+                    ->whereHas('exercise', fn ($e) => $e->whereNull('archived_at')));
         }
         if ($user->profile?->role === UserRole::Patient) {
             $query->where('patient_id', $user->id);
@@ -179,7 +174,7 @@ class SlpWorkflowController extends Controller
         if (isset($data['status'])) {
             $query->where('status', $data['status']);
         } else {
-            $query->whereIn('status', ['awaiting_review', 'failed']);
+            $query->where('status', 'awaiting_review');
         }
 
         return SlpReviewAttemptResource::collection($query->latest()->paginate($data['per_page'] ?? 15));
@@ -258,7 +253,7 @@ class SlpWorkflowController extends Controller
     public function uploadRecording(Request $request, SlpAttempt $attempt): JsonResponse
     {
         abort_unless($attempt->assignment->patient_id === $request->user()->id, 403);
-        $data = $request->validate(['recording' => ['required', 'file', 'max:20480', 'mimetypes:audio/mpeg,audio/wav,audio/mp4,audio/webm']]);
+        $data = $request->validate(['recording' => ['required', 'file', 'max:20480', 'mimetypes:audio/mpeg,audio/wav,audio/mp4,audio/webm,video/webm']]);
         $path = null;
         try {
             [$recording, $run] = DB::transaction(function () use ($request, $attempt, $data, &$path): array {

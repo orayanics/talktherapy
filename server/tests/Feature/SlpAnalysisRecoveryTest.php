@@ -60,6 +60,24 @@ class SlpAnalysisRecoveryTest extends TestCase
         }
     }
 
+    public function test_browser_webm_recording_is_accepted_when_reported_as_video_webm(): void
+    {
+        Storage::fake('local');
+        Bus::fake();
+        [$patient, $attempt] = $this->attempt();
+
+        $this->actingAs($patient)
+            ->postJson("/api/v1/slp/attempts/{$attempt->id}/recording", [
+                'recording' => UploadedFile::fake()->create('speech.webm', 10, 'video/webm'),
+            ])
+            ->assertAccepted();
+
+        $this->assertDatabaseHas('slp_recordings', [
+            'attempt_id' => $attempt->id,
+            'mime_type' => 'video/webm',
+        ]);
+    }
+
     public function test_cleanup_removes_expired_recordings_but_keeps_active_retention(): void
     {
         Storage::fake('local');
