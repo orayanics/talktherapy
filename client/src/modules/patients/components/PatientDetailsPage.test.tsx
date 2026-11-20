@@ -1,6 +1,7 @@
 /** @vitest-environment jsdom */
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { afterEach, expect, it, vi } from 'vitest'
+import type { ReactNode } from 'react'
 import PatientDetailsPage from './PatientDetailsPage'
 
 const { navigate } = vi.hoisted(() => ({ navigate: vi.fn() }))
@@ -8,9 +9,7 @@ vi.mock('@tanstack/react-router', () => ({
   useSearch: () => ({}),
   useParams: () => ({ patientId: 'patient-1' }),
   useNavigate: () => navigate,
-  Link: ({ children }: { children: import('react').ReactNode }) => (
-    <a>{children}</a>
-  ),
+  Link: ({ children }: { children: ReactNode }) => <a>{children}</a>,
 }))
 vi.mock('@tanstack/react-query', () => ({
   useQuery: () => ({

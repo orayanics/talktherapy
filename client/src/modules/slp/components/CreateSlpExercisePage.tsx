@@ -7,6 +7,7 @@ import {
   useCreateSlpExerciseMutation,
   useUpdateSlpExerciseMutation,
 } from '#/modules/slp/hooks/useExerciseMutations'
+import { mutateUploadSlpAsset } from '../api/exercises'
 
 import type { SlpExercise, SlpExerciseModule } from '../api/exercises'
 
@@ -48,6 +49,28 @@ export default function CreateSlpExercisePage({
   )
   const [prompt, setPrompt] = useState(version?.prompt_text ?? '')
   const [scope, setScope] = useState<'private' | 'shared'>('private')
+  const [assetError, setAssetError] = useState('')
+  const [assetUploading, setAssetUploading] = useState(false)
+
+  const uploadAsset = async (file: File) => {
+    setAssetError('')
+    setAssetUploading(true)
+    try {
+      const result = await mutateUploadSlpAsset(file)
+      const parsed = JSON.parse(configuration) as Record<string, unknown>
+      const ids = Array.isArray(parsed.asset_ids)
+        ? parsed.asset_ids.filter((id): id is string => typeof id === 'string')
+        : []
+      parsed.asset_ids = [...new Set([...ids, result.data.id])]
+      setConfiguration(JSON.stringify(parsed, null, 2))
+    } catch {
+      setAssetError(
+        'Could not upload that asset. Use an image or supported audio file under 10 MiB.',
+      )
+    } finally {
+      setAssetUploading(false)
+    }
+  }
 
   const submit = async (event: React.FormEvent) => {
     event.preventDefault()
@@ -186,6 +209,26 @@ export default function CreateSlpExercisePage({
             onChange={(event) => setPrompt(event.target.value)}
             maxLength={2000}
           />
+        </FormInput>
+        <FormInput htmlFor={`${formId}-exercise-asset`} label="Exercise media">
+          <input
+            id={`${formId}-exercise-asset`}
+            className="file-input w-full"
+            type="file"
+            accept="image/jpeg,image/png,audio/mpeg,audio/wav,audio/mp4"
+            disabled={assetUploading}
+            onChange={(event) => {
+              const file = event.target.files?.[0]
+              if (file) void uploadAsset(file)
+              event.currentTarget.value = ''
+            }}
+          />
+          <p className="mt-1 text-xs text-muted">
+            Uploaded media is attached through configuration and remains private
+            until the exercise is visible.
+          </p>
+          {assetUploading && <p role="status">Uploading media…</p>}
+          {assetError && <p role="alert">{assetError}</p>}
         </FormInput>
         <FormInput
           htmlFor={`${formId}-exercise-configuration`}

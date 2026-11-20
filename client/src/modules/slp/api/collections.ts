@@ -24,6 +24,7 @@ export interface PracticeExercise {
   dialect: string | null
   task_type: string
   assignment_id: string | null
+  assets?: Array<{ id: string; url: string; mime_type: string | null }>
 }
 
 export const fetchCollectionPractice = (id: string, page = 1) =>

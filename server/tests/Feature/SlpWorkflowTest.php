@@ -11,6 +11,7 @@ use App\Models\SlpAssignment;
 use App\Models\SlpAttempt;
 use App\Models\SlpConsent;
 use App\Models\SlpExercise;
+use App\Models\SlpExerciseCollection;
 use App\Models\SlpExerciseVersion;
 use App\Models\SlpRecording;
 use App\Models\User;
@@ -123,6 +124,23 @@ class SlpWorkflowTest extends TestCase
         $recording->assertOk()->assertHeader('Content-Type', 'audio/wav');
         $this->assertSame('speech', $recording->streamedContent());
         $this->actingAs($otherClinician)->get("/api/v1/slp/attempts/{$attempt->id}/recording")->assertForbidden();
+    }
+
+    public function test_staff_assets_are_private_and_patient_can_only_read_referenced_visible_assets(): void
+    {
+        Storage::fake('local');
+        $clinician = $this->user(UserRole::Clinician);
+        $patient = $this->user(UserRole::Patient);
+        $asset = $this->actingAs($clinician)->postJson('/api/v1/slp/assets', ['asset' => UploadedFile::fake()->image('card.png')])->assertOk()->json('data');
+        $this->assertArrayNotHasKey('path', $asset);
+        $this->actingAs($clinician)->getJson('/api/v1/slp/assets')->assertOk()->assertJsonPath('data.0.id', $asset['id']);
+        $this->actingAs($patient)->getJson('/api/v1/slp/assets')->assertForbidden();
+        $this->actingAs($patient)->get('/api/v1/slp/assets/'.$asset['id'])->assertForbidden();
+
+        $collection = SlpExerciseCollection::factory()->create(['owner_id' => $this->user(UserRole::Admin)->id, 'patient_audience' => 'platform']);
+        $version = SlpExerciseVersion::factory()->create(['status' => 'published', 'configuration' => ['patient_visible' => true, 'asset_ids' => [$asset['id']]]]);
+        $version->exercise->update(['collection_id' => $collection->id]);
+        $this->actingAs($patient)->get('/api/v1/slp/assets/'.$asset['id'])->assertOk()->assertHeader('Content-Type', 'image/png');
     }
 
     private function user(UserRole $role): User

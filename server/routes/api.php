@@ -55,6 +55,8 @@ Route::middleware(['auth:sanctum', 'account.active', 'verified'])->group(functio
     Route::patch('/slp/exercise-versions/{version}/visibility', [SlpWorkflowController::class, 'visibility']);
     Route::post('/slp/exercise-versions/{version}/publish', [SlpWorkflowController::class, 'publishVersion'])->name('slp.exercise-versions.publish');
     Route::post('/slp/assets', [SlpWorkflowController::class, 'storeAsset'])->name('slp.assets.store');
+    Route::get('/slp/assets', [SlpWorkflowController::class, 'assets'])->name('slp.assets.index');
+    Route::get('/slp/assets/{asset}', [SlpWorkflowController::class, 'showAsset'])->name('slp.assets.show');
     Route::delete('/slp/assets/{asset}', [SlpWorkflowController::class, 'deleteAsset'])->name('slp.assets.destroy');
     Route::post('/slp/consents', [SlpWorkflowController::class, 'storeConsent'])->name('slp.consents.store');
     Route::post('/slp/consents/{consent}/withdraw', [SlpWorkflowController::class, 'withdrawConsent'])->name('slp.consents.withdraw');

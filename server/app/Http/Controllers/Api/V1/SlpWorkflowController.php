@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\SlpAssetResource;
 use App\Http\Resources\SlpAssignmentResource;
 use App\Http\Resources\SlpReportResource;
 use App\Http\Resources\SlpReviewAttemptResource;
@@ -79,7 +80,37 @@ class SlpWorkflowController extends Controller
         $path = $file->store('slp-assets', 'local');
         $asset = SlpAsset::query()->create(['owner_id' => $request->user()->id, 'path' => $path, 'mime_type' => $file->getMimeType(), 'bytes' => $file->getSize(), 'checksum' => hash_file('sha256', $file->getRealPath()), 'license' => $data['license'] ?? null]);
 
-        return ['data' => $asset];
+        return ['data' => SlpAssetResource::make($asset)->resolve($request)];
+    }
+
+    public function assets(Request $request): AnonymousResourceCollection
+    {
+        abort_unless($this->staff($request->user()), 403);
+        $query = SlpAsset::query();
+        if (! $this->admin($request->user())) {
+            $query->where('owner_id', $request->user()->id);
+        }
+
+        return SlpAssetResource::collection($query->latest()->paginate(30));
+    }
+
+    public function showAsset(Request $request, SlpAsset $asset): StreamedResponse
+    {
+        $role = $request->user()->profile?->role;
+        $allowed = $this->admin($request->user()) || ($role === UserRole::Clinician && $asset->owner_id === $request->user()->id);
+        if ($role === UserRole::Patient) {
+            $allowed = SlpExerciseVersion::query()->whereJsonContains('configuration->asset_ids', $asset->id)->patientPractice($request->user())->exists();
+        }
+        abort_unless($allowed, 403);
+        $disk = Storage::disk('local');
+        abort_unless($disk->exists($asset->path), 404);
+        $stream = $disk->readStream($asset->path);
+        abort_unless(is_resource($stream), 404);
+
+        return response()->stream(function () use ($stream): void {
+            fpassthru($stream);
+            fclose($stream);
+        }, 200, ['Content-Type' => $asset->mime_type, 'Content-Length' => (string) $asset->bytes, 'Content-Disposition' => 'inline; filename="slp-asset"', 'Cache-Control' => 'private, max-age=3600']);
     }
 
     public function deleteAsset(Request $request, SlpAsset $asset): Response

@@ -44,6 +44,13 @@ export interface SlpExerciseInput {
   prompt_text: string
   configuration?: Record<string, unknown>
 }
+export interface SlpAsset {
+  id: string
+  mime_type: string
+  bytes: number
+  license: string | null
+  url: string
+}
 
 type ExerciseResponse = { data: SlpExercise }
 export interface SlpExerciseFilters {
@@ -89,3 +96,10 @@ export const mutateUpdateSlpExercise = (
 
 export const mutateArchiveSlpExercise = (id: string) =>
   api<void>(`/api/v1/slp/exercises/${id}`, { method: 'DELETE' })
+
+export const mutateUploadSlpAsset = (file: File, license?: string) => {
+  const data = new FormData()
+  data.append('asset', file)
+  if (license) data.append('license', license)
+  return api<{ data: SlpAsset }>('/api/v1/slp/assets', { method: 'POST', data })
+}

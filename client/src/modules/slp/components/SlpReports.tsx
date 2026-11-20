@@ -2,11 +2,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import StateError from '#/components/State/StateError'
 import StateLoading from '#/components/State/StateLoading'
 import { useAuthGuard } from '#/modules/auth/hooks/useAuth'
-import {
-  fetchSlpReports,
-  mutateReleaseSlpReport,
-  type SlpReport,
-} from '../api/workflow'
+import { fetchSlpReports, mutateReleaseSlpReport } from '../api/workflow'
+import type { SlpReport } from '../api/workflow'
 
 export default function SlpReports() {
   const { role } = useAuthGuard()

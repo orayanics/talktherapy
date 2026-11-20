@@ -60,6 +60,25 @@ class SlpAnalysisRecoveryTest extends TestCase
         }
     }
 
+    public function test_cleanup_removes_expired_recordings_but_keeps_active_retention(): void
+    {
+        Storage::fake('local');
+        [, $expired] = $this->attempt(true);
+        $expired->recording->update(['path' => 'slp-recordings/expired.wav']);
+        $expired->recording->update(['retention_until' => now()->subMinute()]);
+        Storage::disk('local')->put($expired->recording->path, 'expired');
+        [, $active] = $this->attempt(true);
+        $active->recording->update(['path' => 'slp-recordings/active.wav']);
+        $active->recording->update(['retention_until' => now()->addDay()]);
+        Storage::disk('local')->put($active->recording->path, 'active');
+
+        $this->artisan('app:cleanup-slp-recordings')->assertSuccessful();
+        $this->assertDatabaseMissing('slp_recordings', ['id' => $expired->recording->id]);
+        $this->assertDatabaseHas('slp_recordings', ['id' => $active->recording->id]);
+        $this->assertFalse(Storage::disk('local')->exists($expired->recording->path));
+        $this->assertTrue(Storage::disk('local')->exists($active->recording->path));
+    }
+
     public function test_job_is_idempotent_and_does_not_overwrite_an_approved_attempt(): void
     {
         [, $attempt] = $this->attempt(true);
