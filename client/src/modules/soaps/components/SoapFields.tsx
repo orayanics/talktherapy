@@ -28,7 +28,7 @@ export default function SoapFields({
       <FormInput
         htmlFor={id}
         key={name}
-        label={<span className="text-xs font-mono text-gray-400">{label}</span>}
+        label={label}
         error={errors[name]?.message}
       >
         {name === 'activity_plan' || name === 'session_type' ? (

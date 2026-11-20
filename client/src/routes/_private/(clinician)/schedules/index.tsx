@@ -44,6 +44,7 @@ export const Route = createFileRoute('/_private/(clinician)/schedules/')({
     <PageLayout
       title={PAGE_META.schedules.title}
       description={PAGE_META.schedules.description}
+      paddedCh
     >
       <ScheduleList />
     </PageLayout>

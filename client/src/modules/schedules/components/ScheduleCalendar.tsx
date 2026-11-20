@@ -85,7 +85,7 @@ export default function ScheduleCalendar({
 
   return (
     <section className="overflow-hidden bg-white">
-      <div className="flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-4 pb-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center">
           <div>
             <h3 className="font-bold my-0!">
@@ -127,9 +127,9 @@ export default function ScheduleCalendar({
           </button>
         </div>
       </div>
-      <div className="flex flex-col border-t border-border lg:flex-row">
-        <div className="min-w-0 flex-1 overflow-x-auto border-r border-border">
-          <div className="grid min-w-4xl grid-cols-7 ">
+      <div className="flex flex-col border border-border lg:flex-row">
+        <div className="min-w-0 flex-1 overflow-x-auto">
+          <div className="grid min-w-4xl grid-cols-7">
             {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day) => (
               <div
                 key={day}
@@ -151,7 +151,7 @@ export default function ScheduleCalendar({
               return (
                 <div
                   key={key}
-                  className="min-h-32 overflow-hidden bg-white p-2 border-border border-l nth-[7n+1]:border-l-0 border-y"
+                  className="min-h-32 overflow-hidden bg-white p-2 border-border border-t border-l nth-[7n+1]:border-l-0"
                 >
                   <button
                     type="button"
@@ -202,8 +202,8 @@ export default function ScheduleCalendar({
         </div>
 
         {(appointments.length > 0 || slots.length > 0) && (
-          <div className="w-full border-t border-border p-4 lg:w-80 lg:border-t-0">
-            <p className="font-semibold my-0!">
+          <div className="w-full shrink-0 border-t border-border p-4 lg:w-80 lg:border-t-0 lg:border-l">
+            <p className="font-semibold my-0! ">
               {slots.length > 0 ? 'Slots' : 'Appointments'}
             </p>
             <p className="text-xs text-muted mt-0!">
@@ -212,7 +212,7 @@ export default function ScheduleCalendar({
                 'MMMM d, yyyy',
               )}
             </p>
-            <div className="space-y-2">
+            <div className="space-y-2 pt-2">
               {selectedAppointments.map((appointment) => (
                 <div
                   key={appointment.id}

@@ -12,11 +12,7 @@ export default function UpdateSoapPage({
 
   return (
     <div className="w-full bg-white">
-      <div className="flex flex-col gap-4 p-6">
-        <span className="text-sm font-bold uppercase tracking-wide">
-          Update SOAP
-        </span>
-
+      <div className="flex flex-col gap-4">
         <form onSubmit={updateHook.onSubmit} className="space-y-4">
           {updateHook.apiError && (
             <div className="alert alert-soft alert-error" role="alert">

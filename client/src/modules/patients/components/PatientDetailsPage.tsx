@@ -90,25 +90,25 @@ export default function PatientDetailsPage() {
           className="fixed inset-0 z-40"
           panelClassName="min-h-full w-full max-w-2xl overflow-y-auto bg-base-100 text-base-content"
         >
-          {selectedSoap.mode === 'create' ? (
-            <CreateSoapPage
-              patientId={patientId}
-              onClose={() => setSelectedSoap(null)}
-            />
-          ) : selectedSoap.mode === 'view' ? (
-            <div className="p-6">
+          <div className="px-6 py-4">
+            {selectedSoap.mode === 'create' ? (
+              <CreateSoapPage
+                patientId={patientId}
+                onClose={() => setSelectedSoap(null)}
+              />
+            ) : selectedSoap.mode === 'view' ? (
               <SoapDetails soapId={selectedSoap.id} />
-            </div>
-          ) : (
-            <UpdateSoapPage
-              key={selectedSoap.id}
-              soapId={selectedSoap.id}
-              onClose={() => setSelectedSoap(null)}
-            />
-          )}
+            ) : (
+              <UpdateSoapPage
+                key={selectedSoap.id}
+                soapId={selectedSoap.id}
+                onClose={() => setSelectedSoap(null)}
+              />
+            )}
+          </div>
         </Drawer>
       )}
-      <div className="bg-white rounded-box border border-slate-200  overflow-hidden flex flex-col p-4">
+      <div className="overflow-hidden flex flex-col">
         {isPending ? (
           <StateLoading />
         ) : isError ? (

@@ -49,7 +49,7 @@ export default function PatientsPage() {
         value={searchTerm}
         onChange={(s) => updateSearch({ page: 1, search: s })}
       />
-      <div className="bg-white border border-border rounded-box overflow-hidden flex flex-col p-4">
+      <div className="overflow-hidden flex flex-col">
         {isPending ? (
           <StateLoading />
         ) : isError ? (

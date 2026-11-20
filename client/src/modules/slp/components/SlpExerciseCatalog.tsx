@@ -94,7 +94,7 @@ export default function SlpExerciseCatalog() {
           </FilterDrawer>
         </div>
         <Link to="/slp/exercises/create" className="btn btn-neutral">
-          New draft
+          New Draft
         </Link>
       </div>
 

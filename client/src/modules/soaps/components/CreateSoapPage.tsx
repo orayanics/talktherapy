@@ -27,31 +27,23 @@ export default function CreateSoapPage({
         </Link>
       )}
 
-      <div className="w-full bg-white">
-        <div className="rounded-box border border-slate-300  flex flex-col gap-4 p-6">
-          <h2 className="text-sm font-bold uppercase tracking-wide">
-            Create SOAP
-          </h2>
+      <form onSubmit={createHook.onSubmit} className="space-y-4">
+        {createHook.apiError && (
+          <div className="alert alert-soft alert-error" role="alert">
+            {createHook.apiError}
+          </div>
+        )}
 
-          <form onSubmit={createHook.onSubmit} className="space-y-4">
-            {createHook.apiError && (
-              <div className="alert alert-soft alert-error" role="alert">
-                {createHook.apiError}
-              </div>
-            )}
+        <SoapFields
+          register={createHook.register}
+          errors={createHook.errors}
+          idPrefix="soap"
+        />
 
-            <SoapFields
-              register={createHook.register}
-              errors={createHook.errors}
-              idPrefix="soap"
-            />
-
-            <button disabled={createHook.isLoading} className="btn btn-neutral">
-              Create SOAP
-            </button>
-          </form>
-        </div>
-      </div>
+        <button disabled={createHook.isLoading} className="btn btn-neutral">
+          Create SOAP
+        </button>
+      </form>
     </div>
   )
 }

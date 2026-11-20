@@ -19,10 +19,7 @@ export default function Landing() {
       <a className="tt-skip" href="#landing-main">
         Skip to content
       </a>
-      <div className="tt-announcement">
-        A little practice. A meaningful connection. Your next step starts here.
-        <Sparkles size={15} aria-hidden="true" />
-      </div>
+
       <header className="tt-nav">
         <Link to="/" className="tt-wordmark" aria-label="TalkTherapy home">
           <Speech aria-hidden="true" />

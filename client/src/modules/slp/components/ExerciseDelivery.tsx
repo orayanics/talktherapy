@@ -7,6 +7,7 @@ import { useAuthGuard } from '#/modules/auth/hooks/useAuth'
 import { fetchClinicianPatients } from '#/modules/patients/api/patients'
 import type { ClinicianPatient } from '#/modules/patients/types/patients'
 import type { SlpExercise } from '../api/exercises'
+import { Row } from '#/components/Table/Row'
 
 type Audience = 'all' | 'selected'
 
@@ -116,180 +117,180 @@ export default function ExerciseDelivery({
           Patient visibility
         </button>
       }
-      panelClassName="min-h-full w-100 max-w-full bg-base-100 text-base-content"
+      panelClassName="min-h-full bg-base-100 text-base-content"
+      childrenCn="p-6"
     >
       {isOpen && (
-        <div className="space-y-4 p-6">
-          <section
-            aria-label="Exercise content"
-            className="space-y-3 border-b border-border pb-4"
-          >
-            <h2 className="my-0! text-lg font-semibold">Exercise content</h2>
-            <p className="my-0! whitespace-pre-wrap wrap-break-word">
-              {version.prompt_text}
-            </p>
-            <dl className="grid grid-cols-2 gap-3 text-sm">
-              <div>
-                <dt className="font-medium">Module</dt>
-                <dd className="m-0">{exercise.module.replaceAll('_', ' ')}</dd>
-              </div>
-              <div>
-                <dt className="font-medium">Language</dt>
-                <dd className="m-0">
-                  {version.language}
-                  {version.dialect ? ` (${version.dialect})` : ''}
-                </dd>
-              </div>
-              <div>
-                <dt className="font-medium">Task type</dt>
-                <dd className="m-0">
-                  {version.task_type.replaceAll('_', ' ')}
-                </dd>
-              </div>
-              <div>
-                <dt className="font-medium">Scope</dt>
-                <dd className="m-0">{exercise.scope}</dd>
-              </div>
-              <div>
-                <dt className="font-medium">Revision</dt>
-                <dd className="m-0">{version.revision}</dd>
-              </div>
-              <div>
-                <dt className="font-medium">Status</dt>
-                <dd className="m-0">{version.status}</dd>
-              </div>
-            </dl>
-          </section>
-          <label className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              className="checkbox"
-              checked={visible}
-              onChange={(event) => setVisible(event.target.checked)}
-            />
-            Allow patients to test this draft
-          </label>
-          {role === 'clinician' && (
-            <fieldset className="space-y-2">
-              <legend className="font-medium">Patient visibility</legend>
-              <label className="flex items-center gap-2">
-                <input
-                  type="radio"
-                  name={`audience-${version.id}`}
-                  checked={audience === 'all'}
-                  onChange={() => setAudience('all')}
-                />{' '}
-                All of my patients
-              </label>
-              <label className="flex items-center gap-2">
-                <input
-                  type="radio"
-                  name={`audience-${version.id}`}
-                  checked={audience === 'selected'}
-                  onChange={() => setAudience('selected')}
-                />{' '}
-                Specific patients
-              </label>
-            </fieldset>
-          )}
-          {audience === 'selected' && role === 'clinician' && (
-            <div className="space-y-2">
-              <label
-                className="block text-sm font-medium"
-                htmlFor={`patient-search-${version.id}`}
-              >
-                Search patients
-              </label>
-              <input
-                id={`patient-search-${version.id}`}
-                className="input w-full"
-                type="search"
-                value={search}
-                onChange={(event) => setSearch(event.target.value)}
-                placeholder="Search by name or email"
-              />
-              <div
-                className="max-h-56 space-y-1 overflow-y-auto"
-                aria-label="Patient selection"
-              >
-                {patients.isPending && (
-                  <p className="text-sm text-slate-500">Loading patients…</p>
-                )}
-                {pagePatients.map((item: ClinicianPatient) => (
-                  <label
-                    key={item.patientId}
-                    className="flex items-center gap-2 rounded p-2 hover:bg-slate-50"
-                  >
-                    <input
-                      type="checkbox"
-                      checked={selected.has(item.patientId)}
-                      onChange={() => togglePatient(item.patientId)}
-                    />
-                    <span>{item.patient.name}</span>
-                  </label>
-                ))}
-                {!patients.isPending && pagePatients.length === 0 && (
-                  <p className="text-sm text-slate-500">
-                    No matching patients.
-                  </p>
-                )}
-              </div>
-              {selected.size > 0 && (
-                <p className="text-sm text-slate-600" aria-live="polite">
-                  {selected.size} patient{selected.size === 1 ? '' : 's'}{' '}
-                  selected
-                  {selectedNames.length > 0
-                    ? `: ${selectedNames.join(', ')}`
-                    : ''}
-                </p>
-              )}
-              {meta && meta.last_page > 1 && (
-                <Pagination
-                  meta={meta}
-                  page={page}
-                  updateSearch={({ page: nextPage }) => setPage(nextPage)}
+        <>
+          <div className="flex flex-col gap-6">
+            <div>
+              <section aria-label="Exercise content" className="space-y-4">
+                <Row label="Content" value={version.prompt_text} />
+                <Row
+                  label="Module"
+                  value={exercise.module.replaceAll('_', ' ')}
                 />
+                <Row
+                  label="Language"
+                  value={
+                    <>
+                      {version.language}
+                      {version.dialect ? ` (${version.dialect})` : ''}
+                    </>
+                  }
+                />
+                <Row
+                  label="Task Type"
+                  value={version.task_type.replaceAll('_', ' ')}
+                />
+                <Row label="Scope" value={exercise.scope} />
+                <Row label="Revison" value={version.revision} />
+                <Row label="Status" value={version.status} />
+              </section>
+              <label className="flex items-center gap-2 pt-4">
+                <input
+                  type="checkbox"
+                  className="checkbox"
+                  checked={visible}
+                  onChange={(event) => setVisible(event.target.checked)}
+                />
+                Allow patients to test this draft
+              </label>
+            </div>
+
+            <div>
+              {role === 'clinician' && (
+                <fieldset className="space-y-2">
+                  <legend className="font-medium">Patient visibility</legend>
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="radio"
+                      name={`audience-${version.id}`}
+                      checked={audience === 'all'}
+                      onChange={() => setAudience('all')}
+                    />{' '}
+                    All of my patients
+                  </label>
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="radio"
+                      name={`audience-${version.id}`}
+                      checked={audience === 'selected'}
+                      onChange={() => setAudience('selected')}
+                    />{' '}
+                    Specific patients
+                  </label>
+                </fieldset>
+              )}
+              {audience === 'selected' && role === 'clinician' && (
+                <div className="space-y-2 pt-4">
+                  <label
+                    className="block text-sm font-medium"
+                    htmlFor={`patient-search-${version.id}`}
+                  >
+                    Search patients
+                  </label>
+                  <input
+                    id={`patient-search-${version.id}`}
+                    className="input w-full"
+                    type="search"
+                    value={search}
+                    onChange={(event) => setSearch(event.target.value)}
+                    placeholder="Search by name or email"
+                  />
+                  <div
+                    className="max-h-56 space-y-1 overflow-y-auto"
+                    aria-label="Patient selection"
+                  >
+                    {patients.isPending && (
+                      <p className="text-sm text-slate-500">
+                        Loading patients…
+                      </p>
+                    )}
+                    {pagePatients.map((item: ClinicianPatient) => (
+                      <label
+                        key={item.patientId}
+                        className="flex items-center gap-2 rounded p-2 hover:bg-slate-50"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={selected.has(item.patientId)}
+                          onChange={() => togglePatient(item.patientId)}
+                        />
+                        <span>{item.patient.name}</span>
+                      </label>
+                    ))}
+                    {!patients.isPending && pagePatients.length === 0 && (
+                      <p className="text-sm text-slate-500">
+                        No matching patients.
+                      </p>
+                    )}
+                  </div>
+                  {selected.size > 0 && (
+                    <p className="text-sm text-slate-600" aria-live="polite">
+                      {selected.size} patient{selected.size === 1 ? '' : 's'}{' '}
+                      selected
+                      {selectedNames.length > 0
+                        ? `: ${selectedNames.join(', ')}`
+                        : ''}
+                    </p>
+                  )}
+                  {meta && meta.last_page > 1 && (
+                    <Pagination
+                      meta={meta}
+                      page={page}
+                      updateSearch={({ page: nextPage }) => setPage(nextPage)}
+                    />
+                  )}
+                </div>
               )}
             </div>
-          )}
-          <div className="flex flex-wrap gap-2">
-            <button
-              className="btn btn-sm"
-              disabled={
-                visibility.isPending ||
-                (audience === 'selected' && selected.size === 0)
-              }
-              onClick={() => visibility.mutate(visible)}
-            >
-              Save visibility and audience
-            </button>
-            {role === 'clinician' &&
-              version.configuration?.patient_visible === true && (
-                <button
-                  className="btn btn-sm"
-                  disabled={!canAssign || assign.isPending}
-                  onClick={() => assign.mutate()}
-                >
-                  {audience === 'all'
-                    ? 'Assign to all patients'
-                    : `Assign to ${selected.size} patient${selected.size === 1 ? '' : 's'}`}
-                </button>
-              )}
           </div>
-          {version.status !== 'published' && (
-            <p role="status">
-              Assignments require this version to be reviewed and published by
-              an administrator. Patient visibility alone does not publish an
-              exercise.
-            </p>
-          )}
-          {assign.isSuccess && <p role="status">Exercise assigned.</p>}
-          {(visibility.isError || assign.isError || patients.isError) && (
-            <p role="alert">
-              Could not complete this action. Check access and try again.
-            </p>
-          )}
-        </div>
+
+          <div className="pt-6">
+            <div className="flex flex-wrap gap-2">
+              <button
+                className="btn btn-neutral"
+                disabled={
+                  visibility.isPending ||
+                  (audience === 'selected' && selected.size === 0)
+                }
+                onClick={() => visibility.mutate(visible)}
+              >
+                Save Changes
+              </button>
+              {role === 'clinician' &&
+                version.configuration?.patient_visible === true && (
+                  <button
+                    className="btn"
+                    disabled={!canAssign || assign.isPending}
+                    onClick={() => assign.mutate()}
+                  >
+                    {audience === 'all'
+                      ? 'Assign to all patients'
+                      : `Assign to ${selected.size} patient${selected.size === 1 ? '' : 's'}`}
+                  </button>
+                )}
+            </div>
+
+            {version.status !== 'published' && (
+              <div
+                className="alert alert-soft alert-warning mt-4 w-100"
+                role="alert"
+              >
+                Assignments require this version to be reviewed and published by
+                an administrator. Patient visibility alone does not publish an
+                exercise.
+              </div>
+            )}
+            {assign.isSuccess && <p role="status">Exercise assigned.</p>}
+            {(visibility.isError || assign.isError || patients.isError) && (
+              <div className="alert alert-soft alert-error mt-4" role="alert">
+                Could not complete this action. Check access and try again.
+              </div>
+            )}
+          </div>
+        </>
       )}
     </Drawer>
   )

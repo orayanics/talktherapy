@@ -18,6 +18,7 @@ interface DrawerProps {
   panelClassName?: string
   panelProps?: ComponentProps<'aside'>
   hideHeader?: boolean
+  childrenCn?: string
 }
 
 export default function Drawer({
@@ -36,6 +37,7 @@ export default function Drawer({
   panelClassName = 'min-h-full w-100 max-w-full bg-base-100 text-base-content',
   panelProps,
   hideHeader = false,
+  childrenCn = '',
 }: DrawerProps) {
   const id = useId()
 
@@ -78,7 +80,7 @@ export default function Drawer({
               </button>
             </div>
           )}
-          {children}
+          <div className={childrenCn}>{children}</div>
         </aside>
       </div>
     </div>

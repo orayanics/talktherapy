@@ -46,7 +46,7 @@ export default function CreateSlpExercisePage() {
         className="space-y-4 rounded-box border border-border p-4"
       >
         <div>
-          <p className="font-semibold my-0!">New draft</p>
+          <p className="font-semibold my-0!">New Draft</p>
           <p className="text-muted my-0!">
             Exercises created can be toggled and assigned to patient/s or saved
             as draft for further revisions
@@ -117,7 +117,7 @@ export default function CreateSlpExercisePage() {
         </FormInput>
         {create.isError && <RowError message="Could not save this draft." />}
         <button className="btn btn-neutral" disabled={create.isPending}>
-          Save draft
+          Save Draft
         </button>
       </form>
     </div>
