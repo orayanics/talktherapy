@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { Link } from '@tanstack/react-router'
 import { TableBase } from '#/components/Table/TableBase'
 import Pagination from '#/components/Page/Pagination'
 import FilterDrawer from '#/components/Page/FilterDrawer'
@@ -105,19 +104,14 @@ export default function SlpExerciseCatalog({
             </div>
           </FilterDrawer>
         </div>
-        {!readOnly &&
-          (collectionId ? (
-            <button
-              className="btn btn-neutral"
-              onClick={() => setCreating(!creating)}
-            >
-              {creating ? 'Close new exercise' : 'New exercise'}
-            </button>
-          ) : (
-            <Link to="/slp/exercises/create" className="btn btn-neutral">
-              New Draft
-            </Link>
-          ))}
+        {!readOnly && collectionId ? (
+          <button
+            className="btn btn-neutral"
+            onClick={() => setCreating(!creating)}
+          >
+            {creating ? 'Close new exercise' : 'New exercise'}
+          </button>
+        ) : null}
       </div>
       {creating && (
         <CreateSlpExercisePage

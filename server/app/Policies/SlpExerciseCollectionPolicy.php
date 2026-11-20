@@ -10,12 +10,12 @@ class SlpExerciseCollectionPolicy
 {
     public function viewAny(User $user): bool
     {
-        return $user->profile?->role !== null;
+        return in_array($user->profile?->role, [UserRole::Clinician, UserRole::Admin, UserRole::Superadmin, UserRole::Patient], true);
     }
 
     public function create(User $user): bool
     {
-        return in_array($user->profile?->role, [UserRole::Clinician, UserRole::Admin, UserRole::Superadmin], true);
+        return $user->profile?->role === UserRole::Clinician;
     }
 
     public function view(User $user, SlpExerciseCollection $collection): bool
@@ -24,7 +24,7 @@ class SlpExerciseCollectionPolicy
             return SlpExerciseCollection::query()->whereKey($collection->id)->forPatient($user)->exists();
         }
 
-        return $this->create($user) && $collection->archived_at === null
+        return $this->viewAny($user) && $collection->archived_at === null
             && ($collection->owner_id === $user->id || in_array($user->profile->role, [UserRole::Admin, UserRole::Superadmin], true));
     }
 

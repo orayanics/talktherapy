@@ -13,7 +13,7 @@ class SlpExerciseRequest extends FormRequest
     {
         $exercise = $this->route('exercise');
         $user = $this->user();
-        if ($user === null || ($this->isMethod('post') && $this->input('scope', 'private') === 'shared' && $user->profile?->role->value === 'clinician')) {
+        if ($user === null || ($this->isMethod('post') && $user->profile?->role->value !== 'clinician') || ($this->isMethod('post') && $this->input('scope', 'private') === 'shared' && $user->profile?->role->value === 'clinician')) {
             return false;
         }
 
@@ -26,7 +26,7 @@ class SlpExerciseRequest extends FormRequest
         $create = $this->isMethod('post');
 
         return [
-            'collection_id' => ['sometimes', 'nullable', 'uuid', Rule::exists('slp_exercise_collections', 'id')->where('owner_id', $this->user()->id)->whereNull('archived_at')],
+            'collection_id' => [$create ? 'required' : 'sometimes', 'uuid', Rule::exists('slp_exercise_collections', 'id')->where('owner_id', $this->user()->id)->whereNull('archived_at')],
             'is_hidden' => ['sometimes', 'boolean'],
             'scope' => [$create ? 'sometimes' : 'prohibited', Rule::in(['private', 'shared'])],
             'module' => [$create ? 'required' : 'sometimes', 'string', 'max:40', Rule::in(['fluency', 'timing', 'articulation', 'aphasia', 'voice', 'motor_speech'])],

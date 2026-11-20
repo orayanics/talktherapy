@@ -1,6 +1,4 @@
 import { useId, useRef, useState } from 'react'
-import { Link } from '@tanstack/react-router'
-import { useAuthGuard } from '#/modules/auth/hooks/useAuth'
 import RowError from '#/components/Table/RowError'
 import FormInput from '#/components/Form/FormInput'
 import {
@@ -24,8 +22,6 @@ export default function CreateSlpExercisePage({
 }) {
   const formId = useId()
   const errorRef = useRef<HTMLParagraphElement>(null)
-  const { is } = useAuthGuard()
-  const canShare = is('admin') || is('superadmin')
   const create = useCreateSlpExerciseMutation()
   const update = useUpdateSlpExerciseMutation(exercise?.id ?? '')
   const mutation = exercise ? update : create
@@ -48,7 +44,6 @@ export default function CreateSlpExercisePage({
     version?.task_type ?? 'passage_reading',
   )
   const [prompt, setPrompt] = useState(version?.prompt_text ?? '')
-  const [scope, setScope] = useState<'private' | 'shared'>('private')
   const [assetError, setAssetError] = useState('')
   const [assetUploading, setAssetUploading] = useState(false)
 
@@ -92,8 +87,7 @@ export default function CreateSlpExercisePage({
         language,
         task_type: taskType,
         prompt_text: prompt,
-        ...(exercise ? {} : { scope }),
-        ...(collectionId ? { collection_id: collectionId } : {}),
+        collection_id: collectionId,
         dialect: dialect || null,
         is_hidden: hidden,
         configuration: config,
@@ -107,11 +101,6 @@ export default function CreateSlpExercisePage({
 
   return (
     <div className="space-y-6">
-      {!onSaved && (
-        <Link to="/slp/exercises" className="btn">
-          Back to exercises
-        </Link>
-      )}
       <form
         aria-label={exercise ? 'Edit exercise' : 'New exercise'}
         onSubmit={submit}
@@ -177,24 +166,6 @@ export default function CreateSlpExercisePage({
               onChange={(event) => setDialect(event.target.value)}
             />
           </FormInput>
-          {canShare && !exercise && (
-            <FormInput
-              htmlFor={`${formId}-createslpexercisepage-field-4`}
-              label="Scope"
-            >
-              <select
-                id={`${formId}-createslpexercisepage-field-4`}
-                className="select w-full"
-                value={scope}
-                onChange={(event) =>
-                  setScope(event.target.value as 'private' | 'shared')
-                }
-              >
-                <option value="private">Private</option>
-                <option value="shared">Shared catalog</option>
-              </select>
-            </FormInput>
-          )}
         </div>
         <FormInput
           htmlFor={`${formId}-createslpexercisepage-field-5`}

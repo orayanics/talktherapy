@@ -50,11 +50,6 @@ export const superadmin_NAV_ITEMS = [
         to: '/slp/exercises',
         icon: <ClipboardCheck size={16} />,
       },
-      {
-        label: 'New exercise',
-        to: '/slp/exercises/create',
-        icon: <ClipboardPlus size={16} />,
-      },
     ],
   },
   {
@@ -95,11 +90,6 @@ export const ADMIN_NAV_ITEMS = [
         label: 'Collections',
         to: '/slp/exercises',
         icon: <ClipboardCheck size={16} />,
-      },
-      {
-        label: 'New exercise',
-        to: '/slp/exercises/create',
-        icon: <ClipboardPlus size={16} />,
       },
     ],
   },
@@ -151,11 +141,6 @@ export const CLINICIAN_NAV_ITEMS = [
         label: 'Collections',
         to: '/slp/exercises',
         icon: <ClipboardCheck size={16} />,
-      },
-      {
-        label: 'New exercise',
-        to: '/slp/exercises/create',
-        icon: <ClipboardPlus size={16} />,
       },
       {
         label: 'Assignments',

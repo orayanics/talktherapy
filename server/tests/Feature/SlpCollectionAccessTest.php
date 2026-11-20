@@ -119,7 +119,7 @@ class SlpCollectionAccessTest extends TestCase
         $id = $this->postJson('/api/v1/slp/collections', ['title' => 'Practice', 'patient_audience' => 'selected', 'patient_ids' => [$patient->id]])->assertCreated()->json('data.id');
         $this->patchJson('/api/v1/slp/collections/'.$id, ['patient_ids' => []])->assertUnprocessable();
         $this->patchJson('/api/v1/slp/collections/'.$id, ['patient_audience' => 'platform'])->assertOk()->assertJsonPath('data.patient_ids', []);
-        $this->actingAs($this->user('admin'))->postJson('/api/v1/slp/collections', ['title' => 'Practice', 'patient_audience' => 'selected', 'patient_ids' => [$stranger->id]])->assertCreated();
+        $this->actingAs($this->user('admin'))->postJson('/api/v1/slp/collections', ['title' => 'Practice', 'patient_audience' => 'selected', 'patient_ids' => [$stranger->id]])->assertForbidden();
     }
 
     public function test_cover_access_follows_patient_audience_and_hidden_status(): void

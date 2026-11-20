@@ -175,7 +175,8 @@ export default function ExerciseCollections({
   const [editing, setEditing] = useState(false)
   const [creating, setCreating] = useState(false)
   const [deleting, setDeleting] = useState(false)
-  const [allExercises, setAllExercises] = useState(false)
+  const { role } = useAuthGuard()
+  const canCreate = role === 'clinician'
   const client = useQueryClient()
   const collections = useQuery(fetchCollections(page))
   const remove = useMutation({
@@ -201,15 +202,6 @@ export default function ExerciseCollections({
           setEditing(false)
         }}
       />
-    )
-  if (allExercises)
-    return (
-      <div className="space-y-4">
-        <button className="btn" onClick={() => setAllExercises(false)}>
-          Back to collections
-        </button>
-        <SlpExerciseCatalog />
-      </div>
     )
   if (selected)
     return (
@@ -272,13 +264,10 @@ export default function ExerciseCollections({
     )
   return (
     <div className="space-y-4">
-      {!patientView && (
+      {!patientView && canCreate && (
         <div className="flex flex-wrap gap-2">
           <button className="btn btn-neutral" onClick={() => setCreating(true)}>
             New collection
-          </button>
-          <button className="btn" onClick={() => setAllExercises(true)}>
-            All exercises
           </button>
         </div>
       )}
@@ -292,7 +281,9 @@ export default function ExerciseCollections({
             <p>
               {patientView
                 ? 'No practice collections are available to you yet.'
-                : 'No collections yet. Create one to organize your exercises.'}
+                : canCreate
+                  ? 'No collections yet. Create one to organize your exercises.'
+                  : 'No collections are available to review yet.'}
             </p>
           )}
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

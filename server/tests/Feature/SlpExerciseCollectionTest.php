@@ -34,6 +34,11 @@ class SlpExerciseCollectionTest extends TestCase
             $this->patchJson("/api/v1/slp/exercises/{$exercise->id}", ['is_hidden' => true])->assertForbidden();
             $this->deleteJson("/api/v1/slp/exercises/{$exercise->id}")->assertForbidden();
             $this->patchJson('/api/v1/slp/exercise-versions/'.$exercise->versions->first()->id.'/visibility', ['visible' => true])->assertForbidden();
+            if ($role !== UserRole::Clinician) {
+                $this->postJson('/api/v1/slp/collections', ['title' => 'No'])->assertForbidden();
+
+                continue;
+            }
             $id = $this->postJson('/api/v1/slp/collections', ['title' => 'My collection', 'description' => 'Practice', 'owner_id' => $other->id])->assertCreated()->assertJsonPath('data.owner_id', $actor->id)->assertJsonPath('data.is_hidden', false)->json('data.id');
             $this->getJson("/api/v1/slp/collections/{$id}")->assertOk();
             $this->patchJson("/api/v1/slp/collections/{$id}", ['title' => 'Updated', 'is_hidden' => true])->assertOk()->assertJsonPath('data.is_hidden', true);

@@ -48,9 +48,7 @@ it.each(['admin', 'superadmin', 'clinician', 'patient'] as const)(
       ).toBe('/slp/assignments')
       expect(screen.queryByRole('link', { name: 'New exercise' })).toBeNull()
     } else {
-      expect(
-        screen.getByRole('link', { name: 'New exercise' }).getAttribute('href'),
-      ).toBe('/slp/exercises/create')
+      expect(screen.queryByRole('link', { name: 'New exercise' })).toBeNull()
       expect(Boolean(screen.queryByRole('link', { name: 'Assignments' }))).toBe(
         role === 'clinician',
       )
@@ -62,14 +60,14 @@ it.each(['admin', 'superadmin', 'clinician', 'patient'] as const)(
 
 it('opens the group on a speech route and after navigation into it', () => {
   const { rerender } = render(<SidebarItem items={NAV_BY_ROLE.clinician} />)
-  location.pathname = '/slp/exercises/create'
+  location.pathname = '/slp/exercises'
   rerender(<SidebarItem items={NAV_BY_ROLE.clinician} />)
   expect(
     screen
       .getByRole('button', { name: 'Speech Exercises' })
       .getAttribute('aria-expanded'),
   ).toBe('true')
-  expect(screen.getByRole('link', { name: 'New exercise' })).toBeTruthy()
+  expect(screen.getByRole('link', { name: 'Collections' })).toBeTruthy()
 })
 
 it('expands the compact sidebar before showing the child links', () => {
