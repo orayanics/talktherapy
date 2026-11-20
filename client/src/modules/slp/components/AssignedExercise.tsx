@@ -1,9 +1,11 @@
 import { useRef, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { api } from '#/lib/api/client'
 import { useSession } from '#/modules/auth/context/SessionContext'
 import { errMsg } from '#/lib/errorMessage'
 import usePracticeRecorder from '../hooks/usePracticeRecorder'
 import { Tala } from './PracticeRewards'
+import { fetchSlpAttempt } from '../api/workflow'
 
 export default function AssignedExercise({
   assignmentId,
@@ -18,6 +20,19 @@ export default function AssignedExercise({
   const [error, setError] = useState<string | null>(null)
   const attemptId = useRef<string | null>(null)
   const submissionKey = useRef(crypto.randomUUID())
+  const [submittedAttemptId, setSubmittedAttemptId] = useState<string | null>(
+    null,
+  )
+  const attempt = useQuery({
+    ...fetchSlpAttempt(submittedAttemptId ?? ''),
+    enabled: submittedAttemptId !== null,
+    refetchInterval: (query) =>
+      ['queued', 'running'].includes(
+        query.state.data?.data.analysis_status ?? '',
+      )
+        ? 2000
+        : false,
+  })
   const submit = async () => {
     if (!recorder.audio || busy || !consent) return
     setBusy(true)
@@ -46,6 +61,7 @@ export default function AssignedExercise({
           },
         )
         attemptId.current = attempt.data.id
+        setSubmittedAttemptId(attempt.data.id)
       }
       const data = new FormData()
       data.append('recording', recorder.audio, 'recording.webm')
@@ -73,9 +89,28 @@ export default function AssignedExercise({
         role="status"
       >
         <Tala mood="cheer" size={48} />
-        <p className="font-semibold">
-          Thank you. Your recording is ready for clinician review.
-        </p>
+        <div>
+          <p className="font-semibold">
+            {attempt.data?.data.status === 'failed'
+              ? 'Analysis could not be completed. Please try a new recording.'
+              : attempt.data?.data.status === 'awaiting_review'
+                ? 'Your recording has been analyzed and is ready for clinician review.'
+                : 'Your recording is being processed for clinician review.'}
+          </p>
+          {attempt.data?.data.status === 'failed' && (
+            <button
+              className="tt-btn alt mt-3"
+              onClick={() => {
+                attemptId.current = null
+                submissionKey.current = crypto.randomUUID()
+                setSubmittedAttemptId(null)
+                setSent(false)
+              }}
+            >
+              Record another
+            </button>
+          )}
+        </div>
       </div>
     )
   return (

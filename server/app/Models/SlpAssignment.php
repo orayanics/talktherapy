@@ -41,11 +41,7 @@ class SlpAssignment extends Model
 
     public function availableToPatient(string $patientId): bool
     {
-        $configuration = $this->version->configuration ?? [];
-
         return $this->patient_id === $patientId && $this->status === 'active'
-            && $this->version->status === 'published' && $this->version->exercise->archived_at === null
-            && ($configuration['patient_visible'] ?? false) === true
-            && (($configuration['patient_audience'] ?? 'all') === 'all' || in_array($patientId, $configuration['patient_ids'] ?? [], true));
+            && $this->version->status === 'published' && $this->version->exercise->archived_at === null;
     }
 }

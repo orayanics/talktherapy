@@ -216,9 +216,11 @@ class SlpWorkflowController extends Controller
         $allowed = $attempt->assignment->patient_id === $user->id || $attempt->assignment->clinician_id === $user->id;
         abort_unless($allowed, 403);
         $attempt->load(['analysis', 'recording', 'assignment.version']);
-        $data = ['id' => $attempt->id, 'status' => $attempt->status, 'analysis' => $attempt->analysis, 'exercise' => $attempt->assignment->version];
+        $data = ['id' => $attempt->id, 'status' => $attempt->status, 'analysis_status' => $attempt->analysis?->status, 'exercise' => $attempt->assignment->version];
         if ($attempt->assignment->patient_id === $user->id) {
-            unset($data['analysis']);
+            $data['analysis'] = null;
+        } else {
+            $data['analysis'] = $attempt->analysis;
         }
 
         return ['data' => $data];

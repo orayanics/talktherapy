@@ -9,7 +9,7 @@ use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 
 #[Signature('app:dispatch-slp-analysis')]
-#[Description('Recover queued SLP analysis dispatches')]
+#[Description('Recover stalled SLP analysis dispatches')]
 class DispatchSlpAnalysis extends Command
 {
     /**
@@ -17,8 +17,9 @@ class DispatchSlpAnalysis extends Command
      */
     public function handle(): int
     {
-        SlpAnalysisRun::query()->where('status', 'queued')->where('updated_at', '<=', now()->subMinutes(5))
+        SlpAnalysisRun::query()->whereIn('status', ['queued', 'running'])->where('updated_at', '<=', now()->subMinutes(5))
             ->orderBy('updated_at')->limit(100)->get()->each(function (SlpAnalysisRun $run): void {
+                $run->update(['status' => 'queued', 'failure_code' => null]);
                 RunSlpAnalysis::dispatch($run->id);
                 $run->touch();
             });

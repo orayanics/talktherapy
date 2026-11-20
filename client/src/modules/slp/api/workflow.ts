@@ -19,6 +19,7 @@ export interface SlpAssignment {
 export interface SlpAttemptStatus {
   id: string
   status: string
+  analysis_status?: string | null
   analysis?: { status: string; result?: Record<string, unknown> | null }
 }
 type ListResponse<T> = { data: T[]; meta: Record<string, unknown> }
