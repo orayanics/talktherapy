@@ -23,9 +23,16 @@ function PrivateLayout() {
   return (
     <SessionProvider value={user}>
       <NotificationRealtime key={user.id} />
-      <div className="flex w-screen h-screen">
+      <div
+        data-theme="app"
+        className="app-shell flex h-dvh w-full overflow-hidden"
+      >
         <Sidebar role={user.role}>
-          <main className="flex-1 min-h-full w-full overflow-auto">
+          <main
+            id="app-main"
+            tabIndex={-1}
+            className="min-h-full min-w-0 w-full"
+          >
             <Outlet />
           </main>
         </Sidebar>

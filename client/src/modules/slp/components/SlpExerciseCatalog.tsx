@@ -98,7 +98,7 @@ export default function SlpExerciseCatalog() {
         </Link>
       </div>
 
-      <div className="bg-white rounded-box border border-border overflow-hidden flex flex-col">
+      <div className="overflow-hidden flex flex-col">
         {isPending ? (
           <StateLoading />
         ) : isError ? (

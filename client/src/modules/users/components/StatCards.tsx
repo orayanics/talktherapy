@@ -47,7 +47,9 @@ export default function StatCards(props: UsersCount) {
           </div>
           <div>
             <div className="flex items-baseline gap-2 mb-1">
-              <span className="text-4xl font-bold">{stat.count}</span>
+              <span className="text-3xl font-semibold tracking-tight tabular-nums">
+                {stat.count}
+              </span>
             </div>
           </div>
         </div>

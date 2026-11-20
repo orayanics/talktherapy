@@ -74,11 +74,7 @@ export default function LogsPage() {
       ) : logs.length === 0 ? (
         <StateNull />
       ) : (
-        <div
-          className="bg-white
-        border border-slate-300 rounded-box p-4
-        "
-        >
+        <div className="overflow-hidden">
           <TableBase
             data={logs}
             keyExtractor={(row) => row.id}

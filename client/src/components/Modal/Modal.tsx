@@ -63,7 +63,7 @@ export default function Modal({
         titleId={`${id}-title`}
         descriptionId={`${id}-description`}
       />
-      <div className="p-8 space-y-6">{children}</div>
+      <div className="p-4 sm:p-6 space-y-6">{children}</div>
       <ModalFooter
         onClose={close}
         hasSubmit={Boolean(onSubmit)}

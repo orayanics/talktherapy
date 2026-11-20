@@ -20,7 +20,7 @@ export default function ProfilePage() {
         <div className="lg:col-span-4">
           <div
             className="bg-white rounded-box p-4 text-slate-900 
-          border border-slate-300 space-y-2"
+          border border-border space-y-2"
           >
             <div className="relative z-1">
               <div
@@ -30,33 +30,33 @@ export default function ProfilePage() {
               >
                 {name.charAt(0)}
               </div>
-              <h3 className="text-xl font-bold leading-tight">{name}</h3>
+              <h3 className="text-lg font-semibold leading-tight break-words">
+                {name}
+              </h3>
             </div>
           </div>
         </div>
 
         <div className="lg:col-span-8 space-y-4">
-          <div className="bg-white border border-slate-300 rounded-box ">
+          <div className="bg-white border border-border rounded-box ">
             <div className="p-4 border-b border-slate-200 flex items-center gap-2">
               <ShieldCheck size={16} />
-              <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider">
-                Account Details
-              </h3>
+              <h3 className="text-base font-semibold">Account Details</h3>
             </div>
 
-            <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-400 uppercase flex items-center gap-2">
+                <label className="text-sm font-medium text-muted flex items-center gap-2">
                   <Mail size={12} /> Email Address
                 </label>
-                <p className="text-slate-700 font-medium">{email}</p>
+                <p className="text-base-content break-all">{email}</p>
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-400 uppercase flex items-center gap-2">
+                <label className="text-sm font-medium text-muted flex items-center gap-2">
                   <Calendar size={12} /> Member Since
                 </label>
-                <p className="text-slate-700 font-mono text-sm">
+                <p className="text-base-content tabular-nums text-sm">
                   {formatDate(createdAt)}
                 </p>
               </div>
@@ -72,9 +72,9 @@ export default function ProfilePage() {
               event.preventDefault()
               void preferences.update(draft)
             }}
-            className="bg-white border border-slate-300 rounded-box  p-4 space-y-3"
+            className="bg-white border border-border rounded-box  p-4 space-y-3"
           >
-            <h3 className="font-bold">Notification preferences</h3>
+            <h3 className="font-semibold">Notification preferences</h3>
             <label className="flex items-center justify-between">
               <span>In-app notifications</span>
               <input

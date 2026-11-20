@@ -88,18 +88,20 @@ export default function ContentList() {
           )}
         </StateNull>
       ) : (
-        <div className="grid grid-cols-12 gap-4">
-          {contents.map((content) => (
-            <ContentCard key={content.id} content={content} />
-          ))}
+        <div>
+          <div className="grid grid-cols-12 gap-4">
+            {contents.map((content) => (
+              <ContentCard key={content.id} content={content} />
+            ))}
+          </div>
+
+          <Pagination
+            meta={meta}
+            page={page}
+            updateSearch={(next) => updateSearch({ page: next.page })}
+          />
         </div>
       )}
-
-      <Pagination
-        meta={meta}
-        page={page}
-        updateSearch={(next) => updateSearch({ page: next.page })}
-      />
     </div>
   )
 }

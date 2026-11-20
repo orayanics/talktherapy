@@ -49,10 +49,10 @@ export default function PatientDashboard() {
       <PatientSummary summary={summaryQ.data} />
       <section className="space-y-4">
         <div>
-          <p className="text-lg font-bold text-slate-900 uppercase tracking-tight">
+          <p className="text-lg font-semibold text-base-content">
             Clinical Schedule
           </p>
-          <p className="text-xs text-slate-400 font-medium">Next 30 days</p>
+          <p className="text-sm text-muted">Next 30 days</p>
         </div>
 
         {apptQ.isError ? (
@@ -77,7 +77,7 @@ export default function PatientDashboard() {
                   </div>
 
                   <div>
-                    <div className="flex items-center gap-2 text-sm font-bold text-slate-900 leading-tight">
+                    <div className="flex items-center gap-2 text-sm font-semibold text-base-content leading-normal">
                       <Stethoscope size={18} />
                       {a.clinician.name}
                     </div>
@@ -103,10 +103,10 @@ export default function PatientDashboard() {
       {/* Bookmarks Section */}
       <section className="space-y-4">
         <div>
-          <p className="text-lg font-bold text-slate-900 uppercase tracking-tight">
+          <p className="text-lg font-semibold text-base-content">
             Bookmarked Content
           </p>
-          <p className="text-xs text-slate-400 font-medium">
+          <p className="text-sm text-muted">
             Your saved articles for later reading
           </p>
         </div>

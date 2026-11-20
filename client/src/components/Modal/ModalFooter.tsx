@@ -26,8 +26,8 @@ export default function ModalFooter({
   closeLabel = 'Close',
 }: ModalFooterProps) {
   return (
-    <div className="border-t border-border p-4">
-      <div className="flex justify-end gap-2">
+    <div className="border-t border-border px-4 py-4 sm:px-6">
+      <div className="flex flex-wrap justify-end gap-2">
         <button
           type="button"
           className="btn btn-ghost"

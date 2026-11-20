@@ -10,7 +10,7 @@ export default function Breadcrumbs() {
   return (
     <nav
       aria-label="Breadcrumbs"
-      className="breadcrumbs min-w-0 w-100 flex-1 overflow-x-auto"
+      className="breadcrumbs min-w-0 flex-1 overflow-x-auto text-sm"
     >
       <ol role="list" className="whitespace-nowrap px-0!">
         {crumbs.map((crumb, index) => {

@@ -54,10 +54,15 @@ export default function ModalHeader({
   const { class: variantClass, icon } = VARIANT_CONFIG[variant]
 
   return (
-    <div className={`${variantClass} p-6 text-center flex flex-col gap-4`}>
+    <div
+      className={`${variantClass} p-4 sm:p-6 text-center flex flex-col gap-3`}
+    >
       {showIcon && icon}
       <div>
-        <h2 id={titleId} className="text-xl font-bold text-base-content my-0!">
+        <h2
+          id={titleId}
+          className="text-lg font-semibold text-base-content my-0!"
+        >
           {title}
         </h2>
         {description && (

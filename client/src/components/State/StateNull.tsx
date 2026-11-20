@@ -12,7 +12,7 @@ export default function StateNull({
   return (
     <div
       role="alert"
-      className="bg-white flex flex-col items-center justify-center p-6"
+      className="app-state bg-white flex flex-col items-center justify-center p-6"
     >
       <CircleAlert />
       <p className="font-medium mb-0!">{title}</p>

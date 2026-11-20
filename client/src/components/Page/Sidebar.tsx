@@ -1,5 +1,12 @@
 import React, { useState } from 'react'
-import { Bell, Menu, PanelLeftClose, PanelLeftOpen } from 'lucide-react'
+import {
+  Bell,
+  LogOut,
+  Menu,
+  PanelLeftClose,
+  PanelLeftOpen,
+  X,
+} from 'lucide-react'
 
 import type { USER_ROLE } from '#/modules/auth/types/account'
 import { NAV_BY_ROLE } from '#/constants/sidebar'
@@ -64,12 +71,15 @@ export default function Sidebar(props: SidebarProps) {
       position="start"
       className="lg:drawer-open"
       sideClassName="z-40 lg:z-1!"
-      contentClassName="flex flex-col min-h-screen"
-      panelClassName={`w-fit min-h-full bg-base-200 flex flex-col pt-6 pb-4 lg:border-e border-border ${isCollapsed ? 'lg:w-16' : 'lg:w-fit'}`}
+      contentClassName="flex min-h-0 min-w-0 h-dvh flex-col"
+      panelClassName={`app-sidebar w-60 max-w-[85vw] h-dvh bg-base-100 flex flex-col border-e border-border ${isCollapsed ? 'lg:w-16' : 'lg:w-60'}`}
       content={
         <>
-          <div className="bg-white border-b border-border w-full flex flex-row items-center justify-between gap-2 px-4 h-14 shrink-0">
-            <div className="flex min-w-0 items-center gap-2">
+          <a href="#app-main" className="app-skip-link">
+            Skip to content
+          </a>
+          <div className="bg-base-100 border-b border-border w-full flex items-center justify-between gap-3 px-4 sm:px-6 h-16 shrink-0">
+            <div className="flex min-w-0 flex-1 items-center gap-3">
               <button
                 type="button"
                 className="btn btn-square btn-flat btn-sm hidden lg:inline-flex"
@@ -88,6 +98,7 @@ export default function Sidebar(props: SidebarProps) {
               <button
                 type="button"
                 aria-label="Open navigation"
+                aria-expanded={isMenuOpen}
                 onClick={() => setMenuOpen(true)}
                 className="btn btn-square btn-flat btn-sm lg:hidden"
               >
@@ -96,7 +107,7 @@ export default function Sidebar(props: SidebarProps) {
               <Breadcrumbs />
             </div>
 
-            <div className="items-center justify-end relative">
+            <div className="shrink-0 items-center justify-end relative">
               <button
                 type="button"
                 className={`btn btn-sm btn-flat btn-square relative ${unreadCount > 0 ? 'bg-primary/10 text-primary ring-1 ring-primary/30' : ''}`}
@@ -136,25 +147,51 @@ export default function Sidebar(props: SidebarProps) {
               )}
             </div>
           </div>
-          <div className="bg-base-100 flex-1 h-full w-full lg:z-10 relative overflow-auto scrollbar-none [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+          <div className="min-h-0 min-w-0 flex-1 w-full relative overflow-auto">
             {children}
           </div>
         </>
       }
     >
-      <div className="overflow-y-auto px-4 flex-1">
+      <div
+        className={`flex h-16 shrink-0 items-center border-b border-border px-5 text-sm font-semibold tracking-tight ${isCollapsed ? 'lg:justify-center lg:px-0' : ''}`}
+      >
+        <span className={isCollapsed ? 'lg:hidden' : undefined}>
+          TalkTherapy
+        </span>
+        {isCollapsed && (
+          <span className="hidden lg:inline" aria-hidden="true">
+            T
+          </span>
+        )}
+        <button
+          type="button"
+          className="btn btn-sm btn-square btn-ghost ml-auto lg:hidden"
+          aria-label="Close navigation"
+          onClick={() => setMenuOpen(false)}
+        >
+          <X size={18} aria-hidden="true" />
+        </button>
+      </div>
+      <div
+        className="overflow-y-auto p-3 flex-1"
+        onClick={(event) => {
+          if ((event.target as HTMLElement).closest('a')) setMenuOpen(false)
+        }}
+      >
         <SidebarItem items={navItems} collapsed={isCollapsed} />
       </div>
 
-      <div className="p-4 mt-auto">
+      <div className="p-3 mt-auto border-t border-border">
         <button
           type="button"
           onClick={handleLogout}
           aria-label="Log out"
           title="Log out"
-          className={`btn btn-block btn-neutral w-full ${isCollapsed ? 'lg:btn-square' : ''}`}
+          className={`btn btn-ghost w-full justify-start ${isCollapsed ? 'lg:btn-square lg:justify-center' : ''}`}
         >
-          <span className={isCollapsed ? 'lg:hidden' : undefined}>Logout</span>
+          <LogOut size={18} aria-hidden="true" />
+          <span className={isCollapsed ? 'lg:hidden' : undefined}>Log out</span>
         </button>
       </div>
     </Drawer>

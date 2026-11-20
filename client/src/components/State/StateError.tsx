@@ -12,7 +12,7 @@ export default function StateError({
   return (
     <div
       role="alert"
-      className="bg-white flex flex-col items-center justify-center p-6"
+      className="app-state bg-white flex flex-col items-center justify-center p-6"
     >
       <CircleAlert className="text-error" />
       <p className="text-error font-medium mb-0!">{title}</p>

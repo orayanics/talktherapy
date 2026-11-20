@@ -42,6 +42,9 @@ export default function Drawer({
   return (
     <div
       className={`drawer ${position === 'end' ? 'drawer-end' : ''} ${className}`}
+      onKeyDown={(event) => {
+        if (event.key === 'Escape' && isOpen) onClose()
+      }}
     >
       <input
         id={id}
@@ -51,12 +54,7 @@ export default function Drawer({
         readOnly
       />
       <div className={`drawer-content ${contentClassName}`}>{content}</div>
-      <div
-        className={`drawer-side ${sideClassName}`}
-        onKeyDown={(event) => {
-          if (event.key === 'Escape' && isOpen) onClose()
-        }}
-      >
+      <div className={`drawer-side ${sideClassName}`}>
         <label
           htmlFor={id}
           aria-label={`Close ${label}`}
@@ -66,13 +64,13 @@ export default function Drawer({
         <aside aria-label={label} {...panelProps} className={panelClassName}>
           {!hideHeader && (
             <div
-              className={`flex shrink-0 items-center justify-between gap-4 border-b border-border p-6 ${headerClassName}`}
+              className={`flex shrink-0 items-center justify-between gap-4 border-b border-border p-4 sm:p-6 ${headerClassName}`}
             >
               <p className="my-0! min-w-0 font-medium">{title}</p>
               <button
                 ref={closeButtonRef}
                 type="button"
-                className="btn btn-xs btn-square btn-neutral"
+                className="btn btn-sm btn-square btn-ghost"
                 aria-label={`Close ${label}`}
                 onClick={onClose}
               >

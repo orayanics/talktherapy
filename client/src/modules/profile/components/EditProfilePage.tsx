@@ -16,12 +16,10 @@ export default function EditProfilePage() {
         Back to Profile
       </Link>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         <div className="lg:col-span-4 space-y-4">
           <div
-            className="bg-white rounded-box p-8 text-slate-900 
-          border border-slate-300
-          relative overflow-hidden"
+            className="bg-white rounded-box p-4 sm:p-6 text-slate-900 border border-border relative overflow-hidden"
           >
             <div className="relative z-1">
               <div
@@ -31,7 +29,9 @@ export default function EditProfilePage() {
               >
                 {name.charAt(0)}
               </div>
-              <h3 className="text-xl font-bold leading-tight">{name}</h3>
+              <h3 className="text-lg font-semibold leading-tight break-words">
+                {name}
+              </h3>
             </div>
           </div>
 
@@ -45,9 +45,9 @@ export default function EditProfilePage() {
         </div>
 
         <div className="lg:col-span-8">
-          <div className="bg-white border border-slate-300 rounded-box  p-7 space-y-4">
+          <div className="bg-white border border-border rounded-box p-4 sm:p-6 space-y-4">
             <div>
-              <h2 className="text-lg font-bold text-slate-800">
+              <h2 className="text-lg font-semibold text-slate-800">
                 Account Settings
               </h2>
               <p className="text-sm text-slate-500">

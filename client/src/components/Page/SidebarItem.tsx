@@ -10,22 +10,26 @@ export default function SidebarItem(props: SidebarItemProps) {
   const { items = [], collapsed = false } = props
 
   return (
-    <nav className="flex flex-col gap-2">
+    <nav aria-label="Main navigation" className="flex flex-col gap-1">
       {items.map((item) => {
         const { label, to, icon } = item
         return (
           <Link
             key={to}
             to={to}
-            className={`flex items-center transition-colors p-2 group no-underline ${collapsed ? 'lg:justify-center' : ''}`}
+            aria-label={label}
+            title={collapsed ? label : undefined}
+            className={`flex min-h-10 items-center rounded-lg px-3 py-2 gap-3 no-underline ${collapsed ? 'lg:justify-center lg:px-0' : ''}`}
             inactiveProps={{
-              className: 'opacity-70 hover:opacity-100',
+              className: 'text-muted hover:bg-base-200 hover:text-base-content',
             }}
             activeProps={{
-              className: 'rounded-box font-medium bg-base-300',
+              className: 'font-medium bg-base-200 text-base-content',
             }}
           >
-            <span className={collapsed ? 'mr-4 lg:mr-0' : 'mr-4'}>{icon}</span>
+            <span aria-hidden="true" className="shrink-0 [&>svg]:size-4.5">
+              {icon}
+            </span>
             <p
               className={
                 collapsed ? 'text-sm my-0! lg:hidden' : 'text-sm my-0!'

@@ -47,7 +47,7 @@ export default function ContentFilters({
         />
         <div>
           <button
-            className={`btn ${is_bookmarked ? 'btn-primary' : 'btn-primary btn-ghost border-sky-400'}`}
+            className={`btn ${is_bookmarked ? 'btn-primary' : 'btn-primary btn-outline'}`}
             onClick={() =>
               updateSearch({
                 page: 1,

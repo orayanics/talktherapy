@@ -121,7 +121,7 @@ export default function DiagnosisAdmin() {
           </FormInput>
         </div>
       </Modal>
-      <div className="overflow-hidden rounded-box border border-border">
+      <div className="overflow-hidden">
         <TableBase
           data={diagnoses}
           keyExtractor={(diagnosis) => diagnosis.id}

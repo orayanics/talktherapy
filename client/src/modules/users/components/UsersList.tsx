@@ -212,8 +212,8 @@ export default function UsersList() {
         {count && !countPending && !countError && <StatCards {...count} />}
       </div>
 
-      <div className="bg-white rounded-box border border-border overflow-hidden flex flex-col">
-        <div className="w-full p-4">
+      <div className="overflow-hidden flex flex-col">
+        <div className="w-full">
           {isPending ? (
             <StateLoading />
           ) : isError ? (
@@ -255,7 +255,8 @@ export default function UsersList() {
                 },
                 {
                   header: (
-                    <div
+                    <button
+                      type="button"
                       className="flex items-center gap-1 cursor-pointer"
                       onClick={() => {
                         updateSearch({
@@ -270,7 +271,7 @@ export default function UsersList() {
                       ) : (
                         <ChevronDown strokeWidth={3} size={16} />
                       )}
-                    </div>
+                    </button>
                   ),
                   accessor: 'created_at',
                   render: (user) => formatDate(user.created_at, 'MMM dd, yyyy'),
