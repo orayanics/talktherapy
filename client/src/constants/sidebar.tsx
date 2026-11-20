@@ -42,9 +42,20 @@ export const superadmin_NAV_ITEMS = [
     icon: <Clapperboard size={16} />,
   },
   {
-    label: 'SLP Exercises',
-    to: '/slp/exercises',
+    label: 'Speech Exercises',
     icon: <ClipboardCheck size={16} />,
+    children: [
+      {
+        label: 'Collections',
+        to: '/slp/exercises',
+        icon: <ClipboardCheck size={16} />,
+      },
+      {
+        label: 'New exercise',
+        to: '/slp/exercises/create',
+        icon: <ClipboardPlus size={16} />,
+      },
+    ],
   },
   {
     label: 'Logs',
@@ -77,9 +88,20 @@ export const ADMIN_NAV_ITEMS = [
     icon: <Clapperboard size={16} />,
   },
   {
-    label: 'SLP Exercises',
-    to: '/slp/exercises',
+    label: 'Speech Exercises',
     icon: <ClipboardCheck size={16} />,
+    children: [
+      {
+        label: 'Collections',
+        to: '/slp/exercises',
+        icon: <ClipboardCheck size={16} />,
+      },
+      {
+        label: 'New exercise',
+        to: '/slp/exercises/create',
+        icon: <ClipboardPlus size={16} />,
+      },
+    ],
   },
   {
     label: 'Logs',
@@ -122,14 +144,25 @@ export const CLINICIAN_NAV_ITEMS = [
     icon: <Clapperboard size={16} />,
   },
   {
-    label: 'SLP Exercises',
-    to: '/slp/exercises',
+    label: 'Speech Exercises',
     icon: <ClipboardCheck size={16} />,
-  },
-  {
-    label: 'SLP Assignments',
-    to: '/slp/assignments',
-    icon: <ClipboardPlus size={16} />,
+    children: [
+      {
+        label: 'Collections',
+        to: '/slp/exercises',
+        icon: <ClipboardCheck size={16} />,
+      },
+      {
+        label: 'New exercise',
+        to: '/slp/exercises/create',
+        icon: <ClipboardPlus size={16} />,
+      },
+      {
+        label: 'Assignments',
+        to: '/slp/assignments',
+        icon: <ClipboardPlus size={16} />,
+      },
+    ],
   },
 
   {
@@ -146,14 +179,16 @@ export const PATIENT_NAV_ITEMS = [
     icon: <LayoutDashboard size={16} />,
   },
   {
-    label: 'Practice',
-    to: '/slp',
-    icon: <ClipboardPlus size={16} />,
-  },
-  {
-    label: 'Assignments',
-    to: '/slp/assignments',
+    label: 'Speech Exercises',
     icon: <ClipboardCheck size={16} />,
+    children: [
+      { label: 'Collections', to: '/slp', icon: <ClipboardCheck size={16} /> },
+      {
+        label: 'My assignments',
+        to: '/slp/assignments',
+        icon: <ClipboardPlus size={16} />,
+      },
+    ],
   },
   {
     label: 'Book',

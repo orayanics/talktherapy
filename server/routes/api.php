@@ -17,6 +17,8 @@ use App\Http\Controllers\Api\V1\ProfileController;
 use App\Http\Controllers\Api\V1\ReportingStatsController;
 use App\Http\Controllers\Api\V1\ScheduleController;
 use App\Http\Controllers\Api\V1\SlotController;
+use App\Http\Controllers\Api\V1\SlpCollectionPracticeController;
+use App\Http\Controllers\Api\V1\SlpExerciseCollectionController;
 use App\Http\Controllers\Api\V1\SlpExerciseController;
 use App\Http\Controllers\Api\V1\SlpWorkflowController;
 use App\Http\Controllers\Api\V1\SoapController;
@@ -42,6 +44,9 @@ Route::middleware(['auth:sanctum', 'account.active', 'verified'])->group(functio
     Route::post('/broadcasting/auth', [BroadcastController::class, 'authenticate'])->name('broadcasting.auth');
     Route::post('/slp/assess', PhonemeAssessmentController::class)->middleware('throttle:5,1')->name('slp.assess');
     Route::get('/slp/exercises', [SlpExerciseController::class, 'index'])->name('slp.exercises.index');
+    Route::apiResource('slp/collections', SlpExerciseCollectionController::class)->names('slp.collections');
+    Route::get('/slp/collections/{collection}/cover', [SlpExerciseCollectionController::class, 'cover'])->name('slp.collections.cover');
+    Route::get('/slp/collections/{collection}/practice', SlpCollectionPracticeController::class)->name('slp.collections.practice');
     Route::post('/slp/exercises', [SlpExerciseController::class, 'store'])->name('slp.exercises.store');
     Route::get('/slp/exercises/{exercise}', [SlpExerciseController::class, 'show'])->name('slp.exercises.show');
     Route::patch('/slp/exercises/{exercise}', [SlpExerciseController::class, 'update'])->name('slp.exercises.update');

@@ -45,7 +45,7 @@ class SlpExerciseCatalogTest extends TestCase
     public function test_admin_can_manage_shared_catalog_and_delete_archives(): void
     {
         $admin = $this->user(UserRole::Admin);
-        $exercise = SlpExercise::factory()->for($this->user(UserRole::Clinician), 'owner')->withDraft(['status' => 'draft'])->create(['scope' => 'shared']);
+        $exercise = SlpExercise::factory()->for($admin, 'owner')->withDraft(['status' => 'draft'])->create(['scope' => 'shared']);
 
         $this->actingAs($admin)->getJson('/api/v1/slp/exercises')->assertOk()->assertJsonPath('data.0.id', $exercise->id);
         $this->actingAs($admin)->deleteJson("/api/v1/slp/exercises/{$exercise->id}")->assertNoContent();

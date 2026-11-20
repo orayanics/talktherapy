@@ -69,7 +69,7 @@ export type AssessResponse = {
 }
 
 export const MAX_AUDIO_BYTES = 10 * 1024 * 1024
-export const MAX_REFERENCE_LENGTH = 800
+export const MAX_REFERENCE_LENGTH = 2000
 
 export const assessPronunciation = async (
   audioBlob: Blob,
@@ -86,7 +86,7 @@ export const assessPronunciation = async (
     !trimmedReferenceText ||
     trimmedReferenceText.length > MAX_REFERENCE_LENGTH
   ) {
-    throw new Error('Reference text must be between 1 and 800 characters.')
+    throw new Error('Reference text must be between 1 and 2000 characters.')
   }
 
   const formData = new FormData()

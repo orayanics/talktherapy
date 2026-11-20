@@ -26,6 +26,8 @@ class SlpExerciseRequest extends FormRequest
         $create = $this->isMethod('post');
 
         return [
+            'collection_id' => ['sometimes', 'nullable', 'uuid', Rule::exists('slp_exercise_collections', 'id')->where('owner_id', $this->user()->id)->whereNull('archived_at')],
+            'is_hidden' => ['sometimes', 'boolean'],
             'scope' => [$create ? 'sometimes' : 'prohibited', Rule::in(['private', 'shared'])],
             'module' => [$create ? 'required' : 'sometimes', 'string', 'max:40', Rule::in(['fluency', 'timing', 'articulation', 'aphasia', 'voice', 'motor_speech'])],
             'language' => [$create ? 'required' : 'sometimes', 'string', 'max:16'],

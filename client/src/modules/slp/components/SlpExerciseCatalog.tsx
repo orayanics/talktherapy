@@ -10,15 +10,27 @@ import StateLoading from '#/components/State/StateLoading'
 import StateError from '#/components/State/StateError'
 import StateNull from '#/components/State/StateNull'
 import ExerciseDelivery from './ExerciseDelivery'
+import CreateSlpExercisePage from './CreateSlpExercisePage'
+import ExerciseActions from './ExerciseActions'
 import { fetchSlpExercises } from '../api/exercises'
 import type { SlpExerciseFilters } from '../api/exercises'
 import { slpExerciseModules } from '../types/exercises'
 
-export default function SlpExerciseCatalog() {
+export default function SlpExerciseCatalog({
+  collectionId,
+  readOnly = false,
+}: {
+  collectionId?: string
+  readOnly?: boolean
+}) {
+  const [creating, setCreating] = useState(false)
   const [page, setPage] = useState(1)
   const [filters, setFilters] = useState<SlpExerciseFilters>({})
   const { data, isPending, isError } = useQuery(
-    fetchSlpExercises(page, filters),
+    fetchSlpExercises(
+      page,
+      collectionId ? { ...filters, collection_id: collectionId } : filters,
+    ),
   )
   const updateFilters = (next: Partial<SlpExerciseFilters>) => {
     setFilters((current) => ({ ...current, ...next }))
@@ -93,10 +105,26 @@ export default function SlpExerciseCatalog() {
             </div>
           </FilterDrawer>
         </div>
-        <Link to="/slp/exercises/create" className="btn btn-neutral">
-          New Draft
-        </Link>
+        {!readOnly &&
+          (collectionId ? (
+            <button
+              className="btn btn-neutral"
+              onClick={() => setCreating(!creating)}
+            >
+              {creating ? 'Close new exercise' : 'New exercise'}
+            </button>
+          ) : (
+            <Link to="/slp/exercises/create" className="btn btn-neutral">
+              New Draft
+            </Link>
+          ))}
       </div>
+      {creating && (
+        <CreateSlpExercisePage
+          collectionId={collectionId}
+          onSaved={() => setCreating(false)}
+        />
+      )}
 
       <div className="overflow-hidden flex flex-col">
         {isPending ? (
@@ -127,17 +155,33 @@ export default function SlpExerciseCatalog() {
               },
               { header: 'Scope', accessor: 'scope' },
               {
+                header: 'Manage',
+                render: (exercise) => (
+                  <ExerciseActions
+                    key={`${exercise.id}-${exercise.updated_at}-${exercise.is_hidden}`}
+                    exercise={exercise}
+                  />
+                ),
+              },
+              {
                 header: 'Revision',
                 render: (exercise) => exercise.latest_version?.revision,
               },
               {
+                header: 'Status',
+                render: (exercise) => exercise.latest_version?.status,
+              },
+              {
                 header: 'Delivery',
-                render: (exercise) => (
-                  <ExerciseDelivery
-                    key={exercise.latest_version?.id}
-                    exercise={exercise}
-                  />
-                ),
+                render: (exercise) =>
+                  exercise.can_manage ? (
+                    <ExerciseDelivery
+                      key={exercise.latest_version?.id}
+                      exercise={exercise}
+                    />
+                  ) : (
+                    <span>Read only</span>
+                  ),
               },
             ]}
           />

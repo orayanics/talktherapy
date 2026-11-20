@@ -154,7 +154,7 @@ export default function ExerciseDelivery({
                   checked={visible}
                   onChange={(event) => setVisible(event.target.checked)}
                 />
-                Allow patients to test this draft
+                Make available after publishing
               </label>
             </div>
 
@@ -263,7 +263,11 @@ export default function ExerciseDelivery({
                 version.configuration?.patient_visible === true && (
                   <button
                     className="btn"
-                    disabled={!canAssign || assign.isPending}
+                    disabled={
+                      !canAssign ||
+                      exercise.available_for_assignment === false ||
+                      assign.isPending
+                    }
                     onClick={() => assign.mutate()}
                   >
                     {audience === 'all'

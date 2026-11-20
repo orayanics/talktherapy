@@ -30,6 +30,7 @@ vi.mock('@tanstack/react-router', () => ({
   Link: ({ children }: { children: React.ReactNode }) => <a>{children}</a>,
 }))
 vi.mock('../api/exercises', () => ({ fetchSlpExercises: vi.fn() }))
+vi.mock('./ExerciseActions', () => ({ default: () => <button>Edit</button> }))
 vi.mock('./ExerciseDelivery', () => ({
   default: () => <button>Patient visibility</button>,
 }))

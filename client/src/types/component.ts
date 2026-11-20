@@ -1,8 +1,16 @@
-export interface NavItem {
+export interface NavLink {
   label: string
   to: string
   icon: React.ReactNode
 }
+
+export type NavItem =
+  | NavLink
+  | {
+      label: string
+      icon: React.ReactNode
+      children: Array<NavLink>
+    }
 
 export interface ModalProps {
   isOpen: boolean

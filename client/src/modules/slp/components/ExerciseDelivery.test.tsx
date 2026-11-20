@@ -26,6 +26,10 @@ it('opens the visibility drawer, saves visibility and audience, and restores foc
   const exercise: SlpExercise = {
     id: 'exercise',
     owner_id: 'clinician',
+    can_manage: true,
+    collection_id: null,
+    is_hidden: false,
+    available_for_assignment: true,
     scope: 'private',
     module: 'voice',
     archived_at: null,
@@ -71,11 +75,9 @@ it('opens the visibility drawer, saves visibility and audience, and restores foc
   expect(content.textContent).toContain('private')
   expect(content.textContent).toContain('draft')
   fireEvent.click(
-    screen.getByRole('checkbox', { name: 'Allow patients to test this draft' }),
+    screen.getByRole('checkbox', { name: 'Make available after publishing' }),
   )
-  fireEvent.click(
-    screen.getByRole('button', { name: 'Save visibility and audience' }),
-  )
+  fireEvent.click(screen.getByRole('button', { name: 'Save Changes' }))
   await waitFor(() =>
     expect(api).toHaveBeenCalledWith(
       '/api/v1/slp/exercise-versions/version/visibility',
@@ -103,6 +105,10 @@ it.each(['draft', 'published'] as const)(
     const exercise = {
       id: 'exercise',
       owner_id: 'clinician',
+      can_manage: true,
+      collection_id: null,
+      is_hidden: false,
+      available_for_assignment: true,
       scope: 'private',
       module: 'voice',
       archived_at: null,

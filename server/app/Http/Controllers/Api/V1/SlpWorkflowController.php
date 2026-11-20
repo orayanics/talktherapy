@@ -22,6 +22,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
@@ -31,7 +32,7 @@ class SlpWorkflowController extends Controller
 {
     public function visibility(Request $request, SlpExerciseVersion $version): array
     {
-        abort_unless($this->staff($request->user()) && ($version->exercise->owner_id === $request->user()->id || $this->admin($request->user())), 403);
+        Gate::authorize('update', $version->exercise);
         $data = $request->validate([
             'visible' => ['required', 'boolean'],
             'audience' => ['sometimes', Rule::in(['all', 'selected'])],
@@ -139,7 +140,7 @@ class SlpWorkflowController extends Controller
         $version = SlpExerciseVersion::query()->with('exercise')->findOrFail($data['exercise_version_id']);
         abort_unless($version->status === 'published', 422, 'Publish this version before assigning it.');
         abort_unless($version->exercise->owner_id === $request->user()->id || ($version->exercise->scope === 'shared' && $version->status === 'published'), 403);
-        abort_unless($version->exercise->archived_at === null && ($version->configuration['patient_visible'] ?? false) === true, 422, 'Enable patient visibility before assigning this version.');
+        abort_unless($version->exercise->availableForAssignment() && ($version->configuration['patient_visible'] ?? false) === true, 422, 'Unhide the collection and exercise and enable patient visibility before assigning this version.');
         $patientIds = $audience === 'all'
             ? ClinicianPatient::query()->where('clinician_id', $request->user()->id)->pluck('patient_id')->all()
             : ($data['patient_ids'] ?? (! empty($data['patient_id']) ? [$data['patient_id']] : []));

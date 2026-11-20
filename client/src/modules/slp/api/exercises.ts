@@ -21,6 +21,10 @@ export interface SlpExerciseVersion {
 export interface SlpExercise {
   id: string
   owner_id: string
+  can_manage: boolean
+  collection_id: string | null
+  is_hidden: boolean
+  available_for_assignment: boolean
   scope: 'private' | 'shared'
   module: SlpExerciseModule
   archived_at: string | null
@@ -30,6 +34,8 @@ export interface SlpExercise {
 }
 
 export interface SlpExerciseInput {
+  collection_id?: string | null
+  is_hidden?: boolean
   scope?: 'private' | 'shared'
   module: SlpExerciseModule
   language: string
@@ -41,6 +47,7 @@ export interface SlpExerciseInput {
 
 type ExerciseResponse = { data: SlpExercise }
 export interface SlpExerciseFilters {
+  collection_id?: string
   module?: SlpExerciseModule
   language?: string
   scope?: 'private' | 'shared'

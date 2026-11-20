@@ -12,7 +12,10 @@ export const useCreateSlpExerciseMutation = () => {
   return useMutation({
     mutationFn: mutateCreateSlpExercise,
     onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: slpExerciseKeys.all }),
+      Promise.all([
+        queryClient.invalidateQueries({ queryKey: slpExerciseKeys.all }),
+        queryClient.invalidateQueries({ queryKey: ['slp-collections'] }),
+      ]),
   })
 }
 
@@ -22,7 +25,10 @@ export const useUpdateSlpExerciseMutation = (id: string) => {
     mutationFn: (input: Parameters<typeof mutateUpdateSlpExercise>[1]) =>
       mutateUpdateSlpExercise(id, input),
     onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: slpExerciseKeys.all }),
+      Promise.all([
+        queryClient.invalidateQueries({ queryKey: slpExerciseKeys.all }),
+        queryClient.invalidateQueries({ queryKey: ['slp-collections'] }),
+      ]),
   })
 }
 
@@ -31,6 +37,9 @@ export const useArchiveSlpExerciseMutation = (id: string) => {
   return useMutation({
     mutationFn: () => mutateArchiveSlpExercise(id),
     onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: slpExerciseKeys.all }),
+      Promise.all([
+        queryClient.invalidateQueries({ queryKey: slpExerciseKeys.all }),
+        queryClient.invalidateQueries({ queryKey: ['slp-collections'] }),
+      ]),
   })
 }

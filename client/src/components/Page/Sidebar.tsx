@@ -179,7 +179,11 @@ export default function Sidebar(props: SidebarProps) {
           if ((event.target as HTMLElement).closest('a')) setMenuOpen(false)
         }}
       >
-        <SidebarItem items={navItems} collapsed={isCollapsed} />
+        <SidebarItem
+          items={navItems}
+          collapsed={isCollapsed}
+          onExpand={toggleCollapsed}
+        />
       </div>
 
       <div className="p-3 mt-auto border-t border-border">
