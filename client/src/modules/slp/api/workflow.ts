@@ -22,12 +22,34 @@ export interface SlpAttemptStatus {
   analysis_status?: string | null
   analysis?: { status: string; result?: Record<string, unknown> | null }
 }
+export interface SlpReviewAttempt extends SlpAttemptStatus {
+  patient: { id: string; name: string | null }
+  exercise: {
+    id: string
+    prompt_text: string
+    task_type: string
+    language: string
+  }
+  recording: {
+    url: string
+    mime_type: string
+    bytes: number
+    duration_ms: number | null
+  } | null
+  latest_review?: {
+    id: string
+    revision: number
+    status: string
+    annotations: Record<string, unknown>[] | null
+  } | null
+}
 type ListResponse<T> = { data: T[]; meta: Record<string, unknown> }
 
 export const slpWorkflowKeys = {
   all: ['slp-workflow'] as const,
   assignments: ['slp-workflow', 'assignments'] as const,
   attempt: (id: string) => ['slp-workflow', 'attempt', id] as const,
+  reviewAttempts: ['slp-workflow', 'review-attempts'] as const,
 }
 
 export const fetchSlpAssignments = () =>
@@ -81,10 +103,28 @@ export const fetchSlpAttempt = (attemptId: string) =>
     queryFn: () => api(`/api/v1/slp/attempts/${attemptId}`),
     refetchInterval: (query) =>
       ['queued', 'running'].includes(
-        query.state.data?.data.analysis?.status ?? '',
+        query.state.data?.data.analysis_status ?? '',
       )
         ? 2000
         : false,
+  })
+
+export const fetchSlpReviewAttempts = (status?: string) =>
+  queryOptions<ListResponse<SlpReviewAttempt>>({
+    queryKey: [...slpWorkflowKeys.reviewAttempts, status ?? 'default'],
+    queryFn: () =>
+      api<ListResponse<SlpReviewAttempt>>('/api/v1/slp/review-attempts', {
+        params: status ? { status } : undefined,
+      }),
+  })
+
+export const fetchSlpRecording = (attemptId: string) =>
+  queryOptions<Blob>({
+    queryKey: ['slp-workflow', 'recording', attemptId],
+    queryFn: () =>
+      api<Blob>(`/api/v1/slp/attempts/${attemptId}/recording`, {
+        responseType: 'blob',
+      }),
   })
 
 export const mutateSaveSlpReview = (
@@ -94,7 +134,7 @@ export const mutateSaveSlpReview = (
     metrics?: Record<string, unknown>
   },
 ) =>
-  api(`/api/v1/slp/attempts/${attemptId}/review`, {
+  api<{ data: { id: string } }>(`/api/v1/slp/attempts/${attemptId}/review`, {
     method: 'PUT',
     data: input,
   })

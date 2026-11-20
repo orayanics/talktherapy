@@ -6,9 +6,13 @@ use App\Enums\UserRole;
 use App\Enums\UserStatus;
 use App\Jobs\RunSlpAnalysis;
 use App\Models\ClinicianPatient;
+use App\Models\SlpAnalysisRun;
 use App\Models\SlpAssignment;
+use App\Models\SlpAttempt;
+use App\Models\SlpConsent;
 use App\Models\SlpExercise;
 use App\Models\SlpExerciseVersion;
+use App\Models\SlpRecording;
 use App\Models\User;
 use App\Models\UserProfile;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -74,6 +78,7 @@ class SlpWorkflowTest extends TestCase
             'submission_key' => 'access-check',
             'consent_id' => $consent['id'],
         ])->json('data');
+        SlpAttempt::query()->findOrFail($attempt['id'])->update(['status' => 'awaiting_review']);
 
         $this->actingAs($admin)->getJson("/api/v1/slp/attempts/{$attempt['id']}")->assertForbidden();
         $this->actingAs($unrelatedClinician)->getJson("/api/v1/slp/attempts/{$attempt['id']}")->assertForbidden();
@@ -90,6 +95,29 @@ class SlpWorkflowTest extends TestCase
         $this->actingAs($clinician)->postJson("/api/v1/slp/reviews/{$review['id']}/approve")->assertOk();
         $this->actingAs($clinician)->postJson("/api/v1/slp/reviews/{$review['id']}/approve")->assertOk();
         $this->assertDatabaseCount('slp_reports', 1);
+    }
+
+    public function test_clinician_can_list_review_attempts_and_stream_only_their_recordings(): void
+    {
+        Storage::fake('local');
+        $clinician = $this->user(UserRole::Clinician);
+        $otherClinician = $this->user(UserRole::Clinician);
+        $patient = $this->user(UserRole::Patient);
+        $version = SlpExerciseVersion::factory()->create(['status' => 'published', 'configuration' => ['patient_visible' => true]]);
+        $assignment = SlpAssignment::factory()->create(['clinician_id' => $clinician->id, 'patient_id' => $patient->id, 'exercise_version_id' => $version->id]);
+        $consent = SlpConsent::query()->create(['subject_id' => $patient->id, 'actor_id' => $patient->id, 'purpose' => 'slp_recording', 'policy_version' => 'v1', 'accepted_at' => now()]);
+        $attempt = SlpAttempt::query()->create(['assignment_id' => $assignment->id, 'consent_id' => $consent->id, 'submission_key' => 'review-one', 'status' => 'awaiting_review']);
+        SlpAnalysisRun::query()->create(['attempt_id' => $attempt->id, 'status' => 'succeeded', 'schema_version' => '2.0', 'result' => ['meta' => ['status' => 'review_required']]]);
+        Storage::disk('local')->put('slp-recordings/review.wav', 'speech');
+        SlpRecording::query()->create(['attempt_id' => $attempt->id, 'path' => 'slp-recordings/review.wav', 'mime_type' => 'audio/wav', 'bytes' => 6, 'checksum' => hash('sha256', 'speech'), 'retention_until' => now()->addDay()]);
+
+        $this->actingAs($clinician)->getJson('/api/v1/slp/review-attempts')->assertOk()->assertJsonCount(1, 'data')->assertJsonPath('data.0.id', $attempt->id)->assertJsonPath('data.0.recording.mime_type', 'audio/wav');
+        $this->actingAs($otherClinician)->getJson('/api/v1/slp/review-attempts')->assertOk()->assertJsonCount(0, 'data');
+        $this->actingAs($patient)->getJson('/api/v1/slp/review-attempts')->assertForbidden();
+        $recording = $this->actingAs($clinician)->get("/api/v1/slp/attempts/{$attempt->id}/recording");
+        $recording->assertOk()->assertHeader('Content-Type', 'audio/wav');
+        $this->assertSame('speech', $recording->streamedContent());
+        $this->actingAs($otherClinician)->get("/api/v1/slp/attempts/{$attempt->id}/recording")->assertForbidden();
     }
 
     private function user(UserRole $role): User

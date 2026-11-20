@@ -59,9 +59,11 @@ Route::middleware(['auth:sanctum', 'account.active', 'verified'])->group(functio
     Route::post('/slp/consents', [SlpWorkflowController::class, 'storeConsent'])->name('slp.consents.store');
     Route::post('/slp/consents/{consent}/withdraw', [SlpWorkflowController::class, 'withdrawConsent'])->name('slp.consents.withdraw');
     Route::get('/slp/assignments', [SlpWorkflowController::class, 'assignments'])->name('slp.assignments.index');
+    Route::get('/slp/review-attempts', [SlpWorkflowController::class, 'reviewAttempts'])->name('slp.review-attempts.index');
     Route::post('/slp/assignments', [SlpWorkflowController::class, 'storeAssignment'])->name('slp.assignments.store');
     Route::post('/slp/assignments/{assignment}/attempts', [SlpWorkflowController::class, 'storeAttempt'])->name('slp.attempts.store');
     Route::post('/slp/attempts/{attempt}/recording', [SlpWorkflowController::class, 'uploadRecording'])->name('slp.recordings.store');
+    Route::get('/slp/attempts/{attempt}/recording', [SlpWorkflowController::class, 'recording'])->name('slp.recordings.show');
     Route::get('/slp/attempts/{attempt}', [SlpWorkflowController::class, 'attempt'])->name('slp.attempts.show');
     Route::put('/slp/attempts/{attempt}/review', [SlpWorkflowController::class, 'saveReview'])->name('slp.reviews.store');
     Route::post('/slp/reviews/{review}/approve', [SlpWorkflowController::class, 'approveReview'])->name('slp.reviews.approve');

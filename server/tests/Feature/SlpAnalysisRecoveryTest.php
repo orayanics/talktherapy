@@ -107,12 +107,13 @@ class SlpAnalysisRecoveryTest extends TestCase
     public function test_report_failure_rolls_back_approval(): void
     {
         [, $attempt, $clinician] = $this->attempt();
+        $attempt->update(['status' => 'awaiting_review']);
         $review = $attempt->reviews()->create(['revision' => 1, 'reviewer_id' => $clinician->id, 'status' => 'draft', 'annotations' => []]);
         SlpReport::creating(fn () => throw new \RuntimeException('Cannot persist report'));
         try {
             $this->actingAs($clinician)->postJson("/api/v1/slp/reviews/{$review->id}/approve")->assertStatus(500);
             $this->assertSame('draft', $review->fresh()->status);
-            $this->assertSame('created', $attempt->fresh()->status);
+            $this->assertSame('awaiting_review', $attempt->fresh()->status);
             $this->assertDatabaseCount('slp_reports', 0);
         } finally {
             SlpReport::flushEventListeners();

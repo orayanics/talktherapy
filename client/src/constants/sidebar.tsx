@@ -162,6 +162,11 @@ export const CLINICIAN_NAV_ITEMS = [
         to: '/slp/assignments',
         icon: <ClipboardPlus size={16} />,
       },
+      {
+        label: 'Review recordings',
+        to: '/slp/reviews',
+        icon: <ClipboardCheck size={16} />,
+      },
     ],
   },
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\SlpAssignmentResource;
+use App\Http\Resources\SlpReviewAttemptResource;
 use App\Jobs\RunSlpAnalysis;
 use App\Models\ClinicianPatient;
 use App\Models\SlpAnalysisRun;
@@ -26,6 +27,7 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Throwable;
 
 class SlpWorkflowController extends Controller
@@ -132,6 +134,47 @@ class SlpWorkflowController extends Controller
         return SlpAssignmentResource::collection($query->latest()->paginate($data['per_page'] ?? 15));
     }
 
+    public function reviewAttempts(Request $request): AnonymousResourceCollection
+    {
+        abort_unless($request->user()->profile?->role === UserRole::Clinician, 403);
+        $data = $request->validate([
+            'status' => ['sometimes', Rule::in(['queued', 'running', 'awaiting_review', 'failed', 'approved'])],
+            'per_page' => ['sometimes', 'integer', 'min:1', 'max:100'],
+        ]);
+        $query = SlpAttempt::query()
+            ->with(['assignment.patient', 'assignment.version', 'analysis', 'recording', 'reviews'])
+            ->whereHas('assignment', fn ($q) => $q->where('clinician_id', $request->user()->id));
+        if (isset($data['status'])) {
+            $query->where('status', $data['status']);
+        } else {
+            $query->whereIn('status', ['awaiting_review', 'failed']);
+        }
+
+        return SlpReviewAttemptResource::collection($query->latest()->paginate($data['per_page'] ?? 15));
+    }
+
+    public function recording(Request $request, SlpAttempt $attempt): StreamedResponse
+    {
+        abort_unless($request->user()->profile?->role === UserRole::Clinician, 403);
+        abort_unless($attempt->assignment->clinician_id === $request->user()->id, 403);
+        $recording = $attempt->recording;
+        abort_unless($recording !== null && ($recording->retention_until === null || $recording->retention_until->isFuture()), 404);
+        $disk = Storage::disk('local');
+        abort_unless($disk->exists($recording->path), 404);
+        $stream = $disk->readStream($recording->path);
+        abort_unless(is_resource($stream), 404);
+
+        return response()->stream(function () use ($stream): void {
+            fpassthru($stream);
+            fclose($stream);
+        }, 200, [
+            'Content-Type' => $recording->mime_type,
+            'Content-Length' => (string) $recording->bytes,
+            'Content-Disposition' => 'inline; filename="speech-recording"',
+            'Cache-Control' => 'private, no-store',
+        ]);
+    }
+
     public function storeAssignment(Request $request): JsonResponse
     {
         abort_unless($request->user()->profile?->role === UserRole::Clinician, 403);
@@ -229,6 +272,7 @@ class SlpWorkflowController extends Controller
     public function saveReview(Request $request, SlpAttempt $attempt): array
     {
         abort_unless($attempt->assignment->clinician_id === $request->user()->id, 403);
+        abort_unless($attempt->status === 'awaiting_review', 409, 'Analysis is not ready for review.');
         $data = $request->validate(['annotations' => ['required', 'array'], 'metrics' => ['nullable', 'array']]);
         $review = DB::transaction(function () use ($attempt, $request, $data): SlpReview {
             $locked = SlpAttempt::query()->lockForUpdate()->findOrFail($attempt->id);
@@ -250,6 +294,7 @@ class SlpWorkflowController extends Controller
             $report = SlpReport::query()->where('review_id', $locked->id)->first();
             if ($report === null) {
                 abort_unless($locked->status === 'draft', 409);
+                abort_unless($attempt->status === 'awaiting_review', 409, 'Analysis is not ready for approval.');
                 $locked->update(['status' => 'approved']);
                 $attempt->update(['status' => 'approved']);
                 $report = SlpReport::query()->create(['review_id' => $locked->id, 'created_by' => $request->user()->id, 'snapshot' => ['metrics' => $locked->metrics, 'annotations' => $locked->annotations, 'approved_at' => now()->toISOString()]]);

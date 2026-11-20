@@ -120,6 +120,10 @@ export const PAGE_META = {
         title: 'SLP assignments',
         description: 'View and manage assigned speech practice.',
       },
+      reviews: {
+        title: 'SLP reviews',
+        description: 'Review submitted speech recordings and analysis.',
+      },
       exercises: {
         title: 'SLP exercises',
         description: 'Browse speech and language exercises.',
