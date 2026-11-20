@@ -143,7 +143,7 @@ class SlpWorkflowController extends Controller
     {
         $data = $request->validate(['per_page' => ['sometimes', 'integer', 'min:1', 'max:100']]);
         $user = $request->user();
-        $query = SlpAssignment::query()->with('version.exercise');
+        $query = SlpAssignment::query()->with(['patient', 'version.exercise.collection']);
         if ($user->profile?->role === UserRole::Patient) {
             // Existing assignments remain available even after an exercise is hidden from new practice.
             $query->where('status', 'active')
@@ -153,7 +153,7 @@ class SlpWorkflowController extends Controller
         if ($user->profile?->role === UserRole::Patient) {
             $query->where('patient_id', $user->id);
         } elseif ($user->profile?->role === UserRole::Clinician) {
-            $query->where('clinician_id', $user->id);
+            $query->where('clinician_id', $user->id)->where('status', 'active');
         } else {
             abort(403);
         }
@@ -219,7 +219,7 @@ class SlpWorkflowController extends Controller
     public function storeAssignment(Request $request): JsonResponse
     {
         abort_unless($request->user()->profile?->role === UserRole::Clinician, 403);
-        $data = $request->validate(['patient_id' => ['nullable', 'uuid', Rule::exists('users', 'id')], 'patient_ids' => ['nullable', 'array', 'min:1', 'max:1000'], 'patient_ids.*' => ['uuid', Rule::exists('users', 'id')], 'audience' => ['sometimes', Rule::in(['all', 'selected'])], 'exercise_version_id' => ['required', 'uuid', Rule::exists('slp_exercise_versions', 'id')], 'schedule' => ['nullable', 'array']]);
+        $data = $request->validate(['patient_id' => ['nullable', 'uuid', Rule::exists('users', 'id')], 'patient_ids' => ['nullable', 'array', 'max:1000'], 'patient_ids.*' => ['uuid', Rule::exists('users', 'id')], 'audience' => ['sometimes', Rule::in(['all', 'selected'])], 'exercise_version_id' => ['required', 'uuid', Rule::exists('slp_exercise_versions', 'id')], 'schedule' => ['nullable', 'array']]);
         $audience = $data['audience'] ?? 'selected';
         $version = SlpExerciseVersion::query()->with('exercise')->findOrFail($data['exercise_version_id']);
         abort_unless($version->status === 'published', 422, 'Publish this version before assigning it.');
@@ -236,6 +236,16 @@ class SlpWorkflowController extends Controller
         ));
 
         return response()->json(['data' => $assignments->values()], 201);
+    }
+
+    public function unassign(Request $request, SlpAssignment $assignment): Response
+    {
+        abort_unless($request->user()->profile?->role === UserRole::Clinician, 403);
+        abort_unless($assignment->clinician_id === $request->user()->id, 403);
+
+        $assignment->update(['status' => 'cancelled']);
+
+        return response()->noContent();
     }
 
     public function storeAttempt(Request $request, SlpAssignment $assignment): JsonResponse

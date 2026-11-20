@@ -65,6 +65,65 @@ class SlpWorkflowTest extends TestCase
             ->assertJsonPath('data.0.id', $assignment->id);
     }
 
+    public function test_assigning_to_all_patients_does_not_require_an_empty_patient_list(): void
+    {
+        $clinician = $this->user(UserRole::Clinician);
+        $patient = $this->user(UserRole::Patient);
+        ClinicianPatient::factory()->create(['clinician_id' => $clinician->id, 'patient_id' => $patient->id]);
+        $version = SlpExerciseVersion::factory()
+            ->for(SlpExercise::factory()->for($clinician, 'owner')->create(), 'exercise')
+            ->create(['status' => 'published', 'configuration' => ['patient_visible' => true]]);
+
+        $this->actingAs($clinician)
+            ->postJson('/api/v1/slp/assignments', ['audience' => 'all', 'exercise_version_id' => $version->id])
+            ->assertCreated()
+            ->assertJsonCount(1, 'data');
+    }
+
+    public function test_clinician_assignment_list_includes_patient_and_collection_details(): void
+    {
+        $clinician = $this->user(UserRole::Clinician);
+        $patient = $this->user(UserRole::Patient);
+        $collection = SlpExerciseCollection::factory()->create(['owner_id' => $clinician->id, 'title' => 'Home practice']);
+        $exercise = SlpExercise::factory()->for($clinician, 'owner')->for($collection, 'collection')->create();
+        $version = SlpExerciseVersion::factory()->for($exercise, 'exercise')->create(['status' => 'published']);
+        $assignment = SlpAssignment::factory()->create([
+            'clinician_id' => $clinician->id,
+            'patient_id' => $patient->id,
+            'exercise_version_id' => $version->id,
+        ]);
+
+        $this->actingAs($clinician)
+            ->getJson('/api/v1/slp/assignments')
+            ->assertOk()
+            ->assertJsonPath('data.0.id', $assignment->id)
+            ->assertJsonPath('data.0.patient.id', $patient->id)
+            ->assertJsonPath('data.0.patient.name', $patient->name)
+            ->assertJsonPath('data.0.version.exercise.collection.title', 'Home practice');
+    }
+
+    public function test_clinician_can_unassign_only_their_own_assignment(): void
+    {
+        $clinician = $this->user(UserRole::Clinician);
+        $otherClinician = $this->user(UserRole::Clinician);
+        $assignment = SlpAssignment::factory()->create(['clinician_id' => $clinician->id]);
+
+        $this->actingAs($otherClinician)
+            ->deleteJson("/api/v1/slp/assignments/{$assignment->id}")
+            ->assertForbidden();
+        $this->actingAs($clinician)
+            ->deleteJson("/api/v1/slp/assignments/{$assignment->id}")
+            ->assertNoContent();
+        $this->assertDatabaseHas('slp_assignments', [
+            'id' => $assignment->id,
+            'status' => 'cancelled',
+        ]);
+        $this->actingAs($clinician)
+            ->getJson('/api/v1/slp/assignments')
+            ->assertOk()
+            ->assertJsonCount(0, 'data');
+    }
+
     public function test_attempt_requires_active_consent_and_queues_recording_analysis(): void
     {
         Queue::fake();

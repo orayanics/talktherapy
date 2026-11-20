@@ -9,11 +9,17 @@ export interface SlpAssignment {
   exercise_version_id: string
   status: 'active' | 'cancelled' | 'completed'
   schedule: Record<string, unknown> | null
+  patient?: { id: string; name: string | null }
   version?: {
+    id: string
     prompt_text: string
     task_type: string
     language: string
     status: string
+    exercise?: {
+      id: string
+      collection: { id: string; title: string } | null
+    } | null
   }
 }
 export interface SlpAttemptStatus {
@@ -69,7 +75,10 @@ export const slpWorkflowKeys = {
 export const fetchSlpAssignments = () =>
   queryOptions<ListResponse<SlpAssignment>>({
     queryKey: slpWorkflowKeys.assignments,
-    queryFn: () => api<ListResponse<SlpAssignment>>('/api/v1/slp/assignments'),
+    queryFn: () =>
+      api<ListResponse<SlpAssignment>>('/api/v1/slp/assignments', {
+        params: { per_page: 100 },
+      }),
   })
 
 export const mutateCreateSlpAssignment = (input: {
@@ -83,6 +92,9 @@ export const mutateCreateSlpAssignment = (input: {
     method: 'POST',
     data: input,
   })
+
+export const mutateUnassignSlpAssignment = (assignmentId: string) =>
+  api<void>(`/api/v1/slp/assignments/${assignmentId}`, { method: 'DELETE' })
 
 export const mutateCreateSlpConsent = (input: {
   subject_id: string

@@ -1,6 +1,10 @@
-import { useId, useRef, useState } from 'react'
+import { useEffect, useId, useMemo, useRef, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import Pagination from '#/components/Page/Pagination'
 import RowError from '#/components/Table/RowError'
 import FormInput from '#/components/Form/FormInput'
+import { fetchClinicianPatients } from '#/modules/patients/api/patients'
+import type { ClinicianPatient } from '#/modules/patients/types/patients'
 import {
   useCreateSlpExerciseMutation,
   useUpdateSlpExerciseMutation,
@@ -10,6 +14,8 @@ import { mutateUploadSlpAsset } from '../api/exercises'
 import type { SlpExercise, SlpExerciseModule } from '../api/exercises'
 
 import { slpExerciseModules } from '../types/exercises'
+
+type Audience = 'all' | 'selected'
 
 export default function CreateSlpExercisePage({
   exercise,
@@ -46,6 +52,40 @@ export default function CreateSlpExercisePage({
   const [prompt, setPrompt] = useState(version?.prompt_text ?? '')
   const [assetError, setAssetError] = useState('')
   const [assetUploading, setAssetUploading] = useState(false)
+  const [visible, setVisible] = useState(
+    version?.configuration?.patient_visible === true,
+  )
+  const [audience, setAudience] = useState<Audience>(
+    version?.configuration?.patient_audience === 'selected'
+      ? 'selected'
+      : 'all',
+  )
+  const [search, setSearch] = useState('')
+  const [patientPage, setPatientPage] = useState(1)
+  const [selectedPatients, setSelectedPatients] = useState<Set<string>>(
+    new Set(
+      Array.isArray(version?.configuration?.patient_ids)
+        ? version.configuration.patient_ids.filter(
+            (id): id is string => typeof id === 'string',
+          )
+        : [],
+    ),
+  )
+  const patients = useQuery({
+    ...fetchClinicianPatients(
+      { page: patientPage },
+      { search: search || undefined },
+    ),
+    enabled: audience === 'selected',
+  })
+  const selectedNames = useMemo(() => {
+    const names = new Map<string, string>()
+    ;(patients.data?.data ?? []).forEach((item) =>
+      names.set(item.patientId, item.patient.name),
+    )
+    return [...selectedPatients].map((id) => names.get(id) ?? id)
+  }, [patients.data?.data, selectedPatients])
+  useEffect(() => setPatientPage(1), [search])
 
   const uploadAsset = async (file: File) => {
     setAssetError('')
@@ -81,6 +121,16 @@ export default function CreateSlpExercisePage({
       requestAnimationFrame(() => errorRef.current?.focus())
       return
     }
+    if (audience === 'selected' && selectedPatients.size === 0) {
+      setFormError(
+        'Select at least one patient or choose all of your patients.',
+      )
+      requestAnimationFrame(() => errorRef.current?.focus())
+      return
+    }
+    config.patient_visible = visible
+    config.patient_audience = audience
+    config.patient_ids = audience === 'selected' ? [...selectedPatients] : []
     try {
       await mutation.mutateAsync({
         module,
@@ -201,6 +251,111 @@ export default function CreateSlpExercisePage({
           {assetUploading && <p role="status">Uploading media…</p>}
           {assetError && <p role="alert">{assetError}</p>}
         </FormInput>
+        <fieldset className="space-y-3 rounded-box border border-base-300 p-4">
+          <legend className="px-1 font-medium">Patient visibility</legend>
+          <label className="flex items-center gap-2">
+            <input
+              className="checkbox"
+              type="checkbox"
+              checked={visible}
+              onChange={(event) => setVisible(event.target.checked)}
+            />
+            Make available after publishing
+          </label>
+          <p className="text-sm text-muted">
+            An administrator must publish the exercise before patients can use
+            it.
+          </p>
+          <div className="space-y-2">
+            <p className="font-medium">Who can see it?</p>
+            <label className="flex items-center gap-2">
+              <input
+                type="radio"
+                name={`${formId}-patient-audience`}
+                checked={audience === 'all'}
+                onChange={() => setAudience('all')}
+              />
+              All of my patients
+            </label>
+            <label className="flex items-center gap-2">
+              <input
+                type="radio"
+                name={`${formId}-patient-audience`}
+                checked={audience === 'selected'}
+                onChange={() => setAudience('selected')}
+              />
+              Specific patients
+            </label>
+          </div>
+          {audience === 'selected' && (
+            <div className="space-y-2">
+              <label
+                className="block text-sm font-medium"
+                htmlFor={`${formId}-patient-search`}
+              >
+                Search patients
+              </label>
+              <input
+                id={`${formId}-patient-search`}
+                className="input w-full"
+                type="search"
+                value={search}
+                onChange={(event) => setSearch(event.target.value)}
+                placeholder="Search by name or email"
+              />
+              <div
+                className="max-h-56 space-y-1 overflow-y-auto"
+                aria-label="Patient selection"
+              >
+                {patients.isPending && (
+                  <p className="text-sm text-slate-500">Loading patients…</p>
+                )}
+                {(patients.data?.data ?? []).map((item: ClinicianPatient) => (
+                  <label
+                    key={item.patientId}
+                    className="flex items-center gap-2 rounded p-2 hover:bg-slate-50"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={selectedPatients.has(item.patientId)}
+                      onChange={() =>
+                        setSelectedPatients((current) => {
+                          const next = new Set(current)
+                          if (next.has(item.patientId))
+                            next.delete(item.patientId)
+                          else next.add(item.patientId)
+                          return next
+                        })
+                      }
+                    />
+                    <span>{item.patient.name}</span>
+                  </label>
+                ))}
+                {!patients.isPending && patients.data?.data.length === 0 && (
+                  <p className="text-sm text-slate-500">
+                    No matching patients.
+                  </p>
+                )}
+              </div>
+              {selectedPatients.size > 0 && (
+                <p className="text-sm text-slate-600" aria-live="polite">
+                  {selectedPatients.size} patient
+                  {selectedPatients.size === 1 ? '' : 's'} selected
+                  {selectedNames.length > 0
+                    ? `: ${selectedNames.join(', ')}`
+                    : ''}
+                </p>
+              )}
+              {patients.data?.meta && patients.data.meta.last_page > 1 && (
+                <Pagination
+                  meta={patients.data.meta}
+                  page={patientPage}
+                  updateSearch={({ page }) => setPatientPage(page)}
+                />
+              )}
+            </div>
+          )}
+        </fieldset>
         <FormInput
           htmlFor={`${formId}-exercise-configuration`}
           label="Configuration (JSON object)"

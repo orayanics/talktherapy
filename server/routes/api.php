@@ -64,6 +64,7 @@ Route::middleware(['auth:sanctum', 'account.active', 'verified'])->group(functio
     Route::get('/slp/review-attempts', [SlpWorkflowController::class, 'reviewAttempts'])->name('slp.review-attempts.index');
     Route::get('/slp/reports', [SlpWorkflowController::class, 'reports'])->name('slp.reports.index');
     Route::post('/slp/assignments', [SlpWorkflowController::class, 'storeAssignment'])->name('slp.assignments.store');
+    Route::delete('/slp/assignments/{assignment}', [SlpWorkflowController::class, 'unassign'])->name('slp.assignments.destroy');
     Route::post('/slp/assignments/{assignment}/attempts', [SlpWorkflowController::class, 'storeAttempt'])->name('slp.attempts.store');
     Route::post('/slp/attempts/{attempt}/recording', [SlpWorkflowController::class, 'uploadRecording'])->name('slp.recordings.store');
     Route::get('/slp/attempts/{attempt}/recording', [SlpWorkflowController::class, 'recording'])->name('slp.recordings.show');

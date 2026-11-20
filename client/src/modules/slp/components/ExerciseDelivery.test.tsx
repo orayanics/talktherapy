@@ -75,9 +75,13 @@ it('opens the visibility drawer, saves visibility and audience, and restores foc
   expect(content.textContent).toContain('private')
   expect(content.textContent).toContain('draft')
   fireEvent.click(
-    screen.getByRole('checkbox', { name: 'Make available after publishing' }),
+    screen.getByRole('checkbox', {
+      name: 'Allow patients to discover this after publishing',
+    }),
   )
-  fireEvent.click(screen.getByRole('button', { name: 'Save Changes' }))
+  fireEvent.click(
+    screen.getByRole('button', { name: 'Save patient visibility' }),
+  )
   await waitFor(() =>
     expect(api).toHaveBeenCalledWith(
       '/api/v1/slp/exercise-versions/version/visibility',

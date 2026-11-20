@@ -83,7 +83,7 @@ export default function ExerciseDelivery({
         method: 'POST',
         data: {
           audience,
-          patient_ids: audience === 'selected' ? [...selected] : [],
+          ...(audience === 'selected' ? { patient_ids: [...selected] } : {}),
           exercise_version_id: version?.id,
         },
       }),
@@ -154,14 +154,21 @@ export default function ExerciseDelivery({
                   checked={visible}
                   onChange={(event) => setVisible(event.target.checked)}
                 />
-                Make available after publishing
+                Allow patients to discover this after publishing
               </label>
+              <p className="pt-1 text-sm text-slate-600">
+                This controls browsing visibility only. Use the assignment
+                action when an exercise should appear in a patient’s My
+                assignments list.
+              </p>
             </div>
 
             <div>
               {role === 'clinician' && (
                 <fieldset className="space-y-2">
-                  <legend className="font-medium">Patient visibility</legend>
+                  <legend className="font-medium">
+                    Who can discover this exercise?
+                  </legend>
                   <label className="flex items-center gap-2">
                     <input
                       type="radio"
@@ -169,7 +176,7 @@ export default function ExerciseDelivery({
                       checked={audience === 'all'}
                       onChange={() => setAudience('all')}
                     />{' '}
-                    All of my patients
+                    All of my patients can discover it
                   </label>
                   <label className="flex items-center gap-2">
                     <input
@@ -178,7 +185,7 @@ export default function ExerciseDelivery({
                       checked={audience === 'selected'}
                       onChange={() => setAudience('selected')}
                     />{' '}
-                    Specific patients
+                    Only specific patients can discover it
                   </label>
                 </fieldset>
               )}
@@ -257,23 +264,29 @@ export default function ExerciseDelivery({
                 }
                 onClick={() => visibility.mutate(visible)}
               >
-                Save Changes
+                Save patient visibility
               </button>
+              {role === 'clinician' && (
+                <button
+                  className="btn"
+                  disabled={
+                    !canAssign ||
+                    version.configuration?.patient_visible !== true ||
+                    exercise.available_for_assignment === false ||
+                    assign.isPending
+                  }
+                  onClick={() => assign.mutate()}
+                >
+                  {audience === 'all'
+                    ? 'Assign to all patients'
+                    : `Assign to ${selected.size} patient${selected.size === 1 ? '' : 's'}`}
+                </button>
+              )}
               {role === 'clinician' &&
-                version.configuration?.patient_visible === true && (
-                  <button
-                    className="btn"
-                    disabled={
-                      !canAssign ||
-                      exercise.available_for_assignment === false ||
-                      assign.isPending
-                    }
-                    onClick={() => assign.mutate()}
-                  >
-                    {audience === 'all'
-                      ? 'Assign to all patients'
-                      : `Assign to ${selected.size} patient${selected.size === 1 ? '' : 's'}`}
-                  </button>
+                version.configuration?.patient_visible !== true && (
+                  <p className="basis-full text-sm text-slate-600">
+                    Save patient visibility first, then assign this exercise.
+                  </p>
                 )}
             </div>
 
