@@ -59,7 +59,11 @@ export default function SlpAssignments() {
       </section>
     ) : (
       <Root calm={calm}>
-        <section className="slp-practice" aria-busy="true">
+        <section
+          className="slp-practice slp-assigned-practice"
+          data-theme="light"
+          aria-busy="true"
+        >
           <p className="slp-section-label">Loading your practice...</p>
         </section>
       </Root>
@@ -74,7 +78,11 @@ export default function SlpAssignments() {
       </section>
     ) : (
       <Root calm={calm}>
-        <section className="slp-practice" role="alert">
+        <section
+          className="slp-practice slp-assigned-practice"
+          data-theme="light"
+          role="alert"
+        >
           <p className="slp-section-label">
             Could not load your practice assignments.
           </p>
@@ -159,15 +167,14 @@ export default function SlpAssignments() {
   return (
     <Root calm={calm}>
       <section
-        className="slp-practice mx-auto max-w-4xl space-y-5"
+        className="slp-practice slp-assigned-practice mx-auto max-w-4xl space-y-5"
+        data-theme="light"
         aria-labelledby="slp-assignment-heading"
       >
-        <header className="flex items-center gap-4">
+        <header className="slp-assignment-header">
           <Tala mood="cheer" size={64} />
           <div>
-            <h2 id="slp-assignment-heading" className="text-2xl font-bold">
-              Your speech practice
-            </h2>
+            <h2 id="slp-assignment-heading">Your speech practice</h2>
             <p className="mt-1 text-sm text-slate-600">
               Try each activity at your own pace. Your clinician reviews
               recordings.

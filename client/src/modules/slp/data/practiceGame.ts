@@ -142,26 +142,26 @@ export const checkFeedback: Record<
 > = {
   not_checked: {
     title: 'A practice turn recorded',
-    detail: 'Listen back together. The automatic word check is optional.',
+    detail: 'Choose Check my word to continue.',
   },
   checking: {
     title: 'The word listener is checking…',
     detail: 'Your practice star is already earned.',
   },
   matched: {
-    title: 'The transcript matched!',
+    title: 'I heard your word!',
     detail:
-      'The automatic listener wrote the practice word. This does not measure sound accuracy.',
+      'You can move to the next picture.',
   },
   review: {
     title: 'Let’s listen together',
     detail:
-      'A helper can compare the recording and the practice word. The listener can make mistakes.',
+      'Ask a grown-up to listen with you. Sometimes the word listener hears things differently.',
   },
   different: {
     title: 'Let’s check what was heard',
     detail:
-      'The listener heard something different. Play it back together; this is not a sound-correctness score.',
+      'Want to listen together? You can also try the next picture.',
   },
   unscorable: {
     title: 'A quieter spot might help',

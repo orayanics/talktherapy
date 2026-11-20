@@ -12,7 +12,8 @@ const STATUS_MESSAGE_MAP: Record<SLP_OVERALL_STATUS, string> = {
   accurate: 'The practice estimate was higher for this recording.',
   mixed: 'The practice estimate varied across this recording.',
   needs_work: 'The practice estimate suggests more practice may help.',
-  unknown: 'This recording could not be scored reliably. Please try another recording.',
+  unknown:
+    'This recording could not be scored reliably. Please try another recording.',
 }
 
 const STATUS_ICON_MAP: Record<SLP_OVERALL_STATUS, React.ReactNode> = {

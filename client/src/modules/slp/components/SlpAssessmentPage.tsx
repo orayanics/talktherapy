@@ -1,24 +1,23 @@
 import { useEffect, useReducer, useRef, useState } from 'react'
-import { Pause } from 'lucide-react'
+import { Star, Images, Pause, Play, SlidersHorizontal } from 'lucide-react'
 import useSlpAssessment from '../hooks/useSlpAssessment'
 import usePracticeRecorder from '../hooks/usePracticeRecorder'
 import {
   getPracticeWord,
+  getPictureUrl,
   picturePrompts,
   practiceCategories,
 } from '../data/practiceContent'
-import { practiceThemes } from '../data/practiceThemes'
 import type {
   PracticeCategory,
   PracticeLanguage,
 } from '../data/practiceContent'
-import type { PracticeThemeId } from '../data/practiceThemes'
 import PracticePicture from './PracticePicture'
 import PracticeTurn from './PracticeTurn'
 import PracticeReview from './PracticeReview'
 import {
   Root,
-  ReadyCountdown,
+  PracticeWelcome,
   RoundPath,
   RoundRecap,
   useCalmMotion,
@@ -38,7 +37,6 @@ export default function SlpAssessmentPage() {
   const calm = useCalmMotion(userCalm)
   const [language, setLanguage] = useState<PracticeLanguage>('en')
   const [category, setCategory] = useState<PracticeCategory>('everyday')
-  const [themeId, setThemeId] = useState<PracticeThemeId>('jungle')
   const [mode, setMode] = useState<'explore' | 'focus'>('explore')
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [customWord, setCustomWord] = useState('')
@@ -51,9 +49,6 @@ export default function SlpAssessmentPage() {
   const assessment = useSlpAssessment()
   const prompts = picturePrompts.filter((item) => item.category === category)
   const prompt = prompts[index]
-  const theme =
-    practiceThemes.find((item) => item.id === themeId) ?? practiceThemes[0]
-  const Buddy = theme.icon
   const word = customWord.trim() || getPracticeWord(prompt, language)
   const currentProgress =
     game[prompt.id]?.word === word ? game[prompt.id] : undefined
@@ -95,7 +90,11 @@ export default function SlpAssessmentPage() {
     assessment.isSubmitting
   const capturing =
     recorder.state === 'recording' || recorder.state === 'requesting_permission'
-  const showingFeedback = !!currentProgress && !capturing
+  const showingFeedback = !!recorder.audio && !capturing
+  const canContinue =
+    !locked &&
+    !!assessment.result &&
+    currentProgress?.recordingKey === recorder.url
   const clear = () => {
     roundGeneration.current++
     dispatchGame({ type: 'cancel_checks' })
@@ -113,6 +112,7 @@ export default function SlpAssessmentPage() {
     setPaused(false)
   }
   const next = () => {
+    if (!canContinue) return
     setVisited((previous) => new Set(previous).add(prompt.id))
     clear()
     setCustomWord('')
@@ -163,94 +163,54 @@ export default function SlpAssessmentPage() {
   return (
     <Root calm={calm}>
       <section
-        className="slp-practice mx-auto max-w-5xl space-y-5 sm:space-y-6"
-        data-practice-theme={themeId}
+        className="slp-practice slp-picture-practice mx-auto"
+        data-theme="light"
         data-practice-mode={mode}
         aria-label="Speech practice"
       >
-        <label className="flex min-h-12 items-center gap-2">
-          <input
-            type="checkbox"
-            checked={userCalm}
-            onChange={(event) => setUserCalm(event.target.checked)}
-          />
-          Calm mode
-        </label>
-        <header className="flex flex-wrap items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
-            {mode === 'explore' && (
-              <Buddy
-                size={48}
-                strokeWidth={1.5}
-                className="slp-adventure-mark hidden sm:block"
-                aria-hidden="true"
-              />
-            )}
-            <div>
-              <h2 className="text-xl sm:text-2xl font-bold">
-                {mode === 'explore' ? 'Picture adventures' : 'Speech practice'}
-              </h2>
-              <p className="mt-1 text-sm text-slate-600 hidden sm:block">
-                {mode === 'explore'
-                  ? theme.greeting
-                  : 'Record, replay, and practice at your pace.'}
-              </p>
-            </div>
-          </div>
+        <div className="slp-game-tools">
           <button
             type="button"
-            className="slp-secondary-button"
+            className="slp-game-pill"
             aria-label={paused ? 'Come back to practice' : 'Take a break'}
             onClick={() => {
               clear()
               setPaused(!paused)
             }}
           >
-            <Pause size={18} aria-hidden="true" />
+            {paused ? (
+              <Play size={18} aria-hidden="true" />
+            ) : (
+              <Pause size={18} aria-hidden="true" />
+            )}
             <span className="sm:hidden">{paused ? 'Resume' : 'Break'}</span>
             <span className="hidden sm:inline">
               {paused ? 'Come back to practice' : 'Take a break'}
             </span>
           </button>
-        </header>
-
-        <button
-          type="button"
-          className="slp-secondary-button"
-          aria-expanded={settingsOpen}
-          aria-controls="practice-activity-settings"
-          onClick={() => setSettingsOpen(!settingsOpen)}
-        >
-          {settingsOpen
-            ? 'Close activity settings'
-            : 'Change theme, language or pictures'}
-        </button>
+          <button
+            type="button"
+            className="slp-game-pill"
+            aria-expanded={settingsOpen}
+            aria-controls="practice-activity-settings"
+            onClick={() => setSettingsOpen(!settingsOpen)}
+          >
+            <SlidersHorizontal size={17} aria-hidden="true" />
+            Settings
+          </button>
+        </div>
         <div
           id="practice-activity-settings"
           className={`${settingsOpen ? 'block' : 'hidden'} space-y-5`}
         >
-          {mode === 'explore' && (
-            <fieldset className="space-y-3">
-              <legend className="slp-section-label mb-3">
-                Pick your adventure
-              </legend>
-              <div className="flex flex-wrap gap-2">
-                {practiceThemes.map((item) => (
-                  <button
-                    key={item.id}
-                    type="button"
-                    className="slp-theme-button"
-                    aria-pressed={themeId === item.id}
-                    onClick={() => setThemeId(item.id)}
-                  >
-                    <item.icon size={18} aria-hidden="true" />
-                    {item.label}
-                  </button>
-                ))}
-              </div>
-            </fieldset>
-          )}
-
+          <label className="slp-calm-toggle">
+            <input
+              type="checkbox"
+              checked={userCalm}
+              onChange={(event) => setUserCalm(event.target.checked)}
+            />
+            Calm mode
+          </label>
           <div className="grid gap-4 sm:grid-cols-3">
             <label className="space-y-2 text-sm font-medium">
               <span className="block">Practice language</span>
@@ -299,7 +259,31 @@ export default function SlpAssessmentPage() {
               </select>
             </label>
           </div>
+          <PracticeReview
+            prompt={prompt}
+            word={word}
+            customWord={customWord}
+            locked={locked}
+            result={assessment.result}
+            onChange={(value) => {
+              clear()
+              setCustomWord(value)
+            }}
+          />
         </div>
+        <header className="slp-game-heading">
+          <h2>
+            {paused
+              ? 'Break time'
+              : finished
+                ? 'My results'
+                : 'Picture practice'}
+          </h2>
+          <span className="slp-star-pill">
+            <Star aria-hidden="true" size={20} fill="currentColor" />
+            {rewards.reduce((sum, item) => sum + item.stars, 0)} stars
+          </span>
+        </header>
         <RoundPath
           results={rewards.map((result, i) =>
             visited.has(prompts[i].id) ? result : undefined,
@@ -308,16 +292,19 @@ export default function SlpAssessmentPage() {
           total={prompts.length}
         />
         {lobby && !paused ? (
-          <ReadyCountdown calm={calm} onGo={() => setLobby(false)} />
+          <PracticeWelcome
+            pictures={prompts.slice(0, 3).map(getPictureUrl)}
+            onGo={() => setLobby(false)}
+          />
         ) : paused ? (
           <div className="slp-rest space-y-5">
-            <Buddy
+            <Images
               size={72}
               strokeWidth={1.5}
               className="slp-adventure-mark mx-auto"
               aria-hidden="true"
             />
-            <h2 className="text-2xl font-bold">Time for a little rest</h2>
+            <h2 className="text-2xl font-bold">Take a breather</h2>
             <p>
               {completed.size} practice{' '}
               {completed.size === 1 ? 'turn' : 'turns'} tried. Every try is part
@@ -347,16 +334,8 @@ export default function SlpAssessmentPage() {
               showingFeedback ? 'slp-feedback-stage' : 'slp-lesson-stage'
             }
           >
-            {!showingFeedback && (
-              <PracticePicture
-                key={`${prompt.id}-${language}-${customWord}`}
-                prompt={prompt}
-                language={language}
-                customWord={customWord}
-                focusMode={mode === 'focus'}
-              />
-            )}
             <PracticeTurn
+              canContinue={canContinue}
               recorder={recorder}
               assessment={assessment}
               language={language}
@@ -382,20 +361,19 @@ export default function SlpAssessmentPage() {
               onFinish={() => void analyze()}
               onNext={next}
               onClear={clear}
-            />
+            >
+              {!showingFeedback && (
+                <PracticePicture
+                  key={`${prompt.id}-${language}-${customWord}`}
+                  prompt={prompt}
+                  language={language}
+                  customWord={customWord}
+                  focusMode={mode === 'focus'}
+                />
+              )}
+            </PracticeTurn>
           </div>
         )}
-        <PracticeReview
-          prompt={prompt}
-          word={word}
-          customWord={customWord}
-          locked={locked}
-          result={assessment.result}
-          onChange={(value) => {
-            clear()
-            setCustomWord(value)
-          }}
-        />
       </section>
     </Root>
   )

@@ -18,7 +18,13 @@ export default function ExercisePreview({
   const assess = useMutation({
     mutationFn: async () => {
       const data = new FormData()
-      data.append('audio', recorder.audio!, recorder.audio!.type.includes('wav') ? 'recording.wav' : 'recording.webm')
+      data.append(
+        'audio',
+        recorder.audio!,
+        recorder.audio!.type.includes('wav')
+          ? 'recording.wav'
+          : 'recording.webm',
+      )
       if (version) data.append('exercise_version_id', version.id)
       else data.append('exercise_id', exercise!.id)
       return api<{ data: AssessResponse }>('/api/v1/slp/assess', {
