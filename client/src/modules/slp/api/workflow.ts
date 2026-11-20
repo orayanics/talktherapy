@@ -116,7 +116,7 @@ export const mutateUploadSlpRecording = (
   recording: Blob,
 ) => {
   const data = new FormData()
-  data.append('recording', recording, 'recording.webm')
+  data.append('recording', recording, recording.type.includes('wav') ? 'recording.wav' : 'recording.webm')
   return api(`/api/v1/slp/attempts/${attemptId}/recording`, {
     method: 'POST',
     data,

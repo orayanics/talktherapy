@@ -99,7 +99,11 @@ export default function PracticeTurn({
           onClick={onStart}
         >
           <Mic size={20} aria-hidden="true" />
-          {recorder.audio ? 'Record again' : 'My turn'}
+          {recorder.error
+            ? 'Retry recording'
+            : recorder.audio
+              ? 'Record again'
+              : 'My turn'}
         </button>
       ) : null}
       {recorder.url && !progress && (

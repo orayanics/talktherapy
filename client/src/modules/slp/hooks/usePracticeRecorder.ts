@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { MAX_AUDIO_BYTES } from '../api/slp'
 
+import { makeWav } from './makeWav'
+
 export default function usePracticeRecorder() {
   const [state, setState] = useState<
     'idle' | 'requesting_permission' | 'recording' | 'reviewing'
@@ -12,11 +14,16 @@ export default function usePracticeRecorder() {
   const stream = useRef<MediaStream | null>(null)
   const generation = useRef(0)
   const busy = useRef(false)
+  const context = useRef<AudioContext | null>(null)
+  const finishWav = useRef<(() => void) | null>(null)
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const release = () => {
     if (timer.current) clearTimeout(timer.current)
     timer.current = null
+    finishWav.current = null
+    if (context.current) void context.current.close()
+    context.current = null
     const recorder = active.current
     active.current = null
     if (recorder && recorder.state !== 'inactive') recorder.stop()
@@ -56,27 +63,80 @@ export default function usePracticeRecorder() {
     try {
       const devices = Reflect.get(navigator, 'mediaDevices') as
         MediaDevices | undefined
-      if (
-        typeof devices?.getUserMedia !== 'function' ||
-        typeof MediaRecorder === 'undefined'
-      ) {
+      if (!devices?.getUserMedia) {
         throw new Error(
-          'Recording is unavailable. Ask your helper to check this browser.',
+          'Microphone access requires HTTPS or localhost and a supported browser.',
         )
       }
-      const mimeType = ['audio/webm;codecs=opus', 'audio/webm'].find((type) =>
-        MediaRecorder.isTypeSupported(type),
-      )
-      if (!mimeType)
-        throw new Error(
-          'This browser needs WebM recording support. Try Chrome, Edge, or Firefox.',
+      const mimeType =
+        typeof MediaRecorder !== 'undefined' &&
+        ['audio/webm;codecs=opus', 'audio/webm'].find((type) =>
+          MediaRecorder.isTypeSupported(type),
         )
+      // Resume during the Record gesture, before the permission prompt can consume it.
+      const ctx =
+        typeof AudioContext !== 'undefined' &&
+        typeof AudioWorkletNode !== 'undefined'
+          ? new AudioContext()
+          : null
+      context.current = ctx
+      const prepareWav = ctx?.audioWorklet
+        ? Promise.all([
+            ctx.resume(),
+            ctx.audioWorklet.addModule('/slp/practice-pcm.js'),
+          ]).then(
+            () => true,
+            () => false,
+          )
+        : Promise.resolve(false)
       const capture = await devices.getUserMedia({ audio: true })
       if (attempt !== generation.current) {
         capture.getTracks().forEach((track) => track.stop())
         return
       }
       stream.current = capture
+      const wavReady = await prepareWav
+      if (attempt !== generation.current) return
+      if (ctx && wavReady) {
+        const source = ctx.createMediaStreamSource(capture)
+        const node = new AudioWorkletNode(ctx, 'practice-pcm', {
+          channelCount: 1,
+          channelCountMode: 'explicit',
+        })
+        const chunks: Array<ArrayBuffer> = []
+        let size = 44
+        node.port.onmessage = (event: MessageEvent<ArrayBuffer>) => {
+          if (generation.current !== attempt || !finishWav.current) return
+          size += event.data.byteLength
+          if (size > MAX_AUDIO_BYTES) {
+            release()
+            setState('idle')
+            setError('That recording was too long. Try a shorter turn.')
+          } else chunks.push(event.data)
+        }
+        source.connect(node)
+        node.connect(ctx.destination)
+        finishWav.current = () => {
+          release()
+          if (!chunks.length) {
+            setState('idle')
+            setError('No audio was captured. Choose Retry recording.')
+            return
+          }
+          const blob = makeWav(chunks, ctx.sampleRate)
+          setAudio(blob)
+          setUrl(URL.createObjectURL(blob))
+          setState('reviewing')
+        }
+        timer.current = setTimeout(finishWav.current, 60_000)
+        setState('recording')
+        return
+      }
+      if (ctx) {
+        void ctx.close()
+        context.current = null
+      }
+      if (!mimeType) throw new Error('This browser cannot record audio.')
       const recorder = new MediaRecorder(capture, { mimeType })
       active.current = recorder
       const chunks: Blob[] = []
@@ -92,10 +152,12 @@ export default function usePracticeRecorder() {
         } else chunks.push(event.data)
       }
       recorder.onerror = () => {
-        if (attempt !== generation.current) return
+        if (attempt !== generation.current || active.current !== recorder)
+          return
+        generation.current++
         failed = true
         setError(
-          'The microphone stopped working. Ask your helper and try again.',
+          'Recording stopped. Choose Retry recording to start a new take. If it keeps happening, check your microphone or try another browser.',
         )
         release()
         setState('idle')
@@ -121,6 +183,15 @@ export default function usePracticeRecorder() {
       }, 60_000)
     } catch (cause) {
       if (attempt !== generation.current) return
+      if (stream.current) {
+        generation.current++
+        release()
+        setState('idle')
+        setError(
+          'Recording could not start. Choose Retry recording to try again.',
+        )
+        return
+      }
       release()
       setState('idle')
       setError(
@@ -132,7 +203,8 @@ export default function usePracticeRecorder() {
   }
 
   const stop = () => {
-    if (active.current?.state === 'recording') active.current.stop()
+    if (finishWav.current) finishWav.current()
+    else if (active.current?.state === 'recording') active.current.stop()
   }
 
   return { state, audio, url, error, start, stop, clear }

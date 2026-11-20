@@ -263,7 +263,7 @@ class SlpWorkflowController extends Controller
     public function uploadRecording(Request $request, SlpAttempt $attempt): JsonResponse
     {
         abort_unless($attempt->assignment->patient_id === $request->user()->id, 403);
-        $data = $request->validate(['recording' => ['required', 'file', 'max:20480', 'mimetypes:audio/mpeg,audio/wav,audio/mp4,audio/webm,video/webm']]);
+        $data = $request->validate(['recording' => ['required', 'file', 'max:20480', 'mimetypes:audio/mpeg,audio/wav,audio/x-wav,audio/mp4,audio/webm']]);
         $path = null;
         try {
             [$recording, $run] = DB::transaction(function () use ($request, $attempt, $data, &$path): array {
