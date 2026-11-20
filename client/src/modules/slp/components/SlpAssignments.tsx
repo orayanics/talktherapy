@@ -5,12 +5,12 @@ import {
   mutateUnassignSlpAssignment,
 } from '../api/workflow'
 import type { SlpAssignment } from '../api/workflow'
-import AssignedExercise from './AssignedExercise'
+import PatientAssignmentDeck from './PatientAssignmentDeck'
 import { Root, Tala, useCalmMotion } from './PracticeRewards'
 import './practice.css'
 
 export default function SlpAssignments() {
-  const { is, role } = useAuthGuard()
+  const { is } = useAuthGuard()
   const calm = useCalmMotion(false)
   const queryClient = useQueryClient()
   const { data, isPending, isError } = useQuery(fetchSlpAssignments())
@@ -182,29 +182,9 @@ export default function SlpAssignments() {
             </p>
           </div>
         )}
-        <ul className="grid gap-4">
-          {data.data.map((item, index) => (
-            <li key={item.id} className="tt-card">
-              <div className="flex items-start gap-3">
-                <span className="tt-node now" aria-hidden="true">
-                  {index + 1}
-                </span>
-                <div className="min-w-0 flex-1">
-                  <h3 className="break-words text-lg font-bold">
-                    {item.version?.prompt_text ?? 'Assigned exercise'}
-                  </h3>
-                  <p className="mt-1 text-sm text-slate-600">
-                    {item.version?.task_type ?? 'Speech activity'} ·{' '}
-                    {item.version?.language ?? 'English'}
-                  </p>
-                </div>
-              </div>
-              {role === 'patient' && item.status === 'active' && (
-                <AssignedExercise assignmentId={item.id} />
-              )}
-            </li>
-          ))}
-        </ul>
+        {!!data.data.length && (
+          <PatientAssignmentDeck assignments={data.data} />
+        )}
       </section>
     </Root>
   )
