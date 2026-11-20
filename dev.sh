@@ -11,7 +11,7 @@ else
   exit 1
 fi
 
-exec npx --yes --package concurrently concurrently --kill-others \
+exec npx --offline --yes --package concurrently concurrently --kill-others \
   --names client,backend,python \
   'npm --prefix client run dev' \
   'composer --working-dir=server run dev' \
