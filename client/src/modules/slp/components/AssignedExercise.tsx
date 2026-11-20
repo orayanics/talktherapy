@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { api } from '#/lib/api/client'
 import { useSession } from '#/modules/auth/context/SessionContext'
@@ -9,13 +9,18 @@ import { fetchSlpAttempt } from '../api/workflow'
 
 export default function AssignedExercise({
   assignmentId,
+  onNavigationLockChange,
 }: {
   assignmentId: string
+  onNavigationLockChange?: (locked: boolean) => void
 }) {
   const session = useSession()
   const recorder = usePracticeRecorder()
   const [consent, setConsent] = useState(false)
   const [busy, setBusy] = useState(false)
+  useEffect(() => {
+    onNavigationLockChange?.(busy || recorder.state === 'recording' || recorder.state === 'requesting_permission')
+  }, [busy, recorder.state, onNavigationLockChange])
   const [sent, setSent] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const attemptId = useRef<string | null>(null)
