@@ -707,6 +707,7 @@
   background: #fff;
   box-shadow: 0 3px 0 var(--practice-border, var(--practice-tint));
 }
+.slp-practice.slp-assigned-practice,
 .slp-practice.slp-picture-practice {
   --game-deep: color-mix(in oklch, var(--color-primary), #092d57 66%);
   --game-blue: color-mix(in oklch, var(--color-primary), #075781 56%);
@@ -727,6 +728,7 @@
     linear-gradient(155deg, var(--game-blue), var(--game-deep) 78%);
   background-color: var(--game-deep);
 }
+.slp-assigned-practice > *,
 .slp-picture-practice > * {
   min-width: 0;
 }
@@ -766,6 +768,7 @@
 .slp-star-pill svg {
   color: var(--game-gold);
 }
+.slp-assigned-practice .slp-assignment-header h2,
 .slp-picture-practice .slp-game-heading h2 {
   font-size: clamp(1.5rem, 4vw, 2.25rem);
   font-weight: 800;
@@ -776,13 +779,17 @@
 .slp-game-progress .slp-round-caption span {
   color: white;
 }
+.slp-assigned-practice .slp-deck-position,
+.slp-assigned-practice progress::-webkit-progress-bar,
 .slp-game-progress .slp-deck-position,
 .slp-game-progress progress::-webkit-progress-bar {
   background: #092e54a8;
 }
+.slp-assigned-practice progress::-webkit-progress-value,
 .slp-game-progress progress::-webkit-progress-value {
   background: var(--game-gold);
 }
+.slp-assigned-practice progress::-moz-progress-bar,
 .slp-game-progress progress::-moz-progress-bar {
   background: var(--game-gold);
 }
@@ -790,6 +797,41 @@
 .slp-picture-practice .tt-ready {
   display: grid;
   gap: 1rem;
+}
+.slp-assigned-practice {
+  margin-inline: auto;
+}
+.slp-assigned-practice .slp-assignment-header {
+  justify-self: start;
+  margin: 0;
+  color: white;
+}
+.slp-assigned-practice > .slp-section-label,
+.slp-assigned-practice
+  .slp-deck-toolbar
+  :is(.slp-deck-label, .slp-deck-caption),
+.slp-assigned-practice .slp-deck-hint {
+  color: white;
+}
+.slp-assigned-practice .slp-deck-count {
+  background: #092e54a8;
+  color: white;
+  border-radius: 99rem;
+}
+.slp-assigned-practice .slp-deck-recording,
+.slp-assigned-practice .slp-deck-card {
+  border-radius: 1.25rem;
+  box-shadow: 0 5px 0 #06254438;
+}
+.slp-assigned-practice .slp-record-button:not([data-recording='true']),
+.slp-assigned-practice .slp-send-button:enabled {
+  background: var(--game-gold);
+  border-color: transparent;
+  color: #463600;
+  box-shadow: 0 4px 0 #b79117;
+}
+.slp-assigned-practice .slp-deck-arrow:focus-visible {
+  outline-color: white;
 }
 .slp-game-card,
 .slp-welcome-card {
