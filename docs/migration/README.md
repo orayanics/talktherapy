@@ -10,7 +10,6 @@ The active backend is Laravel 13 in `server/`. The React client remains in `clie
 | Identity           | Implemented                      | Deployed browser cookie and CSRF checks      |
 | Business modules   | Implemented with SQLite coverage | Browser workflows and PostgreSQL races       |
 | Production cutover | Pending                          | Deployment, backup, rollback, and monitoring |
-| Legacy import      | Retired                          | No source data or password conversion        |
 | Speech assessment  | Non-diagnostic practice feedback | Clinical validation and artifact review      |
 
 ## Read in this order
@@ -19,8 +18,7 @@ The active backend is Laravel 13 in `server/`. The React client remains in `clie
 2. [Architecture](ARCHITECTURE.md)
 3. [API contract](API-CONTRACT.md)
 4. [Module specifications](modules/)
-5. [Official sources](SOURCES.md)
-6. [Task ledger](../../tasks/todo.md)
+5. [Task ledger](../../tasks/todo.md)
 
 ## Capability map
 
@@ -38,7 +36,6 @@ The active backend is Laravel 13 in `server/`. The React client remains in `clie
 | Realtime            | Authorized Reverb channels and WebRTC signalling         | [Realtime](modules/SPEC-realtime.md)                   |
 | Speech service      | Laravel proxy and private Python inference               | [Phoneme analysis](modules/SPEC-phoneme-analysis.md)   |
 | Reporting           | Dashboard aggregates, audit reads, bounded exports       | [Reporting](modules/SPEC-reporting.md)                 |
-| Cutover             | Deployment and rollback gates                            | [Migration cutover](modules/SPEC-migration-cutover.md) |
 
 ## Boundaries
 

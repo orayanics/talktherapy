@@ -37,7 +37,7 @@ Open the client at `http://localhost:3000` and Mailpit at `http://localhost:8025
 
 The Compose setup uses PostgreSQL with a named data volume. The default Python image downloads the `base` Whisper artifact during its first build, so the initial build is large and may take several minutes. Keep the Python service private in production and replace the development credentials and secrets in the env files.
 
-For local HTTPS and network-device camera/microphone access, complete the HTTP setup first, then follow [SETUP_SSL.md](SETUP_SSL.md).
+For LAN camera and microphone testing, complete the HTTP setup first, then follow [the local HTTPS/Nginx guide](SETUP_SSL.md).
 
 ## Run all development services
 
@@ -166,7 +166,7 @@ Provision Whisper model artifacts before startup using the development instructi
 
 ## Troubleshooting: localhost CSRF mismatch
 
-If login works through the HTTPS nginx network IP but returns `CSRF token mismatch` on `http://localhost:3000`, check that the client API URL also uses localhost. A localhost page cannot read the network IP's `XSRF-TOKEN` cookie to send the CSRF header. Secure session cookies can also prevent direct HTTP development from working.
+If login returns `CSRF token mismatch`, check that the browser origin, API origin, CORS configuration, and Sanctum stateful domains all describe the same host and scheme. Mixed-origin cookies and secure-session settings can also prevent direct HTTP development from working.
 
 For direct localhost development, set these values in `client/.env`:
 
@@ -190,7 +190,7 @@ cd server
 php artisan config:clear
 ```
 
-Restart the client and backend, clear localhost cookies in the browser, and retry. Use `localhost` consistently rather than mixing it with `127.0.0.1` or the network IP. For the HTTPS nginx setup, keep `SESSION_SECURE_COOKIE=true` and use the same HTTPS origin for the page and API; see [SETUP_SSL.md](SETUP_SSL.md).
+Restart the client and backend, clear localhost cookies in the browser, and retry. Use `localhost` consistently rather than mixing it with `127.0.0.1` or the network IP.
 
 ## Verification
 
@@ -233,6 +233,6 @@ CI runs the Laravel and client checks on pushes and pull requests. Python CI and
 - [Module specifications](docs/migration/README.md)
 - [Current task ledger](tasks/todo.md)
 - [Laravel-specific setup](server/README.md)
-- [Local TLS/nginx setup](SETUP_SSL.md)
+- [Local HTTPS/Nginx setup](SETUP_SSL.md)
 
 Do not expose Python publicly, commit `.env` files, reuse demo credentials, or describe speech feedback as clinically validated.

@@ -57,4 +57,3 @@ Use this ledger for unfinished work. Completed implementation remains documented
 - [Architecture](../docs/migration/ARCHITECTURE.md)
 - [API contract](../docs/migration/API-CONTRACT.md)
 - [Migration module specifications](../docs/migration/README.md)
-- [Deferred assessment design](../docs/slp-assessment/README.md)
