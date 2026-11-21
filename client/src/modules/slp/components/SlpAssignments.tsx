@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useAuthGuard } from '#/modules/auth/hooks/useAuth'
+import { api } from '#/lib/api/client'
 import {
   fetchSlpAssignments,
   mutateUnassignSlpAssignment,
@@ -13,6 +14,9 @@ export default function SlpAssignments() {
   const { is } = useAuthGuard()
   const calm = useCalmMotion(false)
   const queryClient = useQueryClient()
+  const withdraw = useMutation({
+    mutationFn: () => api('/api/v1/slp/consents/withdraw', { method: 'POST' }),
+  })
   const { data, isPending, isError } = useQuery(fetchSlpAssignments())
   const unassign = useMutation({
     mutationFn: mutateUnassignSlpAssignment,
@@ -191,6 +195,29 @@ export default function SlpAssignments() {
         {!!data.data.length && (
           <PatientAssignmentDeck assignments={data.data} />
         )}
+        <details className="mt-4">
+          <summary>Recording consent</summary>
+          <p>
+            Withdraw consent for all previous assignment recordings to stop
+            analysis that has yet to start. Existing recordings follow their
+            retention period and completed reports remain available.
+          </p>
+          <button
+            className="btn"
+            disabled={withdraw.isPending}
+            onClick={() => withdraw.mutate()}
+          >
+            Withdraw my recording consent
+          </button>
+          {withdraw.isSuccess && (
+            <p role="status">Recording consent withdrawn.</p>
+          )}
+          {withdraw.isError && (
+            <p role="alert">
+              Could not withdraw recording consent. Please try again.
+            </p>
+          )}
+        </details>
       </section>
     </Root>
   )

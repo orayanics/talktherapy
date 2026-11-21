@@ -125,10 +125,19 @@ class SlpWorkflowController extends Controller
 
     public function storeConsent(Request $request): array
     {
-        $data = $request->validate(['subject_id' => ['required', 'uuid', Rule::exists('users', 'id')], 'purpose' => ['required', 'string', 'max:80'], 'policy_version' => ['required', 'string', 'max:40']]);
+        $data = $request->validate(['subject_id' => ['required', 'uuid', Rule::exists('users', 'id')], 'purpose' => ['required', 'in:slp_recording'], 'policy_version' => ['required', 'in:v1'], 'accepted' => ['accepted']]);
+        unset($data['accepted']);
         abort_unless($data['subject_id'] === $request->user()->id || $this->admin($request->user()), 403);
 
         return ['data' => SlpConsent::query()->create([...$data, 'actor_id' => $request->user()->id, 'accepted_at' => now()])];
+    }
+
+    public function withdrawMyRecordingConsents(Request $request): Response
+    {
+        abort_unless($request->user()->profile?->role === UserRole::Patient, 403);
+        SlpConsent::query()->where('subject_id', $request->user()->id)->where('purpose', 'slp_recording')->whereNull('withdrawn_at')->update(['withdrawn_at' => now()]);
+
+        return response()->noContent();
     }
 
     public function withdrawConsent(Request $request, SlpConsent $consent): array
@@ -219,7 +228,7 @@ class SlpWorkflowController extends Controller
     public function storeAssignment(Request $request): JsonResponse
     {
         abort_unless($request->user()->profile?->role === UserRole::Clinician, 403);
-        $data = $request->validate(['patient_id' => ['nullable', 'uuid', Rule::exists('users', 'id')], 'patient_ids' => ['nullable', 'array', 'max:1000'], 'patient_ids.*' => ['uuid', Rule::exists('users', 'id')], 'audience' => ['sometimes', Rule::in(['all', 'selected'])], 'exercise_version_id' => ['required', 'uuid', Rule::exists('slp_exercise_versions', 'id')], 'schedule' => ['nullable', 'array']]);
+        $data = $request->validate(['patient_id' => ['nullable', 'uuid', Rule::exists('users', 'id')], 'patient_ids' => ['nullable', 'array', 'max:1000'], 'patient_ids.*' => ['uuid', Rule::exists('users', 'id')], 'audience' => ['sometimes', Rule::in(['all', 'selected'])], 'exercise_version_id' => ['required', 'uuid', Rule::exists('slp_exercise_versions', 'id')], 'schedule' => ['prohibited']]);
         $audience = $data['audience'] ?? 'selected';
         $version = SlpExerciseVersion::query()->with('exercise')->findOrFail($data['exercise_version_id']);
         abort_unless($version->status === 'published', 422, 'Publish this version before assigning it.');
@@ -232,7 +241,7 @@ class SlpWorkflowController extends Controller
         abort_unless(ClinicianPatient::query()->where('clinician_id', $request->user()->id)->whereIn('patient_id', $patientIds)->count() === count(array_unique($patientIds)), 403);
         $assignments = collect($patientIds)->unique()->map(fn (string $patientId): SlpAssignment => SlpAssignment::query()->updateOrCreate(
             ['clinician_id' => $request->user()->id, 'patient_id' => $patientId, 'exercise_version_id' => $version->id],
-            ['status' => 'active', 'schedule' => $data['schedule'] ?? null, 'configuration_snapshot' => $version->configuration],
+            ['status' => 'active', 'configuration_snapshot' => $version->configuration],
         ));
 
         return response()->json(['data' => $assignments->values()], 201);
@@ -263,7 +272,7 @@ class SlpWorkflowController extends Controller
     public function uploadRecording(Request $request, SlpAttempt $attempt): JsonResponse
     {
         abort_unless($attempt->assignment->patient_id === $request->user()->id, 403);
-        $data = $request->validate(['recording' => ['required', 'file', 'max:20480', 'mimetypes:audio/mpeg,audio/wav,audio/x-wav,audio/mp4,audio/webm']]);
+        $data = $request->validate(['recording' => ['required', 'file', 'max:10240', 'mimetypes:audio/wav,audio/x-wav,audio/webm,video/webm']]);
         $path = null;
         try {
             [$recording, $run] = DB::transaction(function () use ($request, $attempt, $data, &$path): array {

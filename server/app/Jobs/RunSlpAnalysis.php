@@ -13,11 +13,14 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Throwable;
 
 class RunSlpAnalysis implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
+    public int $tries = 4;
 
     public function __construct(public string $runId) {}
 
@@ -83,6 +86,13 @@ class RunSlpAnalysis implements ShouldQueue
                 $attempt->update(['status' => 'awaiting_review']);
             });
         } catch (Throwable $exception) {
+            if ($exception instanceof HttpExceptionInterface && in_array($exception->getStatusCode(), [429, 503], true) && $this->attempts() < $this->tries) {
+                if (SlpAnalysisRun::query()->whereKey($this->runId)->where('status', 'running')->update(['status' => 'queued'])) {
+                    $this->release(15 * $this->attempts());
+                }
+
+                return;
+            }
             DB::transaction(function () use ($exception): void {
                 $run = SlpAnalysisRun::query()->lockForUpdate()->findOrFail($this->runId);
                 $attempt = SlpAttempt::query()->lockForUpdate()->findOrFail($run->attempt_id);

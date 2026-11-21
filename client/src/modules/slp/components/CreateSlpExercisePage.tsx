@@ -168,7 +168,7 @@ export default function CreateSlpExercisePage({
         <div className="grid gap-3 md:grid-cols-2">
           <FormInput
             htmlFor={`${formId}-createslpexercisepage-field-1`}
-            label="Module"
+            label="Exercise category"
           >
             <select
               id={`${formId}-createslpexercisepage-field-1`}

@@ -62,10 +62,10 @@ export default function SlpExerciseCatalog({
           />
           <FilterDrawer>
             <div className="space-y-6">
-              <FormInput htmlFor="slpexercisecatalog-field-1" label="Module">
+              <FormInput htmlFor="slpexercisecatalog-field-1" label="Exercise category">
                 <select
                   id="slpexercisecatalog-field-1"
-                  aria-label="Module"
+                  aria-label="Exercise category"
                   className="select w-full"
                   value={filters.module ?? ''}
                   onChange={(event) =>
@@ -76,7 +76,7 @@ export default function SlpExerciseCatalog({
                     })
                   }
                 >
-                  <option value="">All modules</option>
+                  <option value="">All categories</option>
                   {slpExerciseModules.map((module) => (
                     <option key={module} value={module}>
                       {module.replaceAll('_', ' ')}
@@ -210,7 +210,7 @@ export default function SlpExerciseCatalog({
                 render: (exercise) => exercise.latest_version?.prompt_text,
               },
               {
-                header: 'Module',
+                header: 'Category',
                 render: (exercise) => exercise.module.replaceAll('_', ' '),
               },
               {

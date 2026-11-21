@@ -127,7 +127,7 @@ class SlpExerciseCollectionTest extends TestCase
         $this->patchJson('/api/v1/slp/exercises/'.$exercise->id, ['is_hidden' => true])->assertOk();
         $this->postJson('/api/v1/slp/assignments', $input)->assertUnprocessable();
         $this->actingAs($patient)->getJson('/api/v1/slp/assignments')->assertOk()->assertJsonPath('data.0.id', $assignment);
-        $consent = $this->postJson('/api/v1/slp/consents', ['subject_id' => $patient->id, 'purpose' => 'slp_recording', 'policy_version' => 'v1'])->json('data.id');
+        $consent = $this->postJson('/api/v1/slp/consents', ['subject_id' => $patient->id, 'purpose' => 'slp_recording', 'accepted' => true, 'policy_version' => 'v1'])->json('data.id');
         $this->postJson("/api/v1/slp/assignments/{$assignment}/attempts", ['submission_key' => 'hidden', 'consent_id' => $consent])->assertCreated();
         $this->actingAs($owner)->deleteJson('/api/v1/slp/collections/'.$collection->id)->assertNoContent();
         $this->actingAs($patient)->getJson('/api/v1/slp/assignments')->assertOk()->assertJsonPath('data.0.id', $assignment);

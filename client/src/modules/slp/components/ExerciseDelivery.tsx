@@ -127,7 +127,7 @@ export default function ExerciseDelivery({
               <section aria-label="Exercise content" className="space-y-4">
                 <Row label="Content" value={version.prompt_text} />
                 <Row
-                  label="Module"
+                  label="Exercise category"
                   value={exercise.module.replaceAll('_', ' ')}
                 />
                 <Row

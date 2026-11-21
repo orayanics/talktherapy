@@ -86,7 +86,6 @@ export const mutateCreateSlpAssignment = (input: {
   patient_id?: string
   patient_ids?: string[]
   exercise_version_id: string
-  schedule?: Record<string, unknown>
 }) =>
   api<{ data: SlpAssignment[] }>('/api/v1/slp/assignments', {
     method: 'POST',
@@ -99,6 +98,7 @@ export const mutateUnassignSlpAssignment = (assignmentId: string) =>
 export const mutateCreateSlpConsent = (input: {
   subject_id: string
   purpose: 'slp_recording'
+  accepted: boolean
   policy_version: string
 }) => api('/api/v1/slp/consents', { method: 'POST', data: input })
 

@@ -26,6 +26,20 @@ class SlpWorkflowTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_recording_notice_requires_acceptance_and_withdrawal_only_affects_own_consent(): void
+    {
+        $patient = $this->user(UserRole::Patient);
+        $other = $this->user(UserRole::Patient);
+        $payload = ['subject_id' => $patient->id, 'purpose' => 'slp_recording', 'policy_version' => 'v1'];
+        $this->actingAs($patient)->postJson('/api/v1/slp/consents', $payload)->assertUnprocessable()->assertJsonValidationErrors('accepted');
+        $this->postJson('/api/v1/slp/consents', ['policy_version' => 'unknown', 'accepted' => true] + $payload)->assertUnprocessable()->assertJsonValidationErrors('policy_version');
+        $id = $this->postJson('/api/v1/slp/consents', $payload + ['accepted' => true])->assertOk()->json('data.id');
+        $this->actingAs($other)->postJson('/api/v1/slp/consents/withdraw')->assertNoContent();
+        $this->assertNull(SlpConsent::findOrFail($id)->withdrawn_at);
+        $this->actingAs($patient)->postJson('/api/v1/slp/consents/withdraw')->assertNoContent();
+        $this->assertNotNull(SlpConsent::findOrFail($id)->withdrawn_at);
+    }
+
     public function test_review_then_publish_is_required_before_assignment(): void
     {
         $admin = $this->user(UserRole::Admin);
@@ -36,6 +50,7 @@ class SlpWorkflowTest extends TestCase
 
         $this->actingAs($clinician)->postJson('/api/v1/slp/assignments', ['patient_id' => $patient->id, 'exercise_version_id' => $version->id])->assertUnprocessable();
         $this->assertDatabaseCount('slp_assignments', 0);
+        $this->postJson('/api/v1/slp/assignments', ['patient_id' => $patient->id, 'exercise_version_id' => $version->id, 'schedule' => ['daily' => true]])->assertUnprocessable()->assertJsonValidationErrors('schedule');
         $unrelatedClinician = $this->user(UserRole::Clinician);
         $this->actingAs($unrelatedClinician)->postJson("/api/v1/slp/exercise-versions/{$version->id}/review")->assertForbidden();
         $this->actingAs($clinician)->postJson("/api/v1/slp/exercise-versions/{$version->id}/review")->assertOk();
@@ -134,7 +149,7 @@ class SlpWorkflowTest extends TestCase
         $this->actingAs($clinician)->getJson('/api/v1/slp/assignments?per_page=101')->assertUnprocessable();
         $version = SlpExerciseVersion::factory()->create(['status' => 'published', 'configuration' => ['patient_visible' => true]]);
         $assignment = SlpAssignment::factory()->create(['clinician_id' => $clinician->id, 'patient_id' => $patient->id, 'exercise_version_id' => $version->id]);
-        $consent = $this->actingAs($patient)->postJson('/api/v1/slp/consents', ['subject_id' => $patient->id, 'purpose' => 'slp_recording', 'policy_version' => 'v1'])->json('data');
+        $consent = $this->actingAs($patient)->postJson('/api/v1/slp/consents', ['subject_id' => $patient->id, 'purpose' => 'slp_recording', 'accepted' => true, 'policy_version' => 'v1'])->json('data');
         $attempt = $this->actingAs($patient)->postJson("/api/v1/slp/assignments/{$assignment->id}/attempts", ['submission_key' => 'one', 'consent_id' => $consent['id']])->assertCreated()->json('data');
 
         $this->actingAs($patient)->postJson("/api/v1/slp/attempts/{$attempt['id']}/recording", ['recording' => UploadedFile::fake()->create('speech.wav', 10, 'audio/x-wav')])->assertStatus(202)->assertJsonPath('data.status', 'queued');
@@ -153,7 +168,7 @@ class SlpWorkflowTest extends TestCase
         $consent = $this->actingAs($patient)->postJson('/api/v1/slp/consents', [
             'subject_id' => $patient->id,
             'purpose' => 'slp_recording',
-            'policy_version' => 'v1',
+            'accepted' => true, 'policy_version' => 'v1',
         ])->json('data');
         $attempt = $this->actingAs($patient)->postJson("/api/v1/slp/assignments/{$assignment->id}/attempts", [
             'submission_key' => 'access-check',

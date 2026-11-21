@@ -243,16 +243,13 @@ export default function PatientAssignmentDeck({
           </div>
           <span className="slp-deck-limit">Up to 60 sec</span>
         </div>
-        {assignments.map((item) => (
-          <div key={item.id} hidden={item.id !== assignment.id}>
-            {item.status === 'active' && (
-              <AssignedExercise
-                assignmentId={item.id}
-                onNavigationLockChange={setLocked}
-              />
-            )}
-          </div>
-        ))}
+        {assignment.status === 'active' && (
+          <AssignedExercise
+            key={assignment.id}
+            assignmentId={assignment.id}
+            onNavigationLockChange={setLocked}
+          />
+        )}
       </div>
     </section>
   )

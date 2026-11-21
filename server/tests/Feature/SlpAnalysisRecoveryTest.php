@@ -19,6 +19,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Tests\TestCase;
 
 class SlpAnalysisRecoveryTest extends TestCase
@@ -112,6 +113,21 @@ class SlpAnalysisRecoveryTest extends TestCase
         (new RunSlpAnalysis($late->id))->handle(app(PhonemeClient::class));
         $this->assertSame('approved', $attempt->fresh()->status);
         $this->assertSame('attempt_state_changed', $late->fresh()->failure_code);
+    }
+
+    public function test_busy_service_releases_the_job_and_keeps_the_attempt_queued(): void
+    {
+        [, $attempt] = $this->attempt(true);
+        $attempt->update(['status' => 'queued']);
+        $run = SlpAnalysisRun::query()->create(['attempt_id' => $attempt->id, 'status' => 'queued']);
+        $client = $this->mock(PhonemeClient::class)->shouldReceive('assess')->once()->andThrow(new HttpException(503))->getMock();
+        $job = (new RunSlpAnalysis($run->id))->withFakeQueueInteractions();
+
+        $job->handle($client);
+
+        $job->assertReleased(15);
+        $this->assertSame('queued', $run->fresh()->status);
+        $this->assertSame('queued', $attempt->fresh()->status);
     }
 
     public function test_withdrawal_blocks_queued_analysis(): void

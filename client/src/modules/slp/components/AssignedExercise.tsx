@@ -18,6 +18,7 @@ export default function AssignedExercise({
   const session = useSession()
   const recorder = usePracticeRecorder()
   const [busy, setBusy] = useState(false)
+  const [agreed, setAgreed] = useState(false)
   useEffect(() => {
     onNavigationLockChange?.(
       busy ||
@@ -43,7 +44,7 @@ export default function AssignedExercise({
         : false,
   })
   const submit = async () => {
-    if (!recorder.audio || busy) return
+    if (!recorder.audio || busy || !agreed) return
     setBusy(true)
     setError(null)
     try {
@@ -56,6 +57,7 @@ export default function AssignedExercise({
               subject_id: session.id,
               purpose: 'slp_recording',
               policy_version: 'v1',
+              accepted: agreed,
             },
           },
         )
@@ -70,7 +72,6 @@ export default function AssignedExercise({
           },
         )
         attemptId.current = createdAttempt.data.id
-        setSubmittedAttemptId(createdAttempt.data.id)
       }
       const data = new FormData()
       data.append(
@@ -85,6 +86,7 @@ export default function AssignedExercise({
         data,
       })
       recorder.clear()
+      setSubmittedAttemptId(attemptId.current)
       setSent(true)
     } catch (cause) {
       setError(
@@ -162,6 +164,17 @@ export default function AssignedExercise({
         />
       )}
       <div className="slp-recording-actions">
+        <label>
+          <input
+            type="checkbox"
+            checked={agreed}
+            disabled={busy}
+            onChange={(event) => setAgreed(event.target.checked)}
+          />
+          I agree to send this recording for automated transcription and
+          clinician review. Audio expires after 30 days. Analysis and clinician
+          reports are stored separately. (Recording policy v1)
+        </label>
         {recorder.state === 'recording' ? (
           <button
             type="button"
@@ -200,7 +213,7 @@ export default function AssignedExercise({
         <button
           type="button"
           className="slp-send-button"
-          disabled={!recorder.audio || busy}
+          disabled={!recorder.audio || busy || !agreed}
           onClick={() => void submit()}
         >
           {busy ? (

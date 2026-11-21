@@ -61,6 +61,7 @@ const exercise = {
 }
 const assignment = { exercise_version_id: 'version', patient_id: 'patient' }
 const consent = {
+  accepted: true,
   subject_id: 'patient',
   purpose: 'slp_recording',
   policy_version: 'v1',
