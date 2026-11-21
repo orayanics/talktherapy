@@ -1,7 +1,7 @@
-import { useId, useState } from 'react'
-import { Link, useRouterState } from '@tanstack/react-router'
+import type { NavItem,NavLink } from '#/types/component'
+import { Link,useRouterState } from '@tanstack/react-router'
 import { ChevronRight } from 'lucide-react'
-import type { NavItem, NavLink } from '#/types/component'
+import { useId,useState } from 'react'
 
 export interface SidebarItemProps {
   items?: Array<NavItem>
@@ -9,7 +9,7 @@ export interface SidebarItemProps {
   onExpand?: () => void
 }
 
-function NavigationLink({
+export function NavigationLink({
   item,
   collapsed,
   exact = false,
@@ -93,9 +93,11 @@ function NavigationGroup({
         className={`m-0 ms-5 list-none space-y-1 border-s border-border ps-2 ${collapsed ? 'lg:ms-0 lg:border-0 lg:ps-0' : ''}`}
       >
         {item.children.map((child) => (
-          <li key={child.to}>
-            <NavigationLink item={child} collapsed={collapsed} exact />
-          </li>
+          <SidebarChildLink
+            key={child.to}
+            child={child}
+            collapsed={collapsed}
+          />
         ))}
       </ul>
     </div>
@@ -128,3 +130,5 @@ export default function SidebarItem({
     </nav>
   )
 }
+
+import SidebarChildLink from './SidebarChildLink'

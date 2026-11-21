@@ -1,13 +1,12 @@
-import { useQuery } from '@tanstack/react-query'
 import { formatDate } from '#/utils/useDate'
+import { useQuery } from '@tanstack/react-query'
 import { fetchAppointment } from '../api/appointments'
 
-import { Row } from '#/components/Table/Row'
+import Drawer from '#/components/Drawer'
 import StateError from '#/components/State/StateError'
 import StateLoading from '#/components/State/StateLoading'
+import { Row } from '#/components/Table/Row'
 import AppointmentPill from './AppointmentPill'
-import RolePill from '#/modules/users/components/RolePill'
-import Drawer from '#/components/Drawer'
 
 export default function AppointmentDetailsDrawer({
   appointmentId,
@@ -116,34 +115,7 @@ export default function AppointmentDetailsDrawer({
               </p>
               <div className="relative ml-3 space-y-10 border-l-2 border-slate-100">
                 {events.map((event) => (
-                  <div key={event.id} className="group relative pl-8">
-                    <div className="absolute -left-1.75 h-3 w-3 rounded-full border-2 border-primary bg-white " />
-
-                    <div className="flex flex-col gap-1">
-                      <time className="text-xs uppercase text-muted">
-                        {formatDate(event.created_at)}
-                      </time>
-
-                      <div className="flex items-center gap-2">
-                        <h4 className="text-sm font-semibold capitalize my-0!">
-                          {event.to_status.toLowerCase().replace('_', ' ')}
-                        </h4>
-                        <span className="text-muted">•</span>
-                        <RolePill role={event.actor_type} />
-                      </div>
-
-                      {event.reason && (
-                        <div className="rounded-box border border-border bg-slate-50 p-4">
-                          <p className="text-xs leading-relaxed uppercase font-bold my-0!">
-                            Reason
-                          </p>
-                          <p className="leading-relaxed my-0!">
-                            {event.reason}
-                          </p>
-                        </div>
-                      )}
-                    </div>
-                  </div>
+                  <AppointmentHistoryEntry key={event.id} event={event} />
                 ))}
               </div>
             </div>
@@ -153,3 +125,5 @@ export default function AppointmentDetailsDrawer({
     </Drawer>
   )
 }
+
+import AppointmentHistoryEntry from './AppointmentHistoryEntry'

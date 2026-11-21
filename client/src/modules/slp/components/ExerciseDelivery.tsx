@@ -8,6 +8,7 @@ import { fetchClinicianPatients } from '#/modules/patients/api/patients'
 import type { ClinicianPatient } from '#/modules/patients/types/patients'
 import type { SlpExercise } from '../api/exercises'
 import { Row } from '#/components/Table/Row'
+import SlpPatientOption from './SlpPatientOption'
 
 type Audience = 'all' | 'selected'
 
@@ -215,17 +216,12 @@ export default function ExerciseDelivery({
                       </p>
                     )}
                     {pagePatients.map((item: ClinicianPatient) => (
-                      <label
+                      <SlpPatientOption
                         key={item.patientId}
-                        className="flex items-center gap-2 rounded p-2 hover:bg-slate-50"
-                      >
-                        <input
-                          type="checkbox"
-                          checked={selected.has(item.patientId)}
-                          onChange={() => togglePatient(item.patientId)}
-                        />
-                        <span>{item.patient.name}</span>
-                      </label>
+                        patient={item}
+                        selected={selected.has(item.patientId)}
+                        onToggle={() => togglePatient(item.patientId)}
+                      />
                     ))}
                     {!patients.isPending && pagePatients.length === 0 && (
                       <p className="text-sm text-slate-500">

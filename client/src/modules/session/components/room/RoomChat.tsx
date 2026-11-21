@@ -2,6 +2,7 @@ import { useState } from 'react'
 import type { RefObject } from 'react'
 import { MessageCircle } from 'lucide-react'
 import Drawer from '#/components/Drawer'
+import RoomChatMessage from './RoomChatMessage'
 
 interface ChatProps {
   messages: string[]
@@ -59,21 +60,8 @@ export default function RoomChat({
             ) : (
               messages.map((m, i) => {
                 const msg = normalizeMessage(m)
-                const isLocal = msg.from === 'local'
                 return (
-                  <div
-                    key={i}
-                    className={`chat ${isLocal ? 'chat-end' : 'chat-start'} animate-fade-in w-full`}
-                  >
-                    <div className="chat-header text-xs text-base-content/50">
-                      {isLocal ? 'You' : 'Peer'}
-                    </div>
-                    <div
-                      className={`chat-bubble text-sm  ${isLocal ? 'chat-bubble-primary' : 'chat-bubble-neutral'}`}
-                    >
-                      {msg.text}
-                    </div>
-                  </div>
+                  <RoomChatMessage key={i} from={msg.from} text={msg.text} />
                 )
               })
             )}

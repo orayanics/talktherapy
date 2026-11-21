@@ -1,22 +1,22 @@
-import { useRef, useState } from 'react'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import FormInput from '#/components/Form/FormInput'
-import Pagination from '#/components/Page/Pagination'
 import ModalConfirm from '#/components/Modal/ModalConfirm'
-import StateLoading from '#/components/State/StateLoading'
+import Pagination from '#/components/Page/Pagination'
 import StateError from '#/components/State/StateError'
+import StateLoading from '#/components/State/StateLoading'
 import { errMsg } from '#/lib/errorMessage'
-import {
-  collectionKeys,
-  deleteCollection,
-  fetchCollections,
-  saveCollection,
-} from '../api/collections'
-import type { ExerciseCollection } from '../api/collections'
-import SlpExerciseCatalog from './SlpExerciseCatalog'
-import CollectionPractice from './CollectionPractice'
-import CollectionPatientPicker from './CollectionPatientPicker'
 import { useAuthGuard } from '#/modules/auth/hooks/useAuth'
+import { useMutation,useQuery,useQueryClient } from '@tanstack/react-query'
+import { useRef,useState } from 'react'
+import type { ExerciseCollection } from '../api/collections'
+import {
+collectionKeys,
+deleteCollection,
+fetchCollections,
+saveCollection,
+} from '../api/collections'
+import CollectionPatientPicker from './CollectionPatientPicker'
+import CollectionPractice from './CollectionPractice'
+import SlpExerciseCatalog from './SlpExerciseCatalog'
 
 function CollectionForm({
   collection,
@@ -288,30 +288,12 @@ export default function ExerciseCollections({
           )}
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {collections.data.data.map((collection) => (
-              <button
+              <CollectionCard
                 key={collection.id}
-                className="overflow-hidden rounded-box border border-base-300 text-left"
-                onClick={() => setSelected(collection)}
-              >
-                {collection.cover_url && (
-                  <img
-                    src={collection.cover_url}
-                    alt=""
-                    className="h-40 w-full object-cover"
-                    loading="lazy"
-                  />
-                )}
-                <div className="space-y-2 p-4">
-                  <h2 className="font-semibold">{collection.title}</h2>
-                  <p className="line-clamp-3">{collection.description}</p>
-                  <p>
-                    {patientView
-                      ? 'Open practice collection'
-                      : `${collection.exercises_count ?? 0} exercises`}
-                    {collection.is_hidden ? ' · Hidden' : ''}
-                  </p>
-                </div>
-              </button>
+                setSelected={setSelected}
+                collection={collection}
+                patientView={patientView}
+              />
             ))}
           </div>
           <Pagination
@@ -324,3 +306,5 @@ export default function ExerciseCollections({
     </div>
   )
 }
+
+import CollectionCard from './CollectionCard'

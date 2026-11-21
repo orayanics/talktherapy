@@ -13,26 +13,11 @@ export default function SlpAccurate({ result }: SlpAccurateProps) {
       <div className="uppercase font-medium">Higher practice estimates</div>
       <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
         {result.analysis.structured.accurateUnits.slice(0, 10).map((item) => (
-          <li
-            key={`acc-${item.unit}`}
-            className="bg-white  rounded-box
-                border border-slate-300
-                flex items-start justify-between gap-3 p-3"
-          >
-            <div>
-              <div className="font-mono">{item.unit}</div>
-              {item.examples?.length ? (
-                <div className="text-xs text-slate-500">
-                  e.g. {item.examples.join(', ')}
-                </div>
-              ) : null}
-            </div>
-            <div className="font-mono tabular-nums text-sm">
-              {item.avgScore.toFixed(1)}%
-            </div>
-          </li>
+          <AccurateUnitItem key={`acc-${item.unit}`} item={item} />
         ))}
       </ul>
     </div>
   )
 }
+
+import AccurateUnitItem from './AccurateUnitItem'

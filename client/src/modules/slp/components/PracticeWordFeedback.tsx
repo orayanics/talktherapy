@@ -1,8 +1,8 @@
-import { useEffect, useRef } from 'react'
-import { Check, Circle, Medal } from 'lucide-react'
-import { checkFeedback, getPracticeStars } from '../data/practiceGame'
-import type { PracticeReflection, WordProgress } from '../data/practiceGame'
-import { StarMeter, Tala, CheckInKeys } from './PracticeRewards'
+import { Medal } from 'lucide-react'
+import { useEffect,useRef } from 'react'
+import type { PracticeReflection,WordProgress } from '../data/practiceGame'
+import { checkFeedback,getPracticeStars } from '../data/practiceGame'
+import { CheckInKeys,StarMeter,Tala } from './PracticeRewards'
 
 export default function PracticeWordFeedback({
   progress,
@@ -92,14 +92,7 @@ export default function PracticeWordFeedback({
               ['Shared a check-in', progress.reflected],
             ] as const
           ).map(([label, done]) => (
-            <li key={label} data-done={done}>
-              {done ? (
-                <Check size={18} aria-hidden="true" />
-              ) : (
-                <Circle size={18} aria-hidden="true" />
-              )}
-              {label}
-            </li>
+            <PracticeActionItem key={label} done={done} label={label} />
           ))}
         </ul>
         {audioUrl && (
@@ -163,3 +156,5 @@ export default function PracticeWordFeedback({
     </div>
   )
 }
+
+import PracticeActionItem from './PracticeActionItem'

@@ -1,4 +1,5 @@
 import { useId } from 'react'
+import HalfPieLegendItem from './HalfPieLegendItem'
 
 export interface HalfPieChartDatum {
   label: string
@@ -153,26 +154,7 @@ export default function HalfPieChart({
           {data.map((item) => {
             if (item.value === 0) return null
 
-            return (
-              <div
-                key={item.label}
-                className="flex items-center justify-between gap-3"
-              >
-                <span className="flex min-w-0 items-center gap-2">
-                  <span
-                    className="h-3 w-3 shrink-0 rounded-full"
-                    style={{
-                      backgroundColor: item.color,
-                      // boxShadow: `0 0 8px 1px ${item.color}`,
-                    }}
-                  />
-                  <span className="truncate text-neutral">{item.label}</span>
-                </span>
-                <span className="font-mono font-bold tabular-nums">
-                  {item.value}
-                </span>
-              </div>
-            )
+            return <HalfPieLegendItem key={item.label} item={item} />
           })}
         </div>
       )}

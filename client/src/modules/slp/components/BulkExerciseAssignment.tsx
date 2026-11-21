@@ -6,6 +6,7 @@ import { api } from '#/lib/api/client'
 import { fetchClinicianPatients } from '#/modules/patients/api/patients'
 import type { ClinicianPatient } from '#/modules/patients/types/patients'
 import type { SlpExercise } from '../api/exercises'
+import SlpPatientOption from './SlpPatientOption'
 
 export default function BulkExerciseAssignment({
   exercises,
@@ -159,17 +160,12 @@ export default function BulkExerciseAssignment({
                   <p className="text-sm text-slate-500">Loading patients…</p>
                 )}
                 {(patients.data?.data ?? []).map((item: ClinicianPatient) => (
-                  <label
+                  <SlpPatientOption
                     key={item.patientId}
-                    className="flex items-center gap-2 rounded p-2 hover:bg-slate-50"
-                  >
-                    <input
-                      type="checkbox"
-                      checked={selected.has(item.patientId)}
-                      onChange={() => togglePatient(item.patientId)}
-                    />
-                    <span>{item.patient.name}</span>
-                  </label>
+                    patient={item}
+                    selected={selected.has(item.patientId)}
+                    onToggle={() => togglePatient(item.patientId)}
+                  />
                 ))}
                 {!patients.isPending &&
                   (patients.data?.data ?? []).length === 0 && (

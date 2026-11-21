@@ -1,16 +1,16 @@
-import { useEffect, useState } from 'react'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import StateError from '#/components/State/StateError'
-import { api } from '#/lib/api/client'
 import StateLoading from '#/components/State/StateLoading'
-import {
-  fetchSlpRecording,
-  fetchSlpReviewAttempts,
-  mutateApproveSlpReview,
-  mutateSaveSlpReview,
-  slpWorkflowKeys,
-} from '../api/workflow'
+import { api } from '#/lib/api/client'
+import { useMutation,useQuery,useQueryClient } from '@tanstack/react-query'
+import { useEffect,useState } from 'react'
 import type { SlpReviewAttempt } from '../api/workflow'
+import {
+fetchSlpRecording,
+fetchSlpReviewAttempts,
+mutateApproveSlpReview,
+mutateSaveSlpReview,
+slpWorkflowKeys,
+} from '../api/workflow'
 
 export default function SlpReviewInbox() {
   const client = useQueryClient()
@@ -65,27 +65,13 @@ export default function SlpReviewInbox() {
     <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)]">
       <section aria-label="Review attempts" className="space-y-3">
         {data.data.map((attempt) => (
-          <button
+          <ReviewAttemptButton
             key={attempt.id}
-            type="button"
-            className={`w-full rounded-box border p-4 text-left ${selectedId === attempt.id ? 'border-primary bg-primary/5' : 'border-base-300'}`}
-            onClick={() => {
-              setSelectedId(attempt.id)
-              setAnnotation(
-                String(attempt.latest_review?.annotations?.[0]?.text ?? ''),
-              )
-            }}
-          >
-            <span className="block font-semibold">
-              {attempt.patient.name ?? 'Patient'}
-            </span>
-            <span className="block text-sm">
-              {attempt.exercise.prompt_text}
-            </span>
-            <span className="mt-1 block text-xs uppercase text-base-content/60">
-              {attempt.status.replaceAll('_', ' ')}
-            </span>
-          </button>
+            selectedId={selectedId}
+            attempt={attempt}
+            setSelectedId={setSelectedId}
+            setAnnotation={setAnnotation}
+          />
         ))}
       </section>
       {selected && (
@@ -99,13 +85,16 @@ export default function SlpReviewInbox() {
             reviewId={
               annotation.trim() ===
               String(selected.latest_review?.annotations?.[0]?.text ?? '')
-                ? selected.latest_review?.id ?? null
+                ? (selected.latest_review?.id ?? null)
                 : null
             }
             savePending={save.isPending}
             approvePending={approve.isPending}
             onSave={() => save.mutate()}
-            onApprove={() => selected.latest_review && approve.mutate(selected.latest_review.id)}
+            onApprove={() =>
+              selected.latest_review &&
+              approve.mutate(selected.latest_review.id)
+            }
             error={save.isError || approve.isError}
           />
           <button
@@ -231,3 +220,5 @@ function ReviewPanel({
     </section>
   )
 }
+
+import ReviewAttemptButton from './ReviewAttemptButton'

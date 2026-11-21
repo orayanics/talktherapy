@@ -12,26 +12,11 @@ export default function SlpImprovement({ result }: SlpImprovementProps) {
       <p className="uppercase font-medium">Areas to practice</p>
       <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
         {result.analysis.structured.needsWorkUnits.slice(0, 10).map((item) => (
-          <li
-            key={`needs-${item.unit}`}
-            className="bg-white  rounded-box
-                border border-slate-300
-                flex items-start justify-between gap-3 p-3"
-          >
-            <div>
-              <div className="font-mono">{item.unit}</div>
-              {item.examples?.length ? (
-                <div className="text-xs text-slate-500">
-                  e.g. {item.examples.join(', ')}
-                </div>
-              ) : null}
-            </div>
-            <div className="font-mono tabular-nums text-sm">
-              {item.avgScore.toFixed(1)}% practice estimate
-            </div>
-          </li>
+          <ImprovementUnitItem key={`needs-${item.unit}`} item={item} />
         ))}
       </ul>
     </div>
   )
 }
+
+import ImprovementUnitItem from './ImprovementUnitItem'

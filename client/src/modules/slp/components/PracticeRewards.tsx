@@ -1,5 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
+import PracticeActivityStat from './PracticeActivityStat'
+import PracticeCheckInOption from './PracticeCheckInOption'
+import PracticeResultWord from './PracticeResultWord'
+import PracticeStarIcon from './PracticeStarIcon'
 
 /* ---------- types ---------- */
 export type CheckIn = 'independent' | 'helped' | 'again'
@@ -173,14 +177,10 @@ export function StarMeter({
       aria-label={`${stars} of 3 practice stars`}
     >
       {[1, 2, 3].map((n) => (
-        <svg
+        <PracticeStarIcon
           key={n}
-          viewBox="0 0 24 24"
           className={`tt-star${n <= stars ? ' on' : ''}${n === justEarned ? ' pop' : ''}`}
-          aria-hidden="true"
-        >
-          <path d="M12 2l3 6.6 7 .8-5.2 4.8 1.5 7L12 17.6 5.7 21.2l1.5-7L2 9.4l7-.8z" />
-        </svg>
+        />
       ))}
     </span>
   )
@@ -291,27 +291,18 @@ export function CheckInKeys({
     >
       <div className="tt-keys">
         {KEYS.map((k, i) => (
-          <button
+          <PracticeCheckInOption
             key={k.id}
-            type="button"
+            id={k.id}
+            label={k.label}
+            hint={k.hint}
+            className={k.cls}
+            shape={SHAPES[k.shape]}
+            selected={value === k.id}
+            shortcut={String(i + 1)}
             disabled={disabled || (skipDisabled && k.id === 'skip')}
-            className={`tt-key ${k.cls}`}
-            aria-pressed={value === k.id}
-            aria-keyshortcuts={String(i + 1)}
-            onClick={() => onPick(k.id)}
-          >
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              {SHAPES[k.shape]}
-            </svg>
-            <span>
-              {k.label}
-              <small
-                style={{ display: 'block', fontWeight: 600, opacity: 0.9 }}
-              >
-                {k.hint}
-              </small>
-            </span>
-          </button>
+            onPick={onPick}
+          />
         ))}
       </div>
     </div>
@@ -424,27 +415,19 @@ export function RoundRecap({
 
       <dl className="slp-result-stats">
         {activities.map(({ label, value }) => (
-          <div key={label}>
-            <dt>{label}</dt>
-            <dd>{value}</dd>
-          </div>
+          <PracticeActivityStat key={label} label={label} value={value} />
         ))}
       </dl>
       <ul className="slp-result-words">
         {results.map((r, i) => (
-          <li key={i}>
-            <strong style={{ flex: 1 }}>{r.word}</strong>
+          <PracticeResultWord
+            key={i}
+            word={r.word}
+            index={i}
+            onRetry={onRetryWord}
+          >
             {r.skipped ? <em>Skipped</em> : <StarMeter stars={r.stars} />}
-            <button
-              type="button"
-              className="tt-btn alt"
-              style={{ padding: '6px 14px' }}
-              onClick={() => onRetryWord(i)}
-              aria-label={`Try ${r.word} again`}
-            >
-              Again
-            </button>
-          </li>
+          </PracticeResultWord>
         ))}
       </ul>
       <p style={{ fontSize: '.9rem', margin: '0 0 16px' }}>

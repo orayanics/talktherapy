@@ -1,13 +1,15 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useAuthGuard } from '#/modules/auth/hooks/useAuth'
+import { TableBase } from '#/components/Table/TableBase'
 import { api } from '#/lib/api/client'
-import {
-  fetchSlpAssignments,
-  mutateUnassignSlpAssignment,
-} from '../api/workflow'
+import { useAuthGuard } from '#/modules/auth/hooks/useAuth'
+import { useMutation,useQuery,useQueryClient } from '@tanstack/react-query'
 import type { SlpAssignment } from '../api/workflow'
+import {
+fetchSlpAssignments,
+mutateUnassignSlpAssignment,
+} from '../api/workflow'
+import AssignedCollectionItem from './AssignedCollectionItem'
 import PatientAssignmentDeck from './PatientAssignmentDeck'
-import { Root, Tala, useCalmMotion } from './PracticeRewards'
+import { Root,Tala,useCalmMotion } from './PracticeRewards'
 import './practice.css'
 
 export default function SlpAssignments() {
@@ -96,15 +98,7 @@ export default function SlpAssignments() {
 
   if (is('clinician'))
     return (
-      <section className="space-y-5" aria-labelledby="slp-assignment-heading">
-        <header>
-          <h2 id="slp-assignment-heading" className="text-2xl font-semibold">
-            Patient assignments
-          </h2>
-          <p className="mt-1 text-sm text-slate-600">
-            Review which collections and exercises are assigned to each patient.
-          </p>
-        </header>
+      <section className="space-y-5" aria-label="Patient assignments">
         {!clinicianRows.size ? (
           <p
             className="border border-base-300 p-4 text-sm text-slate-600"
@@ -113,51 +107,37 @@ export default function SlpAssignments() {
             No patient assignments yet.
           </p>
         ) : (
-          <div className="overflow-x-auto border border-base-300">
-            <table className="table w-full">
-              <thead>
-                <tr>
-                  <th scope="col">Patient</th>
-                  <th scope="col">Assigned collections and exercises</th>
-                </tr>
-              </thead>
-              <tbody>
-                {[...clinicianRows].map(([patientId, patient]) => (
-                  <tr key={patientId}>
-                    <th scope="row" className="align-top font-medium">
-                      {patient.name}
-                    </th>
-                    <td>
-                      <ul className="space-y-3">
-                        {[...patient.collections.values()].map((collection) => (
-                          <li key={collection.title}>
-                            <p className="font-medium">{collection.title}</p>
-                            <ul className="list-disc pl-5 text-sm text-slate-600">
-                              {collection.exercises.map((exercise) => (
-                                <li
-                                  key={exercise.id}
-                                  className="flex items-center justify-between gap-3"
-                                >
-                                  <span>{exercise.prompt}</span>
-                                  <button
-                                    type="button"
-                                    className="btn btn-ghost btn-xs text-error"
-                                    disabled={unassign.isPending}
-                                    onClick={() => unassign.mutate(exercise.id)}
-                                  >
-                                    Unassign
-                                  </button>
-                                </li>
-                              ))}
-                            </ul>
-                          </li>
-                        ))}
-                      </ul>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div>
+            <TableBase
+              data={[...clinicianRows].map(([id, patient]) => ({
+                id,
+                ...patient,
+              }))}
+              keyExtractor={(patient) => patient.id}
+              columns={[
+                {
+                  header: 'Patient',
+                  accessor: 'name',
+                  className: 'align-top font-medium',
+                },
+                {
+                  header: 'Assigned collections and exercises',
+                  render: (patient) => (
+                    <ul className="space-y-3">
+                      {[...patient.collections].map(
+                        ([collectionId, collection]) => (
+                          <AssignedCollectionItem
+                            key={collectionId}
+                            collection={collection}
+                            unassign={unassign}
+                          />
+                        ),
+                      )}
+                    </ul>
+                  ),
+                },
+              ]}
+            />
           </div>
         )}
         {unassign.isError && (

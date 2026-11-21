@@ -1,4 +1,5 @@
-import { Link, useMatches } from '@tanstack/react-router'
+import { useMatches } from '@tanstack/react-router'
+import BreadcrumbItem from './BreadcrumbItem'
 
 export default function Breadcrumbs() {
   const crumbs = useMatches({
@@ -17,19 +18,12 @@ export default function Breadcrumbs() {
           const current = index === crumbs.length - 1
 
           return (
-            <li key={crumb.id}>
-              <Link
-                to={crumb.staticData.bcLink}
-                aria-current={current ? 'page' : undefined}
-                className={
-                  current
-                    ? 'font-semibold text-base-content'
-                    : 'text-base-content/70'
-                }
-              >
-                {crumb.staticData.page?.title}
-              </Link>
-            </li>
+            <BreadcrumbItem
+              key={crumb.id}
+              to={crumb.staticData.bcLink}
+              title={crumb.staticData.page?.title ?? ''}
+              current={current}
+            />
           )
         })}
       </ol>

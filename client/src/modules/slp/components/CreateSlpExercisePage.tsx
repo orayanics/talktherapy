@@ -14,6 +14,7 @@ import { mutateUploadSlpAsset } from '../api/exercises'
 import type { SlpExercise, SlpExerciseModule } from '../api/exercises'
 
 import { slpExerciseModules } from '../types/exercises'
+import SlpPatientOption from './SlpPatientOption'
 
 type Audience = 'all' | 'selected'
 
@@ -311,25 +312,20 @@ export default function CreateSlpExercisePage({
                   <p className="text-sm text-slate-500">Loading patients…</p>
                 )}
                 {(patients.data?.data ?? []).map((item: ClinicianPatient) => (
-                  <label
+                  <SlpPatientOption
                     key={item.patientId}
-                    className="flex items-center gap-2 rounded p-2 hover:bg-slate-50"
-                  >
-                    <input
-                      type="checkbox"
-                      checked={selectedPatients.has(item.patientId)}
-                      onChange={() =>
-                        setSelectedPatients((current) => {
-                          const next = new Set(current)
-                          if (next.has(item.patientId))
-                            next.delete(item.patientId)
-                          else next.add(item.patientId)
-                          return next
-                        })
-                      }
-                    />
-                    <span>{item.patient.name}</span>
-                  </label>
+                    patient={item}
+                    selected={selectedPatients.has(item.patientId)}
+                    onToggle={() =>
+                      setSelectedPatients((current) => {
+                        const next = new Set(current)
+                        if (next.has(item.patientId))
+                          next.delete(item.patientId)
+                        else next.add(item.patientId)
+                        return next
+                      })
+                    }
+                  />
                 ))}
                 {!patients.isPending && patients.data?.data.length === 0 && (
                   <p className="text-sm text-slate-500">

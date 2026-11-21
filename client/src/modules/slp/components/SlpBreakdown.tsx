@@ -1,5 +1,5 @@
 import type { AssessResponse } from '#/modules/slp/api/slp'
-import SlpPill from '#/modules/slp/components/SlpPill'
+import SlpBreakdownWordRow from './SlpBreakdownWordRow'
 
 interface SlpBreakdownProps {
   result: AssessResponse
@@ -26,25 +26,14 @@ export default function SlpBreakdown({ result }: SlpBreakdownProps) {
             </tr>
           </thead>
           <tbody>
-            {result.analysis.structured.words.slice(0, 25).map((w, idx) => {
-              const focus = w.lowUnits
-                .slice(0, 4)
-                .map((u) => `${u.unit}(${u.score.toFixed(0)}%)`)
-                .join(', ')
-
-              return (
-                <tr key={`${w.word}-${idx}`}>
-                  <td className="font-medium">{w.word}</td>
-                  <td className="text-right font-mono">
-                    {w.avgScore.toFixed(1)}%
-                  </td>
-                  <td>
-                    <SlpPill status={w.status} />
-                  </td>
-                  <td>{focus || '-'}</td>
-                </tr>
-              )
-            })}
+            {result.analysis.structured.words
+              .slice(0, 25)
+              .map((word, index) => (
+                <SlpBreakdownWordRow
+                  key={`${word.word}-${index}`}
+                  word={word}
+                />
+              ))}
           </tbody>
         </table>
       </div>

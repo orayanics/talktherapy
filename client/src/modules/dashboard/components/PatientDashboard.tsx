@@ -1,18 +1,17 @@
 import { useQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
-import { ArrowRight, Stethoscope } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 
 import { fetchAppointments } from '#/modules/appointments/api/appointments'
-import { fetchDashboardSummary } from '#/modules/dashboard/api/dashboard'
 import type { Appointment } from '#/modules/appointments/types/appointment'
+import { fetchDashboardSummary } from '#/modules/dashboard/api/dashboard'
 
-import { fetchContentList } from '#/modules/content/api/content'
 import type { Content } from '#/modules/content/api/content'
+import { fetchContentList } from '#/modules/content/api/content'
 
-import StateLoading from '#/components/State/StateLoading'
 import StateError from '#/components/State/StateError'
+import StateLoading from '#/components/State/StateLoading'
 import StateNull from '#/components/State/StateNull'
-import AppointmentPill from '#/modules/appointments/components/AppointmentPill'
 
 import { formatDate } from '#/utils/useDate'
 import PatientSummary from './patient/PatientSummary'
@@ -62,39 +61,7 @@ export default function PatientDashboard() {
         ) : (
           <ul className="space-y-3">
             {appts.map((a) => (
-              <li
-                key={a.id}
-                className="flex items-center justify-between p-4 bg-white border border-slate-200 rounded-box"
-              >
-                <div className="flex items-center gap-4">
-                  <div className="flex flex-col items-center justify-center w-12 h-12 bg-slate-50 rounded-box border border-slate-200">
-                    <span className="text-xs font-bold text-slate-500 uppercase leading-none ">
-                      {formatDate(a.slot.start_at, 'MMM')}
-                    </span>
-                    <span className="text-xs font-bold text-slate-900">
-                      {formatDate(a.slot.start_at, 'dd')}
-                    </span>
-                  </div>
-
-                  <div>
-                    <div className="flex items-center gap-2 text-sm font-semibold text-base-content leading-normal">
-                      <Stethoscope size={18} />
-                      {a.clinician.name}
-                    </div>
-                    <div className="flex items-center gap-2 mt-1">
-                      <span className="text-xs font-mono text-slate-500 tracking-tight">
-                        {formatDate(a.slot.start_at, 'p')}
-                      </span>
-                      <span className="w-1 h-1 rounded-full bg-slate-300" />
-                      <AppointmentPill status={a.status} />
-                    </div>
-                  </div>
-                </div>
-
-                <Link to="/appointments" className="btn btn-sm btn-neutral">
-                  Appointments
-                </Link>
-              </li>
+              <UpcomingAppointmentItem key={a.id} a={a} />
             ))}
           </ul>
         )}
@@ -116,11 +83,14 @@ export default function PatientDashboard() {
         ) : contentQ.isError ? (
           <StateError />
         ) : bookmarks.length === 0 ? (
-          <div className="p-6 bg-slate-50/50 rounded-box border border-slate-100">
-            <p className="text-xs text-slate-500 italic">
-              No bookmarks yet. Browse clinical content to save helpful
-              articles.
-            </p>
+          <div
+            className="p-6 alert alert-soft text-center flex flex-col"
+            role="alert"
+          >
+            Looks like you don't have any favorites yet
+            <Link to="/content" className="btn btn-primary">
+              Browse content
+            </Link>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -134,12 +104,8 @@ export default function PatientDashboard() {
                 p-4 bg-white border border-slate-200 rounded-box"
               >
                 <div className="space-y-1">
-                  <div className="text-sm font-bold text-slate-900 font-serif">
-                    {c.title}
-                  </div>
-                  <p className="text-xs text-slate-500 leading-relaxed line-clamp-2">
-                    {c.description}
-                  </p>
+                  <h3 className="font-bold">{c.title}</h3>
+                  <p className="text-muted">{c.description}</p>
                 </div>
 
                 <div className="gap-2 flex items-center justify-between">
@@ -159,3 +125,5 @@ export default function PatientDashboard() {
     </div>
   )
 }
+
+import UpcomingAppointmentItem from './UpcomingAppointmentItem'

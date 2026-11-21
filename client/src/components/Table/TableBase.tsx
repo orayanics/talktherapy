@@ -1,6 +1,7 @@
 import React from 'react'
+import TableBaseRow from './TableBaseRow'
 
-type Column<T> = {
+export type Column<T> = {
   header: React.ReactNode
   accessor?: keyof T
   render?: (row: T, index: number) => React.ReactNode
@@ -40,19 +41,12 @@ export function TableBase<T>({
 
         <tbody>
           {data.map((row, rowIndex) => (
-            <tr key={keyExtractor?.(row, rowIndex) ?? rowIndex}>
-              {columns.map((col, colIndex) => {
-                const value = col.accessor
-                  ? (row[col.accessor] as React.ReactNode)
-                  : undefined
-
-                return (
-                  <td key={colIndex} className={col.className}>
-                    {col.render ? col.render(row, rowIndex) : value}
-                  </td>
-                )
-              })}
-            </tr>
+            <TableBaseRow
+              key={keyExtractor?.(row, rowIndex) ?? rowIndex}
+              row={row}
+              rowIndex={rowIndex}
+              columns={columns}
+            />
           ))}
         </tbody>
       </table>

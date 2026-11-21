@@ -1,9 +1,9 @@
-import { useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
+import Pagination from '#/components/Page/Pagination'
 import { useAuthGuard } from '#/modules/auth/hooks/useAuth'
 import { fetchClinicianPatients } from '#/modules/patients/api/patients'
 import { fetchUsers } from '#/modules/users/api/users'
-import Pagination from '#/components/Page/Pagination'
+import { useQuery } from '@tanstack/react-query'
+import { useState } from 'react'
 
 export default function CollectionPatientPicker({
   selected,
@@ -48,21 +48,12 @@ export default function CollectionPatientPicker({
       {query.isPending && <p>Loading patients…</p>}
       {query.isError && <p role="alert">Could not load patients.</p>}
       {patients?.map((patient) => (
-        <label key={patient.id} className="flex min-h-12 items-center gap-2">
-          <input
-            type="checkbox"
-            className="checkbox"
-            checked={selected.includes(patient.id)}
-            onChange={(event) =>
-              onChange(
-                event.target.checked
-                  ? [...selected, patient.id]
-                  : selected.filter((id) => id !== patient.id),
-              )
-            }
-          />
-          {patient.name}
-        </label>
+        <CollectionPatientOption
+          key={patient.id}
+          selected={selected}
+          patient={patient}
+          onChange={onChange}
+        />
       ))}
       {patients?.length === 0 && <p>No matching patients.</p>}
       <p aria-live="polite">{selected.length} patients selected</p>
@@ -79,3 +70,5 @@ export default function CollectionPatientPicker({
     </fieldset>
   )
 }
+
+import CollectionPatientOption from './CollectionPatientOption'
