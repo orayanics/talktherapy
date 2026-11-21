@@ -3,6 +3,7 @@
 namespace App\Actions;
 
 use App\Enums\UserStatus;
+use App\Events\SlotAvailabilityChanged;
 use App\Models\Appointment;
 use App\Models\AppointmentEvent;
 use App\Models\AuditLog;
@@ -153,6 +154,8 @@ class TransitionAppointment
                     'updated_at' => $now,
                 ]], ['clinician_id', 'patient_id'], ['updated_at']);
             }
+
+            SlotAvailabilityChanged::dispatch($slot->clinician_id);
 
             return $appointment->load(['slot', 'patient:id,name,email', 'clinician:id,name,email', 'clinician.profile.diagnosis', 'encounter', 'events']);
         }, attempts: 3);

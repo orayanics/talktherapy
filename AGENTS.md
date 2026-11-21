@@ -53,7 +53,7 @@ Make the smallest complete, maintainable change that satisfies the request. Do n
 ## Verification and reporting
 
 - Use existing scripts and tools in the affected directory. Run the narrowest meaningful check first: targeted tests, type-checking, linting, formatting, build, or manual inspection as appropriate.
-- Add or update tests in proportion to changed behavior and regression risk. A purely visual/copy edit does not automatically require tests; authorization, validation, business logic, and contract changes usually do.
+- Retain automated tests for important workflows, including critical authorization and API contracts. Keep focused unit tests and business-logic tests where they catch meaningful regressions. Avoid per-component tests for rendering or routine UI behavior.
 - Unit tests verify isolated logic. Boundary/contract tests verify requests and responses between components. Integration tests verify interacting services. End-to-end tests verify the complete user path. Do not describe one type as proof of another.
 - Expand checks when shared behavior, security, integration risk, or failures warrant it. Do not repeatedly run unchanged successful checks without a reason.
 - Use test fixtures and nonproduction environments. Do not point tests at live data or external paid services without authorization.
@@ -68,7 +68,7 @@ Make the smallest complete, maintainable change that satisfies the request. Do n
 - Account for loading, empty, error, and success states. Keep interactive UI keyboard-accessible, properly labeled, responsive, and consistent with existing design patterns.
 - Inspect existing API clients/types and the Laravel contract before changing data-driven behavior. Do not silently invent endpoint fields or error responses.
 - Treat TanStack Start server functions and server routes as real endpoints: validate inputs, authorize protected operations on the server, preserve CSRF protections, and avoid exposing secrets through returned data or hydration. Reuse Laravel for authoritative business logic.
-- For styling/copy changes, use relevant lint/build checks and visual/browser inspection when available; tests are not required solely because markup changed. For changed frontend behavior, add or adjust focused tests when needed to cover meaningful regressions.
+- For styling and copy changes, use relevant lint or build checks and browser inspection when available. Cover important frontend behavior through workflow tests or focused unit tests for isolated logic.
 - If visual/browser verification was not possible, disclose that instead of claiming the UI was inspected.
 
 ## 2. Backend — `server/` (Laravel API)

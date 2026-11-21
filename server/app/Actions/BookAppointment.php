@@ -4,6 +4,7 @@ namespace App\Actions;
 
 use App\Enums\UserRole;
 use App\Enums\UserStatus;
+use App\Events\SlotAvailabilityChanged;
 use App\Models\Appointment;
 use App\Models\AppointmentEvent;
 use App\Models\AuditLog;
@@ -94,6 +95,8 @@ class BookAppointment
                 ]);
                 $notifications->email($recipient, 'appointment_booked', ['message' => 'A new appointment request is waiting for you in TalkTherapy.']);
             }
+
+            SlotAvailabilityChanged::dispatch($lockedSlot->clinician_id);
 
             return $appointment->load(['slot', 'patient.profile', 'clinician.profile', 'encounter', 'events']);
         }, attempts: 3);
