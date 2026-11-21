@@ -109,7 +109,7 @@ export default function AssignedExercise({
           </p>
           <p className="font-semibold">
             {attempt.data?.data.status === 'failed'
-              ? 'Analysis could not be completed. Please try a new recording.'
+              ? 'The automatic check was unavailable. Your clinician can review the audio if consent is active.'
               : attempt.data?.data.status === 'awaiting_review'
                 ? 'Your recording has been analyzed and is ready for clinician review.'
                 : 'Your recording is being processed for clinician review.'}

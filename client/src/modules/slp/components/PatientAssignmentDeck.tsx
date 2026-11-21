@@ -9,6 +9,7 @@ import {
 import type { PointerEvent } from 'react'
 import type { SlpAssignment } from '../api/workflow'
 import AssignedExercise from './AssignedExercise'
+import ListenToPrompt from './ListenToPrompt'
 import { useCalmMotion } from './PracticeRewards'
 
 export default function PatientAssignmentDeck({
@@ -138,6 +139,13 @@ export default function PatientAssignmentDeck({
         max={assignments.length}
         aria-label="Exercise position"
       />
+
+      {assignment.version && (
+        <ListenToPrompt
+          text={assignment.version.prompt_text}
+          language={assignment.version.language}
+        />
+      )}
       <div className="slp-deck-stage">
         <div className="slp-deck-stack" aria-hidden="true" />
         <div
@@ -186,6 +194,11 @@ export default function PatientAssignmentDeck({
             />
             <span className="slp-deck-eyebrow">Your prompt</span>
             <h3>{assignment.version?.prompt_text ?? 'Assigned exercise'}</h3>
+            {assignment.recording_requested && (
+              <p>
+                Your clinician asked for a clearer recording of this exercise.
+              </p>
+            )}
             <p>Take a breath. There’s no rush.</p>
           </div>
           <div className="slp-deck-card-bottom">

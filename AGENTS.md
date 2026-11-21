@@ -19,14 +19,14 @@ Make the smallest complete, maintainable change that satisfies the request. Do n
 
 ## Match work to the request
 
-| Request              | Expected action                                                                                                     |
-| -------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| Question/explanation | Inspect evidence and answer; do not change code.                                                                    |
-| Plan                 | Provide an actionable plan, dependencies, and checks; do not implement.                                             |
-| Audit/review         | Report prioritized, actionable findings with file references, impact, and fixes; do not implement unless requested. |
-| Investigate a bug    | Reproduce or trace the failure and explain the cause with evidence; do not silently fix it.                         |
-| Fix/implementation   | Make the requested changes, update affected callers, and verify them.                                               |
-| Integration          | Trace the actual producer/consumer contract; update the necessary sides and verify the affected boundary.           |
+| Request              | Expected action                                                                                                          |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| Question/explanation | Inspect evidence and answer, summarize and put into bullet points maximum of 15 words or use tables; do not change code. |
+| Plan                 | Provide an actionable plan, dependencies, and checks; do not implement.                                                  |
+| Audit/review         | Report prioritized, actionable findings with file references, impact, and fixes; do not implement unless requested.      |
+| Investigate a bug    | Reproduce or trace the failure and explain the cause with evidence; do not silently fix it.                              |
+| Fix/implementation   | Make the requested changes, update affected callers, and verify them.                                                    |
+| Integration          | Trace the actual producer/consumer contract; update the necessary sides and verify the affected boundary.                |
 
 - State scope briefly for nontrivial work. Provide concise progress updates only when findings, decisions, or blockers materially affect the work.
 - Ask about genuinely blocking ambiguity or a material tradeoff that cannot be resolved from repository evidence. Use a reasonable, reversible default for routine implementation choices; do not ask permission for every component or small edit.

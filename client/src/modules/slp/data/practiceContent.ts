@@ -6,6 +6,7 @@ export type PicturePrompt = {
   sourceItem: number
   sourceFile: string
   english: string
+  alternatives?: Partial<Record<PracticeLanguage, string[]>>
   filipino: string
   question: Record<PracticeLanguage, string>
 }
@@ -139,6 +140,7 @@ export const picturePrompts: PicturePrompt[] = [
     sourceItem: 1,
     sourceFile: 'Item 1 n 27.jpg',
     english: 'eyes',
+    alternatives: { en: ['eye'] },
     filipino: 'mata',
     question: {
       en: 'What do you use to see?',
@@ -163,6 +165,7 @@ export const picturePrompts: PicturePrompt[] = [
     sourceItem: 29,
     sourceFile: 'Item 29.jpg',
     english: 'teeth',
+    alternatives: { en: ['tooth'] },
     filipino: 'ngipin',
     question: {
       en: 'What do you clean with a toothbrush?',

@@ -30,6 +30,7 @@ class RegisterPatientRequest extends FormRequest
             'password' => ['required', 'confirmed', Password::min(8)->mixedCase()->numbers()->symbols()],
             'diagnosis_id' => ['required', 'string', Rule::exists('diagnoses', 'id')],
             'consent' => ['required', 'accepted'],
+            'privacy_v1' => ['required', 'accepted'],
             'role' => ['prohibited'],
             'status' => ['prohibited'],
         ];

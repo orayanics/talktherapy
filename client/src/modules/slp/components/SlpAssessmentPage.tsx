@@ -40,6 +40,7 @@ export default function SlpAssessmentPage() {
   const [mode, setMode] = useState<'explore' | 'focus'>('explore')
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [customWord, setCustomWord] = useState('')
+  const [checks, setChecks] = useState(0)
   const [paused, setPaused] = useState(false)
   const [finished, setFinished] = useState(false)
   const [visited, setVisited] = useState<Set<string>>(new Set())
@@ -93,7 +94,7 @@ export default function SlpAssessmentPage() {
   const showingFeedback = !!recorder.audio && !capturing
   const canContinue =
     !locked &&
-    !!assessment.result &&
+    (!!assessment.result || currentProgress?.outcome === 'unavailable') &&
     currentProgress?.recordingKey === recorder.url
   const clear = () => {
     roundGeneration.current++
@@ -102,6 +103,7 @@ export default function SlpAssessmentPage() {
     assessment.resetAssessment()
   }
   const restart = () => {
+    setChecks(0)
     clear()
     setCustomWord('')
     dispatchGame({ type: 'reset' })
@@ -112,7 +114,8 @@ export default function SlpAssessmentPage() {
     setPaused(false)
   }
   const next = () => {
-    if (!canContinue) return
+    if (locked) return
+    setChecks(0)
     setVisited((previous) => new Set(previous).add(prompt.id))
     clear()
     setCustomWord('')
@@ -120,7 +123,8 @@ export default function SlpAssessmentPage() {
     else setIndex(index + 1)
   }
   const analyze = async () => {
-    if (!recorder.audio || !recorder.url) return
+    if (!recorder.audio || !recorder.url || checks >= 3) return
+    setChecks(checks + 1)
     const generation = roundGeneration.current
     const recordingKey = recorder.url
     dispatchGame({
@@ -140,13 +144,21 @@ export default function SlpAssessmentPage() {
       type: 'check',
       promptId: prompt.id,
       recordingKey,
-      outcome: response ? getCheckOutcome(response) : 'unavailable',
+      outcome: response
+        ? getCheckOutcome(response, [
+            word,
+            ...(customWord.trim()
+              ? []
+              : (prompt.alternatives?.[language] ?? [])),
+          ])
+        : 'unavailable',
       transcript: response?.analysis.transcript ?? '',
     })
   }
   const retryWord = (promptId: string) => {
     const target = prompts.findIndex((item) => item.id === promptId)
     if (target < 0) return
+    setChecks(0)
     clear()
     setIndex(target)
     setFinished(false)
@@ -335,6 +347,7 @@ export default function SlpAssessmentPage() {
             }
           >
             <PracticeTurn
+              checksRemaining={3 - checks}
               canContinue={canContinue}
               recorder={recorder}
               assessment={assessment}

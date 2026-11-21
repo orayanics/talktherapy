@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import StateError from '#/components/State/StateError'
+import { api } from '#/lib/api/client'
 import StateLoading from '#/components/State/StateLoading'
 import {
   fetchSlpRecording,
@@ -15,42 +16,45 @@ export default function SlpReviewInbox() {
   const client = useQueryClient()
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [annotation, setAnnotation] = useState('')
-  const [reviewId, setReviewId] = useState<string | null>(null)
   const { data, isPending, isError } = useQuery(fetchSlpReviewAttempts())
   const selected = data?.data.find((item) => item.id === selectedId) ?? null
   const recording = useQuery({
     ...fetchSlpRecording(selected?.id ?? ''),
     enabled: selected?.recording !== null && selected !== null,
   })
-  const [recordingUrl, setRecordingUrl] = useState<string | null>(null)
+  const [audio, setAudio] = useState<{ id: string; url: string } | null>(null)
   useEffect(() => {
-    if (!recording.data) return
+    if (!recording.data || !selectedId) return
     const url = URL.createObjectURL(recording.data)
-    setRecordingUrl(url)
+    setAudio({ id: selectedId, url })
     return () => URL.revokeObjectURL(url)
-  }, [recording.data])
+  }, [recording.data, selectedId])
   const save = useMutation({
     mutationFn: () =>
       mutateSaveSlpReview(selected!.id, {
         annotations: [{ text: annotation.trim() }],
       }),
-    onSuccess: (result: { data: { id: string } }) => {
-      setReviewId(result.data.id)
-      void client.invalidateQueries({
+    onSuccess: () => {
+      return client.invalidateQueries({
         queryKey: slpWorkflowKeys.reviewAttempts,
       })
     },
   })
   const approve = useMutation({
-    mutationFn: () => mutateApproveSlpReview(reviewId!),
+    mutationFn: (id: string) => mutateApproveSlpReview(id),
     onSuccess: () => {
       setSelectedId(null)
-      setReviewId(null)
       setAnnotation('')
       void client.invalidateQueries({
         queryKey: slpWorkflowKeys.reviewAttempts,
       })
     },
+  })
+  const requestRecording = useMutation({
+    mutationFn: (id: string) =>
+      api(`/api/v1/slp/attempts/${id}/request-recording`, { method: 'POST' }),
+    onSuccess: () =>
+      client.invalidateQueries({ queryKey: slpWorkflowKeys.reviewAttempts }),
   })
   if (isPending) return <StateLoading />
   if (isError) return <StateError />
@@ -67,8 +71,9 @@ export default function SlpReviewInbox() {
             className={`w-full rounded-box border p-4 text-left ${selectedId === attempt.id ? 'border-primary bg-primary/5' : 'border-base-300'}`}
             onClick={() => {
               setSelectedId(attempt.id)
-              setReviewId(attempt.latest_review?.id ?? null)
-              setAnnotation('')
+              setAnnotation(
+                String(attempt.latest_review?.annotations?.[0]?.text ?? ''),
+              )
             }}
           >
             <span className="block font-semibold">
@@ -84,18 +89,39 @@ export default function SlpReviewInbox() {
         ))}
       </section>
       {selected && (
-        <ReviewPanel
-          attempt={selected}
-          recordingUrl={recordingUrl}
-          annotation={annotation}
-          setAnnotation={setAnnotation}
-          reviewId={reviewId}
-          savePending={save.isPending}
-          approvePending={approve.isPending}
-          onSave={() => save.mutate()}
-          onApprove={() => approve.mutate()}
-          error={save.isError || approve.isError}
-        />
+        <div className="space-y-3">
+          <ReviewPanel
+            key={selected.id}
+            attempt={selected}
+            recordingUrl={audio?.id === selected.id ? audio.url : null}
+            annotation={annotation}
+            setAnnotation={setAnnotation}
+            reviewId={
+              annotation.trim() ===
+              String(selected.latest_review?.annotations?.[0]?.text ?? '')
+                ? selected.latest_review?.id ?? null
+                : null
+            }
+            savePending={save.isPending}
+            approvePending={approve.isPending}
+            onSave={() => save.mutate()}
+            onApprove={() => selected.latest_review && approve.mutate(selected.latest_review.id)}
+            error={save.isError || approve.isError}
+          />
+          <button
+            type="button"
+            className="btn"
+            disabled={
+              requestRecording.isPending || save.isPending || approve.isPending
+            }
+            onClick={() => requestRecording.mutate(selected.id)}
+          >
+            Request clearer recording
+          </button>
+          {requestRecording.isError && (
+            <p role="alert">Could not request another recording.</p>
+          )}
+        </div>
       )}
     </div>
   )
@@ -124,6 +150,7 @@ function ReviewPanel({
   onApprove: () => void
   error: boolean
 }) {
+  const [listened, setListened] = useState(false)
   const result = attempt.analysis?.result as
     | { analysis?: { transcript?: string }; feedback?: { text?: string } }
     | undefined
@@ -144,30 +171,40 @@ function ReviewPanel({
         <audio
           controls
           src={recordingUrl}
+          onEnded={() => setListened(true)}
           className="w-full"
           aria-label="Patient recording"
         />
       ) : (
         <p>Loading recording…</p>
       )}
-      <div className="rounded-box bg-base-200 p-3 text-sm">
-        <p>
-          <strong>Transcript:</strong>{' '}
-          {result?.analysis?.transcript ?? 'Not available'}
-        </p>
-        {result?.feedback?.text && (
-          <p className="mt-2">
-            <strong>Service note:</strong> {result.feedback.text}
+      {listened && result ? (
+        <details className="rounded-box bg-base-200 p-3 text-sm">
+          <summary>Show automated transcript</summary>
+          <p>
+            <strong>Transcript:</strong>{' '}
+            {result?.analysis?.transcript ?? 'Not available'}
           </p>
-        )}
-      </div>
+          {result?.feedback?.text && (
+            <p className="mt-2">
+              <strong>Service note:</strong> {result.feedback.text}
+            </p>
+          )}
+        </details>
+      ) : (
+        <p>
+          {result
+            ? 'Listen to the recording to reveal the transcript.'
+            : 'You can review the audio without a transcript.'}
+        </p>
+      )}
       <label className="form-control">
         <span className="label-text font-medium">Clinician notes</span>
         <textarea
           className="textarea textarea-bordered min-h-32"
           value={annotation}
           onChange={(event) => setAnnotation(event.target.value)}
-          placeholder="Record observations or corrections"
+          placeholder="What I heard… What went well… One thing to try next…"
         />
       </label>
       <div className="flex flex-wrap gap-2">

@@ -71,6 +71,7 @@ Route::middleware(['auth:sanctum', 'account.active', 'verified'])->group(functio
     Route::get('/slp/attempts/{attempt}/recording', [SlpWorkflowController::class, 'recording'])->name('slp.recordings.show');
     Route::get('/slp/attempts/{attempt}', [SlpWorkflowController::class, 'attempt'])->name('slp.attempts.show');
     Route::put('/slp/attempts/{attempt}/review', [SlpWorkflowController::class, 'saveReview'])->name('slp.reviews.store');
+    Route::post('/slp/attempts/{attempt}/request-recording', [SlpWorkflowController::class, 'requestRecording']);
     Route::post('/slp/reviews/{review}/approve', [SlpWorkflowController::class, 'approveReview'])->name('slp.reviews.approve');
     Route::post('/slp/reports/{report}/release', [SlpWorkflowController::class, 'releaseReport'])->name('slp.reports.release');
     Route::get('/me', [SessionController::class, 'show'])->name('me.show');

@@ -3,6 +3,7 @@ import { queryOptions } from '@tanstack/react-query'
 import { api } from '#/lib/api/client'
 
 export interface SlpAssignment {
+  recording_requested?: boolean
   id: string
   patient_id: string
   clinician_id: string

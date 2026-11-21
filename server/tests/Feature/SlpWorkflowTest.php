@@ -220,6 +220,14 @@ class SlpWorkflowTest extends TestCase
         $recording = $this->actingAs($clinician)->get("/api/v1/slp/attempts/{$attempt->id}/recording");
         $recording->assertOk()->assertHeader('Content-Type', 'audio/wav');
         $this->assertSame('speech', $recording->streamedContent());
+        $attempt->update(['status' => 'queued']);
+        $this->getJson('/api/v1/slp/review-attempts')->assertOk()->assertJsonPath('data.0.id', $attempt->id);
+        $this->actingAs($otherClinician)->postJson("/api/v1/slp/attempts/{$attempt->id}/request-recording")->assertForbidden();
+        $this->actingAs($clinician)->postJson("/api/v1/slp/attempts/{$attempt->id}/request-recording")->assertNoContent();
+        $this->getJson('/api/v1/slp/review-attempts')->assertJsonCount(0, 'data');
+        $attempt->update(['status' => 'failed']);
+        $draft = $this->putJson("/api/v1/slp/attempts/{$attempt->id}/review", ['annotations' => [['text' => 'Reviewed by ear.']]])->assertOk()->json('data.id');
+        $this->postJson("/api/v1/slp/reviews/{$draft}/approve")->assertOk();
         $this->actingAs($otherClinician)->get("/api/v1/slp/attempts/{$attempt->id}/recording")->assertForbidden();
     }
 

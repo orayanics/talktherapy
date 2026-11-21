@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 #[Fillable(['patient_id', 'clinician_id', 'exercise_version_id', 'status', 'schedule', 'configuration_snapshot'])]
 class SlpAssignment extends Model
@@ -43,5 +44,10 @@ class SlpAssignment extends Model
     {
         return $this->patient_id === $patientId && $this->status === 'active'
             && $this->version->status === 'published' && $this->version->exercise->archived_at === null;
+    }
+
+    public function latestAttempt(): HasOne
+    {
+        return $this->hasOne(SlpAttempt::class, 'assignment_id')->latestOfMany('created_at');
     }
 }

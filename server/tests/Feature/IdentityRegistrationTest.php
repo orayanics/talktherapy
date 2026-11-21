@@ -28,6 +28,7 @@ class IdentityRegistrationTest extends TestCase
             'password_confirmation' => 'Correct-Horse-9!',
             'diagnosis_id' => $diagnosis->id,
             'consent' => true,
+            'privacy_v1' => true,
         ])->assertCreated()->assertExactJson([
             'data' => [
                 'email' => 'patient@example.com',
@@ -41,7 +42,7 @@ class IdentityRegistrationTest extends TestCase
         $this->assertSame('pending', $user->profile->status->value);
         $this->assertNull($user->email_verified_at);
         $this->assertSame($diagnosis->id, $user->profile->diagnosis_id);
-        $this->assertTrue(ConsentEvidence::query()->whereBelongsTo($user)->exists());
+        $this->assertTrue(ConsentEvidence::query()->whereBelongsTo($user)->where('purpose', 'patient_privacy')->where('policy_version', 'v1')->exists());
         $this->assertTrue(ActivationChallenge::query()->whereBelongsTo($user)->where('purpose', 'activation')->exists());
         $this->assertTrue(OutboxMessage::query()->where('recipient_id', $user->id)->where('kind', 'identity.activation')->exists());
         Notification::assertSentTo($user, ActivationCodeNotification::class);
@@ -61,7 +62,7 @@ class IdentityRegistrationTest extends TestCase
         ];
 
         $this->postJson('/api/v1/registrations/patient', $payload)->assertUnprocessable()
-            ->assertJsonValidationErrors(['diagnosis_id', 'role', 'status']);
+            ->assertJsonValidationErrors(['diagnosis_id', 'role', 'status', 'privacy_v1']);
         $this->assertDatabaseCount('users', 0);
     }
 }

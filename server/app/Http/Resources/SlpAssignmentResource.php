@@ -16,6 +16,7 @@ class SlpAssignmentResource extends JsonResource
             'exercise_version_id' => $this->exercise_version_id,
             'status' => $this->status,
             'schedule' => $this->schedule,
+            'recording_requested' => $this->latestAttempt?->status === 'recording_requested',
             'patient' => $this->whenLoaded('patient', fn (): ?array => $this->patient === null ? null : [
                 'id' => $this->patient->id,
                 'name' => $this->patient->name,

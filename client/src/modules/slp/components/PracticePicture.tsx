@@ -3,6 +3,7 @@ import { Eye, EyeOff } from 'lucide-react'
 import { getPictureUrl, getPracticeWord } from '../data/practiceContent'
 import type { PicturePrompt, PracticeLanguage } from '../data/practiceContent'
 import PracticeBuddy from './PracticeBuddy'
+import ListenToPrompt from './ListenToPrompt'
 
 export default function PracticePicture({
   prompt,
@@ -34,6 +35,7 @@ export default function PracticePicture({
                 : 'Say your practice word.'
               : prompt.question[language]}
           </h2>
+          <ListenToPrompt text={customWord.trim() || prompt.question[language]} language={language} />
         </div>
         {!focusMode && <PracticeBuddy size={44} />}
       </div>

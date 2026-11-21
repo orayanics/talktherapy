@@ -75,7 +75,7 @@ class RunSlpAnalysis implements ShouldQueue
             DB::transaction(function () use ($result): void {
                 $run = SlpAnalysisRun::query()->lockForUpdate()->findOrFail($this->runId);
                 $attempt = SlpAttempt::query()->lockForUpdate()->findOrFail($run->attempt_id);
-                if ($run->status !== 'running' || $attempt->status !== 'queued') {
+                if ($run->status !== 'running') {
                     return;
                 }
                 $run->update([
@@ -83,7 +83,9 @@ class RunSlpAnalysis implements ShouldQueue
                     'schema_version' => (string) ($result['meta']['schemaVersion'] ?? '1'),
                     'result' => $result,
                 ]);
-                $attempt->update(['status' => 'awaiting_review']);
+                if ($attempt->status === 'queued') {
+                    $attempt->update(['status' => 'awaiting_review']);
+                }
             });
         } catch (Throwable $exception) {
             if ($exception instanceof HttpExceptionInterface && in_array($exception->getStatusCode(), [429, 503], true) && $this->attempts() < $this->tries) {

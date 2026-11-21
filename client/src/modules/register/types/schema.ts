@@ -12,6 +12,7 @@ export const RegisterPatientSchema = z
     consent: z.boolean().refine((val) => val === true, {
       message: 'You must give consent to register',
     }),
+    privacy_v1: z.boolean().refine((value) => value, 'Accept the privacy notice to register'),
   })
   .refine((data) => data.password === data.password_confirmation, {
     message: 'Passwords do not match',

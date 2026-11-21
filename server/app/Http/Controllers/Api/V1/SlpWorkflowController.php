@@ -10,6 +10,7 @@ use App\Http\Resources\SlpReportResource;
 use App\Http\Resources\SlpReviewAttemptResource;
 use App\Jobs\RunSlpAnalysis;
 use App\Models\ClinicianPatient;
+use App\Models\OutboxMessage;
 use App\Models\SlpAnalysisRun;
 use App\Models\SlpAsset;
 use App\Models\SlpAssignment;
@@ -20,6 +21,7 @@ use App\Models\SlpRecording;
 use App\Models\SlpReport;
 use App\Models\SlpReview;
 use App\Models\User;
+use App\Services\NotificationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -152,7 +154,7 @@ class SlpWorkflowController extends Controller
     {
         $data = $request->validate(['per_page' => ['sometimes', 'integer', 'min:1', 'max:100']]);
         $user = $request->user();
-        $query = SlpAssignment::query()->with(['patient', 'version.exercise.collection']);
+        $query = SlpAssignment::query()->with(['patient', 'version.exercise.collection', 'latestAttempt']);
         if ($user->profile?->role === UserRole::Patient) {
             // Existing assignments remain available even after an exercise is hidden from new practice.
             $query->where('status', 'active')
@@ -183,7 +185,7 @@ class SlpWorkflowController extends Controller
         if (isset($data['status'])) {
             $query->where('status', $data['status']);
         } else {
-            $query->where('status', 'awaiting_review');
+            $query->reviewable();
         }
 
         return SlpReviewAttemptResource::collection($query->latest()->paginate($data['per_page'] ?? 15));
@@ -293,6 +295,12 @@ class SlpWorkflowController extends Controller
                 $recording = SlpRecording::query()->create(['attempt_id' => $locked->id, 'path' => $path, 'mime_type' => $file->getMimeType(), 'bytes' => $file->getSize(), 'checksum' => $checksum, 'retention_until' => now()->addDays(30)]);
                 $locked->update(['status' => 'queued']);
                 $run = SlpAnalysisRun::query()->create(['attempt_id' => $locked->id, 'status' => 'queued']);
+                OutboxMessage::query()->create([
+                    'kind' => 'notification.broadcast', 'aggregate_id' => $locked->id,
+                    'recipient_id' => $locked->assignment->clinician_id, 'delivery_key' => "slp:{$locked->id}:submitted",
+                    'payload' => ['type' => 'clinical_record', 'title' => 'New assigned recording', 'message' => 'Open SLP reviews to listen.', 'entityType' => 'slp_attempt', 'entityId' => $locked->id],
+                    'available_at' => now(), 'expires_at' => now()->addDays(30),
+                ]);
 
                 return [$recording, $run];
             });
@@ -329,13 +337,29 @@ class SlpWorkflowController extends Controller
         return ['data' => $data];
     }
 
+    public function requestRecording(Request $request, SlpAttempt $attempt, NotificationService $notifications): Response
+    {
+        abort_unless($attempt->assignment->clinician_id === $request->user()->id, 403);
+        DB::transaction(function () use ($attempt, $notifications): void {
+            $locked = SlpAttempt::query()->lockForUpdate()->findOrFail($attempt->id);
+            if ($locked->status === 'recording_requested') {
+                return;
+            }
+            abort_unless($locked->assignment->status === 'active' && SlpAttempt::query()->whereKey($locked->id)->reviewable()->exists(), 409);
+            $locked->update(['status' => 'recording_requested']);
+            $notifications->inApp($locked->assignment->patient, 'clinical_record', 'Please record again', 'Your clinician needs clearer audio. Open My assignments to record again.', 'slp_assignment', $locked->assignment_id);
+        });
+
+        return response()->noContent();
+    }
+
     public function saveReview(Request $request, SlpAttempt $attempt): array
     {
         abort_unless($attempt->assignment->clinician_id === $request->user()->id, 403);
-        abort_unless($attempt->status === 'awaiting_review', 409, 'Analysis is not ready for review.');
         $data = $request->validate(['annotations' => ['required', 'array'], 'metrics' => ['nullable', 'array']]);
         $review = DB::transaction(function () use ($attempt, $request, $data): SlpReview {
             $locked = SlpAttempt::query()->lockForUpdate()->findOrFail($attempt->id);
+            abort_unless(SlpAttempt::query()->whereKey($locked->id)->reviewable()->exists(), 409, 'Recording unavailable for review.');
             $revision = (int) ($locked->reviews()->max('revision') ?? 0) + 1;
 
             return SlpReview::query()->create(['attempt_id' => $locked->id, 'revision' => $revision, 'reviewer_id' => $request->user()->id, 'status' => 'draft', 'annotations' => $data['annotations'], 'metrics' => $data['metrics'] ?? []]);
@@ -354,7 +378,8 @@ class SlpWorkflowController extends Controller
             $report = SlpReport::query()->where('review_id', $locked->id)->first();
             if ($report === null) {
                 abort_unless($locked->status === 'draft', 409);
-                abort_unless($attempt->status === 'awaiting_review', 409, 'Analysis is not ready for approval.');
+                abort_unless(SlpAttempt::query()->whereKey($attempt->id)->reviewable()->exists(), 409, 'Recording unavailable for approval.');
+                abort_if($attempt->reviews()->where('revision', '>', $locked->revision)->exists(), 409, 'Approve the latest draft.');
                 $locked->update(['status' => 'approved']);
                 $attempt->update(['status' => 'approved']);
                 $version = $attempt->assignment->version;

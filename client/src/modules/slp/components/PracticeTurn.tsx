@@ -7,6 +7,7 @@ import type { PracticeReflection, WordProgress } from '../data/practiceGame'
 import PracticeWordFeedback from './PracticeWordFeedback'
 
 export default function PracticeTurn({
+  checksRemaining,
   children,
   canContinue,
   recorder,
@@ -22,6 +23,7 @@ export default function PracticeTurn({
   onReplayed,
   onReflect,
 }: {
+  checksRemaining: number
   children: ReactNode
   canContinue: boolean
   recorder: ReturnType<typeof usePracticeRecorder>
@@ -128,13 +130,29 @@ export default function PracticeTurn({
         <button
           type="button"
           className="slp-main-button"
-          disabled={locked}
+          disabled={locked || checksRemaining === 0}
           onClick={onFinish}
         >
           {assessment.isSubmitting ? 'Listening…' : 'Check my word'}
         </button>
       )}
       <div className="slp-turn-actions">
+        {checksRemaining === 0 && !result && (
+          <p role="status">
+            {language === 'tl'
+              ? 'Maaari kang magpatuloy sa susunod na larawan.'
+              : 'You can move on to the next picture.'}
+          </p>
+        )}
+        {!canContinue && !locked && (
+          <button
+            type="button"
+            className="slp-secondary-button"
+            onClick={onNext}
+          >
+            {language === 'tl' ? 'Laktawan' : 'Skip picture'}
+          </button>
+        )}
         {canContinue && (
           <button type="button" className="slp-main-button" onClick={onNext}>
             {last ? 'Finish my round' : 'Next picture'}
