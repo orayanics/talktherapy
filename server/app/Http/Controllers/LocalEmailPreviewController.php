@@ -43,7 +43,7 @@ class LocalEmailPreviewController extends Controller
         return view('email-previews', [
             'groups' => self::GROUPS,
             'subject' => $message?->subject,
-            'html' => $message?->render()->toHtml(),
+            'html' => $message?->render(),
         ]);
     }
 

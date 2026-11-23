@@ -78,7 +78,7 @@ class LocalEmailPreviewTest extends TestCase
             $mail = $notification->toMail($recipient);
             $this->get('/email-previews/'.$sample)->assertOk()
                 ->assertSeeText($mail->subject)
-                ->assertSee($mail->render()->toHtml());
+                ->assertSee($mail->render());
         }
         foreach (['activation', 'user_invited'] as $sample) {
             $this->get('/email-previews/'.$sample)->assertSee('123456')->assertDontSee('Confirm email address')->assertDontSee('class=&quot;button', false);

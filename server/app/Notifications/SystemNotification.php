@@ -67,6 +67,8 @@ class SystemNotification extends Notification
 
     public function toMail(object $notifiable): MailMessage
     {
-        return (new MailMessage)->subject($this->subject)->line($this->body);
+        return (new MailMessage)
+            ->subject($this->subject)
+            ->view('emails.notification', ['body' => $this->body]);
     }
 }
