@@ -13,31 +13,32 @@ class LocalEmailPreviewController extends Controller
 {
     private const GROUPS = [
         'Appointments' => [
-            'appointment_booked' => 'Booking',
-            'appointment_accepted' => 'Acceptance',
-            'appointment_rejected' => 'Rejection',
-            'appointment_cancelled' => 'Cancellation',
-            'appointment_completed' => 'Completion',
+            'appointment_booked' => ['Booking'],
+            'appointment_accepted' => ['Acceptance', ['status' => 'ACCEPTED']],
+            'appointment_rejected' => ['Rejection', ['status' => 'REJECT']],
+            'appointment_cancelled' => ['Cancellation', ['status' => 'CANCELLED']],
+            'appointment_completed' => ['Completion', ['status' => 'COMPLETED']],
         ],
-        'Clinical records' => ['soap_created' => 'SOAP created', 'soap_updated' => 'SOAP updated'],
+        'Clinical records' => ['soap_created' => ['SOAP created'], 'soap_updated' => ['SOAP updated']],
         'Account' => [
-            'activation' => 'Account activation',
-            'email_change' => 'Email change',
-            'user_invited' => 'Account invitation',
-            'user_suspended' => 'Suspension',
-            'user_reactivated' => 'Reactivation',
-            'password_reset' => 'Password reset',
-            'password_changed' => 'Password change',
+            'activation' => ['Account activation'],
+            'email_change' => ['Email change'],
+            'user_invited' => ['Account invitation'],
+            'user_suspended' => ['Suspension', ['reason' => 'Fictional review.']],
+            'user_reactivated' => ['Reactivation'],
+            'password_reset' => ['Password reset'],
+            'password_changed' => ['Password change'],
         ],
-        'Custom notifications' => ['custom' => 'Custom notification'],
+        'Custom notifications' => ['custom' => ['Custom notification', ['subject' => 'Fictional workshop invitation', 'message' => 'Join the sample workshop on Friday.']]],
     ];
 
     public function __invoke(?string $sample = null): View
     {
         abort_unless(app()->environment('local') && config('mail.previews') === true, 404);
-        abort_if($sample !== null && ! array_key_exists($sample, array_merge(...array_values(self::GROUPS))), 404);
+        $samples = array_merge(...array_values(self::GROUPS));
+        abort_if($sample !== null && ! isset($samples[$sample]), 404);
 
-        $message = $sample === null ? null : $this->sample($sample);
+        $message = $sample === null ? null : $this->sample($sample, $samples[$sample][1] ?? []);
 
         return view('email-previews', [
             'groups' => self::GROUPS,
@@ -46,10 +47,11 @@ class LocalEmailPreviewController extends Controller
         ]);
     }
 
-    private function sample(string $sample): MailMessage
+    private function sample(string $sample, array $context): MailMessage
     {
         $notification = match ($sample) {
-            'activation', 'email_change' => new ActivationCodeNotification('123456', $sample),
+            'activation', 'user_invited' => new ActivationCodeNotification('123456'),
+            'email_change' => new ActivationCodeNotification('123456', 'email_change'),
             'password_reset' => new class('fictional-token') extends ResetPassword
             {
                 protected function resetUrl(mixed $notifiable): string
@@ -57,20 +59,7 @@ class LocalEmailPreviewController extends Controller
                     return 'https://example.invalid/reset-password/'.$this->token;
                 }
             },
-            default => SystemNotification::fromOutbox('email.'.$sample, match ($sample) {
-                'appointment_booked' => ['message' => 'A new appointment request is waiting for you in TalkTherapy.'],
-                'appointment_accepted' => ['message' => 'Your appointment status is now ACCEPTED.'],
-                'appointment_rejected' => ['message' => 'Your appointment status is now REJECT.'],
-                'appointment_cancelled' => ['message' => 'Your appointment status is now CANCELLED.'],
-                'appointment_completed' => ['message' => 'Your appointment status is now COMPLETED.'],
-                'soap_created' => ['message' => 'A new clinical record is available in TalkTherapy.'],
-                'soap_updated' => ['message' => 'A clinical record was updated in TalkTherapy.'],
-                'user_invited' => [],
-                'user_suspended' => ['message' => 'Your TalkTherapy account was suspended. Reason: Fictional review.'],
-                'user_reactivated' => ['message' => 'Your TalkTherapy account was reactivated.'],
-                'password_changed' => ['message' => 'Your TalkTherapy password was changed. If you did not make this change, contact support immediately.'],
-                'custom' => ['subject' => 'Fictional workshop invitation', 'message' => 'Join the sample workshop on Friday.'],
-            }),
+            default => SystemNotification::fromOutbox('email.'.$sample, SystemNotification::workflowPayload($sample, $context)),
         };
 
         return $notification->toMail(new stdClass);

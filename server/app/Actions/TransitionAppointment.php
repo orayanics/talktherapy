@@ -141,7 +141,7 @@ class TransitionAppointment
                 'available_at' => now(),
                 'expires_at' => now()->addDay(),
             ]);
-            $notifications->email(User::query()->findOrFail($recipientId), 'appointment_'.$eventAction, ['message' => "Your appointment status is now {$appointment->status}."]);
+            $notifications->email(User::query()->findOrFail($recipientId), 'appointment_'.$eventAction, ['status' => $appointment->status]);
 
             if ($action === 'complete') {
                 $now = now();

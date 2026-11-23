@@ -93,7 +93,7 @@ class BookAppointment
                     'available_at' => now(),
                     'expires_at' => now()->addDay(),
                 ]);
-                $notifications->email($recipient, 'appointment_booked', ['message' => 'A new appointment request is waiting for you in TalkTherapy.']);
+                $notifications->email($recipient, 'appointment_booked');
             }
 
             SlotAvailabilityChanged::dispatch($lockedSlot->clinician_id);

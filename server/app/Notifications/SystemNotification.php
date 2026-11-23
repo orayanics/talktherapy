@@ -9,6 +9,29 @@ class SystemNotification extends Notification
 {
     public function __construct(public readonly string $subject, public readonly string $body) {}
 
+    /**
+     * @param  array{status?: string, reason?: string, subject?: string, message?: string}  $context
+     * @return array{subject?: string, message: string}
+     */
+    public static function workflowPayload(string $template, array $context): array
+    {
+        if (isset($context['message'])) {
+            return $context;
+        }
+
+        $body = match ($template) {
+            'appointment_booked' => 'A new appointment request is waiting for you in TalkTherapy.',
+            'appointment_accepted', 'appointment_rejected', 'appointment_cancelled', 'appointment_completed' => 'Your appointment status is now '.$context['status'].'.',
+            'soap_created' => 'A new clinical record is available in TalkTherapy.',
+            'soap_updated' => 'A clinical record was updated in TalkTherapy.',
+            'user_suspended' => 'Your TalkTherapy account was suspended. Reason: '.$context['reason'],
+            'user_reactivated' => 'Your TalkTherapy account was reactivated.',
+            'password_changed' => 'Your TalkTherapy password was changed. If you did not make this change, contact support immediately.',
+        };
+
+        return ['message' => $body];
+    }
+
     /** @param array{subject?: string, message?: string} $payload */
     public static function fromOutbox(string $kind, array $payload): self
     {

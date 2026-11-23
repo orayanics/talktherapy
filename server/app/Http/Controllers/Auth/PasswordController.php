@@ -37,7 +37,7 @@ class PasswordController extends Controller
                 'entity_id' => $request->user()->id,
                 'request_id' => $request->attributes->get('request_id'),
             ]);
-            $notifications->email($request->user(), 'password_changed', ['message' => 'Your TalkTherapy password was changed. If you did not make this change, contact support immediately.']);
+            $notifications->email($request->user(), 'password_changed');
         });
 
         return response()->noContent();

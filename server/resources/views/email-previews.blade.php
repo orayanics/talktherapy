@@ -15,7 +15,7 @@
     @foreach ($groups as $group => $samples)
         <h2>{{ $group }}</h2>
         <ul>
-            @foreach ($samples as $key => $label)
+            @foreach ($samples as $key => [$label])
                 <li><a href="{{ route('email-previews', ['sample' => $key]) }}">{{ $label }}</a></li>
             @endforeach
         </ul>

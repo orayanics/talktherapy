@@ -51,7 +51,7 @@ class UpdateSoap
                 'available_at' => now(),
                 'expires_at' => now()->addDays(30),
             ]);
-            $notifications->email(User::query()->findOrFail($record->patient_id), 'soap_updated', ['message' => 'A clinical record was updated in TalkTherapy.']);
+            $notifications->email(User::query()->findOrFail($record->patient_id), 'soap_updated');
 
             return $record->fresh()->load(['clinician:id,name', 'clinician.profile.diagnosis', 'patient:id,name']);
         });

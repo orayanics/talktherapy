@@ -44,7 +44,7 @@ class LocalEmailPreviewTest extends TestCase
             'soap_updated' => 'TalkTherapy clinical record updated',
             'activation' => 'TalkTherapy email verification code',
             'email_change' => 'TalkTherapy email verification code',
-            'user_invited' => 'Your TalkTherapy account invitation',
+            'user_invited' => 'TalkTherapy email verification code',
             'user_suspended' => 'Your TalkTherapy account was suspended',
             'user_reactivated' => 'Your TalkTherapy account was reactivated',
             'password_reset' => 'Reset your password',
@@ -72,7 +72,7 @@ class LocalEmailPreviewTest extends TestCase
             'activation' => new ActivationCodeNotification('123456'),
             'email_change' => new ActivationCodeNotification('123456', 'email_change'),
             'appointment_booked' => new SystemNotification('New TalkTherapy appointment request', 'A new appointment request is waiting for you in TalkTherapy.'),
-            'user_invited' => new SystemNotification('Your TalkTherapy account invitation', 'Your TalkTherapy account has an update.'),
+            'user_invited' => new ActivationCodeNotification('123456'),
         ];
         foreach ($messages as $sample => $notification) {
             $mail = $notification->toMail($recipient);
@@ -80,6 +80,10 @@ class LocalEmailPreviewTest extends TestCase
                 ->assertSeeText($mail->subject)
                 ->assertSee($mail->render()->toHtml());
         }
-        $this->get('/email-previews/password_reset')->assertSee('Reset Password')->assertSee('example.invalid');
+        foreach (['activation', 'user_invited'] as $sample) {
+            $this->get('/email-previews/'.$sample)->assertSee('123456')->assertDontSee('Confirm email address')->assertDontSee('class=&quot;button', false);
+        }
+        $this->get('/email-previews/email_change')->assertSee('Confirm email address')->assertSee('/profile/email-change?code=123456');
+        $this->get('/email-previews/password_reset')->assertSee('Reset Password')->assertSee('https://example.invalid/reset-password/fictional-token');
     }
 }
