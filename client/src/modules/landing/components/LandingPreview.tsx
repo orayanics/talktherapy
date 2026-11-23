@@ -8,6 +8,11 @@
   Video,
 } from 'lucide-react'
 
+import PreviewCalendarDay from './PreviewCalendarDay'
+import PreviewFeatureBadge from './PreviewFeatureBadge'
+import PreviewMetric from './PreviewMetric'
+import PreviewPlanStep from './PreviewPlanStep'
+
 export const FEATURES = [
   {
     label: 'Appointments',
@@ -152,8 +157,3 @@ export default function LandingPreview({
     </div>
   )
 }
-
-import PreviewCalendarDay from './PreviewCalendarDay'
-import PreviewFeatureBadge from './PreviewFeatureBadge'
-import PreviewMetric from './PreviewMetric'
-import PreviewPlanStep from './PreviewPlanStep'

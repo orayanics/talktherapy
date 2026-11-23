@@ -5,6 +5,8 @@ import { fetchUsers } from '#/modules/users/api/users'
 import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 
+import CollectionPatientOption from './CollectionPatientOption'
+
 export default function CollectionPatientPicker({
   selected,
   onChange,
@@ -70,5 +72,3 @@ export default function CollectionPatientPicker({
     </fieldset>
   )
 }
-
-import CollectionPatientOption from './CollectionPatientOption'

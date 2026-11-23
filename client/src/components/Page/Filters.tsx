@@ -1,5 +1,7 @@
 import { useId } from 'react'
 
+import ChoiceFilterOption from './ChoiceFilterOption'
+
 export function SearchFilter({
   value,
   onChange,
@@ -76,5 +78,3 @@ export function ChoiceFilter({
     </fieldset>
   )
 }
-
-import ChoiceFilterOption from './ChoiceFilterOption'

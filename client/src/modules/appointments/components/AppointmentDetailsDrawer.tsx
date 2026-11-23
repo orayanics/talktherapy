@@ -8,6 +8,8 @@ import StateLoading from '#/components/State/StateLoading'
 import { Row } from '#/components/Table/Row'
 import AppointmentPill from './AppointmentPill'
 
+import AppointmentHistoryEntry from './AppointmentHistoryEntry'
+
 export default function AppointmentDetailsDrawer({
   appointmentId,
   onClose,
@@ -125,5 +127,3 @@ export default function AppointmentDetailsDrawer({
     </Drawer>
   )
 }
-
-import AppointmentHistoryEntry from './AppointmentHistoryEntry'

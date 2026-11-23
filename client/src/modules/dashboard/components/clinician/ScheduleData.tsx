@@ -3,6 +3,8 @@ Appointment,
 APPOINTMENT_STATUS,
 } from '#/modules/appointments/types/appointment'
 
+import ScheduleAppointmentButton from './ScheduleAppointmentButton'
+
 export const STATUS_COLOR_MAP: Record<APPOINTMENT_STATUS, string> = {
   PENDING: 'border-amber-200 bg-amber-50 text-amber-700',
   ACCEPTED: 'border-green-200 bg-green-50 text-green-700',
@@ -30,5 +32,3 @@ export default function ScheduleData({
     </div>
   )
 }
-
-import ScheduleAppointmentButton from './ScheduleAppointmentButton'

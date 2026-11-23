@@ -18,6 +18,8 @@ import CollectionPatientPicker from './CollectionPatientPicker'
 import CollectionPractice from './CollectionPractice'
 import SlpExerciseCatalog from './SlpExerciseCatalog'
 
+import CollectionCard from './CollectionCard'
+
 function CollectionForm({
   collection,
   onSaved,
@@ -306,5 +308,3 @@ export default function ExerciseCollections({
     </div>
   )
 }
-
-import CollectionCard from './CollectionCard'

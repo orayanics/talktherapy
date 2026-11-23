@@ -1,5 +1,7 @@
 import { useId } from 'react'
 
+import PieLegendItem from './PieLegendItem'
+
 export interface PieChartDatum {
   label: string
   value: number
@@ -127,5 +129,3 @@ export default function PieChart({
     </div>
   )
 }
-
-import PieLegendItem from './PieLegendItem'

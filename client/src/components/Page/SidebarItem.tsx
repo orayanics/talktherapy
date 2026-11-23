@@ -3,6 +3,8 @@ import { Link,useRouterState } from '@tanstack/react-router'
 import { ChevronRight } from 'lucide-react'
 import { useId,useState } from 'react'
 
+import SidebarChildLink from './SidebarChildLink'
+
 export interface SidebarItemProps {
   items?: Array<NavItem>
   collapsed?: boolean
@@ -130,5 +132,3 @@ export default function SidebarItem({
     </nav>
   )
 }
-
-import SidebarChildLink from './SidebarChildLink'
