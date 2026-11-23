@@ -2,8 +2,8 @@ import { useEffect } from 'react'
 import useScheduleForm from '#/modules/schedules/hooks/useScheduleForm'
 import useRecurrenceBuilder from '#/modules/schedules/hooks/useRecurrenceBuilder'
 import type { TFrequency } from '../types/schema'
-import { formatDate } from '#/utils/useDate'
 import FormInput from '#/components/Form/FormInput'
+import ScheduleOccurrence from './ScheduleOccurrence'
 
 const FREQ_BUTTONS: ReadonlyArray<{ freq: TFrequency; label: string }> = [
   { freq: 'none', label: 'One-Time' },
@@ -176,14 +176,8 @@ export default function ScheduleForm() {
               </p>
             ) : (
               <div className="flex flex-col gap-2">
-                {occurrences.map((d, i) => (
-                  <div key={i} className="flex items-center gap-2">
-                    <span className="text-right font-mono text-neutral/60 shrink-0">
-                      {i + 1}
-                    </span>
-                    <div className={`w-0.5 h-3.5 rounded-full shrink-0`} />
-                    <span className="font-mono ">{formatDate(d, 'PPp')}</span>
-                  </div>
+                {occurrences.map((date, index) => (
+                  <ScheduleOccurrence key={index} date={date} index={index} />
                 ))}
               </div>
             )}

@@ -1,22 +1,17 @@
 import {
-  Award,
-  Headphones,
-  MessageCircle,
-  Mic,
-  Star,
-  Trophy,
+Award,
+Headphones,
+MessageCircle,
+Mic,
+Star,
+Trophy,
 } from 'lucide-react'
-import { getPictureUrl, getPracticeWord } from '../data/practiceContent'
-import {
-  checkFeedback,
-  getPracticeStars,
-  reflectionLabels,
-  summarizePractice,
-} from '../data/practiceGame'
-import type { PicturePrompt, PracticeLanguage } from '../data/practiceContent'
+import type { PicturePrompt,PracticeLanguage } from '../data/practiceContent'
 import type { PracticeGame } from '../data/practiceGame'
-import PracticeStars from './PracticeStars'
+import { summarizePractice } from '../data/practiceGame'
 import PracticeBuddy from './PracticeBuddy'
+import RoundBadge from './RoundBadge'
+import PracticeStoryWord from './PracticeStoryWord'
 
 export default function PracticeRoundSummary({
   game,
@@ -124,13 +119,7 @@ export default function PracticeRoundSummary({
           </h3>
           <ul className="slp-badge-list">
             {badges.map((badge) => (
-              <li key={badge.name}>
-                <badge.icon size={24} aria-hidden="true" />
-                <div>
-                  <strong>{badge.name}</strong>
-                  <span>{badge.detail}</span>
-                </div>
-              </li>
+              <RoundBadge key={badge.name} badge={badge} />
             ))}
           </ul>
         </div>
@@ -146,41 +135,14 @@ export default function PracticeRoundSummary({
         </div>
         <ul className="slp-word-story">
           {prompts.map((prompt) => {
-            const turn = game[prompt.id]
             return (
-              <li key={prompt.id}>
-                <img
-                  src={getPictureUrl(prompt)}
-                  alt=""
-                  width={64}
-                  height={64}
-                />
-                <div className="min-w-0 flex-1">
-                  <h4 className="break-words text-lg font-bold">
-                    {turn?.word ?? getPracticeWord(prompt, language)}
-                  </h4>
-                  <PracticeStars earned={getPracticeStars(turn)} />
-                  <p className="mt-1 text-sm text-slate-700">
-                    {turn
-                      ? `${turn.attempts} ${turn.attempts === 1 ? 'attempt' : 'attempts'} · ${turn.reflection ? reflectionLabels[turn.reflection] : 'No check-in selected'}`
-                      : 'Not tried this round'}
-                  </p>
-                  {turn && (
-                    <p className="mt-1 text-sm text-slate-600">
-                      {checkFeedback[turn.outcome].title}
-                      {turn.transcript ? ` · Heard: “${turn.transcript}”` : ''}
-                    </p>
-                  )}
-                </div>
-                <button
-                  type="button"
-                  className="slp-secondary-button"
-                  onClick={() => onRetry(prompt.id)}
-                  aria-label={`Practice ${turn?.word ?? getPracticeWord(prompt, language)} again`}
-                >
-                  {turn ? 'Try again' : 'Try it'}
-                </button>
-              </li>
+              <PracticeStoryWord
+                key={prompt.id}
+                prompt={prompt}
+                turn={game[prompt.id]}
+                language={language}
+                onRetry={onRetry}
+              />
             )
           })}
         </ul>

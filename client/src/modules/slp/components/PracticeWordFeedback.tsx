@@ -1,8 +1,8 @@
-import { useEffect, useRef } from 'react'
-import { Check, Circle, Medal } from 'lucide-react'
-import { checkFeedback, getPracticeStars } from '../data/practiceGame'
-import type { PracticeReflection, WordProgress } from '../data/practiceGame'
-import { StarMeter, Tala, CheckInKeys } from './PracticeRewards'
+import { Medal } from 'lucide-react'
+import { useEffect,useRef } from 'react'
+import type { PracticeReflection,WordProgress } from '../data/practiceGame'
+import { checkFeedback,getPracticeStars } from '../data/practiceGame'
+import { CheckInKeys,StarMeter,Tala } from './PracticeRewards'
 
 export default function PracticeWordFeedback({
   progress,
@@ -12,6 +12,7 @@ export default function PracticeWordFeedback({
   focusMode,
   onAgain,
   onSkip,
+  canContinue,
   disabled,
 }: {
   progress: WordProgress
@@ -21,6 +22,7 @@ export default function PracticeWordFeedback({
   focusMode: boolean
   onAgain: () => void
   onSkip: () => void
+  canContinue: boolean
   disabled: boolean
 }) {
   const panel = useRef<HTMLHeadingElement>(null)
@@ -43,7 +45,7 @@ export default function PracticeWordFeedback({
         )}
         <div>
           <p className="text-sm font-semibold">
-            {focusMode ? 'Your turn in review' : 'A word for your collection!'}
+            {focusMode ? 'You practiced' : 'You practiced this word!'}
           </p>
           <h3
             ref={panel}
@@ -54,85 +56,8 @@ export default function PracticeWordFeedback({
           </h3>
         </div>
       </header>
-      <div className="slp-star-result" role="status" aria-live="polite">
-        <StarMeter stars={stars} justEarned={stars} />
-        <p className="font-bold">{stars} of 3 practice stars</p>
-      </div>
-      <ul
-        className="slp-action-list"
-        aria-label="Practice activities for this word"
-      >
-        {(
-          [
-            ['Recorded a turn', true],
-            ['Listened back', progress.replayed],
-            ['Shared a check-in', progress.reflected],
-          ] as const
-        ).map(([label, done]) => (
-          <li key={label} data-done={done}>
-            {done ? (
-              <Check size={18} aria-hidden="true" />
-            ) : (
-              <Circle size={18} aria-hidden="true" />
-            )}
-            {label}
-          </li>
-        ))}
-      </ul>
-      {audioUrl && (
-        <div className="space-y-2">
-          <label
-            htmlFor="practice-replay"
-            className="block text-sm font-semibold"
-          >
-            {progress.replayed
-              ? 'Listen to my turn again'
-              : 'Listen back to earn a listening star'}
-          </label>
-          <audio
-            id="practice-replay"
-            controls
-            src={audioUrl}
-            onEnded={onReplayed}
-            className="w-full"
-            aria-label="Listen to my recording"
-          />
-        </div>
-      )}
-      <fieldset className="slp-reflection">
-        <legend className="font-bold">How did that turn feel?</legend>
-        <p className="mt-1 text-xs text-slate-600">
-          Your check-in, or a helper’s observation.
-        </p>
-        <div className="mt-3">
-          <CheckInKeys
-            disabled={disabled}
-            value={
-              progress.reflection === 'with_help'
-                ? 'helped'
-                : progress.reflection === 'try_again'
-                  ? 'again'
-                  : progress.reflection
-            }
-            onPick={(value) => {
-              if (value === 'skip') {
-                onSkip()
-                return
-              }
-              onReflect(
-                value === 'helped'
-                  ? 'with_help'
-                  : value === 'again'
-                    ? 'try_again'
-                    : value,
-              )
-              if (value === 'again') onAgain()
-            }}
-          />
-        </div>
-      </fieldset>
       <div className="slp-word-check" data-outcome={progress.outcome}>
-        <p className="slp-section-label">Automatic word check</p>
+        <p className="slp-section-label">Your word check</p>
         <p className="mt-1 text-lg font-bold" role="status">
           {check.title}
         </p>
@@ -143,17 +68,93 @@ export default function PracticeWordFeedback({
               <dd>{progress.word}</dd>
             </div>
             <div>
-              <dt>What was heard</dt>
+              <dt>What Tala heard</dt>
               <dd>{progress.transcript}</dd>
             </div>
           </dl>
         )}
         <p className="mt-2 text-sm leading-relaxed">{check.detail}</p>
       </div>
-      <p className="text-xs leading-relaxed text-slate-600">
-        Stars celebrate recording, listening and reflection. Sound accuracy is
-        not assessed.
-      </p>
+      <details className="slp-extra-practice">
+        <summary>Listen again or tell us how it felt</summary>
+        <div className="slp-star-result" role="status" aria-live="polite">
+          <StarMeter stars={stars} justEarned={stars} />
+          <p className="font-bold">{stars} of 3 practice stars</p>
+        </div>
+        <ul
+          className="slp-action-list"
+          aria-label="Practice activities for this word"
+        >
+          {(
+            [
+              ['Recorded a turn', true],
+              ['Listened back', progress.replayed],
+              ['Shared a check-in', progress.reflected],
+            ] as const
+          ).map(([label, done]) => (
+            <PracticeActionItem key={label} done={done} label={label} />
+          ))}
+        </ul>
+        {audioUrl && (
+          <div className="space-y-2">
+            <label
+              htmlFor="practice-replay"
+              className="block text-sm font-semibold"
+            >
+              {progress.replayed
+                ? 'Listen to my turn again'
+                : 'Listen back to earn a listening star'}
+            </label>
+            <audio
+              id="practice-replay"
+              controls
+              src={audioUrl}
+              onEnded={onReplayed}
+              className="w-full"
+              aria-label="Listen to my recording"
+            />
+          </div>
+        )}
+        <fieldset className="slp-reflection">
+          <legend className="font-bold">How did that turn feel?</legend>
+          <p className="mt-1 text-xs text-slate-600">
+            Your check-in, or a helper’s observation.
+          </p>
+          <div className="mt-3">
+            <CheckInKeys
+              skipDisabled={!canContinue}
+              disabled={disabled}
+              value={
+                progress.reflection === 'with_help'
+                  ? 'helped'
+                  : progress.reflection === 'try_again'
+                    ? 'again'
+                    : progress.reflection
+              }
+              onPick={(value) => {
+                if (value === 'skip') {
+                  onSkip()
+                  return
+                }
+                onReflect(
+                  value === 'helped'
+                    ? 'with_help'
+                    : value === 'again'
+                      ? 'try_again'
+                      : value,
+                )
+                if (value === 'again') onAgain()
+              }}
+            />
+          </div>
+        </fieldset>
+        <p className="text-xs leading-relaxed text-slate-600">
+          Stars celebrate recording, listening and reflection. Sound accuracy is
+          not assessed.
+        </p>
+      </details>
     </div>
   )
 }
+
+import PracticeActionItem from './PracticeActionItem'

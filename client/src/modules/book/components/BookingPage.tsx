@@ -76,14 +76,12 @@ export default function BookingPage() {
         panelClassName="bg-base-100 text-base-content min-h-full w-[min(36rem,100vw)]"
         content={
           <>
-            <div className="p-4 pb-0 flex flex-col md:flex-row md:items-center justify-between gap-4">
-              <ScheduleFilters
-                diagnosis={diagnosis}
-                from={from}
-                sort={sort}
-                updateSearch={updateSearch}
-              />
-            </div>
+            <ScheduleFilters
+              diagnosis={diagnosis}
+              from={from}
+              sort={sort}
+              updateSearch={updateSearch}
+            />
             <ScheduleCalendar
               start={from ?? formatDate(new Date(), 'yyyy-MM-dd')}
               onSelect={setSelectedDate}

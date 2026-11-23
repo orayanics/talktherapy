@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\UserNotification;
 use App\Notifications\ActivationCodeNotification;
 use App\Notifications\SystemNotification;
+use App\Services\NotificationService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Event;
@@ -77,6 +78,19 @@ class NotificationDeliveryTest extends TestCase
 
         $this->assertDatabaseCount('notifications', 1);
         $this->assertSame(2, $outbox->fresh()->attempts);
+    }
+
+    public function test_email_enqueue_preserves_payloads_without_matching_workflow_context(): void
+    {
+        $recipient = User::factory()->create();
+        $service = app(NotificationService::class);
+        foreach (['user_invited', 'custom', 'unknown', 'appointment_accepted', 'user_suspended'] as $template) {
+            $input = $template === 'custom' ? ['subject' => 'Custom subject'] : [];
+            $service->email($recipient, $template, $input);
+            $queued = OutboxMessage::query()->where('kind', 'email.'.$template)->sole();
+            $this->assertSame($input, $queued->payload);
+            $this->assertSame('Your TalkTherapy account has an update.', SystemNotification::fromOutbox($queued->kind, $queued->payload)->body);
+        }
     }
 
     public function test_email_outbox_delivery_sends_without_creating_an_inbox_row(): void

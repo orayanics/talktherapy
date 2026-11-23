@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Actions\SaveSlpExercise;
+use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SlpExerciseRequest;
 use App\Http\Resources\SlpExerciseResource;
 use App\Models\SlpExercise;
+use App\Models\SlpExerciseCollection;
 use App\Models\SlpExerciseVersion;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -21,18 +23,23 @@ class SlpExerciseController extends Controller
     {
         Gate::authorize('viewAny', SlpExercise::class);
         $filters = $request->validate([
+            'collection_id' => ['sometimes', 'uuid'],
             'module' => ['sometimes', 'nullable', Rule::in(['fluency', 'timing', 'articulation', 'aphasia', 'voice', 'motor_speech'])],
             'language' => ['sometimes', 'nullable', 'string', 'max:16'],
             'scope' => ['sometimes', 'nullable', Rule::in(['private', 'shared'])],
             'page' => ['sometimes', 'integer', 'min:1'],
             'per_page' => ['sometimes', 'integer', 'min:1', 'max:100'],
         ]);
-        $query = SlpExercise::query()->with('versions')->whereNull('archived_at');
-        if ($request->user()->profile?->role->value === 'clinician') {
+        $query = SlpExercise::query()->with(['versions', 'collection'])->whereNull('archived_at')
+            ->where(fn ($q) => $q->whereNull('collection_id')->orWhereHas('collection', fn ($c) => $c->whereNull('archived_at')));
+        if ($request->user()->profile->role === UserRole::Clinician) {
             $query->where('owner_id', $request->user()->id);
         }
+        if (isset($filters['collection_id'])) {
+            Gate::authorize('view', SlpExerciseCollection::query()->findOrFail($filters['collection_id']));
+        }
 
-        foreach (['module', 'scope'] as $field) {
+        foreach (['module', 'scope', 'collection_id'] as $field) {
             if (isset($filters[$field])) {
                 $query->where($field, $filters[$field]);
             }

@@ -14,6 +14,8 @@ return [
     |
     */
 
+    'previews' => env('MAIL_PREVIEWS_ENABLED', false),
+
     'default' => env('MAIL_MAILER', 'log'),
 
     /*

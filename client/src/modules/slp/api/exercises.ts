@@ -21,6 +21,10 @@ export interface SlpExerciseVersion {
 export interface SlpExercise {
   id: string
   owner_id: string
+  can_manage: boolean
+  collection_id: string | null
+  is_hidden: boolean
+  available_for_assignment: boolean
   scope: 'private' | 'shared'
   module: SlpExerciseModule
   archived_at: string | null
@@ -30,6 +34,8 @@ export interface SlpExercise {
 }
 
 export interface SlpExerciseInput {
+  collection_id?: string | null
+  is_hidden?: boolean
   scope?: 'private' | 'shared'
   module: SlpExerciseModule
   language: string
@@ -38,9 +44,17 @@ export interface SlpExerciseInput {
   prompt_text: string
   configuration?: Record<string, unknown>
 }
+export interface SlpAsset {
+  id: string
+  mime_type: string
+  bytes: number
+  license: string | null
+  url: string
+}
 
 type ExerciseResponse = { data: SlpExercise }
 export interface SlpExerciseFilters {
+  collection_id?: string
   module?: SlpExerciseModule
   language?: string
   scope?: 'private' | 'shared'
@@ -82,3 +96,10 @@ export const mutateUpdateSlpExercise = (
 
 export const mutateArchiveSlpExercise = (id: string) =>
   api<void>(`/api/v1/slp/exercises/${id}`, { method: 'DELETE' })
+
+export const mutateUploadSlpAsset = (file: File, license?: string) => {
+  const data = new FormData()
+  data.append('asset', file)
+  if (license) data.append('license', license)
+  return api<{ data: SlpAsset }>('/api/v1/slp/assets', { method: 'POST', data })
+}

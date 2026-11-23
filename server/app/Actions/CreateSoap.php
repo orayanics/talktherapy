@@ -44,7 +44,12 @@ class CreateSoap
                 'available_at' => now(),
                 'expires_at' => now()->addDays(30),
             ]);
-            $notifications->email($patient, 'soap_created', ['message' => 'A new clinical record is available in TalkTherapy.']);
+            $notifications->email($patient, 'soap_created', [
+                'soap_id' => $soap->id,
+                'clinician_name' => $clinician->name,
+                'session_type' => $soap->session_type,
+                'version' => $soap->version,
+            ]);
 
             return $soap->load(['clinician:id,name', 'clinician.profile.diagnosis', 'patient:id,name']);
         });

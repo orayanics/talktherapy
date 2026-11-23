@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Enums\UserRole;
+use App\Events\SlotAvailabilityChanged;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SlotReadRequest;
 use App\Http\Resources\SlotResource;
@@ -39,6 +40,7 @@ class SlotController extends Controller
                     'request_id' => $request->attributes->get('request_id'),
                     'details' => [],
                 ]);
+                SlotAvailabilityChanged::dispatch($record->clinician_id);
             }
 
             return $record;

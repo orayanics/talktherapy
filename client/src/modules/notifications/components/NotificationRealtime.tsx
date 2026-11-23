@@ -11,7 +11,7 @@ type ChannelDescriptor = { channel: string }
 type NotificationEvent = { notification_id: string; type: string }
 
 export default function NotificationRealtime() {
-  const { id: userId } = useSession()
+  const { id: userId, role } = useSession()
   const queryClient = useQueryClient()
   const channelQueryKey = useMemo(
     () => ['notification-channel', userId] as const,
@@ -46,9 +46,49 @@ export default function NotificationRealtime() {
     [channelQueryKey, queryClient, userId],
   )
 
-  return data?.channel ? (
-    <NotificationChannel channel={data.channel} userId={userId} />
-  ) : null
+  return (
+    <>
+      {data?.channel && (
+        <NotificationChannel channel={data.channel} userId={userId} />
+      )}
+      {(role === 'patient' || role === 'clinician') && (
+        <SlotChannel
+          channel={
+            role === 'patient' ? 'slots.patients' : `slots.clinicians.${userId}`
+          }
+        />
+      )}
+    </>
+  )
+}
+
+function SlotChannel({ channel }: { channel: string }) {
+  const queryClient = useQueryClient()
+  const refresh = useCallback(() => {
+    for (const key of [
+      'slots',
+      'slot',
+      'dashboardSummary',
+      'appointments',
+      'appointment',
+    ]) {
+      void queryClient.invalidateQueries({ queryKey: [key] })
+    }
+  }, [queryClient])
+  const subscription = useEcho(channel, 'SlotAvailabilityChanged', refresh, [
+    refresh,
+  ])
+
+  useEffect(() => {
+    const connection = subscription.channel()
+    const event = '.pusher:subscription_succeeded'
+    connection?.listen(event, refresh)
+    return () => {
+      connection?.stopListening(event, refresh)
+    }
+  }, [subscription, refresh])
+
+  return null
 }
 
 function NotificationChannel({

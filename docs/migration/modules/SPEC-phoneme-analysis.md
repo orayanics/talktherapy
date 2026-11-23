@@ -12,6 +12,12 @@ Status: implemented as bounded, non-diagnostic practice feedback.
 
 ## Evidence
 
+### Assigned exercise clients
+
+Deploy the assignment client and Laravel API together. New recording consent requests require explicit `accepted: true`, purpose `slp_recording`, and policy version `v1`. Patients can withdraw their recording consents from My assignments to prevent queued analysis from starting.
+
+Assignment uploads accept WAV and WebM up to 10 MiB, including WebM identified as `video/webm`. Clients sending MPEG, MP4, or larger files must switch formats before rollout. Assignment creation rejects nonempty `schedule` metadata. Existing schedules remain readable and have no effect on availability or reminders.
+
 - Laravel `PhonemeAssessmentTest` covers proxy boundaries and failures.
 - Python tests cover decoding, readiness, worker isolation, and response models.
 

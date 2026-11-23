@@ -8,6 +8,7 @@ import { fetchClinicianPatients } from '#/modules/patients/api/patients'
 import type { ClinicianPatient } from '#/modules/patients/types/patients'
 import type { SlpExercise } from '../api/exercises'
 import { Row } from '#/components/Table/Row'
+import SlpPatientOption from './SlpPatientOption'
 
 type Audience = 'all' | 'selected'
 
@@ -83,7 +84,7 @@ export default function ExerciseDelivery({
         method: 'POST',
         data: {
           audience,
-          patient_ids: audience === 'selected' ? [...selected] : [],
+          ...(audience === 'selected' ? { patient_ids: [...selected] } : {}),
           exercise_version_id: version?.id,
         },
       }),
@@ -127,7 +128,7 @@ export default function ExerciseDelivery({
               <section aria-label="Exercise content" className="space-y-4">
                 <Row label="Content" value={version.prompt_text} />
                 <Row
-                  label="Module"
+                  label="Exercise category"
                   value={exercise.module.replaceAll('_', ' ')}
                 />
                 <Row
@@ -154,14 +155,21 @@ export default function ExerciseDelivery({
                   checked={visible}
                   onChange={(event) => setVisible(event.target.checked)}
                 />
-                Allow patients to test this draft
+                Allow patients to discover this after publishing
               </label>
+              <p className="pt-1 text-sm text-slate-600">
+                This controls browsing visibility only. Use the assignment
+                action when an exercise should appear in a patient’s My
+                assignments list.
+              </p>
             </div>
 
             <div>
               {role === 'clinician' && (
                 <fieldset className="space-y-2">
-                  <legend className="font-medium">Patient visibility</legend>
+                  <legend className="font-medium">
+                    Who can discover this exercise?
+                  </legend>
                   <label className="flex items-center gap-2">
                     <input
                       type="radio"
@@ -169,7 +177,7 @@ export default function ExerciseDelivery({
                       checked={audience === 'all'}
                       onChange={() => setAudience('all')}
                     />{' '}
-                    All of my patients
+                    All of my patients can discover it
                   </label>
                   <label className="flex items-center gap-2">
                     <input
@@ -178,7 +186,7 @@ export default function ExerciseDelivery({
                       checked={audience === 'selected'}
                       onChange={() => setAudience('selected')}
                     />{' '}
-                    Specific patients
+                    Only specific patients can discover it
                   </label>
                 </fieldset>
               )}
@@ -208,17 +216,12 @@ export default function ExerciseDelivery({
                       </p>
                     )}
                     {pagePatients.map((item: ClinicianPatient) => (
-                      <label
+                      <SlpPatientOption
                         key={item.patientId}
-                        className="flex items-center gap-2 rounded p-2 hover:bg-slate-50"
-                      >
-                        <input
-                          type="checkbox"
-                          checked={selected.has(item.patientId)}
-                          onChange={() => togglePatient(item.patientId)}
-                        />
-                        <span>{item.patient.name}</span>
-                      </label>
+                        patient={item}
+                        selected={selected.has(item.patientId)}
+                        onToggle={() => togglePatient(item.patientId)}
+                      />
                     ))}
                     {!patients.isPending && pagePatients.length === 0 && (
                       <p className="text-sm text-slate-500">
@@ -257,19 +260,29 @@ export default function ExerciseDelivery({
                 }
                 onClick={() => visibility.mutate(visible)}
               >
-                Save Changes
+                Save patient visibility
               </button>
+              {role === 'clinician' && (
+                <button
+                  className="btn"
+                  disabled={
+                    !canAssign ||
+                    version.configuration?.patient_visible !== true ||
+                    exercise.available_for_assignment === false ||
+                    assign.isPending
+                  }
+                  onClick={() => assign.mutate()}
+                >
+                  {audience === 'all'
+                    ? 'Assign to all patients'
+                    : `Assign to ${selected.size} patient${selected.size === 1 ? '' : 's'}`}
+                </button>
+              )}
               {role === 'clinician' &&
-                version.configuration?.patient_visible === true && (
-                  <button
-                    className="btn"
-                    disabled={!canAssign || assign.isPending}
-                    onClick={() => assign.mutate()}
-                  >
-                    {audience === 'all'
-                      ? 'Assign to all patients'
-                      : `Assign to ${selected.size} patient${selected.size === 1 ? '' : 's'}`}
-                  </button>
+                version.configuration?.patient_visible !== true && (
+                  <p className="basis-full text-sm text-slate-600">
+                    Save patient visibility first, then assign this exercise.
+                  </p>
                 )}
             </div>
 

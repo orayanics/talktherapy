@@ -130,7 +130,7 @@ def readiness() -> dict[str, str]:
 )
 async def assess(
     audio: UploadFile,
-    referenceText: str = Form(..., min_length=1, max_length=800),
+    referenceText: str = Form(..., min_length=1, max_length=2000),
     language: Literal["en", "tl"] = Form("en"),
 ):
     # Dead workers recover within the next admitted request's inference budget.

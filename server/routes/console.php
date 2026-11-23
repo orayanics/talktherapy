@@ -10,3 +10,4 @@ Artisan::command('inspire', function () {
 
 Schedule::command('app:deliver-notifications')->everyMinute();
 Schedule::command('app:dispatch-slp-analysis')->everyMinute()->withoutOverlapping();
+Schedule::command('app:cleanup-slp-recordings')->dailyAt('02:15')->withoutOverlapping();

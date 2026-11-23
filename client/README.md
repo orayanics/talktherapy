@@ -9,7 +9,7 @@ npm ci
 npm run dev
 ```
 
-The client listens on port 3000. Vite enables local HTTPS when both `../certs/localhost-key.pem` and `../certs/localhost.pem` exist; the `HTTPS` environment variable does not control it. Follow [the TLS guide](../SETUP_SSL.md) for proxy setup.
+The client listens on port 3000. Vite enables local HTTPS when both `../certs/localhost-key.pem` and `../certs/localhost.pem` exist; the `HTTPS` environment variable does not control it. For LAN devices, follow [the local HTTPS/Nginx guide](../SETUP_SSL.md).
 
 Verify changes with:
 

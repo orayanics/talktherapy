@@ -8,6 +8,9 @@ import FormInput from '#/components/Form/FormInput'
 import StateLoading from '#/components/State/StateLoading'
 import StateNull from '#/components/State/StateNull'
 import { useAlert } from '#/context/AlertContext'
+import NotificationChannelOption from './NotificationChannelOption'
+import NotificationRoleOption from './NotificationRoleOption'
+import NotificationUserOption from './NotificationUserOption'
 
 const roles = ['patient', 'clinician', 'admin', 'superadmin'] as const
 
@@ -116,19 +119,12 @@ export default function NotificationComposer() {
             {mode === 'role' ? (
               <div className="grid gap-2 sm:grid-cols-2 my-2">
                 {roles.map((role) => (
-                  <label
+                  <NotificationRoleOption
                     key={role}
-                    className="label cursor-pointer justify-start gap-2"
-                  >
-                    <input
-                      type="radio"
-                      name="recipient-role"
-                      className="radio radio-sm"
-                      checked={selectedRole === role}
-                      onChange={() => setSelectedRole(role)}
-                    />
-                    <span className="capitalize">{role}s</span>
-                  </label>
+                    role={role}
+                    selected={selectedRole === role}
+                    onChange={() => setSelectedRole(role)}
+                  />
                 ))}
               </div>
             ) : (
@@ -159,24 +155,12 @@ export default function NotificationComposer() {
                   ) : (
                     <div className="divide-y divide-border">
                       {visibleUsers.map((user) => (
-                        <div key={user.id}>
-                          <label className="flex cursor-pointer items-center gap-3 p-3 hover:bg-primary/5">
-                            <input
-                              type="checkbox"
-                              className="checkbox checkbox-sm"
-                              checked={Boolean(selectedUsers[user.id])}
-                              onChange={() => toggleUser(user)}
-                            />
-                            <span className="min-w-0">
-                              <span className="block truncate text-xs font-medium">
-                                {user.name}
-                              </span>
-                              <span className="block truncate text-xs text-muted">
-                                {user.email}
-                              </span>
-                            </span>
-                          </label>
-                        </div>
+                        <NotificationUserOption
+                          key={user.id}
+                          user={user}
+                          selected={Boolean(selectedUsers[user.id])}
+                          onToggle={() => toggleUser(user)}
+                        />
                       ))}
                     </div>
                   )}
@@ -220,22 +204,18 @@ export default function NotificationComposer() {
               <legend className="mb-2 font-semibold">Channels</legend>
               <div className="flex gap-4">
                 {(['in_app', 'email'] as const).map((channel) => (
-                  <label key={channel} className="label cursor-pointer gap-2">
-                    <input
-                      type="checkbox"
-                      aria-label={`Send by ${channel === 'in_app' ? 'in-app' : 'email'}`}
-                      className="checkbox checkbox-sm"
-                      checked={channels.includes(channel)}
-                      onChange={() =>
-                        setChannels(
-                          channels.includes(channel)
-                            ? channels.filter((item) => item !== channel)
-                            : [...channels, channel],
-                        )
-                      }
-                    />
-                    <span>{channel === 'in_app' ? 'In-app' : 'Email'}</span>
-                  </label>
+                  <NotificationChannelOption
+                    key={channel}
+                    channel={channel}
+                    checked={channels.includes(channel)}
+                    onChange={() =>
+                      setChannels(
+                        channels.includes(channel)
+                          ? channels.filter((item) => item !== channel)
+                          : [...channels, channel],
+                      )
+                    }
+                  />
                 ))}
               </div>
             </fieldset>

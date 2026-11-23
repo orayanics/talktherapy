@@ -1,25 +1,50 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { Check, LoaderCircle, Mic, Send, Square } from 'lucide-react'
 import { api } from '#/lib/api/client'
 import { useSession } from '#/modules/auth/context/SessionContext'
 import { errMsg } from '#/lib/errorMessage'
 import usePracticeRecorder from '../hooks/usePracticeRecorder'
 import { Tala } from './PracticeRewards'
+import { fetchSlpAttempt } from '../api/workflow'
 
 export default function AssignedExercise({
   assignmentId,
+  onNavigationLockChange,
 }: {
   assignmentId: string
+  onNavigationLockChange?: (locked: boolean) => void
 }) {
   const session = useSession()
   const recorder = usePracticeRecorder()
-  const [consent, setConsent] = useState(false)
   const [busy, setBusy] = useState(false)
+  const [agreed, setAgreed] = useState(false)
+  useEffect(() => {
+    onNavigationLockChange?.(
+      busy ||
+        recorder.state === 'recording' ||
+        recorder.state === 'requesting_permission',
+    )
+  }, [busy, recorder.state, onNavigationLockChange])
   const [sent, setSent] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const attemptId = useRef<string | null>(null)
   const submissionKey = useRef(crypto.randomUUID())
+  const [submittedAttemptId, setSubmittedAttemptId] = useState<string | null>(
+    null,
+  )
+  const attempt = useQuery({
+    ...fetchSlpAttempt(submittedAttemptId ?? ''),
+    enabled: submittedAttemptId !== null,
+    refetchInterval: (query) =>
+      ['queued', 'running'].includes(
+        query.state.data?.data.analysis_status ?? '',
+      )
+        ? 2000
+        : false,
+  })
   const submit = async () => {
-    if (!recorder.audio || busy || !consent) return
+    if (!recorder.audio || busy || !agreed) return
     setBusy(true)
     setError(null)
     try {
@@ -32,10 +57,11 @@ export default function AssignedExercise({
               subject_id: session.id,
               purpose: 'slp_recording',
               policy_version: 'v1',
+              accepted: agreed,
             },
           },
         )
-        const attempt = await api<{ data: { id: string } }>(
+        const createdAttempt = await api<{ data: { id: string } }>(
           `/api/v1/slp/assignments/${assignmentId}/attempts`,
           {
             method: 'POST',
@@ -45,15 +71,22 @@ export default function AssignedExercise({
             },
           },
         )
-        attemptId.current = attempt.data.id
+        attemptId.current = createdAttempt.data.id
       }
       const data = new FormData()
-      data.append('recording', recorder.audio, 'recording.webm')
+      data.append(
+        'recording',
+        recorder.audio,
+        recorder.audio.type.includes('wav')
+          ? 'recording.wav'
+          : 'recording.webm',
+      )
       await api(`/api/v1/slp/attempts/${attemptId.current}/recording`, {
         method: 'POST',
         data,
       })
       recorder.clear()
+      setSubmittedAttemptId(attemptId.current)
       setSent(true)
     } catch (cause) {
       setError(
@@ -68,36 +101,44 @@ export default function AssignedExercise({
   }
   if (sent)
     return (
-      <div
-        className="mt-4 flex items-center gap-3 rounded-box bg-[var(--practice-tint)] p-4"
-        role="status"
-      >
+      <div className="slp-recording-success" role="status">
         <Tala mood="cheer" size={48} />
-        <p className="font-semibold">
-          Thank you. Your recording is ready for clinician review.
-        </p>
+        <div>
+          <p className="slp-recording-status">
+            <Check size={16} aria-hidden="true" /> Recording sent
+          </p>
+          <p className="font-semibold">
+            {attempt.data?.data.status === 'failed'
+              ? 'The automatic check was unavailable. Your clinician can review the audio if consent is active.'
+              : attempt.data?.data.status === 'awaiting_review'
+                ? 'Your recording has been analyzed and is ready for clinician review.'
+                : 'Your recording is being processed for clinician review.'}
+          </p>
+          {attempt.data?.data.status === 'failed' && (
+            <button
+              className="slp-secondary-button mt-3"
+              onClick={() => {
+                attemptId.current = null
+                submissionKey.current = crypto.randomUUID()
+                setSubmittedAttemptId(null)
+                setSent(false)
+              }}
+            >
+              Record another
+            </button>
+          )}
+        </div>
       </div>
     )
   return (
-    <div className="mt-4 space-y-4 rounded-box border-2 border-[var(--practice-tint)] bg-white p-4">
-      <div className="flex items-start gap-3">
+    <div className="slp-recorder">
+      <div className="slp-recorder-intro">
         <Tala mood="idle" size={48} />
         <p className="text-sm leading-relaxed">
           Read the prompt at a comfortable pace. You can stop, listen, and try
-          again before submitting. Each recording lasts up to 60 seconds.
+          again before submitting.
         </p>
       </div>
-      <label className="flex min-h-12 items-start gap-3 text-sm leading-relaxed">
-        <input
-          className="mt-1"
-          type="checkbox"
-          checked={consent}
-          disabled={busy}
-          onChange={(e) => setConsent(e.target.checked)}
-        />
-        I agree to submit this voice recording for review by my assigned
-        clinician. This testing exercise is not a diagnosis.
-      </label>
       {recorder.error && (
         <p
           className="rounded border border-red-200 bg-red-50 p-3 text-sm text-red-800"
@@ -122,28 +163,69 @@ export default function AssignedExercise({
           aria-label="Your recording"
         />
       )}
-      <div className="flex flex-wrap gap-3">
+      <div className="slp-recording-actions">
+        <label>
+          <input
+            type="checkbox"
+            checked={agreed}
+            disabled={busy}
+            onChange={(event) => setAgreed(event.target.checked)}
+          />
+          I agree to send this recording for automated transcription and
+          clinician review. Audio expires after 30 days. Analysis and clinician
+          reports are stored separately. (Recording policy v1)
+        </label>
         {recorder.state === 'recording' ? (
-          <button className="tt-btn" onClick={recorder.stop}>
+          <button
+            type="button"
+            className="slp-record-button"
+            data-recording="true"
+            onClick={recorder.stop}
+          >
+            <Square size={18} fill="currentColor" aria-hidden="true" />
             Stop recording
           </button>
         ) : (
           <button
-            className="tt-btn"
-            disabled={
-              !consent || busy || recorder.state === 'requesting_permission'
-            }
+            type="button"
+            className="slp-record-button"
+            disabled={busy || recorder.state === 'requesting_permission'}
             onClick={() => void recorder.start()}
           >
-            {recorder.audio ? 'Record again' : 'Record'}
+            {recorder.state === 'requesting_permission' ? (
+              <LoaderCircle
+                className="slp-recording-spinner"
+                size={20}
+                aria-hidden="true"
+              />
+            ) : (
+              <Mic size={20} aria-hidden="true" />
+            )}
+            {recorder.state === 'requesting_permission'
+              ? 'Connecting mic…'
+              : recorder.error
+                ? 'Retry recording'
+                : recorder.audio
+                  ? 'Record again'
+                  : 'Start recording'}
           </button>
         )}
         <button
-          className="tt-btn alt"
-          disabled={!consent || !recorder.audio || busy}
+          type="button"
+          className="slp-send-button"
+          disabled={!recorder.audio || busy || !agreed}
           onClick={() => void submit()}
         >
-          {busy ? 'Submitting…' : 'Submit recording'}
+          {busy ? (
+            <LoaderCircle
+              className="slp-recording-spinner"
+              size={18}
+              aria-hidden="true"
+            />
+          ) : (
+            <Send size={18} aria-hidden="true" />
+          )}
+          {busy ? 'Submitting…' : 'Send recording'}
         </button>
       </div>
     </div>

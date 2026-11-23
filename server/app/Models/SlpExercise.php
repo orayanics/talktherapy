@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['owner_id', 'scope', 'module', 'archived_at'])]
+#[Fillable(['owner_id', 'scope', 'module', 'archived_at', 'collection_id', 'is_hidden'])]
 class SlpExercise extends Model
 {
     /** @use HasFactory<SlpExerciseFactory> */
@@ -18,7 +18,18 @@ class SlpExercise extends Model
 
     protected function casts(): array
     {
-        return ['archived_at' => 'immutable_datetime'];
+        return ['archived_at' => 'immutable_datetime', 'is_hidden' => 'boolean'];
+    }
+
+    public function collection(): BelongsTo
+    {
+        return $this->belongsTo(SlpExerciseCollection::class, 'collection_id');
+    }
+
+    public function availableForAssignment(): bool
+    {
+        return $this->archived_at === null && ! $this->is_hidden
+            && ($this->collection === null || (! $this->collection->is_hidden && $this->collection->archived_at === null));
     }
 
     public function owner(): BelongsTo

@@ -82,7 +82,7 @@ class IdentityActivationTest extends TestCase
         $diagnosis = Diagnosis::factory()->create();
         $this->postJson('/api/v1/registrations/patient', [
             'name' => 'Patient', 'email' => $email, 'password' => 'Correct-Horse-9!',
-            'password_confirmation' => 'Correct-Horse-9!', 'diagnosis_id' => $diagnosis->id, 'consent' => true,
+            'password_confirmation' => 'Correct-Horse-9!', 'diagnosis_id' => $diagnosis->id, 'consent' => true, 'privacy_v1' => true,
         ])->assertCreated();
         $user = User::query()->where('email', $email)->sole();
         $code = '';

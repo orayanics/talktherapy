@@ -2,6 +2,7 @@
   "include": [
     "**/*.ts",
     "**/*.tsx",
+    "public/slp/practice-pcm.js",
     "eslint.config.js",
     "prettier.config.js",
     "vite.config.js"
@@ -9,6 +10,7 @@
 
   "compilerOptions": {
     "target": "ES2022",
+    "allowJs": true,
     "jsx": "react-jsx",
     "module": "ESNext",
     "paths": {

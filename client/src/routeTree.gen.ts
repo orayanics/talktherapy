@@ -36,18 +36,20 @@ import { Route as PrivateclinicianSchedulesCreateRouteImport } from './routes/_p
 import { Route as PrivatepatientRecordsIndexRouteImport } from './routes/_private/(patient)/records.index'
 import { Route as PrivatepatientRecordsSoapIdRouteImport } from './routes/_private/(patient)/records.$soapId'
 import { Route as PrivatepatientSlpIndexRouteImport } from './routes/_private/(patient)/slp.index'
+import { Route as PrivatepatientSlpPicturesRouteImport } from './routes/_private/(patient)/slp.pictures'
 import { Route as PrivatesharedAppointmentsIndexRouteImport } from './routes/_private/(shared)/appointments/index'
 import { Route as PrivatesharedContentIndexRouteImport } from './routes/_private/(shared)/content/index'
 import { Route as PrivatesharedContentContentIdRouteImport } from './routes/_private/(shared)/content/$contentId'
 import { Route as PrivatesharedContentAdmRouteRouteImport } from './routes/_private/(shared)/content/_adm/route'
 import { Route as PrivatesharedSlpAssignmentsRouteImport } from './routes/_private/(shared)/slp/assignments'
+import { Route as PrivatesharedSlpReportsRouteImport } from './routes/_private/(shared)/slp/reports'
+import { Route as PrivatesharedSlpReviewsRouteImport } from './routes/_private/(shared)/slp/reviews'
 import { Route as PublicActivateOtpIndexRouteImport } from './routes/_public/activate/otp.index'
 import { Route as PublicActivateOtpUpdateRouteImport } from './routes/_public/activate/otp.update'
 import { Route as PrivateclinicianPatientsPatientIdIndexRouteImport } from './routes/_private/(clinician)/patients/$patientId.index'
 import { Route as PrivateclinicianPatientsPatientIdCreateRouteImport } from './routes/_private/(clinician)/patients/$patientId.create'
 import { Route as PrivatesharedContentAdmCreateRouteImport } from './routes/_private/(shared)/content/_adm/create'
 import { Route as PrivatesharedSlpExercisesIndexRouteImport } from './routes/_private/(shared)/slp/exercises/index'
-import { Route as PrivatesharedSlpExercisesCreateRouteImport } from './routes/_private/(shared)/slp/exercises/create'
 import { Route as PrivatesharedContentAdmContentIdEditRouteImport } from './routes/_private/(shared)/content/_adm/$contentId.edit'
 
 const PrivateRouteRoute = PrivateRouteRouteImport.update({
@@ -189,6 +191,12 @@ const PrivatepatientSlpIndexRoute = PrivatepatientSlpIndexRouteImport.update({
   path: '/slp/',
   getParentRoute: () => PrivatepatientRouteRoute,
 } as any)
+const PrivatepatientSlpPicturesRoute =
+  PrivatepatientSlpPicturesRouteImport.update({
+    id: '/slp/pictures',
+    path: '/slp/pictures',
+    getParentRoute: () => PrivatepatientRouteRoute,
+  } as any)
 const PrivatesharedAppointmentsIndexRoute =
   PrivatesharedAppointmentsIndexRouteImport.update({
     id: '/(shared)/appointments/',
@@ -219,6 +227,16 @@ const PrivatesharedSlpAssignmentsRoute =
     path: '/slp/assignments',
     getParentRoute: () => PrivateRouteRoute,
   } as any)
+const PrivatesharedSlpReportsRoute = PrivatesharedSlpReportsRouteImport.update({
+  id: '/(shared)/slp/reports',
+  path: '/slp/reports',
+  getParentRoute: () => PrivateRouteRoute,
+} as any)
+const PrivatesharedSlpReviewsRoute = PrivatesharedSlpReviewsRouteImport.update({
+  id: '/(shared)/slp/reviews',
+  path: '/slp/reviews',
+  getParentRoute: () => PrivateRouteRoute,
+} as any)
 const PublicActivateOtpIndexRoute = PublicActivateOtpIndexRouteImport.update({
   id: '/activate/otp/',
   path: '/activate/otp/',
@@ -253,12 +271,6 @@ const PrivatesharedSlpExercisesIndexRoute =
     path: '/slp/exercises/',
     getParentRoute: () => PrivateRouteRoute,
   } as any)
-const PrivatesharedSlpExercisesCreateRoute =
-  PrivatesharedSlpExercisesCreateRouteImport.update({
-    id: '/(shared)/slp/exercises/create',
-    path: '/slp/exercises/create',
-    getParentRoute: () => PrivateRouteRoute,
-  } as any)
 const PrivatesharedContentAdmContentIdEditRoute =
   PrivatesharedContentAdmContentIdEditRouteImport.update({
     id: '/$contentId/edit',
@@ -285,8 +297,11 @@ export interface FileRoutesByFullPath {
   '/content': typeof PrivatesharedContentAdmRouteRouteWithChildren
   '/schedules/create': typeof PrivateclinicianSchedulesCreateRoute
   '/records/$soapId': typeof PrivatepatientRecordsSoapIdRoute
+  '/slp/pictures': typeof PrivatepatientSlpPicturesRoute
   '/content/$contentId': typeof PrivatesharedContentContentIdRoute
   '/slp/assignments': typeof PrivatesharedSlpAssignmentsRoute
+  '/slp/reports': typeof PrivatesharedSlpReportsRoute
+  '/slp/reviews': typeof PrivatesharedSlpReviewsRoute
   '/activate/otp/update': typeof PublicActivateOtpUpdateRoute
   '/users/': typeof PrivateadmSharedUsersIndexRoute
   '/patients/': typeof PrivateclinicianPatientsIndexRoute
@@ -298,7 +313,6 @@ export interface FileRoutesByFullPath {
   '/activate/otp/': typeof PublicActivateOtpIndexRoute
   '/patients/$patientId/create': typeof PrivateclinicianPatientsPatientIdCreateRoute
   '/content/create': typeof PrivatesharedContentAdmCreateRoute
-  '/slp/exercises/create': typeof PrivatesharedSlpExercisesCreateRoute
   '/patients/$patientId/': typeof PrivateclinicianPatientsPatientIdIndexRoute
   '/slp/exercises/': typeof PrivatesharedSlpExercisesIndexRoute
   '/content/$contentId/edit': typeof PrivatesharedContentAdmContentIdEditRoute
@@ -322,8 +336,11 @@ export interface FileRoutesByTo {
   '/content': typeof PrivatesharedContentIndexRoute
   '/schedules/create': typeof PrivateclinicianSchedulesCreateRoute
   '/records/$soapId': typeof PrivatepatientRecordsSoapIdRoute
+  '/slp/pictures': typeof PrivatepatientSlpPicturesRoute
   '/content/$contentId': typeof PrivatesharedContentContentIdRoute
   '/slp/assignments': typeof PrivatesharedSlpAssignmentsRoute
+  '/slp/reports': typeof PrivatesharedSlpReportsRoute
+  '/slp/reviews': typeof PrivatesharedSlpReviewsRoute
   '/activate/otp/update': typeof PublicActivateOtpUpdateRoute
   '/users': typeof PrivateadmSharedUsersIndexRoute
   '/patients': typeof PrivateclinicianPatientsIndexRoute
@@ -334,7 +351,6 @@ export interface FileRoutesByTo {
   '/activate/otp': typeof PublicActivateOtpIndexRoute
   '/patients/$patientId/create': typeof PrivateclinicianPatientsPatientIdCreateRoute
   '/content/create': typeof PrivatesharedContentAdmCreateRoute
-  '/slp/exercises/create': typeof PrivatesharedSlpExercisesCreateRoute
   '/patients/$patientId': typeof PrivateclinicianPatientsPatientIdIndexRoute
   '/slp/exercises': typeof PrivatesharedSlpExercisesIndexRoute
   '/content/$contentId/edit': typeof PrivatesharedContentAdmContentIdEditRoute
@@ -364,8 +380,11 @@ export interface FileRoutesById {
   '/_private/(shared)/content/_adm': typeof PrivatesharedContentAdmRouteRouteWithChildren
   '/_private/(clinician)/schedules/create': typeof PrivateclinicianSchedulesCreateRoute
   '/_private/(patient)/records/$soapId': typeof PrivatepatientRecordsSoapIdRoute
+  '/_private/(patient)/slp/pictures': typeof PrivatepatientSlpPicturesRoute
   '/_private/(shared)/content/$contentId': typeof PrivatesharedContentContentIdRoute
   '/_private/(shared)/slp/assignments': typeof PrivatesharedSlpAssignmentsRoute
+  '/_private/(shared)/slp/reports': typeof PrivatesharedSlpReportsRoute
+  '/_private/(shared)/slp/reviews': typeof PrivatesharedSlpReviewsRoute
   '/_public/activate/otp/update': typeof PublicActivateOtpUpdateRoute
   '/_private/(adm-shared)/users/': typeof PrivateadmSharedUsersIndexRoute
   '/_private/(clinician)/patients/': typeof PrivateclinicianPatientsIndexRoute
@@ -377,7 +396,6 @@ export interface FileRoutesById {
   '/_public/activate/otp/': typeof PublicActivateOtpIndexRoute
   '/_private/(clinician)/patients/$patientId/create': typeof PrivateclinicianPatientsPatientIdCreateRoute
   '/_private/(shared)/content/_adm/create': typeof PrivatesharedContentAdmCreateRoute
-  '/_private/(shared)/slp/exercises/create': typeof PrivatesharedSlpExercisesCreateRoute
   '/_private/(clinician)/patients/$patientId/': typeof PrivateclinicianPatientsPatientIdIndexRoute
   '/_private/(shared)/slp/exercises/': typeof PrivatesharedSlpExercisesIndexRoute
   '/_private/(shared)/content/_adm/$contentId/edit': typeof PrivatesharedContentAdmContentIdEditRoute
@@ -403,8 +421,11 @@ export interface FileRouteTypes {
     | '/content'
     | '/schedules/create'
     | '/records/$soapId'
+    | '/slp/pictures'
     | '/content/$contentId'
     | '/slp/assignments'
+    | '/slp/reports'
+    | '/slp/reviews'
     | '/activate/otp/update'
     | '/users/'
     | '/patients/'
@@ -416,7 +437,6 @@ export interface FileRouteTypes {
     | '/activate/otp/'
     | '/patients/$patientId/create'
     | '/content/create'
-    | '/slp/exercises/create'
     | '/patients/$patientId/'
     | '/slp/exercises/'
     | '/content/$contentId/edit'
@@ -440,8 +460,11 @@ export interface FileRouteTypes {
     | '/content'
     | '/schedules/create'
     | '/records/$soapId'
+    | '/slp/pictures'
     | '/content/$contentId'
     | '/slp/assignments'
+    | '/slp/reports'
+    | '/slp/reviews'
     | '/activate/otp/update'
     | '/users'
     | '/patients'
@@ -452,7 +475,6 @@ export interface FileRouteTypes {
     | '/activate/otp'
     | '/patients/$patientId/create'
     | '/content/create'
-    | '/slp/exercises/create'
     | '/patients/$patientId'
     | '/slp/exercises'
     | '/content/$contentId/edit'
@@ -481,8 +503,11 @@ export interface FileRouteTypes {
     | '/_private/(shared)/content/_adm'
     | '/_private/(clinician)/schedules/create'
     | '/_private/(patient)/records/$soapId'
+    | '/_private/(patient)/slp/pictures'
     | '/_private/(shared)/content/$contentId'
     | '/_private/(shared)/slp/assignments'
+    | '/_private/(shared)/slp/reports'
+    | '/_private/(shared)/slp/reviews'
     | '/_public/activate/otp/update'
     | '/_private/(adm-shared)/users/'
     | '/_private/(clinician)/patients/'
@@ -494,7 +519,6 @@ export interface FileRouteTypes {
     | '/_public/activate/otp/'
     | '/_private/(clinician)/patients/$patientId/create'
     | '/_private/(shared)/content/_adm/create'
-    | '/_private/(shared)/slp/exercises/create'
     | '/_private/(clinician)/patients/$patientId/'
     | '/_private/(shared)/slp/exercises/'
     | '/_private/(shared)/content/_adm/$contentId/edit'
@@ -699,6 +723,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivatepatientSlpIndexRouteImport
       parentRoute: typeof PrivatepatientRouteRoute
     }
+    '/_private/(patient)/slp/pictures': {
+      id: '/_private/(patient)/slp/pictures'
+      path: '/slp/pictures'
+      fullPath: '/slp/pictures'
+      preLoaderRoute: typeof PrivatepatientSlpPicturesRouteImport
+      parentRoute: typeof PrivatepatientRouteRoute
+    }
     '/_private/(shared)/appointments/': {
       id: '/_private/(shared)/appointments/'
       path: '/appointments'
@@ -732,6 +763,20 @@ declare module '@tanstack/react-router' {
       path: '/slp/assignments'
       fullPath: '/slp/assignments'
       preLoaderRoute: typeof PrivatesharedSlpAssignmentsRouteImport
+      parentRoute: typeof PrivateRouteRoute
+    }
+    '/_private/(shared)/slp/reports': {
+      id: '/_private/(shared)/slp/reports'
+      path: '/slp/reports'
+      fullPath: '/slp/reports'
+      preLoaderRoute: typeof PrivatesharedSlpReportsRouteImport
+      parentRoute: typeof PrivateRouteRoute
+    }
+    '/_private/(shared)/slp/reviews': {
+      id: '/_private/(shared)/slp/reviews'
+      path: '/slp/reviews'
+      fullPath: '/slp/reviews'
+      preLoaderRoute: typeof PrivatesharedSlpReviewsRouteImport
       parentRoute: typeof PrivateRouteRoute
     }
     '/_public/activate/otp/': {
@@ -774,13 +819,6 @@ declare module '@tanstack/react-router' {
       path: '/slp/exercises'
       fullPath: '/slp/exercises/'
       preLoaderRoute: typeof PrivatesharedSlpExercisesIndexRouteImport
-      parentRoute: typeof PrivateRouteRoute
-    }
-    '/_private/(shared)/slp/exercises/create': {
-      id: '/_private/(shared)/slp/exercises/create'
-      path: '/slp/exercises/create'
-      fullPath: '/slp/exercises/create'
-      preLoaderRoute: typeof PrivatesharedSlpExercisesCreateRouteImport
       parentRoute: typeof PrivateRouteRoute
     }
     '/_private/(shared)/content/_adm/$contentId/edit': {
@@ -838,6 +876,7 @@ const PrivateclinicianRouteRouteWithChildren =
 interface PrivatepatientRouteRouteChildren {
   PrivatepatientBookRoute: typeof PrivatepatientBookRoute
   PrivatepatientRecordsSoapIdRoute: typeof PrivatepatientRecordsSoapIdRoute
+  PrivatepatientSlpPicturesRoute: typeof PrivatepatientSlpPicturesRoute
   PrivatepatientRecordsIndexRoute: typeof PrivatepatientRecordsIndexRoute
   PrivatepatientSlpIndexRoute: typeof PrivatepatientSlpIndexRoute
 }
@@ -845,6 +884,7 @@ interface PrivatepatientRouteRouteChildren {
 const PrivatepatientRouteRouteChildren: PrivatepatientRouteRouteChildren = {
   PrivatepatientBookRoute: PrivatepatientBookRoute,
   PrivatepatientRecordsSoapIdRoute: PrivatepatientRecordsSoapIdRoute,
+  PrivatepatientSlpPicturesRoute: PrivatepatientSlpPicturesRoute,
   PrivatepatientRecordsIndexRoute: PrivatepatientRecordsIndexRoute,
   PrivatepatientSlpIndexRoute: PrivatepatientSlpIndexRoute,
 }
@@ -880,9 +920,10 @@ interface PrivateRouteRouteChildren {
   PrivatesharedContentAdmRouteRoute: typeof PrivatesharedContentAdmRouteRouteWithChildren
   PrivatesharedContentContentIdRoute: typeof PrivatesharedContentContentIdRoute
   PrivatesharedSlpAssignmentsRoute: typeof PrivatesharedSlpAssignmentsRoute
+  PrivatesharedSlpReportsRoute: typeof PrivatesharedSlpReportsRoute
+  PrivatesharedSlpReviewsRoute: typeof PrivatesharedSlpReviewsRoute
   PrivatesharedAppointmentsIndexRoute: typeof PrivatesharedAppointmentsIndexRoute
   PrivatesharedContentIndexRoute: typeof PrivatesharedContentIndexRoute
-  PrivatesharedSlpExercisesCreateRoute: typeof PrivatesharedSlpExercisesCreateRoute
   PrivatesharedSlpExercisesIndexRoute: typeof PrivatesharedSlpExercisesIndexRoute
 }
 
@@ -898,9 +939,10 @@ const PrivateRouteRouteChildren: PrivateRouteRouteChildren = {
     PrivatesharedContentAdmRouteRouteWithChildren,
   PrivatesharedContentContentIdRoute: PrivatesharedContentContentIdRoute,
   PrivatesharedSlpAssignmentsRoute: PrivatesharedSlpAssignmentsRoute,
+  PrivatesharedSlpReportsRoute: PrivatesharedSlpReportsRoute,
+  PrivatesharedSlpReviewsRoute: PrivatesharedSlpReviewsRoute,
   PrivatesharedAppointmentsIndexRoute: PrivatesharedAppointmentsIndexRoute,
   PrivatesharedContentIndexRoute: PrivatesharedContentIndexRoute,
-  PrivatesharedSlpExercisesCreateRoute: PrivatesharedSlpExercisesCreateRoute,
   PrivatesharedSlpExercisesIndexRoute: PrivatesharedSlpExercisesIndexRoute,
 }
 

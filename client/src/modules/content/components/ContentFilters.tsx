@@ -1,13 +1,13 @@
 import { SearchFilter } from '#/components/Page/Filters'
-import { ChevronDown, ChevronUp } from 'lucide-react'
-import type { QueryParams } from '#/types/api'
 import type { ContentParams } from '#/modules/content/types/params'
+import type { QueryParams } from '#/types/api'
+import { ChevronDown,ChevronUp } from 'lucide-react'
 
-import { useQuery } from '@tanstack/react-query'
-import { fetchDiagnoses } from '#/modules/diagnoses/api/diagnoses'
 import FilterDrawer from '#/components/Page/FilterDrawer'
+import { fetchDiagnoses } from '#/modules/diagnoses/api/diagnoses'
+import { useQuery } from '@tanstack/react-query'
 
-type UpdateSearch = (
+export type UpdateSearch = (
   next: Partial<Omit<ContentParams, 'is_bookmarked'> & QueryParams> & {
     is_bookmarked?: true
   },
@@ -79,24 +79,13 @@ export default function ContentFilters({
                 <div className="mb-4">
                   <p className="font-semibold mb-4 mt-0">Diagnosis</p>
                   {diagnoses.map((item) => (
-                    <label
+                    <DiagnosisFilterOption
                       key={item.id}
-                      className="flex items-center gap-2 mb-4"
-                    >
-                      <input
-                        aria-label={`Filter by diagnosis: ${item.label}`}
-                        type="checkbox"
-                        className="checkbox"
-                        checked={diagnosis.includes(item.value)}
-                        onChange={() =>
-                          updateSearch({
-                            page: 1,
-                            diagnosis: toggleValue(diagnosis, item.value),
-                          })
-                        }
-                      />
-                      {item.label}
-                    </label>
+                      item={item}
+                      diagnosis={diagnosis}
+                      updateSearch={updateSearch}
+                      toggleValue={toggleValue}
+                    />
                   ))}
                 </div>
               </div>
@@ -107,3 +96,5 @@ export default function ContentFilters({
     </div>
   )
 }
+
+import DiagnosisFilterOption from './DiagnosisFilterOption'

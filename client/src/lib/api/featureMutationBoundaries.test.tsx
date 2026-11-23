@@ -49,6 +49,7 @@ const patient = {
   password: 'password123',
   password_confirmation: 'password123',
   consent: true,
+  privacy_v1: true,
 }
 const otp = { email: member.email, otp_code: '123456' }
 const diagnosis = { id: 'diagnosis', label: 'Diagnosis', value: 'diagnosis' }
@@ -61,6 +62,7 @@ const exercise = {
 }
 const assignment = { exercise_version_id: 'version', patient_id: 'patient' }
 const consent = {
+  accepted: true,
   subject_id: 'patient',
   purpose: 'slp_recording',
   policy_version: 'v1',

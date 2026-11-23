@@ -117,6 +117,11 @@ export default function RegisterForm() {
           </label>
         </div>
         <RowError message={errors.consent?.message} />
+        <label className="flex items-start gap-2">
+          <input type="checkbox" className="checkbox bg-white" {...register('privacy_v1')} />
+          I agree that TalkTherapy may store my account details and health information to provide care. My assigned clinician can review the exercises I submit.
+        </label>
+        <RowError message={errors.privacy_v1?.message} />
 
         <div className="flex flex-col gap-4 items-center">
           <button

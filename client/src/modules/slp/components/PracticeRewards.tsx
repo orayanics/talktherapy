@@ -1,5 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
+import PracticeActivityStat from './PracticeActivityStat'
+import PracticeCheckInOption from './PracticeCheckInOption'
+import PracticeResultWord from './PracticeResultWord'
+import PracticeStarIcon from './PracticeStarIcon'
 
 /* ---------- types ---------- */
 export type CheckIn = 'independent' | 'helped' | 'again'
@@ -173,14 +177,10 @@ export function StarMeter({
       aria-label={`${stars} of 3 practice stars`}
     >
       {[1, 2, 3].map((n) => (
-        <svg
+        <PracticeStarIcon
           key={n}
-          viewBox="0 0 24 24"
           className={`tt-star${n <= stars ? ' on' : ''}${n === justEarned ? ' pop' : ''}`}
-          aria-hidden="true"
-        >
-          <path d="M12 2l3 6.6 7 .8-5.2 4.8 1.5 7L12 17.6 5.7 21.2l1.5-7L2 9.4l7-.8z" />
-        </svg>
+        />
       ))}
     </span>
   )
@@ -196,62 +196,27 @@ export function RoundPath({
   current: number
   total?: number
 }) {
-  const pct =
-    total > 0 ? Math.round((results.filter(Boolean).length / total) * 100) : 0
+  const visited = results.filter(Boolean).length
   return (
-    <div>
-      <div
-        className="tt-bar"
-        role="progressbar"
-        aria-valuemin={0}
-        aria-valuemax={total}
-        aria-valuenow={Math.min(results.filter(Boolean).length, total)}
-        aria-label="Round progress (words visited)"
-      >
-        <i style={{ width: `${pct}%` }} />
+    <div className="slp-game-progress">
+      <div className="slp-round-caption">
+        <span>
+          {current < 0
+            ? 'Round complete'
+            : `Picture ${current + 1} of ${total}`}
+        </span>
+        <span>{visited} visited</span>
       </div>
-      <ol
-        className="tt-path"
-        style={{ marginTop: 12 }}
-        aria-label="Words in this round"
-      >
-        {Array.from({ length: total }, (_, i) => {
-          const r = results[i]
-          const state = r
-            ? r.skipped
-              ? 'skip'
-              : 'done'
-            : i === current
-              ? 'now'
-              : ''
-          return (
-            <li key={i}>
-              <span
-                className={`tt-node ${state}`}
-                aria-current={i === current ? 'step' : undefined}
-                aria-label={`Word ${i + 1}: ${state === 'done' ? 'tried' : state === 'skip' ? 'skipped' : state === 'now' ? 'current' : 'not yet'}`}
-              >
-                {state === 'done' ? '★' : state === 'skip' ? '–' : i + 1}
-                <span className="tt-vh">
-                  {state === 'done'
-                    ? ' done'
-                    : state === 'skip'
-                      ? ' skipped'
-                      : state === 'now'
-                        ? ' current'
-                        : ' not yet'}
-                </span>
-              </span>
-              {i < total - 1 && <span className={`tt-link${r ? ' on' : ''}`} />}
-            </li>
-          )
-        })}
-      </ol>
+      <progress
+        className="slp-deck-position"
+        max={total || 1}
+        value={visited}
+        aria-label="Pictures visited"
+      />
     </div>
   )
 }
 
-/* ---------- Kahoot-style shape keys for the self/helper check-in ---------- */
 const SHAPES: Record<string, ReactNode> = {
   tri: <path d="M12 3 22 21H2z" />,
   dia: <path d="M12 2 22 12 12 22 2 12z" />,
@@ -298,10 +263,12 @@ export function CheckInKeys({
   value,
   onPick,
   disabled = false,
+  skipDisabled = false,
 }: {
   value: CheckIn | 'skip' | null
   onPick: (v: CheckIn | 'skip') => void
   disabled?: boolean
+  skipDisabled?: boolean
 }) {
   return (
     <div
@@ -311,6 +278,7 @@ export function CheckInKeys({
         if (
           key &&
           !disabled &&
+          !(skipDisabled && key.id === 'skip') &&
           !event.altKey &&
           !event.ctrlKey &&
           !event.metaKey
@@ -323,82 +291,45 @@ export function CheckInKeys({
     >
       <div className="tt-keys">
         {KEYS.map((k, i) => (
-          <button
+          <PracticeCheckInOption
             key={k.id}
-            type="button"
-            disabled={disabled}
-            className={`tt-key ${k.cls}`}
-            aria-pressed={value === k.id}
-            aria-keyshortcuts={String(i + 1)}
-            onClick={() => onPick(k.id)}
-          >
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              {SHAPES[k.shape]}
-            </svg>
-            <span>
-              {k.label}
-              <small
-                style={{ display: 'block', fontWeight: 600, opacity: 0.9 }}
-              >
-                {k.hint}
-              </small>
-            </span>
-          </button>
+            id={k.id}
+            label={k.label}
+            hint={k.hint}
+            className={k.cls}
+            shape={SHAPES[k.shape]}
+            selected={value === k.id}
+            shortcut={String(i + 1)}
+            disabled={disabled || (skipDisabled && k.id === 'skip')}
+            onPick={onPick}
+          />
         ))}
       </div>
     </div>
   )
 }
 
-/* ---------- Kahoot-style "Ready?" lobby (optional, skippable, never penalises) ---------- */
-export function ReadyCountdown({
-  calm,
+export function PracticeWelcome({
+  pictures,
   onGo,
-  from = 3,
 }: {
-  calm: boolean
+  pictures: string[]
   onGo: () => void
-  from?: number
 }) {
-  const [n, setN] = useState(from)
-  const done = useRef(false)
-  useEffect(() => {
-    if (calm || done.current) return // calm mode: no auto-advance, child taps Go
-    if (n <= 0) {
-      done.current = true
-      onGo()
-      return
-    }
-    const t = setTimeout(() => setN((x) => x - 1), 900)
-    return () => clearTimeout(t)
-  }, [n, calm, onGo])
   return (
-    <section className="tt-ready" aria-live="polite" aria-label="Get ready">
-      <Tala mood="cheer" size={84} />
-      <p style={{ margin: 0, fontWeight: 800, fontSize: '1.4rem' }}>
-        Ready for your words?
-      </p>
-      {!calm && n > 0 && (
-        <div key={n} className="tt-count tick" aria-hidden="true">
-          {n}
+    <section className="tt-ready" aria-labelledby="practice-welcome">
+      <div className="slp-welcome-card">
+        <div className="slp-preview-hand" aria-hidden="true">
+          {pictures.map((src) => (
+            <img key={src} src={src} alt="" />
+          ))}
         </div>
-      )}
-      <button
-        type="button"
-        className="tt-btn"
-        style={{
-          background: '#fff',
-          color: 'var(--plum-d)',
-          boxShadow: '0 5px 0 #d9ccf5',
-        }}
-        onClick={() => {
-          if (!done.current) {
-            done.current = true
-            onGo()
-          }
-        }}
-      >
-        {calm ? 'Start' : 'Start now'}
+        <Tala mood="cheer" size={56} />
+        <h3 id="practice-welcome">Ready to play with words?</h3>
+        <p>Look at a picture. Record its name. Then check your word.</p>
+      </div>
+      <button type="button" className="slp-main-button" onClick={onGo}>
+        Show my first picture
       </button>
     </section>
   )
@@ -455,23 +386,14 @@ export function RoundRecap({
   const listened = results.filter((r) => r.replayed).length
   const shared = results.filter((r) => r.checkIn !== null).length
 
-  // A podium of YOUR three activities, ranked by count. Not a ranking of people, not a skill ranking.
-  const podium = [
-    { label: 'Words tried', n: tried },
-    { label: 'Listened back', n: listened },
-    { label: 'Check-ins shared', n: shared },
-  ].sort((a, b) => b.n - a.n)
-  const order = [podium[1], podium[0], podium[2]] // silver, gold, bronze
-  const cls = ['tt-silver', 'tt-gold', 'tt-bronze']
-  const medal = ['2', '1', '3']
-  const height = (n: number) => 60 + n * 22
+  const activities = [
+    { label: 'Words tried', value: tried },
+    { label: 'Listens', value: listened },
+    { label: 'Check-ins', value: shared },
+  ]
 
   return (
-    <section
-      className="tt-card"
-      style={{ position: 'relative' }}
-      aria-labelledby="tt-recap-h"
-    >
+    <section className="slp-game-results" aria-labelledby="tt-recap-h">
       <Confetti calm={calm} />
       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
         <Tala mood="cheer" />
@@ -491,61 +413,21 @@ export function RoundRecap({
         </div>
       </div>
 
-      <div
-        className="tt-pod"
-        role="img"
-        aria-label={`Your practice podium: ${podium.map((p) => `${p.label} ${p.n}`).join(', ')}`}
-      >
-        {order.map((p, i) => (
-          <div key={p.label}>
-            <div style={{ fontWeight: 700, fontSize: '.9rem', minHeight: 40 }}>
-              {p.label}
-            </div>
-            <div
-              className={`tt-block ${cls[i]}`}
-              style={{ height: height(p.n), animationDelay: `${i * 0.12}s` }}
-            >
-              {p.n}
-              <span className="tt-vh"> (place {medal[i]})</span>
-            </div>
-          </div>
+      <dl className="slp-result-stats">
+        {activities.map(({ label, value }) => (
+          <PracticeActivityStat key={label} label={label} value={value} />
         ))}
-      </div>
-
-      <ul
-        style={{
-          listStyle: 'none',
-          margin: '0 0 16px',
-          padding: 0,
-          display: 'grid',
-          gap: 8,
-        }}
-      >
+      </dl>
+      <ul className="slp-result-words">
         {results.map((r, i) => (
-          <li
+          <PracticeResultWord
             key={i}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 10,
-              padding: '8px 12px',
-              background: '#fff',
-              borderRadius: 14,
-              border: '2px solid var(--line)',
-            }}
+            word={r.word}
+            index={i}
+            onRetry={onRetryWord}
           >
-            <strong style={{ flex: 1 }}>{r.word}</strong>
             {r.skipped ? <em>Skipped</em> : <StarMeter stars={r.stars} />}
-            <button
-              type="button"
-              className="tt-btn alt"
-              style={{ padding: '6px 14px' }}
-              onClick={() => onRetryWord(i)}
-              aria-label={`Try ${r.word} again`}
-            >
-              Again
-            </button>
-          </li>
+          </PracticeResultWord>
         ))}
       </ul>
       <p style={{ fontSize: '.9rem', margin: '0 0 16px' }}>
@@ -553,10 +435,10 @@ export function RoundRecap({
         helper or therapist how it went.
       </p>
       <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-        <button type="button" className="tt-btn" onClick={onAgain}>
+        <button type="button" className="slp-main-button" onClick={onAgain}>
           New round
         </button>
-        <button type="button" className="tt-btn alt" onClick={onDone}>
+        <button type="button" className="slp-game-pill" onClick={onDone}>
           Take a break
         </button>
       </div>

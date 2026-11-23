@@ -102,13 +102,39 @@ export function getPracticeStars(progress?: WordProgress): number {
     : 0
 }
 
-export function getCheckOutcome(result: AssessResponse): CheckOutcome {
+export function matchesPracticeAnswer(
+  transcript: string,
+  answers: string[],
+): boolean {
+  const normalize = (value: string) =>
+    value
+      .normalize('NFC')
+      .toLowerCase()
+      .match(/[\p{L}\p{M}\p{N}]+/gu)
+      ?.join(' ') ?? ''
+  const heard = normalize(transcript)
+  return answers.some((answer) => {
+    const phrase = normalize(answer)
+    if (!phrase || !heard) return false
+    const count = heard.split(' ').length / phrase.split(' ').length
+    return (
+      Number.isInteger(count) && Array(count).fill(phrase).join(' ') === heard
+    )
+  })
+}
+
+export function getCheckOutcome(
+  result: AssessResponse,
+  answers: string[] = [],
+): CheckOutcome {
   if (
     result.meta.schemaVersion !== '2.0' ||
     result.meta.measurement !== 'transcript_agreement_only'
   )
     return 'review'
   if (result.meta.status === 'unscorable') return 'unscorable'
+  if (matchesPracticeAnswer(result.analysis.transcript, answers))
+    return 'matched'
   if (result.meta.status === 'task_mismatch') return 'different'
   return result.meta.status === 'review_required' && result.meta.cer === 0
     ? 'matched'
@@ -142,26 +168,24 @@ export const checkFeedback: Record<
 > = {
   not_checked: {
     title: 'A practice turn recorded',
-    detail: 'Listen back together. The automatic word check is optional.',
+    detail: 'Choose Check my word to continue.',
   },
   checking: {
     title: 'The word listener is checking…',
     detail: 'Your practice star is already earned.',
   },
   matched: {
-    title: 'The transcript matched!',
-    detail:
-      'The automatic listener wrote the practice word. This does not measure sound accuracy.',
+    title: 'I heard your word!',
+    detail: 'You can move to the next picture.',
   },
   review: {
     title: 'Let’s listen together',
     detail:
-      'A helper can compare the recording and the practice word. The listener can make mistakes.',
+      'Ask a grown-up to listen with you. Sometimes the word listener hears things differently.',
   },
   different: {
     title: 'Let’s check what was heard',
-    detail:
-      'The listener heard something different. Play it back together; this is not a sound-correctness score.',
+    detail: 'Want to listen together? You can also try the next picture.',
   },
   unscorable: {
     title: 'A quieter spot might help',

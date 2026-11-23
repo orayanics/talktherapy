@@ -1,4 +1,5 @@
 import { Mic, RotateCcw, Square } from 'lucide-react'
+import type { ReactNode } from 'react'
 import type usePracticeRecorder from '../hooks/usePracticeRecorder'
 import type useSlpAssessment from '../hooks/useSlpAssessment'
 import type { PracticeLanguage } from '../data/practiceContent'
@@ -6,6 +7,9 @@ import type { PracticeReflection, WordProgress } from '../data/practiceGame'
 import PracticeWordFeedback from './PracticeWordFeedback'
 
 export default function PracticeTurn({
+  checksRemaining,
+  children,
+  canContinue,
   recorder,
   assessment,
   language,
@@ -19,6 +23,9 @@ export default function PracticeTurn({
   onReplayed,
   onReflect,
 }: {
+  checksRemaining: number
+  children: ReactNode
+  canContinue: boolean
   recorder: ReturnType<typeof usePracticeRecorder>
   assessment: ReturnType<typeof useSlpAssessment>
   language: PracticeLanguage
@@ -42,46 +49,59 @@ export default function PracticeTurn({
     recorder.state === 'recording' || recorder.state === 'requesting_permission'
   const status =
     recorder.state === 'requesting_permission'
-      ? 'Ask your helper to allow the microphone.'
-      : recorder.state === 'recording'
-        ? 'I’m listening. Say your word, then tap Done.'
+      ? 'Ask a grown-up to help turn on the mic.'
+      : capturing
+        ? 'Say your word. Tap Stop when you finish.'
         : assessment.isSubmitting
-          ? 'Listening to your turn…'
-          : result
-            ? 'Thanks for having a go!'
-            : recorder.audio
-              ? 'Want to hear your turn?'
-              : language === 'tl'
-                ? 'Handa ka na ba?'
-                : 'Ready when you are.'
+          ? 'Checking your word�'
+          : recorder.audio
+            ? 'Your recording is ready. Tap Check my word.'
+            : language === 'tl'
+              ? 'Pindutin ang Record my word, tapos sabihin ang salita.'
+              : 'Tap Record my word, then say it out loud.'
   return (
-    <div className="slp-turn space-y-5">
-      {(!progress || capturing) && (
-        <div>
-          <p className="slp-section-label hidden sm:block">
-            {language === 'tl' ? 'Ikaw naman' : 'Your turn'}
-          </p>
-          <p
-            className="mt-2 text-xl font-bold"
-            role="status"
-            aria-live="polite"
-          >
+    <div className="slp-game-turn">
+      <div className="slp-game-card">
+        {children}
+        {!result && (
+          <p className="slp-turn-instruction" role="status">
             {status}
           </p>
-          {!recorder.audio && !locked && (
-            <p className="mt-3 text-sm leading-relaxed text-slate-600 hidden sm:block">
-              {language === 'tl'
-                ? 'Tingnan ang larawan. Sabihin ang sagot. Puwedeng humingi ng tulong.'
-                : 'Look at the picture and say its name. A helper can give you a clue or say the word first.'}
-            </p>
-          )}
-        </div>
-      )}
-      {error && (
-        <p role="alert" className="rounded-box bg-red-50 p-4 text-red-900">
-          {error}
-        </p>
-      )}
+        )}
+        {error && (
+          <p role="alert" className="rounded-box bg-red-50 p-4 text-red-900">
+            {error}
+          </p>
+        )}
+        {recorder.url && !result && (
+          <div className="space-y-2">
+            <label htmlFor="practice-replay" className="text-sm font-semibold">
+              Listen to my turn
+            </label>
+            <audio
+              id="practice-replay"
+              controls
+              src={recorder.url}
+              className="w-full"
+              aria-label="Listen to my recording"
+              onEnded={onReplayed}
+            />
+          </div>
+        )}
+        {progress && canContinue && (
+          <PracticeWordFeedback
+            disabled={locked}
+            progress={progress}
+            audioUrl={recorder.url}
+            onReplayed={onReplayed}
+            onReflect={onReflect}
+            focusMode={focusMode}
+            onAgain={onStart}
+            onSkip={onNext}
+            canContinue={canContinue}
+          />
+        )}
+      </div>
       {recorder.state === 'recording' ? (
         <button
           type="button"
@@ -89,9 +109,9 @@ export default function PracticeTurn({
           onClick={recorder.stop}
         >
           <Square size={20} aria-hidden="true" />
-          Done
+          Stop recording
         </button>
-      ) : !progress || capturing ? (
+      ) : !recorder.audio || capturing ? (
         <button
           type="button"
           className="slp-main-button"
@@ -99,58 +119,46 @@ export default function PracticeTurn({
           onClick={onStart}
         >
           <Mic size={20} aria-hidden="true" />
-          {recorder.audio ? 'Record again' : 'My turn'}
+          {recorder.error
+            ? 'Retry recording'
+            : recorder.audio
+              ? 'Record again'
+              : 'Record my word'}
         </button>
       ) : null}
-      {recorder.url && !progress && (
-        <div className="space-y-2">
-          <label htmlFor="practice-replay" className="text-sm font-semibold">
-            Listen to my turn
-          </label>
-          <audio
-            id="practice-replay"
-            controls
-            src={recorder.url}
-            className="w-full"
-            aria-label="Listen to my recording"
-            onEnded={onReplayed}
-          />
-        </div>
-      )}
-      {progress && !capturing && (
-        <PracticeWordFeedback
-          disabled={locked}
-          progress={progress}
-          audioUrl={recorder.url}
-          onReplayed={onReplayed}
-          onReflect={onReflect}
-          focusMode={focusMode}
-          onAgain={onStart}
-          onSkip={onNext}
-        />
-      )}
       {recorder.audio && !result && (
         <button
           type="button"
-          className="slp-secondary-button w-full"
-          disabled={locked}
+          className="slp-main-button"
+          disabled={locked || checksRemaining === 0}
           onClick={onFinish}
         >
           {assessment.isSubmitting ? 'Listening…' : 'Check my word'}
         </button>
       )}
       <div className="slp-turn-actions">
-        <button
-          type="button"
-          className={
-            progress && !capturing ? 'slp-main-button' : 'slp-secondary-button'
-          }
-          disabled={locked}
-          onClick={onNext}
-        >
-          {last ? 'See my results' : progress ? 'Continue' : 'Skip for now'}
-        </button>
-        {progress && !capturing && (
+        {checksRemaining === 0 && !result && (
+          <p role="status">
+            {language === 'tl'
+              ? 'Maaari kang magpatuloy sa susunod na larawan.'
+              : 'You can move on to the next picture.'}
+          </p>
+        )}
+        {!canContinue && !locked && (
+          <button
+            type="button"
+            className="slp-secondary-button"
+            onClick={onNext}
+          >
+            {language === 'tl' ? 'Laktawan' : 'Skip picture'}
+          </button>
+        )}
+        {canContinue && (
+          <button type="button" className="slp-main-button" onClick={onNext}>
+            {last ? 'Finish my round' : 'Next picture'}
+          </button>
+        )}
+        {recorder.audio && !capturing && (
           <button
             type="button"
             className="slp-secondary-button"
@@ -167,9 +175,6 @@ export default function PracticeTurn({
           </button>
         )}
       </div>
-      <p className="text-xs leading-relaxed text-slate-600">
-        No rush. A try counts, even when you need help.
-      </p>
     </div>
   )
 }

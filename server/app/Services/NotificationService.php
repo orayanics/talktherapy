@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\OutboxMessage;
 use App\Models\User;
+use App\Notifications\SystemNotification;
 use Illuminate\Support\Str;
 
 class NotificationService
@@ -29,7 +30,7 @@ class NotificationService
             'aggregate_id' => $recipient->id,
             'recipient_id' => $recipient->id,
             'delivery_key' => 'email:'.$template.':'.$recipient->id.':'.Str::uuid(),
-            'payload' => $payload,
+            'payload' => SystemNotification::workflowPayload($template, $payload),
             'available_at' => now(),
             'expires_at' => now()->addDays(30),
         ]);

@@ -9,19 +9,437 @@
   border-radius: 2rem;
   padding: clamp(1rem, 3vw, 2rem);
 }
-.slp-practice[data-practice-theme='ocean'] {
-  --practice-accent: #0f766e;
-  --practice-ink: #164e63;
-  --practice-tint: #dff4f1;
-  --practice-ground: #f0f9fa;
-  --practice-depth: #0b5651;
+.slp-deck {
+  display: grid;
+  gap: 1rem;
+  width: 100%;
+  max-width: 42rem;
+  margin-inline: auto;
+  min-width: 0;
 }
-.slp-practice[data-practice-theme='space'] {
-  --practice-accent: #6d28d9;
-  --practice-ink: #3b2368;
-  --practice-tint: #ede7fb;
-  --practice-ground: #f7f5fc;
-  --practice-depth: #4c1d95;
+.slp-deck-toolbar,
+.slp-deck-card-top,
+.slp-deck-card-bottom,
+.slp-deck-navigation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.slp-deck-eyebrow {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--practice-accent);
+}
+.slp-deck-count {
+  display: flex;
+  align-items: baseline;
+  gap: 0.375rem;
+  white-space: nowrap;
+  background: var(--practice-tint);
+  border-radius: 0.875rem;
+  padding: 0.375rem 0.75rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--practice-ink);
+}
+.slp-deck-count strong {
+  font-size: 1.25rem;
+}
+.slp-deck-count > span {
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+.slp-deck-label {
+  font-size: 1rem;
+  font-weight: 750;
+  color: var(--practice-ink);
+}
+.slp-deck-caption {
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  color: #526477;
+}
+.slp-deck-position {
+  appearance: none;
+  width: 100%;
+  height: 0.5rem;
+  border: 0;
+  border-radius: 1rem;
+  overflow: hidden;
+  background: var(--practice-tint);
+  color: var(--color-primary);
+}
+.slp-deck-position::-webkit-progress-bar {
+  background: var(--practice-tint);
+}
+.slp-deck-position::-webkit-progress-value {
+  background: var(--color-primary);
+  border-radius: 1rem;
+}
+.slp-deck-position::-moz-progress-bar {
+  background: var(--color-primary);
+  border-radius: 1rem;
+}
+.slp-deck-hint {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  color: #475569;
+  font-size: 0.75rem;
+  text-align: center;
+}
+.slp-deck-stage {
+  position: relative;
+  isolation: isolate;
+  padding: 0.5rem 0.5rem 1.25rem;
+  overflow: clip;
+}
+.slp-deck-stack {
+  position: absolute;
+  inset: 1.5rem 1.25rem 0.5rem;
+  border: 2px solid var(--practice-border);
+  border-radius: 1.5rem;
+  background: var(--practice-tint);
+  transform: rotate(-1.5deg);
+  z-index: -1;
+}
+.slp-deck-card {
+  display: flex;
+  flex-direction: column;
+  min-height: 21rem;
+  padding: clamp(1.25rem, 4vw, 1.75rem);
+  border: 2px solid var(--practice-border);
+  border-bottom-width: 5px;
+  border-radius: 1.5rem;
+  background: white;
+  color: var(--practice-ink);
+  touch-action: pan-y;
+  user-select: none;
+  cursor: grab;
+  transform-origin: 50% 80%;
+}
+.slp-deck-card-top {
+  color: var(--practice-accent);
+}
+.slp-deck-card-number {
+  font-size: 0.875rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.slp-deck-sound {
+  margin: 0 auto 0.5rem;
+  color: var(--practice-accent);
+}
+.slp-deck-type {
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.75rem;
+  background: var(--practice-tint);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: capitalize;
+}
+.slp-deck-prompt {
+  flex: 1;
+  display: grid;
+  align-content: center;
+  gap: 0.75rem;
+  padding-block: 2rem;
+  text-align: center;
+}
+.slp-deck-prompt h3 {
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  line-height: 1.25;
+  font-weight: 750;
+  overflow-wrap: anywhere;
+}
+.slp-deck-prompt p,
+.slp-deck-card-bottom {
+  font-size: 0.875rem;
+  color: #475569;
+}
+.slp-deck-card-bottom {
+  border-top: 1px solid var(--practice-border);
+  padding-top: 1rem;
+}
+.slp-deck-card-bottom > span:first-child {
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+.slp-deck-language {
+  text-transform: uppercase;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+.slp-deck-card[data-phase='dragging'] {
+  cursor: grabbing;
+  transition: none;
+}
+.slp-deck-card[data-locked='true'] {
+  cursor: default;
+}
+.slp-deck-card[data-phase='idle'] {
+  transition: transform 400ms cubic-bezier(0.22, 1.35, 0.36, 1);
+}
+.slp-deck-card[data-phase='leaving'] {
+  transition: transform 240ms ease-in;
+}
+.slp-deck-arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 3rem;
+  min-width: 3rem;
+  padding: 0.625rem 1rem;
+  border: 2px solid var(--practice-border);
+  border-radius: 0.875rem;
+  background: white;
+  color: var(--practice-ink);
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 3px 0 var(--practice-border);
+}
+.slp-deck-arrow:hover:not(:disabled) {
+  border-color: var(--practice-accent);
+}
+.slp-deck-arrow:last-child:not(:disabled) {
+  background: var(--practice-tint);
+  border-color: var(--practice-border);
+}
+.slp-deck-arrow:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: none;
+}
+.slp-deck-recording,
+.slp-picture-practice .slp-turn,
+.slp-picture-practice .slp-picture-panel {
+  padding: clamp(1rem, 3vw, 1.5rem);
+  border: 1px solid var(--practice-border);
+  border-radius: 1.5rem;
+  background: #fff;
+}
+.slp-deck-recording-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.slp-deck-limit {
+  flex-shrink: 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #526477;
+}
+.slp-deck-recording-title {
+  color: var(--practice-ink);
+  font-size: 1.125rem;
+  font-weight: 750;
+}
+.slp-assigned-practice,
+.slp-picture-practice {
+  --practice-accent: color-mix(in oklch, var(--color-primary), #123a55 50%);
+  --practice-ink: #183c53;
+  --practice-tint: color-mix(in oklch, var(--color-primary), white 89%);
+  --practice-ground: color-mix(in oklch, var(--color-primary), white 97%);
+  --practice-border: color-mix(in oklch, var(--color-primary), white 67%);
+  --practice-depth: color-mix(in oklch, var(--color-primary), #123a55 60%);
+  font-family: var(--font-sans);
+  border: 1px solid var(--practice-border);
+  border-radius: 1.75rem;
+}
+.slp-assignment-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  max-width: 42rem;
+  margin: 0 auto 1.75rem;
+}
+.slp-assignment-header h2,
+.slp-picture-practice > header h2 {
+  color: var(--practice-ink);
+  font-size: clamp(1.25rem, 3vw, 1.625rem);
+  font-weight: 750;
+  line-height: 1.3;
+}
+.slp-assigned-practice .tt-card {
+  background: #fff;
+  border-color: var(--practice-border);
+}
+.slp-deck-lock {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  background: var(--practice-tint);
+  color: var(--practice-ink);
+  font-size: 0.8125rem;
+}
+.slp-deck-lock svg {
+  flex-shrink: 0;
+}
+.slp-recorder {
+  display: grid;
+  gap: 1.25rem;
+  margin-top: 1.25rem;
+}
+.slp-recorder-intro {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  color: #526477;
+}
+.slp-recording-consent {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1rem;
+  border: 1px solid var(--practice-border);
+  border-radius: 0.875rem;
+  background: var(--practice-ground);
+  font-size: 0.8125rem;
+  line-height: 1.7;
+  color: #334155;
+  cursor: pointer;
+}
+.slp-recording-consent:has(input:checked) {
+  border-color: var(--practice-accent);
+}
+.slp-recording-consent input {
+  flex-shrink: 0;
+  width: 1.125rem;
+  height: 1.125rem;
+  margin-top: 0.125rem;
+  accent-color: var(--practice-accent);
+  cursor: pointer;
+}
+.slp-consent-note {
+  display: block;
+  color: #526477;
+}
+.slp-recording-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.875rem;
+  padding-bottom: 0.25rem;
+}
+.slp-record-button,
+.slp-send-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  flex: 1 1 12rem;
+  min-height: 3.25rem;
+  padding: 0.75rem 1rem;
+  border: 2px solid transparent;
+  border-radius: 0.875rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.slp-record-button {
+  background: var(--practice-accent);
+  color: #fff;
+  box-shadow: 0 4px 0 var(--practice-depth);
+}
+.slp-record-button[data-recording='true'] {
+  background: #b42338;
+  box-shadow: 0 4px 0 #851a2a;
+}
+.slp-send-button {
+  background: #fff;
+  color: var(--practice-ink);
+  border-color: var(--practice-border);
+  box-shadow: 0 4px 0 var(--practice-border);
+}
+.slp-record-button:active:not(:disabled),
+.slp-send-button:active:not(:disabled) {
+  transform: translateY(3px);
+  box-shadow: none;
+}
+.slp-record-button:hover:not(:disabled),
+.slp-send-button:hover:not(:disabled) {
+  filter: brightness(0.96);
+}
+.slp-recording-success {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  margin-top: 1.25rem;
+  padding: 1rem;
+  background: var(--practice-tint);
+  border-radius: 1rem;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--practice-ink);
+}
+.slp-recording-status {
+  display: flex;
+  gap: 0.375rem;
+  align-items: center;
+  margin-bottom: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 750;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .slp-recording-spinner {
+    animation: slp-recording-spin 1s linear infinite;
+  }
+  .slp-deck-arrow,
+  .slp-record-button,
+  .slp-send-button {
+    transition:
+      transform 120ms ease,
+      box-shadow 120ms ease,
+      background-color 150ms ease;
+  }
+  @keyframes slp-recording-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+}
+@media (max-width: 479px) {
+  .slp-deck-navigation {
+    flex-wrap: wrap;
+  }
+  .slp-deck-navigation .slp-deck-hint {
+    order: 3;
+    width: 100%;
+  }
+  .slp-deck-arrow {
+    flex: 1;
+  }
+  .slp-deck-card {
+    min-height: 19rem;
+  }
+  .slp-deck-recording-header {
+    align-items: flex-start;
+  }
+  .slp-deck-limit {
+    padding-top: 0.25rem;
+  }
+  .slp-deck-caption {
+    max-width: 16rem;
+  }
+  .slp-assignment-header > .slp-tala {
+    width: 48px;
+    height: 48px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .slp-deck-card {
+    transition: none !important;
+  }
+  .slp-deck-arrow:active:not(:disabled),
+  .slp-record-button:active:not(:disabled),
+  .slp-send-button:active:not(:disabled) {
+    transform: none;
+  }
 }
 .slp-practice[data-practice-mode='focus'] {
   --practice-accent: #334155;
@@ -39,7 +457,6 @@
   font-size: 0.875rem;
   font-weight: 600;
 }
-.slp-theme-button,
 .slp-secondary-button,
 .slp-text-button,
 .slp-reveal {
@@ -53,16 +470,6 @@
   font-weight: 600;
   font-size: 0.875rem;
   cursor: pointer;
-}
-.slp-theme-button {
-  border: 1px solid #cbd5e1;
-  color: #334155;
-  background: #fff;
-}
-.slp-theme-button[aria-pressed='true'] {
-  border: 2px solid var(--practice-accent);
-  color: var(--practice-ink);
-  background: var(--practice-tint);
 }
 .slp-main-button {
   display: flex;
@@ -86,12 +493,8 @@
   background: #fff;
   box-shadow: 0 3px 0 #cbd5e1;
 }
-.slp-theme-button {
-  box-shadow: 0 3px 0 #cbd5e1;
-}
 .slp-main-button:active:not(:disabled),
-.slp-secondary-button:active:not(:disabled),
-.slp-theme-button:active:not(:disabled) {
+.slp-secondary-button:active:not(:disabled) {
   transform: translateY(3px);
   box-shadow: none;
 }
@@ -131,13 +534,6 @@
   gap: 1.25rem;
   max-width: 46rem;
   margin-inline: auto;
-}
-.slp-lesson-stage .slp-turn {
-  padding: 0.25rem 0;
-}
-.slp-lesson-stage .slp-picture-panel {
-  border-width: 2px;
-  border-bottom-width: 5px;
 }
 .slp-lesson-stage .slp-picture-frame {
   min-height: 10rem;
@@ -239,6 +635,7 @@
   cursor: not-allowed;
 }
 .slp-practice button:focus-visible,
+.slp-practice input:focus-visible,
 .slp-practice select:focus-visible,
 .slp-practice summary:focus-visible {
   outline: 3px solid var(--practice-accent);
@@ -273,9 +670,10 @@
 .slp-picture-panel {
   min-width: 0;
   border-radius: 1.5rem;
-  padding: 1rem;
+  padding: clamp(1rem, 3vw, 1.5rem);
   background: #fff;
-  border: 3px solid var(--practice-tint);
+  border: 1px solid var(--practice-border, var(--practice-tint));
+  box-shadow: 0 3px 0 var(--practice-border, var(--practice-tint));
 }
 .slp-picture-frame {
   display: flex;
@@ -284,8 +682,9 @@
   aspect-ratio: 4 / 3;
   min-height: 12rem;
   overflow: hidden;
-  border-radius: 0.75rem;
-  background: white;
+  border-radius: 1rem;
+  background: var(--practice-ground);
+  border: 1px solid var(--practice-tint);
 }
 .slp-picture-frame img {
   width: 100%;
@@ -302,7 +701,372 @@
 }
 .slp-turn {
   min-width: 0;
-  padding: 1rem 0;
+  padding: 1.25rem clamp(1rem, 3vw, 1.5rem);
+  border: 1px solid var(--practice-border, var(--practice-tint));
+  border-radius: 1.5rem;
+  background: #fff;
+  box-shadow: 0 3px 0 var(--practice-border, var(--practice-tint));
+}
+.slp-practice.slp-assigned-practice,
+.slp-practice.slp-picture-practice {
+  --game-deep: color-mix(in oklch, var(--color-primary), #092d57 66%);
+  --game-blue: color-mix(in oklch, var(--color-primary), #075781 56%);
+  --game-gold: #ffdf59;
+  width: 100%;
+  max-width: 40rem;
+  display: grid;
+  gap: clamp(0.875rem, 2vw, 1.25rem);
+  padding: clamp(1rem, 3vw, 2rem);
+  border: 2px solid color-mix(in oklch, var(--color-primary), white 42%);
+  background:
+    repeating-radial-gradient(
+      circle at 108% -3%,
+      transparent 0 4rem,
+      #ffffff12 4.05rem 4.12rem,
+      transparent 4.16rem 7rem
+    ),
+    linear-gradient(155deg, var(--game-blue), var(--game-deep) 78%);
+  background-color: var(--game-deep);
+}
+.slp-assigned-practice > *,
+.slp-picture-practice > * {
+  min-width: 0;
+}
+.slp-game-tools,
+.slp-picture-practice .slp-game-heading,
+.slp-question-heading,
+.slp-round-caption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+.slp-game-pill,
+.slp-star-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  padding: 0.5rem 0.875rem;
+  border-radius: 99rem;
+  background: #092e54a8;
+  color: white;
+  font-weight: 700;
+}
+.slp-game-pill {
+  min-height: 44px;
+  cursor: pointer;
+}
+.slp-game-pill[aria-expanded='true'] {
+  background: white;
+  color: var(--game-deep);
+}
+.slp-star-pill {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.slp-star-pill svg {
+  color: var(--game-gold);
+}
+.slp-assigned-practice .slp-assignment-header h2,
+.slp-picture-practice .slp-game-heading h2 {
+  font-size: clamp(1.5rem, 4vw, 2.25rem);
+  font-weight: 800;
+  line-height: 1.1;
+  color: white;
+}
+.slp-game-progress .slp-round-caption,
+.slp-game-progress .slp-round-caption span {
+  color: white;
+}
+.slp-assigned-practice .slp-deck-position,
+.slp-assigned-practice progress::-webkit-progress-bar,
+.slp-game-progress .slp-deck-position,
+.slp-game-progress progress::-webkit-progress-bar {
+  background: #092e54a8;
+}
+.slp-assigned-practice progress::-webkit-progress-value,
+.slp-game-progress progress::-webkit-progress-value {
+  background: var(--game-gold);
+}
+.slp-assigned-practice progress::-moz-progress-bar,
+.slp-game-progress progress::-moz-progress-bar {
+  background: var(--game-gold);
+}
+.slp-game-turn,
+.slp-picture-practice .tt-ready {
+  display: grid;
+  gap: 1rem;
+}
+.slp-assigned-practice {
+  margin-inline: auto;
+}
+.slp-assigned-practice .slp-assignment-header {
+  justify-self: start;
+  margin: 0;
+  color: white;
+}
+.slp-assigned-practice > .slp-section-label,
+.slp-assigned-practice
+  .slp-deck-toolbar
+  :is(.slp-deck-label, .slp-deck-caption),
+.slp-assigned-practice .slp-deck-hint {
+  color: white;
+}
+.slp-assigned-practice .slp-deck-count {
+  background: #092e54a8;
+  color: white;
+  border-radius: 99rem;
+}
+.slp-assigned-practice .slp-deck-recording,
+.slp-assigned-practice .slp-deck-card {
+  border-radius: 1.25rem;
+  box-shadow: 0 5px 0 #06254438;
+}
+.slp-assigned-practice .slp-record-button:not([data-recording='true']),
+.slp-assigned-practice .slp-send-button:enabled {
+  background: var(--game-gold);
+  border-color: transparent;
+  color: #463600;
+  box-shadow: 0 4px 0 #b79117;
+}
+.slp-assigned-practice .slp-deck-arrow:focus-visible {
+  outline-color: white;
+}
+.slp-game-card,
+.slp-welcome-card {
+  padding: clamp(1rem, 4vw, 2rem);
+  border-radius: 1.25rem;
+  background: white;
+  color: var(--practice-ink);
+  box-shadow: 0 5px 0 #06254438;
+}
+.slp-game-card > * + * {
+  margin-top: 1rem;
+}
+.slp-picture-practice .slp-game-card .slp-picture-panel {
+  background: transparent;
+  border: 0;
+  padding: 0;
+  box-shadow: none;
+}
+.slp-question-heading {
+  margin-bottom: 1rem;
+}
+.slp-turn-instruction {
+  font-size: 1rem;
+  line-height: 1.5;
+  font-weight: 650;
+}
+.slp-picture-practice .tt-ready {
+  background: transparent;
+  border: 0;
+  padding: 0;
+  justify-items: stretch;
+}
+.slp-welcome-card {
+  display: grid;
+  justify-items: center;
+  gap: 0.75rem;
+}
+.slp-welcome-card h3 {
+  font-size: clamp(1.375rem, 4vw, 2rem);
+  font-weight: 800;
+}
+.slp-preview-hand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem 0;
+  width: 100%;
+  background: var(--practice-tint);
+  border-radius: 1rem;
+}
+.slp-preview-hand img {
+  width: 26%;
+  max-width: 7rem;
+  aspect-ratio: 4/5;
+  object-fit: contain;
+  background: white;
+  padding: 0.3rem;
+  border: 1px solid var(--practice-border);
+  border-radius: 0.625rem;
+  box-shadow: 0 4px 8px #12385421;
+}
+.slp-preview-hand img:first-child {
+  transform: rotate(-9deg) translateX(8%);
+}
+.slp-preview-hand img:nth-child(2) {
+  position: relative;
+  z-index: 1;
+}
+.slp-preview-hand img:last-child {
+  transform: rotate(9deg) translateX(-8%);
+}
+.slp-picture-practice .slp-main-button {
+  background: var(--game-gold);
+  color: #463600;
+  box-shadow: 0 4px 0 #b79117;
+}
+.slp-game-turn > .slp-turn-actions {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+.slp-turn-actions:empty {
+  display: none;
+}
+.slp-game-turn > .slp-turn-actions > .slp-main-button {
+  flex-basis: 100%;
+}
+.slp-game-results {
+  position: relative;
+  display: grid;
+  gap: 1rem;
+  color: white;
+}
+.slp-result-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+.slp-result-stats > div {
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  padding: 0.875rem 0.25rem;
+  background: #ffffff18;
+  border: 1px solid #ffffff4d;
+  border-radius: 1rem;
+}
+.slp-result-stats dd {
+  font-weight: 800;
+  font-size: 1.6rem;
+}
+.slp-result-stats dt {
+  font-size: 0.875rem;
+}
+.slp-result-words {
+  display: grid;
+  gap: 0.5rem;
+}
+.slp-result-words li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.875rem;
+  background: white;
+  color: var(--practice-ink);
+}
+.slp-result-words strong {
+  overflow-wrap: anywhere;
+}
+.slp-result-words .tt-star {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+.slp-game-turn > .slp-turn-actions .slp-text-button {
+  color: white;
+}
+.slp-picture-practice .slp-feedback-stage,
+.slp-picture-practice .slp-lesson-stage {
+  width: 100%;
+  margin: 0;
+}
+.slp-picture-practice .slp-game-tools button:focus-visible {
+  outline-color: white;
+}
+.slp-picture-practice[data-practice-mode='focus'] {
+  background: var(--game-deep);
+}
+.slp-extra-practice {
+  border-top: 1px solid var(--practice-border);
+}
+.slp-extra-practice > summary {
+  padding-block: 1rem;
+  color: var(--practice-ink);
+  cursor: pointer;
+  font-weight: 650;
+}
+.slp-extra-practice[open] > * + * {
+  margin-top: 1rem;
+}
+.slp-picture-practice .slp-adventure-mark {
+  padding: 0.5rem;
+  border-radius: 0.875rem;
+  background: var(--practice-tint);
+}
+.slp-activity-toolbar,
+.slp-round-caption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+  color: var(--practice-ink);
+}
+.slp-activity-toolbar {
+  padding: 0.25rem 0.875rem;
+  border: 1px solid var(--practice-border);
+  border-radius: 1rem;
+  background: white;
+}
+.slp-calm-toggle,
+.slp-settings-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  font-size: 0.875rem;
+  font-weight: 650;
+  cursor: pointer;
+}
+.slp-calm-toggle input {
+  accent-color: var(--practice-accent);
+}
+.slp-settings-toggle[aria-expanded='true'] svg:last-child {
+  transform: rotate(180deg);
+}
+#practice-activity-settings {
+  padding: 1rem;
+  border-radius: 1rem;
+  background: var(--practice-tint);
+}
+.slp-round-caption {
+  margin-bottom: 0.375rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+}
+.slp-round-caption span:last-child {
+  color: #526477;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .tt-root:not(.tt-calm) .slp-picture-panel {
+    animation: slp-picture-appear 180ms ease-out;
+  }
+}
+@keyframes slp-picture-appear {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.slp-picture-practice .slp-lesson-stage {
+  gap: 1rem;
+  max-width: 42rem;
+}
+.slp-picture-practice .slp-main-button,
+.slp-picture-practice .slp-secondary-button {
+  border-radius: 0.875rem;
 }
 .slp-feedback {
   padding: 1.25rem;
@@ -332,8 +1096,7 @@
   }
 }
 @media (prefers-reduced-motion: no-preference) {
-  .slp-main-button,
-  .slp-theme-button {
+  .slp-main-button {
     transition: background-color 0.15s ease;
   }
   .slp-main-button:hover:not(:disabled) {

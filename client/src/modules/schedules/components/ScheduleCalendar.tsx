@@ -1,11 +1,14 @@
-import type { ReactNode } from 'react'
 import type { Appointment } from '#/modules/appointments/types/appointment'
 import type { Slot } from '#/modules/schedules/types/slot'
+import type { ReactNode } from 'react'
 
-import { useState } from 'react'
 import { formatDate } from '#/utils/useDate'
+import { useState } from 'react'
 
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { ChevronLeft,ChevronRight } from 'lucide-react'
+import CalendarAppointmentRow from './CalendarAppointmentRow'
+import CalendarSlotButton from './CalendarSlotButton'
+import ScheduleCalendarDay from './ScheduleCalendarDay'
 
 export default function ScheduleCalendar({
   start,
@@ -127,7 +130,7 @@ export default function ScheduleCalendar({
           </button>
         </div>
       </div>
-      <div className="flex flex-col border border-border lg:flex-row">
+      <div className="flex flex-col border border-border rounded-box lg:flex-row">
         <div className="min-w-0 flex-1 overflow-x-auto">
           <div className="grid min-w-4xl grid-cols-7">
             {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day) => (
@@ -149,53 +152,23 @@ export default function ScheduleCalendar({
               )
 
               return (
-                <div
+                <ScheduleCalendarDay
                   key={key}
-                  className="min-h-32 overflow-hidden bg-white p-2 border-border border-t border-l nth-[7n+1]:border-l-0"
-                >
-                  <button
-                    type="button"
-                    className={`flex p-2 items-center justify-center rounded-box text-xs font-semibold transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 ${
-                      selectedDate === key ||
-                      (key === today && selectedDate === key)
-                        ? 'hover:bg-primary/20 text-primary'
-                        : outsideMonth
-                          ? 'text-slate-400'
-                          : 'text-slate-700'
-                    }`}
-                    aria-label={formatDate(date, 'EEEE, MMMM d, yyyy')}
-                    onClick={() => {
-                      setSelectedDate(key)
-                      onSelect?.(key)
-                    }}
-                  >
-                    {date.getUTCDate()}
-                  </button>
-                  <div className="mt-2 space-y-1 overflow-hidden text-xs">
-                    {renderDay ? (
-                      renderDay(key)
-                    ) : (
-                      <>
-                        {/* TODO: Collapsible that is scrollable, remove slicing */}
-                        {dayAppointments.slice(0, 3).map((appointment) => (
-                          <button
-                            key={appointment.id}
-                            type="button"
-                            className="block w-full truncate rounded px-1 py-0.5 text-left text-slate-600 hover:bg-slate-100"
-                            onClick={() => onAppointmentClick?.(appointment)}
-                          >
-                            {appointment.patient.name}
-                          </button>
-                        ))}
-                        {dayAppointments.length > 3 && (
-                          <span className="block px-1 text-slate-400">
-                            +{dayAppointments.length - 3} more
-                          </span>
-                        )}
-                      </>
-                    )}
-                  </div>
-                </div>
+                  date={date}
+                  dateKey={key}
+                  outsideMonth={outsideMonth}
+                  selected={
+                    selectedDate === key ||
+                    (key === today && selectedDate === key)
+                  }
+                  appointments={dayAppointments}
+                  renderDay={renderDay}
+                  onSelect={(selectedKey) => {
+                    setSelectedDate(selectedKey)
+                    onSelect?.(selectedKey)
+                  }}
+                  onAppointmentClick={onAppointmentClick}
+                />
               )
             })}
           </div>
@@ -214,72 +187,22 @@ export default function ScheduleCalendar({
             </p>
             <div className="space-y-2 pt-2">
               {selectedAppointments.map((appointment) => (
-                <div
+                <CalendarAppointmentRow
                   key={appointment.id}
-                  className="rounded-box border border-border hover:border-primary"
-                >
-                  <button
-                    type="button"
-                    className="w-full text-left transition-colors px-3 py-2"
-                    onClick={() => onAppointmentClick?.(appointment)}
-                  >
-                    <span className="block font-medium">
-                      {appointment.patient.name}
-                    </span>
-                    <span className="block text-xs text-muted">
-                      {formatDate(appointment.slot.start_at, 'MMM d, p')} ·{' '}
-                      {appointment.status}
-                    </span>
-                  </button>
-                  {isClinician && (
-                    <div className="mt-2 flex gap-2">
-                      {appointment.status === 'PENDING' && (
-                        <>
-                          <button
-                            type="button"
-                            className="btn btn-xs btn-neutral"
-                            onClick={() => onOpenAcceptAction?.(appointment)}
-                          >
-                            Accept
-                          </button>
-                          <button
-                            type="button"
-                            className="btn btn-xs btn-error"
-                            onClick={() => onOpenAction?.(appointment)}
-                          >
-                            Reject
-                          </button>
-                        </>
-                      )}
-                      {appointment.status === 'ACCEPTED' && (
-                        <button
-                          type="button"
-                          className="btn btn-xs btn-success"
-                          onClick={() => onOpenCompleteAction?.(appointment)}
-                        >
-                          Complete
-                        </button>
-                      )}
-                    </div>
-                  )}
-                </div>
+                  onAppointmentClick={onAppointmentClick}
+                  appointment={appointment}
+                  isClinician={isClinician}
+                  onOpenAcceptAction={onOpenAcceptAction}
+                  onOpenAction={onOpenAction}
+                  onOpenCompleteAction={onOpenCompleteAction}
+                />
               ))}
               {selectedSlots.map((slot) => (
-                <button
+                <CalendarSlotButton
                   key={slot.id}
-                  type="button"
-                  className="w-full rounded-box border border-border p-4 text-left hover:bg-base-200"
-                  onClick={() => onSlotClick?.(slot)}
-                >
-                  <span className="block font-medium text-slate-900">
-                    {formatDate(slot.start_at, 'p')} –{' '}
-                    {formatDate(slot.end_at, 'p')}
-                  </span>
-                  <span className="block text-xs text-slate-500">
-                    {slot.status}
-                    {slot.is_hidden ? ' · Hidden' : ''}
-                  </span>
-                </button>
+                  onSlotClick={onSlotClick}
+                  slot={slot}
+                />
               ))}
               {selectedAppointments.length === 0 &&
                 selectedSlots.length === 0 && (

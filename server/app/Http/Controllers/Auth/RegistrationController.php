@@ -42,6 +42,9 @@ class RegistrationController extends Controller
                 'policy_version' => '2026-10-28',
                 'accepted_at' => now(),
             ]);
+            ConsentEvidence::query()->create([
+                'user_id' => $user->id, 'purpose' => 'patient_privacy', 'policy_version' => 'v1', 'accepted_at' => now(),
+            ]);
             $code = $issuer->handle($user, $user->email);
             AuditLog::query()->create([
                 'actor_id' => null,

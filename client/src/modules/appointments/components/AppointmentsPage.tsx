@@ -1,6 +1,6 @@
 import type { TAppointmentAction } from '#/modules/appointments/types/schema'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useSearch, useNavigate } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { formatDate, getMonthRange } from '#/utils/useDate'
@@ -63,6 +63,12 @@ export default function AppointmentsPage() {
   >(null)
 
   const appointments = data?.data ?? []
+
+  useEffect(() => {
+    if (search.appointmentId) {
+      setDetailsAppointmentId(search.appointmentId)
+    }
+  }, [search.appointmentId])
 
   const openAction = (id: string) => {
     setSelected(id)

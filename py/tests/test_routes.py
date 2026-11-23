@@ -89,3 +89,20 @@ def test_unsupported_language_is_rejected(client):
     )
     assert response.status_code == 422
     routes.worker.transcribe.assert_not_called()
+
+
+@pytest.mark.parametrize("length,expected_status", [(2000, 200), (2001, 422)])
+def test_collection_prompt_length_matches_laravel(client, length, expected_status):
+    prompt = "a" * length
+    response = client.post(
+        "/v1/assess",
+        headers={"X-Service-Token": "test-secret"},
+        files={"audio": ("recording.wav", recording(), "audio/wav")},
+        data={"referenceText": prompt, "language": "tl"},
+    )
+    assert response.status_code == expected_status
+    if expected_status == 200:
+        assert response.json()["analysis"]["structured"]["reference"] == prompt
+        assert routes.worker.transcribe.call_args.kwargs["language"] == "tl"
+    else:
+        routes.worker.transcribe.assert_not_called()

@@ -59,10 +59,7 @@ class AdminUserStatusController extends Controller
                 'details' => ['reason' => $request->validated('reason')],
             ]);
             $notifications->inApp($lockedUser, 'account', $status === UserStatus::Suspended ? 'Account suspended' : 'Account reactivated', $status === UserStatus::Suspended ? 'Your TalkTherapy account was suspended.' : 'Your TalkTherapy account was reactivated.');
-            $message = $status === UserStatus::Suspended
-                ? 'Your TalkTherapy account was suspended. Reason: '.(string) $request->validated('reason')
-                : 'Your TalkTherapy account was reactivated.';
-            $notifications->email($lockedUser, $status === UserStatus::Suspended ? 'user_suspended' : 'user_reactivated', ['message' => $message]);
+            $notifications->email($lockedUser, $status === UserStatus::Suspended ? 'user_suspended' : 'user_reactivated', ['reason' => (string) $request->validated('reason')]);
         });
 
         return UserResource::make($target->fresh()->load('profile'));

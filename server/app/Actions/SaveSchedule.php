@@ -4,6 +4,7 @@ namespace App\Actions;
 
 use App\Enums\UserRole;
 use App\Enums\UserStatus;
+use App\Events\SlotAvailabilityChanged;
 use App\Models\AuditLog;
 use App\Models\Schedule;
 use App\Models\Slot;
@@ -91,6 +92,8 @@ class SaveSchedule
                 'request_id' => $requestId,
                 'details' => ['occurrences' => count($occurrences)],
             ]);
+
+            SlotAvailabilityChanged::dispatch($actor->id);
 
             return $schedule->loadCount('slots');
         }, attempts: 3);

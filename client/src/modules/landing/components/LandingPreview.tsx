@@ -1,11 +1,11 @@
 import {
-  BookOpen,
-  CalendarDays,
-  Check,
-  FileText,
-  Mic,
-  Speech,
-  Video,
+BookOpen,
+CalendarDays,
+Check,
+FileText,
+Mic,
+Speech,
+Video,
 } from 'lucide-react'
 
 export const FEATURES = [
@@ -58,13 +58,13 @@ export default function LandingPreview({
         {!compact && (
           <div className="tt-app-sidebar" aria-hidden="true">
             {FEATURES.map(({ label, icon: Icon }, index) => (
-              <span
+              <PreviewFeatureBadge
                 key={label}
-                className={index === feature ? 'is-active' : ''}
-              >
-                <Icon size={16} />
-                {label}
-              </span>
+                index={index}
+                Icon={Icon}
+                label={label}
+                feature={feature}
+              />
             ))}
           </div>
         )}
@@ -96,14 +96,7 @@ export default function LandingPreview({
               </div>
               <div className="tt-week">
                 {['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].map((day, index) => (
-                  <div
-                    key={day}
-                    className={index === 2 ? 'tt-selected-day' : ''}
-                  >
-                    <span>{day}</span>
-                    <strong>{12 + index}</strong>
-                    <i />
-                  </div>
+                  <PreviewCalendarDay key={day} index={index} day={day} />
                 ))}
               </div>
               <p className="tt-preview-message">
@@ -138,13 +131,7 @@ export default function LandingPreview({
                 'Making room for everyday practice',
                 'Finding moments to communicate',
               ].map((title, index) => (
-                <div key={title}>
-                  <BookOpen size={25} aria-hidden="true" />
-                  <div>
-                    <small>EXAMPLE RESOURCE {index + 1}</small>
-                    <h4>{title}</h4>
-                  </div>
-                </div>
+                <PreviewPlanStep key={title} index={index} title={title} />
               ))}
             </div>
           )}
@@ -153,11 +140,7 @@ export default function LandingPreview({
               <p>A clearer picture of your care journey.</p>
               {['Session notes', 'Clinical observations', 'Care plan'].map(
                 (label) => (
-                  <div key={label}>
-                    <FileText size={20} aria-hidden="true" />
-                    <span>{label}</span>
-                    <Check size={16} aria-hidden="true" />
-                  </div>
+                  <PreviewMetric key={label} label={label} />
                 ),
               )}
               <small>Sample layout · no patient information shown</small>
@@ -168,3 +151,11 @@ export default function LandingPreview({
     </div>
   )
 }
+
+
+
+
+import PreviewCalendarDay from './PreviewCalendarDay'
+import PreviewFeatureBadge from './PreviewFeatureBadge'
+import PreviewMetric from './PreviewMetric'
+import PreviewPlanStep from './PreviewPlanStep'

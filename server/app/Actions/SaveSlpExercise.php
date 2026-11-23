@@ -14,7 +14,7 @@ class SaveSlpExercise
     public function create(User $actor, array $attributes, ?string $requestId): SlpExercise
     {
         return DB::transaction(function () use ($actor, $attributes, $requestId): SlpExercise {
-            $exercise = SlpExercise::query()->create(['owner_id' => $actor->id, 'scope' => $attributes['scope'] ?? 'private', 'module' => $attributes['module']]);
+            $exercise = SlpExercise::query()->create(['owner_id' => $actor->id, 'scope' => $attributes['scope'] ?? 'private', 'module' => $attributes['module'], 'collection_id' => $attributes['collection_id'] ?? null, 'is_hidden' => $attributes['is_hidden'] ?? false]);
             $this->version($exercise, $actor, $attributes, 1);
             $this->audit($actor, $exercise, 'slp.exercise.created', $requestId);
 
@@ -27,8 +27,11 @@ class SaveSlpExercise
     {
         return DB::transaction(function () use ($actor, $attributes, $exercise, $requestId): SlpExercise {
             $locked = SlpExercise::query()->lockForUpdate()->findOrFail($exercise->id);
+            $locked->update(array_intersect_key($attributes, array_flip(['module', 'collection_id', 'is_hidden'])));
             $latest = $locked->versions()->max('revision') ?? 0;
-            $this->version($locked, $actor, $attributes + $locked->versions()->latest('revision')->firstOrFail()->only(['language', 'dialect', 'task_type', 'prompt_text', 'configuration']), $latest + 1);
+            if (array_intersect_key($attributes, array_flip(['module', 'language', 'dialect', 'task_type', 'prompt_text', 'configuration'])) !== []) {
+                $this->version($locked, $actor, $attributes + $locked->versions()->latest('revision')->firstOrFail()->only(['language', 'dialect', 'task_type', 'prompt_text', 'configuration']), $latest + 1);
+            }
             $this->audit($actor, $locked, 'slp.exercise.updated', $requestId);
 
             return $locked->load('versions');

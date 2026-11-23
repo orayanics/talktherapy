@@ -39,8 +39,8 @@ it('rejects empty, oversized audio and reference text before making a request', 
     ),
   ).rejects.toThrow('10 MiB')
   await expect(
-    assessPronunciation(new Blob(['audio']), 'a'.repeat(801)),
-  ).rejects.toThrow('800')
+    assessPronunciation(new Blob(['audio']), 'a'.repeat(2001)),
+  ).rejects.toThrow('2000')
   expect(api).not.toHaveBeenCalled()
 })
 

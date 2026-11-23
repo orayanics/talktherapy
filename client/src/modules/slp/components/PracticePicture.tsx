@@ -3,6 +3,7 @@ import { Eye, EyeOff } from 'lucide-react'
 import { getPictureUrl, getPracticeWord } from '../data/practiceContent'
 import type { PicturePrompt, PracticeLanguage } from '../data/practiceContent'
 import PracticeBuddy from './PracticeBuddy'
+import ListenToPrompt from './ListenToPrompt'
 
 export default function PracticePicture({
   prompt,
@@ -21,16 +22,23 @@ export default function PracticePicture({
   const showWord = revealed || !!customWord.trim()
   return (
     <div className="slp-picture-panel">
-      {!focusMode && (
-        <div className="slp-prompt-buddy">
-          <PracticeBuddy size={64} />
-          <p>
-            {language === 'tl'
-              ? 'Ano ang nasa larawan? Sabihin natin!'
-              : 'What’s in the picture? Let’s say it!'}
-          </p>
+      <div className="slp-question-heading">
+        <div>
+          {' '}
+          <h2
+            className="text-xl font-bold sm:text-2xl"
+            lang={language === 'tl' ? 'fil' : 'en'}
+          >
+            {customWord.trim()
+              ? language === 'tl'
+                ? 'Sabihin ang iyong salita.'
+                : 'Say your practice word.'
+              : prompt.question[language]}
+          </h2>
+          <ListenToPrompt text={customWord.trim() || prompt.question[language]} language={language} />
         </div>
-      )}
+        {!focusMode && <PracticeBuddy size={44} />}
+      </div>
       <div className="slp-picture-frame">
         {customWord.trim() ? (
           <div
@@ -58,16 +66,6 @@ export default function PracticePicture({
         )}
       </div>
       <div className="space-y-4 pt-5 text-center">
-        <h2
-          className="text-xl font-bold sm:text-2xl"
-          lang={language === 'tl' ? 'fil' : 'en'}
-        >
-          {customWord.trim()
-            ? language === 'tl'
-              ? 'Sabihin ang iyong salita.'
-              : 'Say your practice word.'
-            : prompt.question[language]}
-        </h2>
         {!customWord.trim() && (
           <>
             <button

@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Models\SlpExercise;
+use App\Models\SlpExerciseCollection;
 use App\Models\User;
 use App\Models\UserProfile;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -98,7 +100,7 @@ class PhonemeAssessmentTest extends TestCase
         $this->actingAs($user)
             ->post('/api/v1/slp/assess', [
                 'audio' => UploadedFile::fake()->create('recording.mp3', 1, 'audio/mpeg'),
-                'reference_text' => str_repeat('a', 801),
+                'reference_text' => str_repeat('a', 2001),
             ], ['Accept' => 'application/json'])
             ->assertUnprocessable()
             ->assertJsonPath('code', 'validation_failed');
@@ -287,6 +289,42 @@ class PhonemeAssessmentTest extends TestCase
             'audio' => $this->fakeWavFile(), 'reference_text' => 'araw', 'language' => 'unknown',
         ], ['Accept' => 'application/json'])->assertUnprocessable();
         Http::assertSentCount(1);
+    }
+
+    public function test_owned_collection_exercise_preview_uses_saved_prompt_and_language(): void
+    {
+        $owner = $this->createActiveUser();
+        $owner->profile->update(['role' => 'clinician']);
+        $collection = SlpExerciseCollection::factory()->create(['owner_id' => $owner->id]);
+        $prompt = str_repeat('a', 2000);
+        $exercise = SlpExercise::factory()->for($owner, 'owner')->withDraft(['language' => 'tl', 'prompt_text' => $prompt])->create(['collection_id' => $collection->id]);
+        $assessment = $this->practiceAssessment();
+        $assessment['analysis']['structured']['reference'] = $prompt;
+        Http::preventStrayRequests();
+        $body = '';
+        Http::fake(function (ClientRequest $request) use (&$body, $assessment) {
+            $body = $request->body();
+
+            return Http::response($assessment);
+        });
+        $this->actingAs($owner)->post('/api/v1/slp/assess', [
+            'audio' => $this->fakeWavFile(), 'exercise_id' => $exercise->id, 'language' => 'en',
+        ], ['Accept' => 'application/json'])->assertOk()->assertJsonPath('data.analysis.structured.reference', $prompt);
+        $this->assertStringContainsString($prompt, $body);
+        $this->assertStringContainsString("\r\n\r\ntl\r\n", $body);
+        Http::assertSentCount(1);
+    }
+
+    public function test_foreign_exercise_preview_and_prompt_override_never_reach_python(): void
+    {
+        $actor = $this->createActiveUser();
+        $actor->profile->update(['role' => 'clinician']);
+        $exercise = SlpExercise::factory()->withDraft()->create();
+        Http::preventStrayRequests();
+        $this->actingAs($actor)->post('/api/v1/slp/assess', ['audio' => $this->fakeWavFile(), 'exercise_id' => $exercise->id], ['Accept' => 'application/json'])->assertForbidden();
+        $this->post('/api/v1/slp/assess', ['audio' => $this->fakeWavFile(), 'exercise_id' => $exercise->id, 'reference_text' => 'override'], ['Accept' => 'application/json'])->assertUnprocessable();
+        $this->post('/api/v1/slp/assess', ['audio' => $this->fakeWavFile(), 'reference_text' => str_repeat('a', 2001)], ['Accept' => 'application/json'])->assertUnprocessable()->assertJsonValidationErrors('reference_text');
+        Http::assertNothingSent();
     }
 
     private function practiceAssessment(): array

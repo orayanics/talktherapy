@@ -1,8 +1,8 @@
-import { useEffect, useRef } from 'react'
-import { useNotifications } from '#/modules/notifications/hooks/useNotifications'
-import StateLoading from '#/components/State/StateLoading'
 import StateError from '#/components/State/StateError'
+import StateLoading from '#/components/State/StateLoading'
 import StateNull from '#/components/State/StateNull'
+import { useNotifications } from '#/modules/notifications/hooks/useNotifications'
+import { useEffect,useRef } from 'react'
 
 export default function NotificationList() {
   const {
@@ -38,33 +38,7 @@ export default function NotificationList() {
         {isError && <StateError />}
         {isNull && <StateNull />}
         {notifications.map((n) => (
-          <div key={n.id} className={`group transition-colors`}>
-            <div className="flex gap-3">
-              <div className="flex-1 space-y-1">
-                <div className="flex items-center gap-4">
-                  {!n.read_at && (
-                    <div
-                      aria-label="status"
-                      className="status status-primary"
-                    ></div>
-                  )}
-                  <p className="text-xs font-semibold text-slate-800 leading-none">
-                    {n.title}
-                  </p>
-                </div>
-                <p className="text-xs opacity-60 my-0!">{n.message}</p>
-
-                {!n.read_at && (
-                  <button
-                    onClick={() => markRead(n.id)}
-                    className="link link-primary link-hover mt-2 text-xs"
-                  >
-                    Mark as viewed
-                  </button>
-                )}
-              </div>
-            </div>
-          </div>
+          <NotificationRow key={n.id} n={n} markRead={markRead} />
         ))}
         {hasNextPage && (
           <li ref={loadMoreRef} className="m-0! p-2 text-center">
@@ -81,3 +55,5 @@ export default function NotificationList() {
     </div>
   )
 }
+
+import NotificationRow from './NotificationRow'

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -13,6 +14,14 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 class SlpAttempt extends Model
 {
     use HasUuids;
+
+    public function scopeReviewable(Builder $query): Builder
+    {
+        return $query->whereHas('consent', fn ($q) => $q->whereNull('withdrawn_at'))
+            ->where(fn ($q) => $q->where('status', 'awaiting_review')->orWhere(fn ($manual) => $manual
+                ->whereIn('status', ['queued', 'failed'])
+                ->whereHas('recording', fn ($audio) => $audio->where(fn ($expiry) => $expiry->whereNull('retention_until')->orWhere('retention_until', '>', now())))));
+    }
 
     public function assignment(): BelongsTo
     {

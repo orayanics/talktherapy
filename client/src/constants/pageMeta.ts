@@ -90,6 +90,10 @@ export const PAGE_META = {
     title: 'Speech practice',
     description: 'Complete speech and language practice activities.',
   },
+  picturePractice: {
+    title: 'Picture practice',
+    description: 'Practice speech and language with picture prompts.',
+  },
   appointments: {
     title: 'Appointments',
     description: 'View and manage your appointments.',
@@ -119,6 +123,15 @@ export const PAGE_META = {
       assignments: {
         title: 'SLP assignments',
         description: 'View and manage assigned speech practice.',
+      },
+      reviews: {
+        title: 'SLP reviews',
+        description: 'Review submitted speech recordings and analysis.',
+      },
+      reports: {
+        title: 'SLP reports',
+        description:
+          'Review approved speech reports and release them to patients.',
       },
       exercises: {
         title: 'SLP exercises',

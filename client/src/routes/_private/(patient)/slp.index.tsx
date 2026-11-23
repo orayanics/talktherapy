@@ -1,7 +1,7 @@
-import { createFileRoute } from '@tanstack/react-router'
-import SlpAssessmentPage from '#/modules/slp/components/SlpAssessmentPage'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { PAGE_META } from '#/constants/pageMeta'
 import PageLayout from '#/components/Page/PageLayout'
+import ExerciseCollections from '#/modules/slp/components/ExerciseCollections'
 
 export const Route = createFileRoute('/_private/(patient)/slp/')({
   staticData: { page: PAGE_META.speechPractice, bcLink: '.' },
@@ -15,7 +15,12 @@ function RouteComponent() {
       description={PAGE_META.speechPractice.description}
       paddedCh
     >
-      <SlpAssessmentPage />
+      <div className="space-y-6">
+        <Link to="/slp/pictures" className="btn">
+          Picture practice
+        </Link>
+        <ExerciseCollections patientView />
+      </div>
     </PageLayout>
   )
 }

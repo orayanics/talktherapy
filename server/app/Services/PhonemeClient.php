@@ -110,7 +110,7 @@ class PhonemeClient
             'analysis.lowScoring.*.word' => ['present', 'nullable', 'string', 'max:200'],
             'analysis.lowScoring.*.wordIndex' => ['present', 'nullable', 'integer', 'min:0'],
             'analysis.structured' => ['required', 'array:reference,transcript,overall,words,accurateUnits,needsWorkUnits'],
-            'analysis.structured.reference' => ['required', 'string', 'max:800'],
+            'analysis.structured.reference' => ['required', 'string', 'max:2000'],
             'analysis.structured.transcript' => [$transcriptPresence, 'string', 'max:5000'],
             'analysis.structured.overall' => ['required', 'array:avgScore,percentAboveNeedsWork,status'],
             'analysis.structured.overall.avgScore' => ['required', 'numeric', 'between:0,100'],

@@ -1,15 +1,15 @@
-import { useState } from 'react'
 import { Link } from '@tanstack/react-router'
 import {
-  ArrowDown,
-  ArrowRight,
-  MessageCircle,
-  Sparkles,
-  Speech,
+ArrowDown,
+ArrowRight,
+MessageCircle,
+Sparkles,
+Speech,
 } from 'lucide-react'
-import Values from './Values'
-import LandingPreview, { FEATURES } from './LandingPreview'
+import { useState } from 'react'
 import '../landing.css'
+import LandingPreview,{ FEATURES } from './LandingPreview'
+import Values from './Values'
 
 export default function Landing() {
   const [activeFeature, setActiveFeature] = useState(0)
@@ -81,16 +81,14 @@ export default function Landing() {
               aria-label="Explore platform features"
             >
               {FEATURES.map(({ label, icon: Icon }, index) => (
-                <button
+                <LandingFeatureButton
                   key={label}
-                  type="button"
-                  aria-pressed={activeFeature === index}
-                  aria-controls="hero-preview"
-                  onClick={() => setActiveFeature(index)}
-                >
-                  <Icon size={17} aria-hidden="true" />
-                  {label}
-                </button>
+                  activeFeature={activeFeature}
+                  index={index}
+                  setActiveFeature={setActiveFeature}
+                  Icon={Icon}
+                  label={label}
+                />
               ))}
             </div>
             <div className="tt-preview-frame" id="hero-preview">
@@ -127,3 +125,5 @@ export default function Landing() {
     </div>
   )
 }
+
+import LandingFeatureButton from './LandingFeatureButton'

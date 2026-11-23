@@ -1,7 +1,7 @@
-import { useState } from 'react'
 import { Link } from '@tanstack/react-router'
 import { ArrowRight } from 'lucide-react'
-import LandingPreview, { FEATURES } from './LandingPreview'
+import { useState } from 'react'
+import LandingPreview,{ FEATURES } from './LandingPreview'
 
 export default function Values() {
   const [activeFeature, setActiveFeature] = useState(0)
@@ -34,22 +34,15 @@ export default function Values() {
           aria-label="Get to know our features"
         >
           {FEATURES.map(({ label, description, icon: Icon }, index) => (
-            <button
+            <ValueButton
               key={label}
-              type="button"
-              aria-pressed={activeFeature === index}
-              aria-controls="overview-preview"
-              onClick={() => setActiveFeature(index)}
-            >
-              <span className="tt-feature-row">
-                <Icon size={20} aria-hidden="true" />
-                <span>{label}</span>
-                <ArrowRight size={19} aria-hidden="true" />
-              </span>
-              {activeFeature === index && (
-                <span className="tt-feature-description">{description}</span>
-              )}
-            </button>
+              activeFeature={activeFeature}
+              index={index}
+              setActiveFeature={setActiveFeature}
+              Icon={Icon}
+              label={label}
+              description={description}
+            />
           ))}
         </div>
         <div className="tt-overview-visual" id="overview-preview">
@@ -65,3 +58,5 @@ export default function Values() {
     </section>
   )
 }
+
+import ValueButton from './ValueButton'

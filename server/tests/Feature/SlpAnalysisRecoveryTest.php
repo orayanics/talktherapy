@@ -9,13 +9,17 @@ use App\Models\SlpAssignment;
 use App\Models\SlpAttempt;
 use App\Models\SlpConsent;
 use App\Models\SlpExerciseVersion;
+use App\Models\SlpRecording;
 use App\Models\SlpReport;
 use App\Models\User;
 use App\Models\UserProfile;
+use App\Services\PhonemeClient;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Tests\TestCase;
 
 class SlpAnalysisRecoveryTest extends TestCase
@@ -57,20 +61,73 @@ class SlpAnalysisRecoveryTest extends TestCase
         }
     }
 
+    public function test_browser_webm_recording_is_accepted_when_reported_as_video_webm(): void
+    {
+        Storage::fake('local');
+        Bus::fake();
+        [$patient, $attempt] = $this->attempt();
+
+        $this->actingAs($patient)
+            ->postJson("/api/v1/slp/attempts/{$attempt->id}/recording", [
+                'recording' => UploadedFile::fake()->create('speech.webm', 10, 'video/webm'),
+            ])
+            ->assertAccepted();
+
+        $this->assertDatabaseHas('slp_recordings', [
+            'attempt_id' => $attempt->id,
+            'mime_type' => 'video/webm',
+        ]);
+    }
+
+    public function test_cleanup_removes_expired_recordings_but_keeps_active_retention(): void
+    {
+        Storage::fake('local');
+        [, $expired] = $this->attempt(true);
+        $expired->recording->update(['path' => 'slp-recordings/expired.wav']);
+        $expired->recording->update(['retention_until' => now()->subMinute()]);
+        Storage::disk('local')->put($expired->recording->path, 'expired');
+        [, $active] = $this->attempt(true);
+        $active->recording->update(['path' => 'slp-recordings/active.wav']);
+        $active->recording->update(['retention_until' => now()->addDay()]);
+        Storage::disk('local')->put($active->recording->path, 'active');
+
+        $this->artisan('app:cleanup-slp-recordings')->assertSuccessful();
+        $this->assertDatabaseMissing('slp_recordings', ['id' => $expired->recording->id]);
+        $this->assertDatabaseHas('slp_recordings', ['id' => $active->recording->id]);
+        $this->assertFalse(Storage::disk('local')->exists($expired->recording->path));
+        $this->assertTrue(Storage::disk('local')->exists($active->recording->path));
+    }
+
     public function test_job_is_idempotent_and_does_not_overwrite_an_approved_attempt(): void
     {
-        [, $attempt] = $this->attempt();
+        [, $attempt] = $this->attempt(true);
+        $this->mock(PhonemeClient::class)->shouldReceive('assess')->once()->andReturn(['meta' => ['schemaVersion' => '2.0']]);
         $attempt->update(['status' => 'queued']);
         $run = SlpAnalysisRun::query()->create(['attempt_id' => $attempt->id, 'status' => 'queued']);
-        (new RunSlpAnalysis($run->id))->handle();
+        (new RunSlpAnalysis($run->id))->handle(app(PhonemeClient::class));
         $this->assertSame('awaiting_review', $attempt->fresh()->status);
         $attempt->update(['status' => 'approved']);
-        (new RunSlpAnalysis($run->id))->handle();
+        (new RunSlpAnalysis($run->id))->handle(app(PhonemeClient::class));
         $this->assertSame('approved', $attempt->fresh()->status);
         $late = SlpAnalysisRun::query()->create(['attempt_id' => $attempt->id, 'status' => 'queued']);
-        (new RunSlpAnalysis($late->id))->handle();
+        (new RunSlpAnalysis($late->id))->handle(app(PhonemeClient::class));
         $this->assertSame('approved', $attempt->fresh()->status);
         $this->assertSame('attempt_state_changed', $late->fresh()->failure_code);
+    }
+
+    public function test_busy_service_releases_the_job_and_keeps_the_attempt_queued(): void
+    {
+        [, $attempt] = $this->attempt(true);
+        $attempt->update(['status' => 'queued']);
+        $run = SlpAnalysisRun::query()->create(['attempt_id' => $attempt->id, 'status' => 'queued']);
+        $client = $this->mock(PhonemeClient::class)->shouldReceive('assess')->once()->andThrow(new HttpException(503))->getMock();
+        $job = (new RunSlpAnalysis($run->id))->withFakeQueueInteractions();
+
+        $job->handle($client);
+
+        $job->assertReleased(15);
+        $this->assertSame('queued', $run->fresh()->status);
+        $this->assertSame('queued', $attempt->fresh()->status);
     }
 
     public function test_withdrawal_blocks_queued_analysis(): void
@@ -79,42 +136,44 @@ class SlpAnalysisRecoveryTest extends TestCase
         $attempt->update(['status' => 'queued']);
         $run = SlpAnalysisRun::query()->create(['attempt_id' => $attempt->id, 'status' => 'queued']);
         $attempt->consent->update(['withdrawn_at' => now()]);
-        (new RunSlpAnalysis($run->id))->handle();
+        (new RunSlpAnalysis($run->id))->handle(app(PhonemeClient::class));
         $this->assertSame('failed', $run->fresh()->status);
         $this->assertSame('consent_withdrawn', $run->fresh()->failure_code);
         $this->assertNull($run->fresh()->result);
     }
 
-    public function test_changed_patient_audience_blocks_both_upload_and_queued_analysis(): void
+    public function test_changed_patient_audience_does_not_break_an_existing_assignment(): void
     {
         Storage::fake('local');
         [$patient, $attempt] = $this->attempt();
         $attempt->assignment->version->update(['configuration' => ['patient_visible' => true, 'patient_audience' => 'selected', 'patient_ids' => []]]);
-        $this->actingAs($patient)->postJson("/api/v1/slp/attempts/{$attempt->id}/recording", ['recording' => UploadedFile::fake()->create('speech.wav', 10, 'audio/wav')])->assertConflict();
-        $this->assertSame([], Storage::disk('local')->allFiles());
-        $attempt->update(['status' => 'queued']);
-        $run = SlpAnalysisRun::query()->create(['attempt_id' => $attempt->id, 'status' => 'queued']);
-        (new RunSlpAnalysis($run->id))->handle();
-        $this->assertSame('exercise_unavailable', $run->fresh()->failure_code);
-        $this->assertSame('failed', $attempt->fresh()->status);
+        Queue::fake();
+        $this->mock(PhonemeClient::class)->shouldReceive('assess')->once()->andReturn(['meta' => ['schemaVersion' => '2.0']]);
+        $this->actingAs($patient)->postJson("/api/v1/slp/attempts/{$attempt->id}/recording", ['recording' => UploadedFile::fake()->create('speech.wav', 10, 'audio/wav')])->assertAccepted();
+        $this->assertCount(1, Storage::disk('local')->allFiles());
+        $run = SlpAnalysisRun::query()->firstOrFail();
+        (new RunSlpAnalysis($run->id))->handle(app(PhonemeClient::class));
+        $this->assertSame('succeeded', $run->fresh()->status);
+        $this->assertSame('awaiting_review', $attempt->fresh()->status);
     }
 
     public function test_report_failure_rolls_back_approval(): void
     {
         [, $attempt, $clinician] = $this->attempt();
+        $attempt->update(['status' => 'awaiting_review']);
         $review = $attempt->reviews()->create(['revision' => 1, 'reviewer_id' => $clinician->id, 'status' => 'draft', 'annotations' => []]);
         SlpReport::creating(fn () => throw new \RuntimeException('Cannot persist report'));
         try {
             $this->actingAs($clinician)->postJson("/api/v1/slp/reviews/{$review->id}/approve")->assertStatus(500);
             $this->assertSame('draft', $review->fresh()->status);
-            $this->assertSame('created', $attempt->fresh()->status);
+            $this->assertSame('awaiting_review', $attempt->fresh()->status);
             $this->assertDatabaseCount('slp_reports', 0);
         } finally {
             SlpReport::flushEventListeners();
         }
     }
 
-    private function attempt(): array
+    private function attempt(bool $withRecording = false): array
     {
         $patient = User::factory()->create();
         UserProfile::factory()->for($patient)->create(['role' => UserRole::Patient]);
@@ -124,6 +183,11 @@ class SlpAnalysisRecoveryTest extends TestCase
         $assignment = SlpAssignment::factory()->create(['patient_id' => $patient->id, 'clinician_id' => $clinician->id, 'exercise_version_id' => $version->id]);
         $consent = SlpConsent::query()->create(['subject_id' => $patient->id, 'actor_id' => $patient->id, 'purpose' => 'slp_recording', 'policy_version' => 'v1', 'accepted_at' => now()]);
         $attempt = SlpAttempt::query()->create(['assignment_id' => $assignment->id, 'consent_id' => $consent->id, 'submission_key' => 'one', 'status' => 'created']);
+        if ($withRecording) {
+            Storage::fake('local');
+            Storage::disk('local')->put('slp-recordings/test.wav', 'recording');
+            SlpRecording::query()->create(['attempt_id' => $attempt->id, 'path' => 'slp-recordings/test.wav', 'mime_type' => 'audio/wav', 'bytes' => 9, 'checksum' => hash('sha256', 'recording')]);
+        }
 
         return [$patient, $attempt, $clinician];
     }

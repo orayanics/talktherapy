@@ -1,6 +1,5 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { Link } from '@tanstack/react-router'
 import { TableBase } from '#/components/Table/TableBase'
 import Pagination from '#/components/Page/Pagination'
 import FilterDrawer from '#/components/Page/FilterDrawer'
@@ -10,20 +9,44 @@ import StateLoading from '#/components/State/StateLoading'
 import StateError from '#/components/State/StateError'
 import StateNull from '#/components/State/StateNull'
 import ExerciseDelivery from './ExerciseDelivery'
+import CreateSlpExercisePage from './CreateSlpExercisePage'
+import ExerciseActions from './ExerciseActions'
+import BulkExerciseAssignment from './BulkExerciseAssignment'
 import { fetchSlpExercises } from '../api/exercises'
-import type { SlpExerciseFilters } from '../api/exercises'
+import type { SlpExercise, SlpExerciseFilters } from '../api/exercises'
 import { slpExerciseModules } from '../types/exercises'
 
-export default function SlpExerciseCatalog() {
+export default function SlpExerciseCatalog({
+  collectionId,
+  readOnly = false,
+}: {
+  collectionId?: string
+  readOnly?: boolean
+}) {
+  const [creating, setCreating] = useState(false)
   const [page, setPage] = useState(1)
   const [filters, setFilters] = useState<SlpExerciseFilters>({})
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
   const { data, isPending, isError } = useQuery(
-    fetchSlpExercises(page, filters),
+    fetchSlpExercises(
+      page,
+      collectionId ? { ...filters, collection_id: collectionId } : filters,
+    ),
   )
   const updateFilters = (next: Partial<SlpExerciseFilters>) => {
     setFilters((current) => ({ ...current, ...next }))
     setPage(1)
   }
+  useEffect(() => setSelectedIds(new Set()), [page])
+  const selectedExercises =
+    data?.data.filter((exercise) => selectedIds.has(exercise.id)) ?? []
+  const toggleExercise = (id: string) =>
+    setSelectedIds((current) => {
+      const next = new Set(current)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
 
   return (
     <div className="space-y-4">
@@ -39,10 +62,10 @@ export default function SlpExerciseCatalog() {
           />
           <FilterDrawer>
             <div className="space-y-6">
-              <FormInput htmlFor="slpexercisecatalog-field-1" label="Module">
+              <FormInput htmlFor="slpexercisecatalog-field-1" label="Exercise category">
                 <select
                   id="slpexercisecatalog-field-1"
-                  aria-label="Module"
+                  aria-label="Exercise category"
                   className="select w-full"
                   value={filters.module ?? ''}
                   onChange={(event) =>
@@ -53,7 +76,7 @@ export default function SlpExerciseCatalog() {
                     })
                   }
                 >
-                  <option value="">All modules</option>
+                  <option value="">All categories</option>
                   {slpExerciseModules.map((module) => (
                     <option key={module} value={module}>
                       {module.replaceAll('_', ' ')}
@@ -93,10 +116,40 @@ export default function SlpExerciseCatalog() {
             </div>
           </FilterDrawer>
         </div>
-        <Link to="/slp/exercises/create" className="btn btn-neutral">
-          New Draft
-        </Link>
+        {!readOnly && collectionId ? (
+          <button
+            className="btn btn-neutral"
+            onClick={() => setCreating(!creating)}
+          >
+            {creating ? 'Close new exercise' : 'New exercise'}
+          </button>
+        ) : null}
       </div>
+      {!readOnly && (
+        <div className="alert alert-soft alert-info" role="note">
+          <div>
+            <p className="font-medium">Two ways to deliver an exercise</p>
+            <p className="text-sm">
+              Patient visibility lets patients discover an exercise. Assignments
+              put it directly in My assignments. Select published exercises in
+              the table to assign several at once.
+            </p>
+          </div>
+          {selectedExercises.length > 0 && (
+            <BulkExerciseAssignment
+              exercises={selectedExercises}
+              onAssigned={() => setSelectedIds(new Set())}
+            />
+          )}
+        </div>
+      )}
+
+      {creating && (
+        <CreateSlpExercisePage
+          collectionId={collectionId}
+          onSaved={() => setCreating(false)}
+        />
+      )}
 
       <div className="overflow-hidden flex flex-col">
         {isPending ? (
@@ -113,12 +166,51 @@ export default function SlpExerciseCatalog() {
             data={data.data}
             keyExtractor={(exercise) => exercise.id}
             columns={[
+              ...(!readOnly
+                ? [
+                    {
+                      header: (
+                        <input
+                          type="checkbox"
+                          className="checkbox"
+                          aria-label="Select all exercises on this page"
+                          checked={
+                            data.data.length > 0 &&
+                            data.data.every((exercise) =>
+                              selectedIds.has(exercise.id),
+                            )
+                          }
+                          onChange={(event) =>
+                            setSelectedIds((current) => {
+                              const next = new Set(current)
+                              data.data.forEach((exercise) =>
+                                event.target.checked
+                                  ? next.add(exercise.id)
+                                  : next.delete(exercise.id),
+                              )
+                              return next
+                            })
+                          }
+                        />
+                      ),
+                      render: (exercise: SlpExercise) => (
+                        <input
+                          type="checkbox"
+                          className="checkbox"
+                          aria-label={`Select ${exercise.latest_version?.prompt_text ?? 'exercise'}`}
+                          checked={selectedIds.has(exercise.id)}
+                          onChange={() => toggleExercise(exercise.id)}
+                        />
+                      ),
+                    },
+                  ]
+                : []),
               {
                 header: 'Exercise',
                 render: (exercise) => exercise.latest_version?.prompt_text,
               },
               {
-                header: 'Module',
+                header: 'Category',
                 render: (exercise) => exercise.module.replaceAll('_', ' '),
               },
               {
@@ -127,17 +219,33 @@ export default function SlpExerciseCatalog() {
               },
               { header: 'Scope', accessor: 'scope' },
               {
+                header: 'Manage',
+                render: (exercise) => (
+                  <ExerciseActions
+                    key={`${exercise.id}-${exercise.updated_at}-${exercise.is_hidden}`}
+                    exercise={exercise}
+                  />
+                ),
+              },
+              {
                 header: 'Revision',
                 render: (exercise) => exercise.latest_version?.revision,
               },
               {
+                header: 'Status',
+                render: (exercise) => exercise.latest_version?.status,
+              },
+              {
                 header: 'Delivery',
-                render: (exercise) => (
-                  <ExerciseDelivery
-                    key={exercise.latest_version?.id}
-                    exercise={exercise}
-                  />
-                ),
+                render: (exercise) =>
+                  exercise.can_manage ? (
+                    <ExerciseDelivery
+                      key={exercise.latest_version?.id}
+                      exercise={exercise}
+                    />
+                  ) : (
+                    <span>Read only</span>
+                  ),
               },
             ]}
           />

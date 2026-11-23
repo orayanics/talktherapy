@@ -10,7 +10,6 @@ This index describes the current repository. Source code and tests take preceden
 | `server/`              | Laravel 13 API, authentication, jobs, scheduler, and Reverb    | [Server guide](../server/README.md)          |
 | `py/`                  | Private FastAPI speech service                                 | [Python guide](../py/README.md)              |
 | `docs/migration/`      | Current API, architecture, module contracts, and release gates | [Migration index](migration/README.md)       |
-| `docs/slp-assessment/` | Deferred clinician-assessment design                           | [Assessment index](slp-assessment/README.md) |
 | `tasks/`               | Active release checklist                                       | [Task ledger](../tasks/todo.md)              |
 
 ## Runtime map
@@ -36,7 +35,6 @@ This index describes the current repository. Source code and tests take preceden
 | Realtime rooms                   | Implemented; multi-instance revocation, TURN, and two-browser checks remain. |
 | Reporting and exports            | Implemented; queued-export and deployment evidence remain.                   |
 | SLP practice                     | Implemented as a non-diagnostic proof of concept.                            |
-| SLP assessment                   | Design only; no clinical claims or production scoring.                       |
 | Production cutover               | Pending deployment, backup, rollback, and observation gates.                 |
 
 ## Documentation rules

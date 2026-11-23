@@ -25,6 +25,7 @@ export default function useRegisterForm() {
       password: '',
       password_confirmation: '',
       consent: false,
+      privacy_v1: false,
     },
   })
 
