@@ -11,25 +11,30 @@ class SystemNotification extends Notification
 
     /**
      * @param  array{status?: string, reason?: string, subject?: string, message?: string}  $context
-     * @return array{subject?: string, message: string}
+     * @return array<string, mixed>
      */
     public static function workflowPayload(string $template, array $context): array
     {
-        if (isset($context['message'])) {
+        if (array_key_exists('message', $context)) {
             return $context;
         }
 
         $body = match ($template) {
             'appointment_booked' => 'A new appointment request is waiting for you in TalkTherapy.',
-            'appointment_accepted', 'appointment_rejected', 'appointment_cancelled', 'appointment_completed' => 'Your appointment status is now '.$context['status'].'.',
+            'appointment_accepted', 'appointment_rejected', 'appointment_cancelled', 'appointment_completed' => isset($context['status'])
+                ? 'Your appointment status is now '.$context['status'].'.'
+                : null,
             'soap_created' => 'A new clinical record is available in TalkTherapy.',
             'soap_updated' => 'A clinical record was updated in TalkTherapy.',
-            'user_suspended' => 'Your TalkTherapy account was suspended. Reason: '.$context['reason'],
+            'user_suspended' => isset($context['reason'])
+                ? 'Your TalkTherapy account was suspended. Reason: '.$context['reason']
+                : null,
             'user_reactivated' => 'Your TalkTherapy account was reactivated.',
             'password_changed' => 'Your TalkTherapy password was changed. If you did not make this change, contact support immediately.',
+            default => null,
         };
 
-        return ['message' => $body];
+        return $body === null ? $context : ['message' => $body];
     }
 
     /** @param array{subject?: string, message?: string} $payload */
