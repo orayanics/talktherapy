@@ -9,6 +9,7 @@ import '@fontsource/crimson-text/400.css'
 import '@fontsource-variable/jetbrains-mono/wght.css'
 
 import appCss from '../styles.css?url'
+import landingGlobalCss from '../landing-global.css?url'
 
 import type { QueryClient } from '@tanstack/react-query'
 import { AlertProvider } from '#/context/AlertContext'
@@ -21,7 +22,7 @@ const THEME_INIT_SCRIPT = `(function(){try{var stored=window.localStorage.getIte
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
   ssr: true,
-  head: () => ({
+  head: ({ matches }) => ({
     meta: [
       {
         charSet: 'utf-8',
@@ -37,7 +38,9 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
     links: [
       {
         rel: 'stylesheet',
-        href: appCss,
+        href: matches.some((match) => String(match.routeId) === '/')
+          ? landingGlobalCss
+          : appCss,
       },
     ],
   }),

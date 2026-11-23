@@ -39,6 +39,7 @@ Use this ledger for unfinished work. Completed implementation remains documented
 | Authoring     | Notification audit and browser evidence.                          |
 | Diagnoses     | CRUD denial matrix and browser evidence.                          |
 | Suspension    | Modal workflow browser evidence.                                  |
+| Homepage performance | Implemented the [homepage performance spec](../docs/talktherapy-homepage-performance-spec.md). The homepage production build now uses a 23 KB route stylesheet while app routes keep the full stylesheet. Three matched mobile runs improved `/` LCP from a 3.37 s median to 3.07 s and measured `/#get-to-know` at a 3.12 s median. CLS stayed at 0.022 and 0.002. The full client suite remains blocked by the installed Bun runtime missing Vitest APIs such as `vi.mocked` and `vi.hoisted`. |
 
 ## Production cutover
 

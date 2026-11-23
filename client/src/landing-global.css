@@ -1,0 +1,49 @@
+@import 'tailwindcss' source(none);
+
+@source './routes/index.tsx';
+@source './modules/landing/components';
+
+@plugin "daisyui" {
+  themes: light;
+}
+
+@plugin "daisyui/theme" {
+  name: 'light';
+  default: true;
+  prefersdark: true;
+  color-scheme: 'light';
+  --color-base-100: oklch(100% 0 0);
+  --color-base-200: oklch(98% 0 0);
+  --color-base-300: oklch(95% 0 0);
+  --color-base-content: oklch(21% 0.006 285.885);
+  --color-primary: oklch(74% 0.16 232.661);
+  --color-primary-content: oklch(97% 0.013 236.62);
+  --color-border: oklch(90% 0 0);
+  --color-muted: oklch(50% 0 0);
+}
+
+@theme inline {
+  --font-sans: 'Inter Variable', sans-serif;
+  --font-serif: 'Crimson Text', serif;
+  --font-mono: 'JetBrains Mono Variable', monospace;
+  --color-border: var(--color-border);
+  --color-muted: var(--color-muted);
+}
+
+@layer base {
+  body {
+    @apply font-sans bg-base-200 text-base-content antialiased;
+  }
+
+  html {
+    @apply font-sans;
+  }
+
+  * {
+    scrollbar-width: none;
+  }
+
+  *::-webkit-scrollbar {
+    display: none;
+  }
+}
