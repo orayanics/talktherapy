@@ -39,6 +39,7 @@ Use this ledger for unfinished work. Completed implementation remains documented
 | Authoring     | Notification audit and browser evidence.                          |
 | Diagnoses     | CRUD denial matrix and browser evidence.                          |
 | Suspension    | Modal workflow browser evidence.                                  |
+| Landing page  | Implement the [public homepage spec](../docs/talktherapy-landing-seo-spec.md) and collect the production-build homepage and launch verification evidence. `ready-for-agent` |
 
 ## Production cutover
 
