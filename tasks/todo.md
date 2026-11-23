@@ -16,6 +16,7 @@ Use this ledger for unfinished work. Completed implementation remains documented
 | Reporting        | Filters, exports, authorization, and download cleanup.               |
 | PostgreSQL       | Schedules, bookings, transitions, bookmarks, and care relationships. |
 | Redis            | Sessions, queues, rate limits, leases, and worker recovery.          |
+| Startup and CI   | Verify core-only and full Compose startup on fresh and existing PostgreSQL volumes. Record warm startup, clean-build, and GitHub Actions step timings. Verify required check settings for the three workflows. |
 
 ## Speech-service gates
 

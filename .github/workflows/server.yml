@@ -27,7 +27,15 @@ jobs:
         working-directory: server
     steps:
       - uses: actions/checkout@v6
+        with:
+          fetch-depth: 2
+      - uses: ./.github/actions/affected
+        id: affected
+        if: github.event_name == 'pull_request' && hashFiles('.github/actions/affected/action.yml') != ''
+        with:
+          service: server
       - uses: shivammathur/setup-php@v2
+        if: steps.affected.outputs.run != 'false'
         with:
           php-version: ${{ matrix.php }}
           extensions: mbstring, pdo_sqlite, sqlite3
@@ -35,17 +43,28 @@ jobs:
           tools: composer:v2
       - name: Locate Composer cache
         id: composer-cache
+        if: steps.affected.outputs.run != 'false'
         run: echo "dir=$(composer config cache-files-dir)" >> "$GITHUB_OUTPUT"
       - uses: actions/cache@v5
+        if: steps.affected.outputs.run != 'false'
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
-          key: composer-${{ runner.os }}-${{ matrix.php }}-${{ hashFiles('server/composer.lock') }}
+          key: composer-${{ runner.os }}-${{ hashFiles('server/composer.lock') }}
+          restore-keys: composer-${{ runner.os }}-
       - run: composer install --no-interaction --prefer-dist --no-progress
+        if: steps.affected.outputs.run != 'false'
       - run: cp .env.example .env
+        if: steps.affected.outputs.run != 'false'
       - run: php artisan key:generate --no-interaction
+        if: steps.affected.outputs.run != 'false'
       - run: composer validate --strict
+        if: steps.affected.outputs.run != 'false' && matrix.php == '8.4'
       - run: php vendor/bin/pint --test
+        if: steps.affected.outputs.run != 'false' && matrix.php == '8.4'
       - run: php artisan test --compact
+        if: steps.affected.outputs.run != 'false'
       - name: Check production dependency constraints
         run: composer check-platform-reqs --no-dev
+        if: steps.affected.outputs.run != 'false'
       - run: composer audit --locked --no-interaction
+        if: steps.affected.outputs.run != 'false' && matrix.php == '8.4'

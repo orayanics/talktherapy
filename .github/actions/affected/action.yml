@@ -1,0 +1,46 @@
+name: Check affected service
+description: Select service checks from the pull request merge diff
+inputs:
+  service:
+    description: Service to check
+    required: true
+outputs:
+  run:
+    description: Whether to run the service checks
+    value: ${{ steps.select.outputs.run }}
+runs:
+  using: composite
+  steps:
+    - id: select
+      shell: bash
+      env:
+        SERVICE: ${{ inputs.service }}
+        BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+      run: |
+        # A missing or unexpected merge ref must run the checks.
+        paths=$(mktemp)
+        trap 'rm -f "$paths"' EXIT
+        if [[ -z "$BASE_SHA" || -z "$HEAD_SHA" ]] ||
+           [[ "$(git rev-parse HEAD^1)" != "$BASE_SHA" || "$(git rev-parse HEAD^2)" != "$HEAD_SHA" ]] ||
+           ! git diff --no-renames --name-only -z "$BASE_SHA" HEAD -- > "$paths"; then
+          echo 'run=true' >> "$GITHUB_OUTPUT"
+          exit 0
+        fi
+
+        run=false
+        while IFS= read -r -d '' path; do
+          case "$path" in
+            client/*) [[ "$SERVICE" == client ]] || continue ;;
+            server/*) [[ "$SERVICE" == server || "$SERVICE" == client ]] || continue ;;
+            py/*) [[ "$SERVICE" == py || "$SERVICE" == server ]] || continue ;;
+            docs/migration/API-CONTRACT.md|docs/migration/ARCHITECTURE.md|docs/migration/modules/SPEC-phoneme-analysis.md) ;;
+            README.md|SETUP_SSL.md|AGENTS.md|tasks/todo.md|docs/*.md) continue ;;
+          esac
+          run=true
+          break
+        done < "$paths"
+        echo "run=$run" >> "$GITHUB_OUTPUT"
+        if [[ "$run" == false ]]; then
+          echo "::notice::No changes affecting $SERVICE checks"
+        fi

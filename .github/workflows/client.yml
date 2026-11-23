@@ -32,14 +32,28 @@ jobs:
       VITE_REVERB_SCHEME: http
     steps:
       - uses: actions/checkout@v6
+        with:
+          fetch-depth: 2
+      - uses: ./.github/actions/affected
+        id: affected
+        if: github.event_name == 'pull_request' && hashFiles('.github/actions/affected/action.yml') != ''
+        with:
+          service: client
       - uses: actions/setup-node@v6
+        if: steps.affected.outputs.run != 'false'
         with:
           node-version: '24'
           cache: npm
           cache-dependency-path: client/package-lock.json
-      - run: npm ci
+      - run: npm ci --no-audit
+        if: steps.affected.outputs.run != 'false'
       - run: npm run lint
+        if: steps.affected.outputs.run != 'false'
       - run: npx tsc --noEmit
+        if: steps.affected.outputs.run != 'false'
       - run: npm test
+        if: steps.affected.outputs.run != 'false'
       - run: npm run build
+        if: steps.affected.outputs.run != 'false'
       - run: npm audit --audit-level=high
+        if: steps.affected.outputs.run != 'false'
