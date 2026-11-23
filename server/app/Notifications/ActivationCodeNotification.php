@@ -32,7 +32,7 @@ class ActivationCodeNotification extends Notification
     {
         $message = (new MailMessage)
             ->subject('TalkTherapy email verification code')
-            ->view('emails.notification', [
+            ->view('emails.account', [
                 'body' => "Use this code to verify your email address:\n\n{$this->code}\n\nThis code expires in 10 minutes. If you did not request it, ignore this email.",
             ]);
 

@@ -13,13 +13,16 @@ class LocalEmailPreviewController extends Controller
 {
     private const GROUPS = [
         'Appointments' => [
-            'appointment_booked' => ['Booking'],
-            'appointment_accepted' => ['Acceptance', ['status' => 'ACCEPTED']],
-            'appointment_rejected' => ['Rejection', ['status' => 'REJECT']],
-            'appointment_cancelled' => ['Cancellation', ['status' => 'CANCELLED']],
-            'appointment_completed' => ['Completion', ['status' => 'COMPLETED']],
+            'appointment_booked' => ['Booking', ['status' => 'PENDING', 'appointment_date' => 'Tuesday, June 16, 2026', 'appointment_time' => '10:00 AM – 11:00 AM', 'patient_name' => 'Jordan Lee', 'clinician_name' => 'Dr. Avery Smith']],
+            'appointment_accepted' => ['Acceptance', ['status' => 'ACCEPTED', 'appointment_date' => 'Tuesday, June 16, 2026', 'appointment_time' => '10:00 AM – 11:00 AM', 'patient_name' => 'Jordan Lee', 'clinician_name' => 'Dr. Avery Smith']],
+            'appointment_rejected' => ['Rejection', ['status' => 'REJECT', 'appointment_date' => 'Tuesday, June 16, 2026', 'appointment_time' => '10:00 AM – 11:00 AM', 'patient_name' => 'Jordan Lee', 'clinician_name' => 'Dr. Avery Smith', 'reason' => 'The requested time is unavailable.']],
+            'appointment_cancelled' => ['Cancellation', ['status' => 'CANCELLED', 'appointment_date' => 'Tuesday, June 16, 2026', 'appointment_time' => '10:00 AM – 11:00 AM', 'patient_name' => 'Jordan Lee', 'clinician_name' => 'Dr. Avery Smith', 'reason' => 'Schedule conflict.']],
+            'appointment_completed' => ['Completion', ['status' => 'COMPLETED', 'appointment_date' => 'Tuesday, June 16, 2026', 'appointment_time' => '10:00 AM – 11:00 AM', 'patient_name' => 'Jordan Lee', 'clinician_name' => 'Dr. Avery Smith']],
         ],
-        'Clinical records' => ['soap_created' => ['SOAP created'], 'soap_updated' => ['SOAP updated']],
+        'Clinical records' => [
+            'soap_created' => ['SOAP created', ['clinician_name' => 'Dr. Avery Smith', 'session_type' => 'Initial evaluation', 'version' => 1]],
+            'soap_updated' => ['SOAP updated', ['clinician_name' => 'Dr. Avery Smith', 'session_type' => 'Initial evaluation', 'version' => 2]],
+        ],
         'Account' => [
             'activation' => ['Account activation'],
             'email_change' => ['Email change'],
@@ -49,6 +52,12 @@ class LocalEmailPreviewController extends Controller
 
     private function sample(string $sample, array $context): MailMessage
     {
+        if (str_starts_with($sample, 'appointment_')) {
+            $context['appointment_id'] = '00000000-0000-4000-8000-000000000001';
+        } elseif (str_starts_with($sample, 'soap_')) {
+            $context['soap_id'] = '00000000-0000-4000-8000-000000000002';
+        }
+
         $notification = match ($sample) {
             'activation', 'user_invited' => new ActivationCodeNotification('123456'),
             'email_change' => new ActivationCodeNotification('123456', 'email_change'),

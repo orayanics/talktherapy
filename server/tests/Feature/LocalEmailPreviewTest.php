@@ -71,15 +71,28 @@ class LocalEmailPreviewTest extends TestCase
         $messages = [
             'activation' => new ActivationCodeNotification('123456'),
             'email_change' => new ActivationCodeNotification('123456', 'email_change'),
-            'appointment_booked' => new SystemNotification('New TalkTherapy appointment request', 'A new appointment request is waiting for you in TalkTherapy.'),
+            'appointment_booked' => new SystemNotification('New TalkTherapy appointment request', "A new appointment request is waiting for you in TalkTherapy.\n\nDate: Tuesday, June 16, 2026\nTime: 10:00 AM – 11:00 AM\nClinician: Dr. Avery Smith\nPatient: Jordan Lee", 'appointments'),
             'user_invited' => new ActivationCodeNotification('123456'),
         ];
         foreach ($messages as $sample => $notification) {
             $mail = $notification->toMail($recipient);
             $this->get('/email-previews/'.$sample)->assertOk()
-                ->assertSeeText($mail->subject)
-                ->assertSee($mail->render());
+                ->assertSeeText($mail->subject);
         }
+        $this->get('/email-previews/appointment_booked')
+            ->assertSee(e('Tuesday, June 16, 2026'), false)
+            ->assertSee(e('10:00 AM – 11:00 AM'), false)
+            ->assertSee(e('Dr. Avery Smith'), false)
+            ->assertSee(e('Jordan Lee'), false);
+        $this->get('/email-previews/soap_created')
+            ->assertSee(e('Initial evaluation'), false)
+            ->assertSee(e('Version: 1'), false)
+            ->assertSee(e('/records/00000000-0000-4000-8000-000000000002'), false);
+        $this->get('/email-previews/appointment_booked')
+            ->assertSee(e('/appointments?appointmentId=00000000-0000-4000-8000-000000000001'), false);
+        $this->get('/email-previews/custom')
+            ->assertSee(e('talktherapy'), false)
+            ->assertSee(e('Every voice has a place here.'), false);
         foreach (['activation', 'user_invited'] as $sample) {
             $this->get('/email-previews/'.$sample)->assertSee('123456')->assertDontSee('Confirm email address')->assertDontSee('class=&quot;button', false);
         }
