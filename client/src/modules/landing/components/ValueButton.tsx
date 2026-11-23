@@ -1,4 +1,4 @@
-import type { LucideProps } from 'lucide-react'
+﻿import type { LucideProps } from 'lucide-react'
 import { ArrowRight } from 'lucide-react'
 
 export default function ValueButton({
@@ -22,17 +22,22 @@ export default function ValueButton({
     <button
       type="button"
       aria-pressed={activeFeature === index}
+      aria-labelledby={`overview-feature-${index}`}
+      aria-describedby={`overview-description-${index}`}
       aria-controls="overview-preview"
       onClick={() => setActiveFeature(index)}
     >
       <span className="tt-feature-row">
         <Icon size={20} aria-hidden="true" />
-        <span>{label}</span>
+        <span id={`overview-feature-${index}`}>{label}</span>
         <ArrowRight size={19} aria-hidden="true" />
       </span>
-      {activeFeature === index && (
-        <span className="tt-feature-description">{description}</span>
-      )}
+      <span
+        className="tt-feature-description"
+        id={`overview-description-${index}`}
+      >
+        {description}
+      </span>
     </button>
   )
 }

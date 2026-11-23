@@ -1,7 +1,7 @@
-import { Link } from '@tanstack/react-router'
+﻿import { Link } from '@tanstack/react-router'
 import { ArrowRight } from 'lucide-react'
 import { useState } from 'react'
-import LandingPreview,{ FEATURES } from './LandingPreview'
+import LandingPreview, { FEATURES } from './LandingPreview'
 
 export default function Values() {
   const [activeFeature, setActiveFeature] = useState(0)
@@ -22,8 +22,8 @@ export default function Values() {
             Bring your appointments, speech practice, and care resources into
             one place. More connection, with a little less to keep track of.
           </p>
-          <Link to="/register" className="tt-text-link">
-            Explore your next step <ArrowRight size={18} aria-hidden="true" />
+          <Link to="/register" preload={false} className="tt-text-link">
+            Create a patient account <ArrowRight size={18} aria-hidden="true" />
           </Link>
         </div>
       </div>

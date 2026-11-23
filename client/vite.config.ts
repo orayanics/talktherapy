@@ -19,7 +19,16 @@ const config = defineConfig({
   plugins: [
     devtools(),
     tailwindcss(),
-    tanstackStart({ spa: { enabled: true } }),
+    tanstackStart({
+      // Use a separate route for the shell so it does not replace the homepage.
+      spa: { enabled: true, maskPath: '/login' },
+      prerender: {
+        enabled: true,
+        autoStaticPathsDiscovery: false,
+        crawlLinks: false,
+      },
+      pages: [{ path: '/' }],
+    }),
     viteReact(),
   ],
   server: {

@@ -1,15 +1,20 @@
-import { Link } from '@tanstack/react-router'
+﻿import { Link } from '@tanstack/react-router'
 import {
-ArrowDown,
-ArrowRight,
-MessageCircle,
-Sparkles,
-Speech,
+  ArrowDown,
+  ArrowRight,
+  MessageCircle,
+  Sparkles,
+  Speech,
 } from 'lucide-react'
 import { useState } from 'react'
 import '../landing.css'
-import LandingPreview,{ FEATURES } from './LandingPreview'
+import LandingPreview, { FEATURES } from './LandingPreview'
 import Values from './Values'
+import LandingFeatureButton from './LandingFeatureButton'
+
+const operator = import.meta.env.VITE_PUBLIC_OPERATOR
+const privacyUrl = import.meta.env.VITE_PUBLIC_PRIVACY_URL
+const supportUrl = import.meta.env.VITE_PUBLIC_SUPPORT_URL
 
 export default function Landing() {
   const [activeFeature, setActiveFeature] = useState(0)
@@ -27,41 +32,46 @@ export default function Landing() {
         </Link>
         <nav aria-label="Main navigation" className="tt-nav-links">
           <a href="#get-to-know">Our platform</a>
-          <a href="#explore-platform">How it works</a>
+          <a href="#how-it-works">How it works</a>
         </nav>
         <div className="tt-nav-actions">
-          <Link to="/login">Log in</Link>
-          <Link to="/register" className="btn tt-cta">
-            Get started <ArrowRight size={16} aria-hidden="true" />
+          <Link to="/login" preload={false}>
+            Log in
+          </Link>
+          <Link to="/register" preload={false} className="btn tt-cta">
+            Create a patient account <ArrowRight size={16} aria-hidden="true" />
           </Link>
         </div>
       </header>
       <main id="landing-main">
         <section className="tt-hero" aria-labelledby="hero-title">
           <div className="tt-hero-copy">
-            <a className="tt-eyebrow" href="#get-to-know">
-              Speech support, connected{' '}
-              <ArrowRight size={14} aria-hidden="true" />
-            </a>
             <h1 id="hero-title">
-              Your voice matters.
-              <br />
-              Every word, <span>yours.</span>
+              Speech therapy appointments and <span>practice in one place</span>
             </h1>
             <p className="tt-lead">
-              Connect with a therapist, make time for practice, and keep your
-              care together. Speech and language support, one conversation at a
-              time.
+              TalkTherapy helps patients and families request speech therapy
+              appointments, find exercises for speech practice, and access
+              resources and care records.
             </p>
-            <Link to="/register" className="btn tt-cta tt-cta-large">
-              Start your journey <ArrowRight size={18} aria-hidden="true" />
+            <Link
+              to="/register"
+              preload={false}
+              className="btn tt-cta tt-cta-large"
+            >
+              Create a patient account{' '}
+              <ArrowRight size={18} aria-hidden="true" />
             </Link>
             <p className="tt-hero-note">
-              <MessageCircle size={16} aria-hidden="true" /> A place for
-              patients, families, and clinicians.
+              <a href="#how-it-works" className="tt-text-link">
+                How it works
+              </a>
             </p>
           </div>
-          <div id="explore-platform" className="tt-showcase">
+          <section className="tt-showcase" aria-labelledby="preview-title">
+            <h2 id="preview-title" className="sr-only">
+              TalkTherapy feature preview
+            </h2>
             <div className="tt-doodle tt-doodle-left" aria-hidden="true">
               <MessageCircle />
               <span>hello!</span>
@@ -100,30 +110,62 @@ export default function Landing() {
                 Get to know TalkTherapy
               </a>
             </div>
-          </div>
-          <div className="tt-audience">
-            <p>From your first appointment to everyday practice.</p>
-            <div>
-              <span>Patients & families</span>
-              <span>Therapists & clinicians</span>
-              <span>Care that connects</span>
-            </div>
-          </div>
+          </section>
         </section>
         <Values />
+        <section
+          className="tt-info"
+          id="how-it-works"
+          aria-labelledby="onboarding-title"
+        >
+          <h2 id="onboarding-title">How it works</h2>
+          <ol>
+            <li>
+              <h3>Create and verify your account</h3>
+              <p>Create a patient account, verify your email, and log in.</p>
+            </li>
+            <li>
+              <h3>Request an appointment</h3>
+              <p>
+                After intake, eligible patients can request an available
+                appointment. The appointment is confirmed when the clinician
+                accepts it.
+              </p>
+            </li>
+            <li>
+              <h3>Find speech exercises</h3>
+              <p>
+                Open Speech practice after signing in to find exercises
+                available to you, including exercises your clinician assigns.
+              </p>
+            </li>
+          </ol>
+        </section>
+        <section className="tt-info" aria-labelledby="clinician-title">
+          <h2 id="clinician-title">For clinicians</h2>
+          <p>
+            Manage appointment requests, assign speech exercises, and keep
+            patient care records together.
+          </p>
+          <Link to="/login" preload={false} className="tt-text-link">
+            Log in <ArrowRight size={16} aria-hidden="true" />
+          </Link>
+        </section>
       </main>
       <footer className="tt-footer">
         <span className="tt-wordmark">
           <Speech aria-hidden="true" />
           talktherapy.
         </span>
-        <p>Every voice has a place here.</p>
-        <Link to="/login">
-          Log in <ArrowRight size={16} aria-hidden="true" />
-        </Link>
+        {operator && <p>Operated by {operator}</p>}
+        <nav aria-label="Footer navigation" className="tt-footer-links">
+          {privacyUrl && <a href={privacyUrl}>Privacy notice</a>}
+          {supportUrl && <a href={supportUrl}>Contact support</a>}
+          <Link to="/login" preload={false}>
+            Log in
+          </Link>
+        </nav>
       </footer>
     </div>
   )
 }
-
-import LandingFeatureButton from './LandingFeatureButton'
