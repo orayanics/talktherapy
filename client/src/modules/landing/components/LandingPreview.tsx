@@ -1,11 +1,11 @@
-import {
-BookOpen,
-CalendarDays,
-Check,
-FileText,
-Mic,
-Speech,
-Video,
+﻿import {
+  BookOpen,
+  CalendarDays,
+  Check,
+  FileText,
+  Mic,
+  Speech,
+  Video,
 } from 'lucide-react'
 
 export const FEATURES = [
@@ -14,14 +14,14 @@ export const FEATURES = [
     icon: CalendarDays,
     headline: 'Make space for a conversation.',
     description:
-      'Find time for your next session and keep your appointments together.',
+      'Request an available appointment and see when your clinician confirms it.',
   },
   {
     label: 'Speech practice',
     icon: Mic,
     headline: 'Small steps. Your own pace.',
     description:
-      'Explore speech exercises in English and Filipino, with room to record and replay.',
+      'Explore speech exercises in English and Filipino. Record and replay your speech where supported.',
   },
   {
     label: 'Resources',
@@ -114,6 +114,7 @@ export default function LandingPreview({
                 width="150"
                 height="140"
                 loading="lazy"
+                fetchPriority="low"
               />
               <h4>Let’s try a word together.</h4>
               <p>Listen. Say it. Take your time.</p>
@@ -151,9 +152,6 @@ export default function LandingPreview({
     </div>
   )
 }
-
-
-
 
 import PreviewCalendarDay from './PreviewCalendarDay'
 import PreviewFeatureBadge from './PreviewFeatureBadge'

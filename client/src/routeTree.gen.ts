@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as IndexRouteImport } from './routes/index'
 import { Route as PrivateRouteRouteImport } from './routes/_private/route'
 import { Route as PublicRouteRouteImport } from './routes/_public/route'
 import { Route as ForbiddenRouteImport } from './routes/forbidden'
@@ -17,7 +18,6 @@ import { Route as PrivateadmSharedRouteRouteImport } from './routes/_private/(ad
 import { Route as PrivateclinicianRouteRouteImport } from './routes/_private/(clinician)/route'
 import { Route as PrivatepatientRouteRouteImport } from './routes/_private/(patient)/route'
 import { Route as PrivateDashboardRouteImport } from './routes/_private/dashboard'
-import { Route as PublicIndexRouteImport } from './routes/_public/index'
 import { Route as PublicLoginRouteImport } from './routes/_public/login'
 import { Route as PublicRegisterRouteImport } from './routes/_public/register'
 import { Route as SessionRoomRouteRouteImport } from './routes/_session/room/route'
@@ -52,6 +52,11 @@ import { Route as PrivatesharedContentAdmCreateRouteImport } from './routes/_pri
 import { Route as PrivatesharedSlpExercisesIndexRouteImport } from './routes/_private/(shared)/slp/exercises/index'
 import { Route as PrivatesharedContentAdmContentIdEditRouteImport } from './routes/_private/(shared)/content/_adm/$contentId.edit'
 
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PrivateRouteRoute = PrivateRouteRouteImport.update({
   id: '/_private',
   getParentRoute: () => rootRouteImport,
@@ -86,11 +91,6 @@ const PrivateDashboardRoute = PrivateDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
   getParentRoute: () => PrivateRouteRoute,
-} as any)
-const PublicIndexRoute = PublicIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => PublicRouteRoute,
 } as any)
 const PublicLoginRoute = PublicLoginRouteImport.update({
   id: '/login',
@@ -279,7 +279,7 @@ const PrivatesharedContentAdmContentIdEditRoute =
   } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof PublicIndexRoute
+  '/': typeof IndexRoute
   '/forbidden': typeof ForbiddenRoute
   '/unauthorized': typeof UnauthorizedRoute
   '/room': typeof SessionRoomRouteRouteWithChildren
@@ -318,7 +318,7 @@ export interface FileRoutesByFullPath {
   '/content/$contentId/edit': typeof PrivatesharedContentAdmContentIdEditRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof PublicIndexRoute
+  '/': typeof IndexRoute
   '/forbidden': typeof ForbiddenRoute
   '/unauthorized': typeof UnauthorizedRoute
   '/room': typeof SessionRoomRouteRouteWithChildren
@@ -357,6 +357,7 @@ export interface FileRoutesByTo {
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
+  '/': typeof IndexRoute
   '/_private': typeof PrivateRouteRouteWithChildren
   '/_public': typeof PublicRouteRouteWithChildren
   '/forbidden': typeof ForbiddenRoute
@@ -368,7 +369,6 @@ export interface FileRoutesById {
   '/_private/dashboard': typeof PrivateDashboardRoute
   '/_public/login': typeof PublicLoginRoute
   '/_public/register': typeof PublicRegisterRoute
-  '/_public/': typeof PublicIndexRoute
   '/_private/(adm-shared)/diagnoses': typeof PrivateadmSharedDiagnosesRoute
   '/_private/(adm-shared)/logs': typeof PrivateadmSharedLogsRoute
   '/_private/(adm-shared)/notifications': typeof PrivateadmSharedNotificationsRoute
@@ -480,6 +480,7 @@ export interface FileRouteTypes {
     | '/content/$contentId/edit'
   id:
     | '__root__'
+    | '/'
     | '/_private'
     | '/_public'
     | '/forbidden'
@@ -491,7 +492,6 @@ export interface FileRouteTypes {
     | '/_private/dashboard'
     | '/_public/login'
     | '/_public/register'
-    | '/_public/'
     | '/_private/(adm-shared)/diagnoses'
     | '/_private/(adm-shared)/logs'
     | '/_private/(adm-shared)/notifications'
@@ -525,6 +525,7 @@ export interface FileRouteTypes {
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
+  IndexRoute: typeof IndexRoute
   PrivateRouteRoute: typeof PrivateRouteRouteWithChildren
   PublicRouteRoute: typeof PublicRouteRouteWithChildren
   ForbiddenRoute: typeof ForbiddenRoute
@@ -534,6 +535,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_private': {
       id: '/_private'
       path: ''
@@ -589,13 +597,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/dashboard'
       preLoaderRoute: typeof PrivateDashboardRouteImport
       parentRoute: typeof PrivateRouteRoute
-    }
-    '/_public/': {
-      id: '/_public/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof PublicIndexRouteImport
-      parentRoute: typeof PublicRouteRoute
     }
     '/_public/login': {
       id: '/_public/login'
@@ -953,7 +954,6 @@ const PrivateRouteRouteWithChildren = PrivateRouteRoute._addFileChildren(
 interface PublicRouteRouteChildren {
   PublicLoginRoute: typeof PublicLoginRoute
   PublicRegisterRoute: typeof PublicRegisterRoute
-  PublicIndexRoute: typeof PublicIndexRoute
   PublicActivateOtpUpdateRoute: typeof PublicActivateOtpUpdateRoute
   PublicActivateOtpIndexRoute: typeof PublicActivateOtpIndexRoute
 }
@@ -961,7 +961,6 @@ interface PublicRouteRouteChildren {
 const PublicRouteRouteChildren: PublicRouteRouteChildren = {
   PublicLoginRoute: PublicLoginRoute,
   PublicRegisterRoute: PublicRegisterRoute,
-  PublicIndexRoute: PublicIndexRoute,
   PublicActivateOtpUpdateRoute: PublicActivateOtpUpdateRoute,
   PublicActivateOtpIndexRoute: PublicActivateOtpIndexRoute,
 }
@@ -982,6 +981,7 @@ const SessionRoomRouteRouteWithChildren =
   SessionRoomRouteRoute._addFileChildren(SessionRoomRouteRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
+  IndexRoute: IndexRoute,
   PrivateRouteRoute: PrivateRouteRouteWithChildren,
   PublicRouteRoute: PublicRouteRouteWithChildren,
   ForbiddenRoute: ForbiddenRoute,

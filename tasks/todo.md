@@ -39,6 +39,7 @@ Use this ledger for unfinished work. Completed implementation remains documented
 | Authoring     | Notification audit and browser evidence.                          |
 | Diagnoses     | CRUD denial matrix and browser evidence.                          |
 | Suspension    | Modal workflow browser evidence.                                  |
+| Homepage performance | Implemented the [homepage performance spec](../docs/talktherapy-homepage-performance-spec.md). The homepage production build now uses a 23 KB route stylesheet while app routes keep the full stylesheet. Three matched mobile runs improved `/` LCP from a 3.37 s median to 3.07 s and measured `/#get-to-know` at a 3.12 s median. CLS stayed at 0.022 and 0.002. The full client suite remains blocked by the installed Bun runtime missing Vitest APIs such as `vi.mocked` and `vi.hoisted`. |
 
 ## Production cutover
 
@@ -49,6 +50,7 @@ Use this ledger for unfinished work. Completed implementation remains documented
 | Recovery          | Rehearse encrypted backups, restore, rollback, and secret rotation.            |
 | Monitoring        | Cover API, queues, Reverb, Python, storage, and dependency failures.           |
 | Release candidate | Run browser and PostgreSQL verification.                                       |
+| Public homepage   | Confirm the production origin, operator, approved privacy notice, support contact, and social image. Verify the live homepage, canonical, crawlability, social preview, and app route handling using the [homepage spec](../docs/talktherapy-landing-seo-spec.md). The local production-build mobile median was 3.37 s LCP and 0.022 CLS. The trace showed the shared stylesheet on the render-blocking path. Recheck LCP on the release host against the 2.5 s target. |
 | Retirement        | Observe deployment before removing legacy runtime references.                  |
 
 ## References
