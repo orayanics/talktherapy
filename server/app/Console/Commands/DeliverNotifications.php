@@ -94,23 +94,7 @@ class DeliverNotifications extends Command
 
                 return;
             }
-            $subject = match ($message->kind) {
-                'email.custom' => (string) ($message->payload['subject'] ?? 'TalkTherapy notification'),
-                'email.appointment_booked' => 'New TalkTherapy appointment request',
-                'email.appointment_accepted' => 'TalkTherapy appointment accepted',
-                'email.appointment_rejected' => 'TalkTherapy appointment declined',
-                'email.appointment_cancelled' => 'TalkTherapy appointment cancelled',
-                'email.appointment_completed' => 'TalkTherapy appointment completed',
-                'email.soap_created' => 'New TalkTherapy clinical record',
-                'email.soap_updated' => 'TalkTherapy clinical record updated',
-                'email.user_invited' => 'Your TalkTherapy account invitation',
-                'email.user_suspended' => 'Your TalkTherapy account was suspended',
-                'email.user_reactivated' => 'Your TalkTherapy account was reactivated',
-                'email.password_changed' => 'Your TalkTherapy password was changed',
-                default => 'TalkTherapy account update',
-            };
-            $body = (string) ($message->payload['message'] ?? 'Your TalkTherapy account has an update.');
-            Notification::route('mail', $recipient->email)->notify(new SystemNotification($subject, $body));
+            Notification::route('mail', $recipient->email)->notify(SystemNotification::fromOutbox($message->kind, $message->payload ?? []));
             $message->forceFill(['delivered_at' => now(), 'broadcasted_at' => now(), 'claimed_at' => null, 'claim_token' => null, 'last_error_code' => null])->save();
 
             return;
