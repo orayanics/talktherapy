@@ -499,18 +499,11 @@
 .tt-overview-caption {
   margin: 0 0 24px;
 }
-.tt-overview-caption > span {
-  font-size: 10px;
-  letter-spacing: 0.1em;
-  color: var(--tt-blue);
-  font-weight: 650;
-}
 .tt-overview-caption h3 {
   font-size: 25px;
   line-height: 1.2;
   letter-spacing: -0.7px;
   font-weight: 600;
-  margin-top: 9px;
   max-width: 320px;
 }
 .tt-overview-visual .tt-preview-frame {

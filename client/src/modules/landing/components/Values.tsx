@@ -2,6 +2,7 @@
 import { ArrowRight } from 'lucide-react'
 import { useState } from 'react'
 import LandingPreview, { FEATURES } from './LandingPreview'
+import ValueButton from './ValueButton'
 
 export default function Values() {
   const [activeFeature, setActiveFeature] = useState(0)
@@ -47,7 +48,6 @@ export default function Values() {
         </div>
         <div className="tt-overview-visual" id="overview-preview">
           <div className="tt-overview-caption">
-            <span>YOUR CARE, CONNECTED</span>
             <h3>{FEATURES[activeFeature].headline}</h3>
           </div>
           <div className="tt-preview-frame">
@@ -58,5 +58,3 @@ export default function Values() {
     </section>
   )
 }
-
-import ValueButton from './ValueButton'

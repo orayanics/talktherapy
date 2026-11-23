@@ -127,16 +127,17 @@ export default function Landing() {
             <li>
               <h3>Request an appointment</h3>
               <p>
-                After intake, eligible patients can request an available
-                appointment. The appointment is confirmed when the clinician
-                accepts it.
+                Eligible patients can choose an available slot in Book and
+                complete the intake questions to send an appointment request.
+                The appointment is confirmed when the clinician accepts it.
               </p>
             </li>
             <li>
               <h3>Find speech exercises</h3>
               <p>
-                Open Speech practice after signing in to find exercises
-                available to you, including exercises your clinician assigns.
+                After signing in, open Speech Exercises. Go to Collections for
+                available exercises or My assignments for exercises your
+                clinician assigns.
               </p>
             </li>
           </ol>
