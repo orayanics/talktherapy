@@ -36,7 +36,7 @@ class PlatformOperationsTest extends TestCase
     public function test_database_failure_returns_safe_unready_response(): void
     {
         config(['health.readiness_token' => 'test-readiness-secret']);
-        DB::shouldReceive('connection')->andThrow(new \RuntimeException('private database credentials'));
+        DB::partialMock()->shouldReceive('connection')->once()->andThrow(new \RuntimeException('private database credentials'));
         $this->withToken('test-readiness-secret')->getJson('/ready')->assertServiceUnavailable()
             ->assertDontSee('private database credentials')->assertJsonPath('code', 'service_unavailable');
     }
