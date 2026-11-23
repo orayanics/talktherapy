@@ -141,7 +141,15 @@ class TransitionAppointment
                 'available_at' => now(),
                 'expires_at' => now()->addDay(),
             ]);
-            $notifications->email(User::query()->findOrFail($recipientId), 'appointment_'.$eventAction, ['message' => "Your appointment status is now {$appointment->status}."]);
+            $notifications->email(User::query()->findOrFail($recipientId), 'appointment_'.$eventAction, [
+                'appointment_id' => $appointment->id,
+                'status' => $appointment->status,
+                'appointment_date' => $slot->start_at->format('l, F j, Y'),
+                'appointment_time' => $slot->start_at->format('g:i A').' – '.$slot->end_at->format('g:i A'),
+                'patient_name' => $appointment->patient()->value('name'),
+                'clinician_name' => $appointment->clinician()->value('name'),
+                'reason' => $input['reason'] ?? null,
+            ]);
 
             if ($action === 'complete') {
                 $now = now();

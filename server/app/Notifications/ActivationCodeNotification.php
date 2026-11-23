@@ -32,15 +32,15 @@ class ActivationCodeNotification extends Notification
     {
         $message = (new MailMessage)
             ->subject('TalkTherapy email verification code')
-            ->line('Use this code to verify your email address:')
-            ->line($this->code)
-            ->line('This code expires in 10 minutes. If you did not request it, ignore this email.');
+            ->view('emails.account', [
+                'body' => "Use this code to verify your email address:\n\n{$this->code}\n\nThis code expires in 10 minutes. If you did not request it, ignore this email.",
+            ]);
 
         if ($this->purpose === 'email_change') {
-            $message->action(
-                'Confirm email address',
-                rtrim((string) config('app.frontend_url'), '/').'/profile/email-change?code='.urlencode($this->code),
-            );
+            $message->viewData['action'] = [
+                'label' => 'Confirm email address',
+                'url' => rtrim((string) config('app.frontend_url'), '/').'/profile/email-change?code='.urlencode($this->code),
+            ];
         }
 
         return $message;

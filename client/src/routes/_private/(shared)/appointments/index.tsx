@@ -25,6 +25,7 @@ const searchSchema = z
       .transform((v) => v?.toLowerCase())
       .refine((v) => !v || v === 'asc' || v === 'desc')
       .transform((v) => (v === 'asc' || v === 'desc' ? v : undefined)),
+    appointmentId: z.string().uuid().optional(),
     status: z
       .unknown()
       .optional()
@@ -44,6 +45,7 @@ const searchSchema = z
     ...(data.status.length
       ? { status: data.status.map((value) => value.toUpperCase()) }
       : {}),
+    ...(data.appointmentId ? { appointmentId: data.appointmentId } : {}),
   }))
 
 export const Route = createFileRoute('/_private/(shared)/appointments/')({
