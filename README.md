@@ -33,7 +33,9 @@ cp py/.env.example py/.env
 docker compose up --build
 ```
 
-Open the client at `http://localhost:3000` and Mailpit at `http://localhost:8025`. The Compose setup runs the Laravel API, Reverb, queue, scheduler, Vite client, Python service, and Mailpit. Laravel creates its key, database, and seeded development accounts on first start; named volumes preserve dependencies, storage, and the Python model between restarts.
+Open the client at `http://localhost:3000` and Mailpit at `http://localhost:8025`. The Compose setup runs the Laravel API, Reverb, queue, scheduler, Vite client, Python service, and Mailpit. For everyday work without speech analysis, use `docker compose up client`. Use `docker compose up --build client` on first use or after changing an image input.
+
+On startup Laravel applies pending migrations. Compose seeds demo data once in a new PostgreSQL volume. To refresh demo accounts and fixtures explicitly, run `docker compose exec server php artisan db:seed`. This resets demo-account credentials and updates demo records. Named volumes preserve dependencies, storage, and the Python model between restarts.
 
 The Compose setup uses PostgreSQL with a named data volume. The default Python image downloads the `base` Whisper artifact during its first build, so the initial build is large and may take several minutes. Keep the Python service private in production and replace the development credentials and secrets in the env files.
 
@@ -224,7 +226,7 @@ python -m ruff check src tests
 python -m compileall -q src tests
 ```
 
-CI runs the Laravel and client checks on pushes and pull requests. Python CI and a hash-locked clean-image inference test are still tracked release work.
+Pull requests run quality checks for affected services. Client changes check the client, Laravel changes check Laravel and the client, and Python changes check Python and Laravel. Shared CI or startup changes run checks for all three services. Pushes to `main` or `staging` and manual workflow runs execute the full checks for each triggered workflow. Python CI runs without Whisper weights. The [release checklist](tasks/todo.md#speech-service-gates) tracks the clean-image inference test.
 
 ## Documentation and release status
 

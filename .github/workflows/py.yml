@@ -1,0 +1,67 @@
+name: Python speech service
+
+on:
+  push:
+    branches: [main, staging]
+  pull_request:
+  workflow_dispatch:
+  workflow_call:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: py-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  python-quality:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: py
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 2
+      - uses: ./.github/actions/affected
+        id: affected
+        if: github.event_name == 'pull_request' && hashFiles('.github/actions/affected/action.yml') != ''
+        with:
+          service: py
+      - uses: actions/setup-python@v6
+        if: steps.affected.outputs.run != 'false'
+        with:
+          python-version: '3.13'
+          cache: pip
+          cache-dependency-path: py/pyproject.toml
+      - name: Install audio libraries
+        if: steps.affected.outputs.run != 'false'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends espeak-ng ffmpeg libsndfile1
+      - name: Install Python dependencies
+        if: steps.affected.outputs.run != 'false'
+        run: |
+          python - <<'PY'
+          import subprocess
+          import sys
+          import tomllib
+
+          with open('pyproject.toml', 'rb') as manifest:
+              dependencies = tomllib.load(manifest)['project']['dependencies']
+          torch = [requirement for requirement in dependencies
+                   if requirement.partition('==')[0] in {'torch', 'torchaudio'}]
+          subprocess.check_call([
+              sys.executable, '-m', 'pip', 'install',
+              '--index-url', 'https://download.pytorch.org/whl/cpu', *torch,
+          ])
+          PY
+          python -m pip install '.[dev]'
+      - run: python -m ruff check src tests
+        if: steps.affected.outputs.run != 'false'
+      - run: python -m compileall -q src tests
+        if: steps.affected.outputs.run != 'false'
+      - run: python -m pytest -q
+        if: steps.affected.outputs.run != 'false'

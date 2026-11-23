@@ -5,6 +5,8 @@ import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 import { fetchCollectionPractice } from '../api/collections'
 
+import PracticeExerciseCard from './PracticeExerciseCard'
+
 export default function CollectionPractice({
   collectionId,
 }: {
@@ -39,5 +41,3 @@ export default function CollectionPractice({
     </div>
   )
 }
-
-import PracticeExerciseCard from './PracticeExerciseCard'

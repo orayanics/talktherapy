@@ -1,5 +1,7 @@
 import type { AssessResponse } from '#/modules/slp/api/slp'
 
+import ImprovementUnitItem from './ImprovementUnitItem'
+
 interface SlpImprovementProps {
   result: AssessResponse
 }
@@ -18,5 +20,3 @@ export default function SlpImprovement({ result }: SlpImprovementProps) {
     </div>
   )
 }
-
-import ImprovementUnitItem from './ImprovementUnitItem'

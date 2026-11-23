@@ -12,6 +12,8 @@ mutateSaveSlpReview,
 slpWorkflowKeys,
 } from '../api/workflow'
 
+import ReviewAttemptButton from './ReviewAttemptButton'
+
 export default function SlpReviewInbox() {
   const client = useQueryClient()
   const [selectedId, setSelectedId] = useState<string | null>(null)
@@ -172,9 +174,9 @@ function ReviewPanel({
           <summary>Show automated transcript</summary>
           <p>
             <strong>Transcript:</strong>{' '}
-            {result?.analysis?.transcript ?? 'Not available'}
+            {result.analysis?.transcript ?? 'Not available'}
           </p>
-          {result?.feedback?.text && (
+          {result.feedback?.text && (
             <p className="mt-2">
               <strong>Service note:</strong> {result.feedback.text}
             </p>
@@ -220,5 +222,3 @@ function ReviewPanel({
     </section>
   )
 }
-
-import ReviewAttemptButton from './ReviewAttemptButton'

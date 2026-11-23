@@ -1,5 +1,7 @@
 import type { AssessResponse } from '#/modules/slp/api/slp'
 
+import AccurateUnitItem from './AccurateUnitItem'
+
 interface SlpAccurateProps {
   result: AssessResponse
 }
@@ -19,5 +21,3 @@ export default function SlpAccurate({ result }: SlpAccurateProps) {
     </div>
   )
 }
-
-import AccurateUnitItem from './AccurateUnitItem'

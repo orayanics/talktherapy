@@ -22,8 +22,6 @@ services:
     depends_on:
       db:
         condition: service_healthy
-      py:
-        condition: service_started
       mailpit:
         condition: service_started
     restart: unless-stopped
@@ -57,8 +55,9 @@ services:
       POSTGRES_PASSWORD: talktherapy
     volumes:
       - postgres_data:/var/lib/postgresql
+      - ./server/docker-init.sql:/docker-entrypoint-initdb.d/10-demo-seed.sql:ro
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U talktherapy -d talktherapy"]
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U talktherapy -d talktherapy"]
       interval: 5s
       timeout: 5s
       retries: 10

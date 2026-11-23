@@ -4,6 +4,8 @@ import type { PracticeReflection,WordProgress } from '../data/practiceGame'
 import { checkFeedback,getPracticeStars } from '../data/practiceGame'
 import { CheckInKeys,StarMeter,Tala } from './PracticeRewards'
 
+import PracticeActionItem from './PracticeActionItem'
+
 export default function PracticeWordFeedback({
   progress,
   audioUrl,
@@ -156,5 +158,3 @@ export default function PracticeWordFeedback({
     </div>
   )
 }
-
-import PracticeActionItem from './PracticeActionItem'

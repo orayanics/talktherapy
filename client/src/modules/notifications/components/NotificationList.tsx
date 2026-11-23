@@ -4,6 +4,8 @@ import StateNull from '#/components/State/StateNull'
 import { useNotifications } from '#/modules/notifications/hooks/useNotifications'
 import { useEffect,useRef } from 'react'
 
+import NotificationRow from './NotificationRow'
+
 export default function NotificationList() {
   const {
     notifications,
@@ -55,5 +57,3 @@ export default function NotificationList() {
     </div>
   )
 }
-
-import NotificationRow from './NotificationRow'

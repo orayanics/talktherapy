@@ -7,6 +7,8 @@ import FilterDrawer from '#/components/Page/FilterDrawer'
 import { fetchDiagnoses } from '#/modules/diagnoses/api/diagnoses'
 import { useQuery } from '@tanstack/react-query'
 
+import DiagnosisFilterOption from './DiagnosisFilterOption'
+
 export type UpdateSearch = (
   next: Partial<Omit<ContentParams, 'is_bookmarked'> & QueryParams> & {
     is_bookmarked?: true
@@ -96,5 +98,3 @@ export default function ContentFilters({
     </div>
   )
 }
-
-import DiagnosisFilterOption from './DiagnosisFilterOption'

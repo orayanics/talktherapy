@@ -16,6 +16,8 @@ import StateNull from '#/components/State/StateNull'
 import { formatDate } from '#/utils/useDate'
 import PatientSummary from './patient/PatientSummary'
 
+import UpcomingAppointmentItem from './UpcomingAppointmentItem'
+
 function upcomingRange() {
   const start = new Date()
   const end = new Date(start)
@@ -125,5 +127,3 @@ export default function PatientDashboard() {
     </div>
   )
 }
-
-import UpcomingAppointmentItem from './UpcomingAppointmentItem'
