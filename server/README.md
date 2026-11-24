@@ -42,6 +42,28 @@ php artisan route:list
 
 Tests use isolated in-memory SQLite, not the local database. CI runs PHP 8.4/8.5 platform checks. PostgreSQL/MySQL locking, Redis coordination, browser auth and inference need their later-phase checks. `composer run dev` starts the API, Reverb, scheduler, and queue listener. The React client runs separately from `../client/`.
 
+## Local MySQL load benchmarks
+
+Run the benchmarks on the Windows host with Laragon MySQL listening at `127.0.0.1:3306`. The runner uses the local root account, creates a fresh named schema per block, and drops it during cleanup. The wide fixture grows the clinician and patient population. The hot fixture concentrates linked history and roster rows.
+
+From `server/`, collect baseline SQL and MySQL execution plans for both shapes at 10×, 100× and 1000×.
+
+```powershell
+New-Item -ItemType Directory -Force ../artifacts/mysql-benchmark
+php artisan app:benchmark-relational --blocks=2 --pairs=6 --output=../artifacts/mysql-benchmark/sql-before.json
+php artisan app:benchmark-relational --scales=1000 --shapes=wide --case=admin_audit --index=audit_logs:action,created_at,id --blocks=12 --output=../artifacts/mysql-benchmark/audit-paired.json
+```
+
+From the repo root, run HTTP discovery using an installed Nginx binary, FFmpeg, the Python service virtual environment, a pinned local Whisper model, and a short synthetic speech WAV. Use a fresh output filename for each run.
+
+```powershell
+python tools/load_backend.py --nginx <nginx.exe> --ffmpeg-dir <ffmpeg-directory> --model-dir <whisper-directory> --model-revision <revision> --audio <synthetic-wav> --ramp --output artifacts/mysql-benchmark/live-before.json
+python tools/analyze_benchmarks.py artifacts/mysql-benchmark/audit-paired.json --min-improvement-ms 50 --output artifacts/mysql-benchmark/audit-report
+python tools/analyze_benchmarks.py artifacts/mysql-benchmark/live-before.json --output artifacts/mysql-benchmark/live-report
+```
+
+The live runner starts separate loopback PHP workers, one real database queue worker, and the private speech service. It measures authenticated core API traffic, speech alone, mixed traffic, and a same-slot booking race. It records offered and completed work, active concurrency, HTTP outcomes, and latency. Use `--scales`, `--shapes`, `--profiles`, `--api-rate`, and `--speech-rate` to focus a run. For paired index tests, fix the offered rates and use `--index` and `--blocks`. Record the primary metric and meaningful change before the confirmation run.
+
 ## Laravel Boost
 
 Installed with `composer require laravel/boost --dev`, then:

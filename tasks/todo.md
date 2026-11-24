@@ -16,6 +16,7 @@ Use this ledger for unfinished work. Completed implementation remains documented
 | Reporting        | Filters, exports, authorization, and download cleanup.               |
 | PostgreSQL       | Schedules, bookings, transitions, bookmarks, and care relationships. |
 | Redis            | Sessions, queues, rate limits, leases, and worker recovery.          |
+| MySQL performance | Investigate the 1000× hot assignment list and mixed dashboard, availability, appointment, and booking latency on Laragon. |
 | Startup and CI   | Verify core-only and full Compose startup on fresh and existing PostgreSQL volumes. Record warm startup, clean-build, and GitHub Actions step timings. Verify required check settings for the three workflows. |
 
 ## Speech-service gates
@@ -28,7 +29,7 @@ Use this ledger for unfinished work. Completed implementation remains documented
 | Open  | Add clean-image startup and inference smoke tests.                                |
 | Open  | Replace deprecated MMS_FA alignment before production.                            |
 | Open  | Confirm model licenses and artifact provenance.                                   |
-| Open  | Measure memory, latency, concurrency, and recovery budgets.                       |
+| Open  | Measure peak memory and recovery under sustained speech load. Repeat the local concurrency measurements on the release host. |
 | Open  | Obtain clinical and privacy review before retaining speech or claiming scores.    |
 
 ## Product follow-up

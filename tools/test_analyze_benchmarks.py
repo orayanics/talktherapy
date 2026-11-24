@@ -67,8 +67,15 @@ class AnalysisTest(unittest.TestCase):
     def test_small_runs_are_marked_insufficient_and_large_runs_qualify(self):
         small = summarize_case(10, dict(name="small", samples=self.samples(1, 1)), 100)
         self.assertFalse(small["sufficient_observations"])
-        full = summarize_case(10, dict(name="full", samples=self.samples(6, 5)), 100)
+        full = summarize_case(10, dict(name="full", samples=self.samples(12, 3)), 100)
         self.assertTrue(full["sufficient_observations"])
+
+    def test_baseline_keeps_timings_without_inferring_an_effect(self):
+        samples = [sample for sample in self.samples() if sample["variant"] == "before"]
+        result = summarize_case(10, dict(name="baseline", samples=samples), baseline=True)
+        self.assertEqual(result["before"]["p95_ms"], 10)
+        self.assertEqual(result["blocks"], 3)
+        self.assertNotIn("p_value", result)
 
     def test_invalid_scales_and_excess_blocks_fail_before_inference(self):
         for scale in (0, -1, "10", True):
@@ -79,7 +86,7 @@ class AnalysisTest(unittest.TestCase):
 
     def test_cli_generates_reports_and_preserves_failed_cases(self):
         case = dict(name="case <one>", samples=self.samples(6, 5))
-        payload = dict(metadata=dict(database="sqlite", exclusions=["HTTP concurrency"]),
+        payload = dict(metadata=dict(database="mysql", exclusions=["HTTP concurrency"]),
                        scales=[dict(scale=10, cases=[case], blocks=[
                            dict(index_build=dict(wall_ms=2, allocated_bytes=2048))])])
         script = Path(__file__).with_name("analyze_benchmarks.py")
@@ -95,7 +102,7 @@ class AnalysisTest(unittest.TestCase):
             self.assertEqual(summary["failures"], [])
             self.assertIn("case &lt;one&gt;", (output / "comparison.svg").read_text())
             self.assertTrue((output / "scale.svg").exists())
-            self.assertIn("| 10 | 1 | 2.0000 | 2.00 |", (output / "report.md").read_text())
+            self.assertIn("| — | 10 | 1 | 2.0000 |", (output / "report.md").read_text(encoding="utf-8"))
             broken = copy.deepcopy(case)
             broken["name"] = "failed case"
             broken["samples"][0]["error"] = "database timeout"

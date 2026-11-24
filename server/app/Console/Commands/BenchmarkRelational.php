@@ -8,8 +8,8 @@ use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Throwable;
 
-#[Signature('app:benchmark-relational {--scales=10,100,1000} {--blocks=10} {--pairs=3} {--warmups=2} {--baseline : Capture before samples only} {--output= : New JSON artifact path; existing files are refused}')]
-#[Description('Profile production read controllers against disposable synthetic SQLite databases')]
+#[Signature('app:benchmark-relational {--scales=10,100,1000} {--shapes=wide,hot} {--blocks=12} {--pairs=3} {--warmups=2} {--case= : Focus on one controller case} {--index= : Compare a candidate index as table:column,column} {--output= : New JSON artifact path; existing files are refused}')]
+#[Description('Profile production read controllers against disposable Laragon MySQL schemas')]
 class BenchmarkRelational extends Command
 {
     /**
@@ -36,6 +36,12 @@ class BenchmarkRelational extends Command
 
             return self::FAILURE;
         }
+        $index = $this->option('index');
+        if ($index !== null && ! preg_match('/\A[a-z_][a-z0-9_]*:[a-z_][a-z0-9_]*(?:,[a-z_][a-z0-9_]*)*\z/', $index)) {
+            $this->error('Use --index=table:column,column for a candidate.');
+
+            return self::FAILURE;
+        }
         $file = @fopen($path, 'xb');
         if ($file === false) {
             $this->error('Cannot create output; the parent directory must exist and the file must be new.');
@@ -43,7 +49,15 @@ class BenchmarkRelational extends Command
             return self::FAILURE;
         }
         try {
-            $result = $benchmark->run(array_map('intval', $integers), (int) $this->option('blocks'), (int) $this->option('pairs'), (int) $this->option('warmups'), (bool) $this->option('baseline'));
+            $result = $benchmark->run(
+                array_map('intval', $integers),
+                (int) $this->option('blocks'),
+                (int) $this->option('pairs'),
+                (int) $this->option('warmups'),
+                explode(',', $this->option('shapes')),
+                $index,
+                $this->option('case'),
+            );
             $failed = false;
             foreach ($result['scales'] as $scale) {
                 $failed = $failed || ! empty($scale['errors']);

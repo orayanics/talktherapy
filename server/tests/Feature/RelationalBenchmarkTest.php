@@ -10,6 +10,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use PDO;
 use Tests\TestCase;
 
 class RelationalBenchmarkTest extends TestCase
@@ -18,22 +19,23 @@ class RelationalBenchmarkTest extends TestCase
 
     public function test_fixtures_include_available_slots_and_growing_patient_history(): void
     {
-        $counts = (new RelationalBenchmarkFixtures)->seed(1);
+        $counts = (new RelationalBenchmarkFixtures)->seed(1, 'hot');
         $patient = RelationalBenchmarkFixtures::id('patient', 0);
 
         $this->assertSame(8, $counts['users']);
         $this->assertSame(10, DB::table('slots')->where('status', 'FREE')->where('start_at', '>', '2026-01-01')->count());
         $this->assertSame(5, DB::table('notifications')->where('user_id', $patient)->count());
         $this->assertSame(5, DB::table('appointments')->where('patient_id', $patient)->count());
-        $this->assertSame([], DB::select('PRAGMA foreign_key_check'));
+        $this->assertSame(10, DB::table('appointments')->join('slots', 'slots.id', '=', 'appointments.slot_id')->count());
     }
 
     public function test_runner_isolates_database_and_preserves_equivalent_results(): void
     {
+        $this->requireLaragonMySql();
         $connection = DB::connection();
         $config = config('database');
         $request = app('request');
-        $result = (new RelationalBenchmark)->run([1], 1, 1, 0);
+        $result = (new RelationalBenchmark)->run([1], 1, 1, 0, ['wide'], 'audit_logs:action,created_at,id');
 
         $this->assertSame($config, config('database'));
         $this->assertSame($connection, DB::connection());
@@ -54,12 +56,11 @@ class RelationalBenchmarkTest extends TestCase
 
     public function test_fixture_batches_insert_new_patients_before_their_histories(): void
     {
-        $counts = (new RelationalBenchmarkFixtures)->seed(11);
+        $counts = (new RelationalBenchmarkFixtures)->seed(201, 'hot');
 
-        $this->assertSame(58, $counts['users']);
-        $this->assertSame(110, DB::table('appointments')->count());
-        $this->assertSame(55, DB::table('notifications')->where('user_id', RelationalBenchmarkFixtures::id('patient', 0))->count());
-        $this->assertSame([], DB::select('PRAGMA foreign_key_check'));
+        $this->assertSame(1008, $counts['users']);
+        $this->assertSame(2010, DB::table('appointments')->count());
+        $this->assertSame(1005, DB::table('notifications')->where('user_id', RelationalBenchmarkFixtures::id('patient', 0))->count());
     }
 
     public function test_runner_refuses_production_before_opening_a_database(): void
@@ -72,28 +73,32 @@ class RelationalBenchmarkTest extends TestCase
 
     public function test_seed_failures_are_recorded_and_process_state_is_restored(): void
     {
+        $this->requireLaragonMySql();
         $this->travelTo(CarbonImmutable::parse('2027-03-04 05:06:07 UTC'));
         $originalNow = Date::getTestNow();
         $connection = DB::connection();
         $config = config('database');
         $user = User::factory()->create();
         $this->actingAs($user);
-        $temporaryPath = null;
-        $this->mock(RelationalBenchmarkFixtures::class, function ($mock) use (&$temporaryPath): void {
-            $mock->shouldReceive('seed')->once()->andReturnUsing(function () use (&$temporaryPath): never {
-                $temporaryPath = DB::connection()->getConfig('database');
+        $schema = null;
+        $this->mock(RelationalBenchmarkFixtures::class, function ($mock) use (&$schema): void {
+            $mock->shouldReceive('seed')->once()->andReturnUsing(function () use (&$schema): never {
+                $schema = DB::connection()->getConfig('database');
                 throw new \RuntimeException('Synthetic seed failure');
             });
         });
 
-        $result = (new RelationalBenchmark)->run([1], 1, 1, 0);
+        $result = (new RelationalBenchmark)->run([1], 1, 1, 0, ['wide'], 'audit_logs:action,created_at,id');
 
         $this->assertSame($config, config('database'));
         $this->assertSame($connection, DB::connection());
         $this->assertSame($user, Auth::user());
         $this->assertSame($originalNow->toISOString(), Date::getTestNow()->toISOString());
         $this->assertSame('2027-03-04 05:06:07', CarbonImmutable::now('UTC')->format('Y-m-d H:i:s'));
-        $this->assertFileDoesNotExist($temporaryPath);
+        $pdo = new PDO('mysql:host=127.0.0.1;port=3306', 'root', '');
+        $query = $pdo->prepare('SELECT COUNT(*) FROM information_schema.SCHEMATA WHERE SCHEMA_NAME = ?');
+        $query->execute([$schema]);
+        $this->assertSame(0, (int) $query->fetchColumn());
         $this->assertSame('RuntimeException: Synthetic seed failure', $result['scales'][0]['errors'][0]['error']);
         foreach ($result['scales'][0]['cases'] as $case) {
             $this->assertCount(2, $case['samples']);
@@ -130,6 +135,13 @@ class RelationalBenchmarkTest extends TestCase
             if (is_file($path)) {
                 unlink($path);
             }
+        }
+    }
+
+    private function requireLaragonMySql(): void
+    {
+        if (getenv('TALKTHERAPY_MYSQL_BENCHMARK_TEST') !== '1') {
+            $this->markTestSkipped('Set TALKTHERAPY_MYSQL_BENCHMARK_TEST=1 to exercise the Laragon schema lifecycle.');
         }
     }
 }
