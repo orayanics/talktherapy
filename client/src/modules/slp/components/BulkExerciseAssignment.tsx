@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import Drawer from '#/components/Drawer'
+import SearchInput from '#/components/Form/SearchInput'
 import Pagination from '#/components/Page/Pagination'
 import { api } from '#/lib/api/client'
 import { fetchClinicianPatients } from '#/modules/patients/api/patients'
@@ -50,7 +51,6 @@ export default function BulkExerciseAssignment({
       onAssigned()
     },
   })
-  useEffect(() => setPage(1), [search])
   const assignable = exercises.filter(
     (exercise) =>
       exercise.latest_version?.status === 'published' &&
@@ -144,12 +144,14 @@ export default function BulkExerciseAssignment({
               >
                 Search patients
               </label>
-              <input
+              <SearchInput
                 id="bulk-patient-search"
                 className="input w-full"
-                type="search"
                 value={search}
-                onChange={(event) => setSearch(event.target.value)}
+                onSearch={(value) => {
+                  setSearch(value)
+                  setPage(1)
+                }}
                 placeholder="Search by name or email"
               />
               <div

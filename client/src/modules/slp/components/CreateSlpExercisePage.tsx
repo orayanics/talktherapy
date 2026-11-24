@@ -1,8 +1,9 @@
-import { useEffect, useId, useMemo, useRef, useState } from 'react'
+import { useId, useMemo, useRef, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import Pagination from '#/components/Page/Pagination'
 import RowError from '#/components/Table/RowError'
 import FormInput from '#/components/Form/FormInput'
+import SearchInput from '#/components/Form/SearchInput'
 import { fetchClinicianPatients } from '#/modules/patients/api/patients'
 import type { ClinicianPatient } from '#/modules/patients/types/patients'
 import {
@@ -86,7 +87,6 @@ export default function CreateSlpExercisePage({
     )
     return [...selectedPatients].map((id) => names.get(id) ?? id)
   }, [patients.data?.data, selectedPatients])
-  useEffect(() => setPatientPage(1), [search])
 
   const uploadAsset = async (file: File) => {
     setAssetError('')
@@ -296,12 +296,14 @@ export default function CreateSlpExercisePage({
               >
                 Search patients
               </label>
-              <input
+              <SearchInput
                 id={`${formId}-patient-search`}
                 className="input w-full"
-                type="search"
                 value={search}
-                onChange={(event) => setSearch(event.target.value)}
+                onSearch={(value) => {
+                  setSearch(value)
+                  setPatientPage(1)
+                }}
                 placeholder="Search by name or email"
               />
               <div

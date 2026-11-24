@@ -26,6 +26,7 @@ export default function SlpExerciseCatalog({
   const [creating, setCreating] = useState(false)
   const [page, setPage] = useState(1)
   const [filters, setFilters] = useState<SlpExerciseFilters>({})
+  const [searchReset, setSearchReset] = useState(0)
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
   const { data, isPending, isError } = useQuery(
     fetchSlpExercises(
@@ -53,6 +54,7 @@ export default function SlpExerciseCatalog({
       <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div className="flex flex-col gap-4 md:flex-row md:items-end">
           <SearchFilter
+            key={searchReset}
             label="Language code"
             placeholder="Language code (e.g. en, tl)"
             value={filters.language ?? ''}
@@ -109,6 +111,7 @@ export default function SlpExerciseCatalog({
                 onClick={() => {
                   setFilters({})
                   setPage(1)
+                  setSearchReset((current) => current + 1)
                 }}
               >
                 Clear filters

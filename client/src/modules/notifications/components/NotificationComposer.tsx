@@ -5,6 +5,7 @@ import type { AdminUser } from '#/modules/users/types/user'
 import { useAdminNotificationComposer } from '#/modules/notifications/hooks/useAdminNotificationComposer'
 import type { BroadcastDraft } from '#/modules/notifications/api/admin'
 import FormInput from '#/components/Form/FormInput'
+import SearchInput from '#/components/Form/SearchInput'
 import StateLoading from '#/components/State/StateLoading'
 import StateNull from '#/components/State/StateNull'
 import { useAlert } from '#/context/AlertContext'
@@ -135,14 +136,13 @@ export default function NotificationComposer() {
                   label="Search active users"
                   className="my-2"
                 >
-                  <input
+                  <SearchInput
                     id="notification-user-search"
                     className="input input-bordered w-full"
-                    type="search"
                     placeholder="Search active users"
                     value={search}
-                    onChange={(event) => {
-                      setSearch(event.target.value)
+                    onSearch={(value) => {
+                      setSearch(value)
                       setPage(1)
                     }}
                   />

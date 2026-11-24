@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import Pagination from '#/components/Page/Pagination'
 import Drawer from '#/components/Drawer'
+import SearchInput from '#/components/Form/SearchInput'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { api } from '#/lib/api/client'
 import { useAuthGuard } from '#/modules/auth/hooks/useAuth'
@@ -48,7 +49,6 @@ export default function ExerciseDelivery({
   const pagePatients = patients.data?.data ?? []
   const meta = patients.data?.meta
 
-  useEffect(() => setPage(1), [search])
   useEffect(() => {
     const configured = version?.configuration?.patient_ids
     if (Array.isArray(configured))
@@ -198,12 +198,14 @@ export default function ExerciseDelivery({
                   >
                     Search patients
                   </label>
-                  <input
+                  <SearchInput
                     id={`patient-search-${version.id}`}
                     className="input w-full"
-                    type="search"
                     value={search}
-                    onChange={(event) => setSearch(event.target.value)}
+                    onSearch={(value) => {
+                      setSearch(value)
+                      setPage(1)
+                    }}
                     placeholder="Search by name or email"
                   />
                   <div

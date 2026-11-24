@@ -1,3 +1,4 @@
+import SearchInput from '#/components/Form/SearchInput'
 import Pagination from '#/components/Page/Pagination'
 import { useAuthGuard } from '#/modules/auth/hooks/useAuth'
 import { fetchClinicianPatients } from '#/modules/patients/api/patients'
@@ -37,13 +38,12 @@ export default function CollectionPatientPicker({
     <fieldset className="space-y-3">
       <legend>Selected patients</legend>
       <label htmlFor="collection-patient-search">Search patients</label>
-      <input
+      <SearchInput
         id="collection-patient-search"
         className="input w-full"
-        type="search"
         value={search}
-        onChange={(event) => {
-          setSearch(event.target.value)
+        onSearch={(value) => {
+          setSearch(value)
           setPage(1)
         }}
       />

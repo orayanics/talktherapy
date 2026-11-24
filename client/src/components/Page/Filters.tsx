@@ -1,5 +1,6 @@
 import { useId } from 'react'
 
+import SearchInput from '#/components/Form/SearchInput'
 import ChoiceFilterOption from './ChoiceFilterOption'
 
 export function SearchFilter({
@@ -16,10 +17,9 @@ export function SearchFilter({
   return (
     <label className="input min-w-0 w-fit">
       <span className="sr-only">{label}</span>
-      <input
-        type="search"
+      <SearchInput
         value={value}
-        onChange={(event) => onChange(event.target.value)}
+        onSearch={onChange}
         placeholder={placeholder ?? label}
         className="input"
       />
